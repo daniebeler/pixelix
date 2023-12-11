@@ -1,4 +1,4 @@
-package com.daniebeler.pixels
+package com.daniebeler.pixels.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,14 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
 
 @Composable
@@ -31,7 +25,7 @@ fun TestComposable(viewModel: MainViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(items) { item ->
-                    AsyncImage(model = item.mediaAttachments[0].url, contentDescription = "")
+                    PostComposable(post = item)
                 }
             }
         }
