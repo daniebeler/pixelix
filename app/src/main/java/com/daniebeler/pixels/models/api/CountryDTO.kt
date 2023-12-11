@@ -7,12 +7,13 @@ data class CountryDTO(
     val id: String,
 
     @SerializedName("media_attachments")
-    val mediaAttachments: ArrayList<MediaAttachment>
+    val mediaAttachments: List<MediaAttachment>
 )
 
 data class MediaAttachment(
     @SerializedName("id")
-    val id: String
+    val id: String,
+    val url: String
 )
 
 fun CountryDTO.toModel() = Post(
