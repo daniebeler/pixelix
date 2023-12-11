@@ -3,24 +3,19 @@ package com.daniebeler.pixels.models.api
 import com.google.gson.annotations.SerializedName
 
 data class CountryDTO(
-    @SerializedName("name")
-    val name: Name,
-    @SerializedName("region")
-    val region: String,
-    @SerializedName("area")
-    val area: Double,
-    @SerializedName("population")
-    val population: Int
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("media_attachments")
+    val mediaAttachments: ArrayList<MediaAttachment>
 )
 
-data class Name(
-    @SerializedName("common")
-    val common: String
+data class MediaAttachment(
+    @SerializedName("id")
+    val id: String
 )
 
-fun CountryDTO.toModel() = Country(
-    name = this.name.common,
-    region = this.region,
-    area = this.area,
-    population = this.population
+fun CountryDTO.toModel() = Post(
+    id = this.id,
+    mediaAttachments = this.mediaAttachments
 )

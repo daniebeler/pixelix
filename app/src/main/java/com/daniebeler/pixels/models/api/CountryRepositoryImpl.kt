@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CountryRepositoryImpl: CountryRepository {
 
-    private val BASE_URL = "https://restcountries.com/v3.1/"
+    private val BASE_URL = "https://pixelfed.social/api/pixelfed/"
 
     private val countryApi: CountryApi
 
@@ -30,9 +30,9 @@ class CountryRepositoryImpl: CountryRepository {
         countryApi = retrofit.create(CountryApi::class.java)
     }
 
-    override suspend fun searchCountries(query: String): List<Country> {
+    override suspend fun searchCountries(): List<Post> {
         return try {
-            val response = countryApi.searchCountries(query).awaitResponse()
+            val response = countryApi.searchCountries().awaitResponse()
             if (response.isSuccessful) {
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }

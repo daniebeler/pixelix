@@ -5,6 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface CountryApi {
-    @GET("name/{countryName}")
-    fun searchCountries(@Path("countryName") countryName: String): Call<List<CountryDTO>>
+    @GET("v2/discover/posts/trending")
+    fun searchCountries(): Call<List<CountryDTO>>
 }
