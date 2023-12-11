@@ -2,15 +2,21 @@ package com.daniebeler.pixels.models.api
 
 import com.google.gson.annotations.SerializedName
 
-data class CountryDTO(
+data class PostDTO(
     @SerializedName("id")
     val id: String,
-
     @SerializedName("media_attachments")
     val mediaAttachments: List<MediaAttachment>,
-
     @SerializedName("account")
-    val account: Account
+    val account: Account,
+    @SerializedName("tags")
+    val tags: List<Tag>,
+    @SerializedName("liked_by")
+    val liked_by: LikedBy,
+    @SerializedName("content_text")
+    val content: String,
+    @SerializedName("reply_count")
+    val replyCount: Int
 )
 
 data class MediaAttachment(
@@ -31,8 +37,24 @@ data class Account(
     val avatar: String,
 )
 
-fun CountryDTO.toModel() = Post(
+data class Tag(
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+)
+
+data class LikedBy(
+    @SerializedName("total_count")
+    val total_count: Int
+)
+
+fun PostDTO.toModel() = Post(
     id = this.id,
     mediaAttachments = this.mediaAttachments,
-    account = this.account
+    account = this.account,
+    tags = this.tags,
+    likes = this.liked_by.total_count,
+    replyCount = this.replyCount,
+    content = this.content
 )

@@ -18,11 +18,11 @@ import com.daniebeler.pixels.MainViewModel
 
 @Composable
 fun ForyouComposable(viewModel: MainViewModel) {
-    val items = viewModel.countries
+    val items = viewModel.trendingPosts
 
     Column {
         Column {
-            Button(onClick = { viewModel.searchCountries("austria") }) {
+            Button(onClick = { viewModel.getTrendingPosts() }) {
             }
 
             LazyVerticalStaggeredGrid(

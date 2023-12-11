@@ -87,6 +87,8 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.5.0")
 
     implementation ("androidx.navigation:navigation-compose:2.7.5")
+
+    implementation ("androidx.compose.material3:material3:1.2.0-alpha12")
 }
 
 kapt {

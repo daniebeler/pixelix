@@ -40,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.components.ForyouComposable
+import com.daniebeler.pixels.ui.components.LocalTimeline
 import com.daniebeler.pixels.ui.components.TestComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,12 +50,9 @@ class MainActivity : ComponentActivity() {
 
      private val mainViewModel: MainViewModel by viewModels()
 
-
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val items = mainViewModel.countries
 
         setContent {
             PixelsTheme {
@@ -109,24 +107,6 @@ sealed class Destinations(
 }
 
 @Composable
-fun NotificationScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Blue)
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Notification Screen",
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Composable
 fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController, startDestination = Destinations.HomeScreen.route) {
         composable(Destinations.HomeScreen.route) {
@@ -136,7 +116,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             ForyouComposable(viewModel = viewModel)
         }
         composable(Destinations.Notification.route) {
-            NotificationScreen()
+            LocalTimeline(viewModel = viewModel)
         }
     }
 }

@@ -1,5 +1,9 @@
 package com.daniebeler.pixels.models.api
 
 interface CountryRepository {
-    suspend fun searchCountries(): List<Post>
+    suspend fun getTrendingPosts(): List<Post>
+
+    suspend fun getLocalTimeline(): List<Post>
+
+    suspend fun getReplies(userid: String, postid: String): List<Reply>
 }

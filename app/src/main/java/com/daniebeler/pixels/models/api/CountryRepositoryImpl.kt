@@ -8,9 +8,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CountryRepositoryImpl: CountryRepository {
 
-    private val BASE_URL = "https://pixelfed.social/api/pixelfed/"
+    private val BASE_URL = "https://pixelfed.social/api/"
 
-    private val countryApi: CountryApi
+    private val pixelfedApi: PixelfedApi
 
     init {
         val mHttpLoggingInterceptor = HttpLoggingInterceptor()
@@ -27,12 +27,12 @@ class CountryRepositoryImpl: CountryRepository {
             .client(mOkHttpClient)
             .build()
 
-        countryApi = retrofit.create(CountryApi::class.java)
+        pixelfedApi = retrofit.create(PixelfedApi::class.java)
     }
 
-    override suspend fun searchCountries(): List<Post> {
+    override suspend fun getTrendingPosts(): List<Post> {
         return try {
-            val response = countryApi.searchCountries().awaitResponse()
+            val response = pixelfedApi.getTrendingPosts().awaitResponse()
             if (response.isSuccessful) {
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }
@@ -41,6 +41,40 @@ class CountryRepositoryImpl: CountryRepository {
             }
         } catch (exception: Exception) {
             val e = exception
+            emptyList()
+        }
+    }
+
+    override suspend fun getLocalTimeline(): List<Post> {
+        return try {
+            val response = pixelfedApi.getLocalTimeline().awaitResponse()
+            if (response.isSuccessful) {
+                val countries = response.body() ?: emptyList()
+                countries.map { it.toModel() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            emptyList()
+        }
+    }
+
+    override suspend fun getReplies(userid: String, postid: String): List<Reply> {
+        println("saaasen")
+        return try {
+            val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
+            println("mehege")
+            if (response.isSuccessful) {
+                val countries = response.body()?.data ?: emptyList()
+                countries.map { it.toModel() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            println("Fuck")
+            println(e)
             emptyList()
         }
     }

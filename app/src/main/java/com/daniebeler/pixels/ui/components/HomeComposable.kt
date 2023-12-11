@@ -17,10 +17,10 @@ import com.daniebeler.pixels.MainViewModel
 @Composable
 fun TestComposable(viewModel: MainViewModel) {
 
-    val items = viewModel.countries
+    val items = viewModel.trendingPosts
 
         Column {
-            Button(onClick = { viewModel.searchCountries("austria") }) {
+            Button(onClick = { viewModel.getTrendingPosts() }) {
             }
 
             LazyColumn(

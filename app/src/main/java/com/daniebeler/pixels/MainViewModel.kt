@@ -16,16 +16,24 @@ class MainViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    private var _countries by mutableStateOf(emptyList<Post>())
+    private var _trendingPosts by mutableStateOf(emptyList<Post>())
+    private var _localTimeline by mutableStateOf(emptyList<Post>())
 
-    val countries: List<Post>
-        get() = _countries
+    val trendingPosts: List<Post>
+        get() = _trendingPosts
 
-    fun searchCountries(query: String) {
+    val localTimeline: List<Post>
+        get() = _localTimeline
+
+    fun getTrendingPosts() {
         viewModelScope.launch {
-            _countries = repository.searchCountries()
-            println("Got Data")
-            println(countries)
+            _trendingPosts = repository.getTrendingPosts()
+        }
+    }
+
+    fun getLocalTimeline() {
+        viewModelScope.launch {
+            _localTimeline = repository.getLocalTimeline()
         }
     }
 }
