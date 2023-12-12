@@ -16,18 +16,38 @@ class MainViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    private var _trendingPosts by mutableStateOf(emptyList<Post>())
+    private var _dailyTrendingPosts by mutableStateOf(emptyList<Post>())
+    private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
+    private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _localTimeline by mutableStateOf(emptyList<Post>())
 
-    val trendingPosts: List<Post>
-        get() = _trendingPosts
+    val dailyTrendingPosts: List<Post>
+        get() = _dailyTrendingPosts
+
+    val monthlyTrendingPosts: List<Post>
+        get() = _monthlyTrendingPosts
+
+    val yearlyTrendingPosts: List<Post>
+        get() = _yearlyTrendingPosts
 
     val localTimeline: List<Post>
         get() = _localTimeline
 
-    fun getTrendingPosts() {
+    fun getDailyTrendingPosts() {
         viewModelScope.launch {
-            _trendingPosts = repository.getTrendingPosts()
+            _dailyTrendingPosts = repository.getTrendingPosts("daily")
+        }
+    }
+
+    fun getMonthlyTrendingPosts() {
+        viewModelScope.launch {
+            _monthlyTrendingPosts = repository.getTrendingPosts("monthly")
+        }
+    }
+
+    fun getYearlyTrendingPosts() {
+        viewModelScope.launch {
+            _yearlyTrendingPosts = repository.getTrendingPosts("yearly")
         }
     }
 

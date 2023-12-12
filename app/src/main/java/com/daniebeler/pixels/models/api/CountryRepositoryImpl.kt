@@ -30,10 +30,12 @@ class CountryRepositoryImpl: CountryRepository {
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
     }
 
-    override suspend fun getTrendingPosts(): List<Post> {
+    override suspend fun getTrendingPosts(range: String): List<Post> {
         return try {
-            val response = pixelfedApi.getTrendingPosts().awaitResponse()
+            val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
+                println("yay")
+                println(response.body())
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }
             } else {
@@ -41,6 +43,8 @@ class CountryRepositoryImpl: CountryRepository {
             }
         } catch (exception: Exception) {
             val e = exception
+            println("fuck")
+            println(e)
             emptyList()
         }
     }

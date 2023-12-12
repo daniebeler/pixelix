@@ -23,7 +23,9 @@ data class MediaAttachment(
     @SerializedName("id")
     val id: String,
     @SerializedName("url")
-    val url: String
+    val url: String,
+    @SerializedName("preview_url")
+    val previewUrl: String
 )
 
 data class Account(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +18,9 @@ import com.daniebeler.pixels.MainViewModel
 @Composable
 fun TestComposable(viewModel: MainViewModel) {
 
-    val items = viewModel.trendingPosts
+    val items = viewModel.dailyTrendingPosts
 
-        Column {
-            Button(onClick = { viewModel.getTrendingPosts() }) {
-            }
+
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(32.dp)
@@ -30,5 +29,5 @@ fun TestComposable(viewModel: MainViewModel) {
                     PostComposable(post = item)
                 }
             }
-    }
+
 }

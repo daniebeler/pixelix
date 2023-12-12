@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,6 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.models.api.CountryRepository
@@ -68,7 +75,8 @@ fun PostComposable(post: Post) {
 
         Column (Modifier.padding(8.dp)) {
             Text(text = post.likes.toString() + " likes")
-            Text(text = post.account.username + " " + post.content)
+
+            HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {})
 
             if (post.replyCount > 0) {
                 TextButton(onClick = {
@@ -101,11 +109,88 @@ fun PostComposable(post: Post) {
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
                     items(replies) { reply ->
-                        Text(text = reply.content)
+                        HashtagsMentionsTextView(text = reply.content, onClick = {})
                     }
                 }
             }
         }
     }
 
+}
+
+
+@Composable
+fun HashtagsMentionsTextView(text: String, modifier: Modifier = Modifier, onClick: (String) -> Unit) {
+
+    val colorScheme = MaterialTheme.colorScheme
+    val textStyle = SpanStyle(color = colorScheme.onBackground)
+    val primaryStyle = SpanStyle(color = colorScheme.error)
+
+    val hashtags = Regex("((?=[^\\w!])[#@][\\u4e00-\\u9fa5\\w]+)")
+
+    val annotatedStringList = remember {
+
+        var lastIndex = 0
+        val annotatedStringList = mutableStateListOf<AnnotatedString.Range<String>>()
+
+        // Add a text range for hashtags
+        for (match in hashtags.findAll(text)) {
+
+            val start = match.range.first
+            val end = match.range.last + 1
+            val string = text.substring(start, end)
+
+            if (start > lastIndex) {
+                annotatedStringList.add(
+                    AnnotatedString.Range(
+                        text.substring(lastIndex, start),
+                        lastIndex,
+                        start,
+                        "text"
+                    )
+                )
+            }
+            annotatedStringList.add(
+                AnnotatedString.Range(string, start, end, "link")
+            )
+            lastIndex = end
+        }
+
+        // Add remaining text
+        if (lastIndex < text.length) {
+            annotatedStringList.add(
+                AnnotatedString.Range(
+                    text.substring(lastIndex, text.length),
+                    lastIndex,
+                    text.length,
+                    "text"
+                )
+            )
+        }
+        annotatedStringList
+    }
+
+    // Build an annotated string
+    val annotatedString = buildAnnotatedString {
+        annotatedStringList.forEach {
+            if (it.tag == "link") {
+                pushStringAnnotation(tag = it.tag, annotation = it.item)
+                withStyle(style = primaryStyle) { append(it.item) }
+                pop()
+            } else {
+                withStyle(style = textStyle) { append(it.item) }
+            }
+        }
+    }
+
+    ClickableText(
+        text = annotatedString,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = modifier,
+        onClick = { position ->
+            val annotatedStringRange =
+                annotatedStringList.first { it.start < position && position < it.end }
+            if (annotatedStringRange.tag == "link") onClick(annotatedStringRange.item)
+        }
+    )
 }
