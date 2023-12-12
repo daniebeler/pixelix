@@ -1,5 +1,6 @@
 package com.daniebeler.pixels.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.models.api.CountryRepository
 import com.daniebeler.pixels.models.api.CountryRepositoryImpl
@@ -44,10 +47,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostComposable(post: Post) {
+fun PostComposable(post: Post, navController: NavController) {
 
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var replies by remember {
@@ -58,7 +60,15 @@ fun PostComposable(post: Post) {
 
 
     Column {
-        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
+        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp).clickable(onClick = {
+            navController.navigate("profile_screen") {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        })) {
             AsyncImage(
                 model = post.account.avatar, contentDescription = "",
                 modifier = Modifier

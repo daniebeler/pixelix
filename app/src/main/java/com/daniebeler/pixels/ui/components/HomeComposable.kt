@@ -42,21 +42,8 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            item {
-                Button(onClick = {
-                    navController.navigate("profile_screen") {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }) {
-
-                }
-            }
             items(items) { item ->
-                PostComposable(post = item)
+                PostComposable(post = item, navController)
             }
         }
     }

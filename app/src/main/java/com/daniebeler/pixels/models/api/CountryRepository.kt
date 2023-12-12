@@ -6,4 +6,6 @@ interface CountryRepository {
     suspend fun getLocalTimeline(): List<Post>
 
     suspend fun getReplies(userid: String, postid: String): List<Reply>
+
+    suspend fun getAccount(accountId: String): Account
 }

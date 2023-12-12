@@ -14,4 +14,7 @@ interface PixelfedApi {
 
     @GET("v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
+
+    @GET("pixelfed/v1/accounts/{accountid}")
+    fun getAccount(@Path("accountid") accountId: String): Call<Account>
 }

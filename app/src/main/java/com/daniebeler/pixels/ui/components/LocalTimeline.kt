@@ -14,16 +14,5 @@ fun LocalTimeline(viewModel: MainViewModel) {
 
     val posts = viewModel.localTimeline
 
-    Column {
-        Button(onClick = { viewModel.getLocalTimeline() }) {
-        }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(32.dp)
-        ) {
-            items(posts) { post ->
-                PostComposable(post = post)
-            }
-        }
-    }
 }

@@ -82,4 +82,22 @@ class CountryRepositoryImpl: CountryRepository {
             emptyList()
         }
     }
+
+    override suspend fun getAccount(accountId: String): Account {
+        return try {
+            val response = pixelfedApi.getAccount(accountId).awaitResponse()
+            println("mehege")
+            if (response.isSuccessful) {
+                val countries: Account = response.body() ?: Account("", "null", "null", "null",0, 0)
+                countries
+            } else {
+                Account("", "null", "null", "null",0, 0)
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            println("Fuck")
+            println(e)
+            Account("", "null", "null", "null",0, 0)
+        }
+    }
 }

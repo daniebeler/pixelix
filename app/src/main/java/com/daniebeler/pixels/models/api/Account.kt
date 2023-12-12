@@ -11,4 +11,8 @@ data class Account(
     val displayname: String,
     @SerializedName("avatar")
     val avatar: String,
+    @SerializedName("followers_count")
+    val followersCount: Int,
+    @SerializedName("following_count")
+    val followingCount: Int
 )
