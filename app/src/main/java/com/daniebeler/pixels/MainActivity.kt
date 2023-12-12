@@ -28,8 +28,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LocalTimeline
-import com.daniebeler.pixels.ui.components.TestComposable
+import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -92,6 +93,12 @@ sealed class Destinations(
         icon = Icons.Outlined.Favorite
     )
 
+    object Profile : Destinations(
+        route = "profile_screen",
+        title = "Profile",
+        icon = Icons.Outlined.Favorite
+    )
+
     object Notification : Destinations(
         route = "notification_screen",
         title = "Notification",
@@ -103,10 +110,13 @@ sealed class Destinations(
 fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController, startDestination = Destinations.HomeScreen.route) {
         composable(Destinations.HomeScreen.route) {
-            TestComposable(viewModel = viewModel)
+            HomeComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.Favourite.route) {
             TrendingPostsComposable(viewModel = viewModel)
+        }
+        composable(Destinations.Profile.route) {
+            ProfileComposable(navController)
         }
         composable(Destinations.Notification.route) {
             LocalTimeline(viewModel = viewModel)

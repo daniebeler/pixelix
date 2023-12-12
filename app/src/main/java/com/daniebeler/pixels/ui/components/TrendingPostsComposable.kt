@@ -42,7 +42,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel) {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text("Top app bar")
+                    Text("Trending")
                 }
             )
 

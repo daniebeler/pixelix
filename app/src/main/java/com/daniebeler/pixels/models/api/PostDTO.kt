@@ -8,7 +8,7 @@ data class PostDTO(
     @SerializedName("media_attachments")
     val mediaAttachments: List<MediaAttachment>,
     @SerializedName("account")
-    val account: Account,
+    val account: AccountDTO,
     @SerializedName("tags")
     val tags: List<Tag>,
     @SerializedName("liked_by")
@@ -28,7 +28,7 @@ data class MediaAttachment(
     val previewUrl: String
 )
 
-data class Account(
+data class AccountDTO(
     @SerializedName("id")
     val id: String,
     @SerializedName("username")
