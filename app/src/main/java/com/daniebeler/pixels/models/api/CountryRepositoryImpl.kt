@@ -100,4 +100,20 @@ class CountryRepositoryImpl: CountryRepository {
             Account("", "null", "null", "null",0, 0, "", "")
         }
     }
+
+
+    override suspend fun getPostsByAccountId(accountId: String): List<Post> {
+        return try {
+            val response = pixelfedApi.getPostsByAccountId(accountId).awaitResponse()
+            if (response.isSuccessful) {
+                val countries = response.body() ?: emptyList()
+                countries.map { it.toModel() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            emptyList()
+        }
+    }
 }

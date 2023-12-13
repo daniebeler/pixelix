@@ -8,4 +8,6 @@ interface CountryRepository {
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 
     suspend fun getAccount(accountId: String): Account
+
+    suspend fun getPostsByAccountId(accountId: String): List<Post>
 }

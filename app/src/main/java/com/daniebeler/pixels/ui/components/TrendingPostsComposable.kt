@@ -100,9 +100,6 @@ fun CustomPost(post: Post, navController: NavController) {
         contentDescription = null,
         modifier = Modifier.aspectRatio(1f).clickable(onClick = {
             navController.navigate("single_post_screen") {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
                 launchSingleTop = true
                 restoreState = true
             }

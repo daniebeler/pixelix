@@ -12,7 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -60,15 +62,17 @@ fun PostComposable(post: Post, navController: NavController) {
 
 
     Column {
-        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp).clickable(onClick = {
-            navController.navigate("profile_screen/" + post.account.id) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
+        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+            .padding(start = 8.dp)
+            .clickable(onClick = {
+                navController.navigate("profile_screen/" + post.account.id) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            }
-        })) {
+            })) {
             AsyncImage(
                 model = post.account.avatar, contentDescription = "",
                 modifier = Modifier
@@ -111,9 +115,9 @@ fun PostComposable(post: Post, navController: NavController) {
             },
             sheetState = sheetState
         ) {
-            Column (Modifier.fillMaxSize()) {
+            Column (Modifier.fillMaxSize().padding(12.dp)) {
                 Text(text = post.content)
-
+                HorizontalDivider(Modifier.padding(12.dp))
 
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp)

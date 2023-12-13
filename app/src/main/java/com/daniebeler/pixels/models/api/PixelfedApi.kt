@@ -17,4 +17,7 @@ interface PixelfedApi {
 
     @GET("pixelfed/v1/accounts/{accountid}")
     fun getAccount(@Path("accountid") accountId: String): Call<Account>
+
+    @GET("pixelfed/v1/accounts/{accountid}/statuses")
+    fun getPostsByAccountId(@Path("accountid") accountId: String): Call<List<PostDTO>>
 }
