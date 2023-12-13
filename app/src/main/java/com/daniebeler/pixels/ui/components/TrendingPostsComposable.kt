@@ -1,5 +1,6 @@
 package com.daniebeler.pixels.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,13 +24,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.models.api.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrendingPostsComposable(viewModel: MainViewModel) {
+fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavController) {
     val dailyTrendingPosts = viewModel.dailyTrendingPosts
     val monthlyTrendingPosts = viewModel.monthlyTrendingPosts
     val yearlyTrendingPosts = viewModel.yearlyTrendingPosts
@@ -60,12 +63,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel) {
                     Heading(text = "Trending today")
                 }
                 items(dailyTrendingPosts) { photo ->
-                    AsyncImage(
-                        model = photo.mediaAttachments[0].previewUrl,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier.aspectRatio(1f)
-                    )
+                    CustomPost(post = photo, navController = navController)
                 }
 
                 item (
@@ -74,12 +72,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel) {
                     Heading(text = "Trending this month")
                 }
                 items(monthlyTrendingPosts) { photo ->
-                    AsyncImage(
-                        model = photo.mediaAttachments[0].previewUrl,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier.aspectRatio(1f)
-                    )
+                    CustomPost(post = photo, navController = navController)
                 }
 
 
@@ -89,12 +82,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel) {
                     Heading(text = "Trending this year")
                 }
                 items(yearlyTrendingPosts) { photo ->
-                    AsyncImage(
-                        model = photo.mediaAttachments[0].previewUrl,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier.aspectRatio(1f)
-                    )
+                    CustomPost(post = photo, navController = navController)
                 }
             }
         )
@@ -102,6 +90,24 @@ fun TrendingPostsComposable(viewModel: MainViewModel) {
 
 
 
+}
+
+@Composable
+fun CustomPost(post: Post, navController: NavController) {
+    AsyncImage(
+        model = post.mediaAttachments[0].previewUrl,
+        contentScale = ContentScale.Crop,
+        contentDescription = null,
+        modifier = Modifier.aspectRatio(1f).clickable(onClick = {
+            navController.navigate("single_post_screen") {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        })
+    )
 }
 
 @Composable

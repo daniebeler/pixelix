@@ -1,7 +1,11 @@
 package com.daniebeler.pixels.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -19,8 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -34,16 +41,18 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComposable(navController: NavController) {
+fun ProfileComposable(navController: NavController, userId: String) {
+
+    val uriHandler = LocalUriHandler.current
 
     var account: Account by remember {
-        mutableStateOf(Account("null", "null", "null", "null", 0, 0))
+        mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", ""))
     }
 
     val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        account = repository.getAccount("497910174831013185")
+        account = repository.getAccount(userId)
     }
 
 
@@ -67,17 +76,51 @@ fun ProfileComposable(navController: NavController) {
 
         }
     ) {paddingValues ->
-        Column (Modifier.padding(paddingValues)) {
-            Row {
-                AsyncImage(
-                    model = account.avatar,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(64.dp)
-                        .clip(CircleShape))
-                Text(text = account.followersCount.toString())
+        if (account.id != "null") {
+            Column (Modifier.padding(paddingValues)) {
+                Column (Modifier.padding(12.dp)) {
+                    Row (verticalAlignment = Alignment.CenterVertically) {
+                        AsyncImage(
+                            model = account.avatar,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .height(64.dp)
+                                .clip(CircleShape))
+
+                        Row (horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                            Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(text = account.followersCount.toString())
+                                Text(text = "Followers")
+                            }
+
+                            Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(text = account.followingCount.toString())
+                                Text(text = "Following")
+                            }
+                        }
+
+
+
+                    }
+                    Text(text = account.displayname, fontWeight = FontWeight.Bold)
+                    println("laaal")
+                    println(account.toString())
+
+                    account.note?.let {
+                        Text(text = account.note)
+                    }
+
+                    account.website?.let {
+                        Text(text = account.website, modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website)}))
+
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(text = "Posts")
+                }
+
             }
-            Text(text = account.displayname)
         }
+
     }
 }

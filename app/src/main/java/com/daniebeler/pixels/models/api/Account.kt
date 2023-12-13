@@ -14,5 +14,9 @@ data class Account(
     @SerializedName("followers_count")
     val followersCount: Int,
     @SerializedName("following_count")
-    val followingCount: Int
+    val followingCount: Int,
+    @SerializedName("website")
+    val website: String,
+    @SerializedName("note_text")
+    val note: String
 )

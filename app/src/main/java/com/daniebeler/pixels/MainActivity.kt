@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LocalTimeline
 import com.daniebeler.pixels.ui.components.ProfileComposable
+import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,8 +95,14 @@ sealed class Destinations(
     )
 
     object Profile : Destinations(
-        route = "profile_screen",
+        route = "profile_screen/{userid}",
         title = "Profile",
+        icon = Icons.Outlined.Favorite
+    )
+
+    object SinglePost : Destinations(
+        route = "single_post_screen",
+        title = "SinglePost",
         icon = Icons.Outlined.Favorite
     )
 
@@ -113,13 +120,21 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             HomeComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.Favourite.route) {
-            TrendingPostsComposable(viewModel = viewModel)
+            TrendingPostsComposable(viewModel = viewModel, navController)
         }
-        composable(Destinations.Profile.route) {
-            ProfileComposable(navController)
+        composable(Destinations.Profile.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("userid")
+            /* We check if it's not null */
+            uId?.let { id->
+                ProfileComposable(navController, userId = id)
+            }
+
         }
         composable(Destinations.Notification.route) {
             LocalTimeline(viewModel = viewModel)
+        }
+        composable(Destinations.SinglePost.route) {
+            SinglePostComposable(navController)
         }
     }
 }

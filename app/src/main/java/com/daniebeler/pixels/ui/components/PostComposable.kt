@@ -61,7 +61,7 @@ fun PostComposable(post: Post, navController: NavController) {
 
     Column {
         Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp).clickable(onClick = {
-            navController.navigate("profile_screen") {
+            navController.navigate("profile_screen/" + post.account.id) {
                 popUpTo(navController.graph.findStartDestination().id) {
                     saveState = true
                 }
