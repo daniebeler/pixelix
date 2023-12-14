@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,6 +68,16 @@ fun ProfileComposable(navController: NavController, userId: String) {
     CoroutineScope(Dispatchers.Default).launch {
         account = repository.getAccount(userId)
         posts = repository.getPostsByAccountId(userId)
+    }
+
+    fun loadMorePosts() {
+        if (posts.isNotEmpty()) {
+            var maxId = posts.last().id
+
+            CoroutineScope(Dispatchers.Default).launch {
+                posts = posts + repository.getPostsByAccountId(userId, maxId)
+            }
+        }
     }
 
 
@@ -151,6 +162,14 @@ fun ProfileComposable(navController: NavController, userId: String) {
                         }
                         items(posts) { photo ->
                             CustomPost(post = photo, navController = navController)
+                        }
+
+                        item {
+                            Button(onClick = {
+                                loadMorePosts()
+                            }) {
+                                Text(text = "Load More")
+                            }
                         }
 
                     }

@@ -102,10 +102,25 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
-
     override suspend fun getPostsByAccountId(accountId: String): List<Post> {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId).awaitResponse()
+            if (response.isSuccessful) {
+                val countries = response.body() ?: emptyList()
+                countries.map { it.toModel() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            emptyList()
+        }
+    }
+
+
+    override suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post> {
+        return try {
+            val response = pixelfedApi.getPostsByAccountId(accountId, maxPostId).awaitResponse()
             if (response.isSuccessful) {
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }

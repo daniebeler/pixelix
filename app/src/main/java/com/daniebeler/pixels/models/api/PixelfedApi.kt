@@ -18,8 +18,11 @@ interface PixelfedApi {
     @GET("pixelfed/v1/accounts/{accountid}")
     fun getAccount(@Path("accountid") accountId: String): Call<Account>
 
-    @GET("pixelfed/v1/accounts/{accountid}/statuses")
+    @GET("pixelfed/v1/accounts/{accountid}/statuses?limit=10")
     fun getPostsByAccountId(@Path("accountid") accountId: String): Call<List<PostDTO>>
+
+    @GET("pixelfed/v1/accounts/{accountid}/statuses?limit=10")
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Query("max_id") maxId: String): Call<List<PostDTO>>
 
     @GET("v1/statuses/{postid}")
     fun getPostById(@Path("postid") postId: String): Call<Post>
