@@ -102,7 +102,7 @@ sealed class Destinations(
     )
 
     object SinglePost : Destinations(
-        route = "single_post_screen",
+        route = "single_post_screen/{postid}",
         title = "SinglePost",
         icon = Icons.Outlined.Favorite
     )
@@ -125,7 +125,6 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         }
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
-            /* We check if it's not null */
             uId?.let { id->
                 ProfileComposable(navController, userId = id)
             }
@@ -134,8 +133,11 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.Notification.route) {
             LocalTimeline(viewModel = viewModel)
         }
-        composable(Destinations.SinglePost.route) {
-            SinglePostComposable(navController)
+        composable(Destinations.SinglePost.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("postid")
+            uId?.let { id->
+                SinglePostComposable(navController, postId = id)
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.daniebeler.pixels.models.api
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
@@ -114,6 +115,25 @@ class CountryRepositoryImpl: CountryRepository {
         } catch (exception: Exception) {
             val e = exception
             emptyList()
+        }
+    }
+
+    // Does not work
+    override suspend fun getPostById(postId: String): Post? {
+        return try {
+            val response = pixelfedApi.getPostById(postId).awaitResponse()
+            println("mehege")
+            if (response.isSuccessful) {
+                val countries: Post? = response.body()
+                countries
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            val e = exception
+            println("Fuck")
+            println(e)
+            null
         }
     }
 }

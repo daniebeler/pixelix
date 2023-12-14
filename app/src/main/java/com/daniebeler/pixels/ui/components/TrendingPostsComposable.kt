@@ -99,7 +99,7 @@ fun CustomPost(post: Post, navController: NavController) {
         contentScale = ContentScale.Crop,
         contentDescription = null,
         modifier = Modifier.aspectRatio(1f).clickable(onClick = {
-            navController.navigate("single_post_screen") {
+            navController.navigate("single_post_screen/" + post.id) {
                 launchSingleTop = true
                 restoreState = true
             }
