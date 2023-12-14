@@ -1,6 +1,9 @@
 package com.daniebeler.pixels.ui.components
 
+import android.accounts.AccountManager
+import android.os.Bundle
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,35 +18,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pixels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
+fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
 
-    val items = viewModel.dailyTrendingPosts
+    val am: AccountManager = AccountManager.get(this)
+    val options = Bundle()
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold (
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
                 title = {
-                    Text("Home")
+                    Text("Login")
                 }
             )
 
         }
     ) {paddingValues ->
-        LazyColumn(
+        Column(
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(items) { item ->
-                PostComposable(post = item, navController)
+            Button(onClick = {
+
+            }) {
+                Text(text = "Pixelfed.social")
             }
         }
     }

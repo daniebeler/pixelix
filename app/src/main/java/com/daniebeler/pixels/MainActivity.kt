@@ -32,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LocalTimeline
+import com.daniebeler.pixels.ui.components.LoginComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
@@ -131,7 +132,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         }
         composable(Destinations.Notification.route) {
-            LocalTimeline(viewModel = viewModel)
+            LoginComposable(viewModel = viewModel, navController = navController)
         }
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
