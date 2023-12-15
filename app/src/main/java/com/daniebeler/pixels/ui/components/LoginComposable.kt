@@ -24,9 +24,6 @@ import com.daniebeler.pixels.MainViewModel
 @Composable
 fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
 
-    val am: AccountManager = AccountManager.get(this)
-    val options = Bundle()
-
 
     Scaffold (
         topBar = {

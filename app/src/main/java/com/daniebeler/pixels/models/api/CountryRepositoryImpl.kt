@@ -35,17 +35,12 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
-                println("yay")
-                println(response.body())
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }
             } else {
                 emptyList()
             }
         } catch (exception: Exception) {
-            val e = exception
-            println("fuck")
-            println(e)
             emptyList()
         }
     }
@@ -60,16 +55,13 @@ class CountryRepositoryImpl: CountryRepository {
                 emptyList()
             }
         } catch (exception: Exception) {
-            val e = exception
             emptyList()
         }
     }
 
     override suspend fun getReplies(userid: String, postid: String): List<Reply> {
-        println("saaasen")
         return try {
             val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
-            println("mehege")
             if (response.isSuccessful) {
                 val countries = response.body()?.data ?: emptyList()
                 countries.map { it.toModel() }
@@ -77,9 +69,6 @@ class CountryRepositoryImpl: CountryRepository {
                 emptyList()
             }
         } catch (exception: Exception) {
-            val e = exception
-            println("Fuck")
-            println(e)
             emptyList()
         }
     }
@@ -87,7 +76,6 @@ class CountryRepositoryImpl: CountryRepository {
     override suspend fun getAccount(accountId: String): Account {
         return try {
             val response = pixelfedApi.getAccount(accountId).awaitResponse()
-            println("mehege")
             if (response.isSuccessful) {
                 val countries: Account = response.body() ?: Account("", "null", "null", "null",0, 0, "", "")
                 countries
@@ -95,9 +83,6 @@ class CountryRepositoryImpl: CountryRepository {
                 Account("", "null", "null", "null",0, 0, "", "")
             }
         } catch (exception: Exception) {
-            val e = exception
-            println("Fuck")
-            println(e)
             Account("", "null", "null", "null",0, 0, "", "")
         }
     }
@@ -112,7 +97,6 @@ class CountryRepositoryImpl: CountryRepository {
                 emptyList()
             }
         } catch (exception: Exception) {
-            val e = exception
             emptyList()
         }
     }
@@ -128,7 +112,6 @@ class CountryRepositoryImpl: CountryRepository {
                 emptyList()
             }
         } catch (exception: Exception) {
-            val e = exception
             emptyList()
         }
     }
@@ -137,7 +120,6 @@ class CountryRepositoryImpl: CountryRepository {
     override suspend fun getPostById(postId: String): Post? {
         return try {
             val response = pixelfedApi.getPostById(postId).awaitResponse()
-            println("mehege")
             if (response.isSuccessful) {
                 val countries: Post? = response.body()
                 countries
@@ -145,9 +127,6 @@ class CountryRepositoryImpl: CountryRepository {
                 null
             }
         } catch (exception: Exception) {
-            val e = exception
-            println("Fuck")
-            println(e)
             null
         }
     }
