@@ -2,6 +2,7 @@ package com.daniebeler.pixels.models.api
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,4 +27,8 @@ interface PixelfedApi {
 
     @GET("v1/statuses/{postid}")
     fun getPostById(@Path("postid") postId: String): Call<Post>
+
+
+    @POST("v1/apps?client_name=pixels&redirect_uris=urn:ietf:wg:oauth:2.0:oob")
+    fun createApplication(): Call<Application>
 }

@@ -16,4 +16,6 @@ interface CountryRepository {
     suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>
 
     suspend fun getPostById(postId: String): Post?
+
+    suspend fun createApplication(): Application?
 }

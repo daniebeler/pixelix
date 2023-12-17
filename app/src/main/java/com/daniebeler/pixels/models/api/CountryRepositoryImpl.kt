@@ -130,4 +130,21 @@ class CountryRepositoryImpl: CountryRepository {
             null
         }
     }
+
+
+    // Auth
+
+    override suspend fun createApplication(): Application? {
+        return try {
+            val response = pixelfedApi.createApplication().awaitResponse()
+            if (response.isSuccessful) {
+                val countries: Application? = response.body()
+                countries
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
 }
