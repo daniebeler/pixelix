@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CountryRepositoryImpl: CountryRepository {
 
-    private val BASE_URL = "https://pixelfed.social/api/"
+    private val BASE_URL = "https://pixelfed.social/"
 
     private val pixelfedApi: PixelfedApi
 
@@ -150,6 +150,10 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken? {
         return try {
+            println("im api call")
+            println(clientId)
+            println(clientSecret)
+            println(code)
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
                 val countries: AccessToken? = response.body()

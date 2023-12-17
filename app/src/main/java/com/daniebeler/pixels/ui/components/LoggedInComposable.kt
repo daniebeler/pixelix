@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.models.api.AccessToken
 import com.daniebeler.pixels.models.api.Application
 import com.daniebeler.pixels.models.api.CountryRepository
 import com.daniebeler.pixels.models.api.CountryRepositoryImpl
@@ -34,10 +34,19 @@ fun LoggedInComposable(viewModel: MainViewModel, navController: NavController, c
 
     val repository: CountryRepository = CountryRepositoryImpl()
 
-    val uriHandler = LocalUriHandler.current
+    var token: AccessToken? by remember {
+        mutableStateOf(null)
+    }
 
-    var account: Application by remember {
-        mutableStateOf(Application("null", "null", "null", "null", "null"))
+    println("ausgabe")
+    println(code)
+    println(viewModel._authApplication)
+
+    if (viewModel._authApplication != null) {
+        println("auth not null")
+        CoroutineScope(Dispatchers.Default).launch {
+            token = repository.obtainToken(viewModel._authApplication!!.clientId, viewModel._authApplication!!.clientSecret, code)
+        }
     }
 
 
@@ -55,12 +64,15 @@ fun LoggedInComposable(viewModel: MainViewModel, navController: NavController, c
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            CircularProgressIndicator(
-                modifier = Modifier.width(64.dp),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            )
-
+            if (token != null) {
+                Text(text = token!!.accessToken)
+            } else {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                )
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixels.models.api.Application
 import com.daniebeler.pixels.models.api.Post
 import com.daniebeler.pixels.models.api.CountryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,8 @@ class MainViewModel @Inject constructor(
     private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _localTimeline by mutableStateOf(emptyList<Post>())
+
+    var _authApplication: Application? = null
 
     val dailyTrendingPosts: List<Post>
         get() = _dailyTrendingPosts
@@ -54,6 +57,12 @@ class MainViewModel @Inject constructor(
     fun getLocalTimeline() {
         viewModelScope.launch {
             _localTimeline = repository.getLocalTimeline()
+        }
+    }
+
+    fun registerApplication() {
+        viewModelScope.launch {
+            _authApplication = repository.createApplication()
         }
     }
 }
