@@ -32,6 +32,6 @@ interface PixelfedApi {
     @POST("v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<Application>
 
-    @POST("v1/oauth/token?redirect_uri=pixels-android-auth://callback")
-    fun obtainToken(@Query("client_id") clientId: String, @Query("client_secret") clientSecret: String): Call<AccessToken>
+    @POST("v1/oauth/token?redirect_uri=pixels-android-auth://callback&grant_type=authorization_code")
+    fun obtainToken(@Query("client_id") clientId: String, @Query("client_secret") clientSecret: String, @Query("code") code: String): Call<AccessToken>
 }

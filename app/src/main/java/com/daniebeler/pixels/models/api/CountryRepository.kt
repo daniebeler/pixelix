@@ -18,4 +18,6 @@ interface CountryRepository {
     suspend fun getPostById(postId: String): Post?
 
     suspend fun createApplication(): Application?
+
+    suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken?
 }

@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LocalTimeline
+import com.daniebeler.pixels.ui.components.LoggedInComposable
 import com.daniebeler.pixels.ui.components.LoginComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
@@ -151,7 +152,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         ) { backStackEntry ->
             val code = backStackEntry.arguments?.getString("code")
             code?.let {
-                Text(text = it)
+                LoggedInComposable(viewModel, navController, it)
             }
         }
     }

@@ -148,6 +148,18 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
-
+    override suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken? {
+        return try {
+            val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
+            if (response.isSuccessful) {
+                val countries: AccessToken? = response.body()
+                countries
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
 
 }
