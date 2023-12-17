@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -30,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LocalTimeline
 import com.daniebeler.pixels.ui.components.LoginComposable
@@ -138,6 +140,18 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             val uId = navBackStackEntry.arguments?.getString("postid")
             uId?.let { id->
                 SinglePostComposable(navController, postId = id)
+            }
+        }
+
+        composable(
+            "fief",
+            deepLinks = listOf(navDeepLink {
+                uriPattern = "pixels-android-auth://callback?code={code}"
+            }),
+        ) { backStackEntry ->
+            val code = backStackEntry.arguments?.getString("code")
+            code?.let {
+                Text(text = it)
             }
         }
     }

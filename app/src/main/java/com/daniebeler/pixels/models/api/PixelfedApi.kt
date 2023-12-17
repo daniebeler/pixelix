@@ -29,6 +29,9 @@ interface PixelfedApi {
     fun getPostById(@Path("postid") postId: String): Call<Post>
 
 
-    @POST("v1/apps?client_name=pixels&redirect_uris=urn:ietf:wg:oauth:2.0:oob")
+    @POST("v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<Application>
+
+    @POST("v1/oauth/token?redirect_uri=pixels-android-auth://callback")
+    fun obtainToken(@Query("client_id") clientId: String, @Query("client_secret") clientSecret: String): Call<AccessToken>
 }

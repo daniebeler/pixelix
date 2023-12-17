@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
@@ -36,6 +37,8 @@ import kotlinx.coroutines.launch
 fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
 
     val repository: CountryRepository = CountryRepositoryImpl()
+
+    val uriHandler = LocalUriHandler.current
 
     var account: Application by remember {
         mutableStateOf(Application("null", "null", "null", "null", "null"))
@@ -58,6 +61,7 @@ fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
         ) {
             Button(onClick = {
 
+                uriHandler.openUri("https://pixelfed.social/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + account.clientId)
             }) {
                 Text(text = "Pixelfed.social")
             }
