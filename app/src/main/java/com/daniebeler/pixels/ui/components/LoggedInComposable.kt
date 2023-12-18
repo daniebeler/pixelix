@@ -46,15 +46,17 @@ fun LoggedInComposable(viewModel: MainViewModel, navController: NavController, c
     println(viewModel.dailyTrendingPosts)
 
     CoroutineScope(Dispatchers.Default).launch {
-        println(viewModel.getClientIdFromStorage().first())
-    }
+        val clientId: String? = viewModel.getClientIdFromStorage().first()
+        val clientSecret: String? = viewModel.getClientSecretFromStorage().first()
 
+        if (clientId != null && clientSecret != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                token = repository.obtainToken(clientId, clientSecret, code)
 
-
-    if (viewModel._authApplication != null) {
-        println("auth not null")
-        CoroutineScope(Dispatchers.Default).launch {
-            token = repository.obtainToken(viewModel._authApplication!!.clientId, viewModel._authApplication!!.clientSecret, code)
+                if (token != null) {
+                    viewModel.storeAccessToken(token!!.accessToken)
+                }
+            }
         }
     }
 

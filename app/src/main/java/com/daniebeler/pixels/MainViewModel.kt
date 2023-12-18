@@ -81,6 +81,7 @@ class MainViewModel @Inject constructor(
             _authApplication = repository.createApplication()
             if (_authApplication != null) {
                 storeClientId(_authApplication!!.clientId)
+                storeClientSecret(_authApplication!!.clientSecret)
             }
 
         }
@@ -95,6 +96,26 @@ class MainViewModel @Inject constructor(
 
     fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
         preferences[stringPreferencesKey("client_id")] ?: ""
+    }
+
+    suspend fun storeClientSecret(clientSecret: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("client_secret")] = clientSecret
+        }
+    }
+
+    fun getClientSecretFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey("client_secret")] ?: ""
+    }
+
+    suspend fun storeAccessToken(accessToken: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("access_token")] = accessToken
+        }
+    }
+
+    fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey("access_token")] ?: ""
     }
 
 }

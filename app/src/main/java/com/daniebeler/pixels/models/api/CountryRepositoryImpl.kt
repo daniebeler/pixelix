@@ -156,12 +156,18 @@ class CountryRepositoryImpl: CountryRepository {
             println(code)
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
+                println("uccess")
+                println(response.body())
                 val countries: AccessToken? = response.body()
                 countries
             } else {
+                println("not success")
+                println(response)
                 null
             }
         } catch (exception: Exception) {
+            println("errorr")
+            println(exception)
             null
         }
     }

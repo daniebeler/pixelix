@@ -1,6 +1,8 @@
 package com.daniebeler.pixels.models.api
 
 import retrofit2.Call
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -32,6 +34,13 @@ interface PixelfedApi {
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<Application>
 
-    @POST("oauth/token?redirect_uri=pixels-android-auth://callback&grant_type=authorization_code")
-    fun obtainToken(@Query("client_id") clientId: String, @Query("client_secret") clientSecret: String, @Query("code") code: String): Call<AccessToken>
+    @FormUrlEncoded
+    @POST("oauth/token")
+    fun obtainToken(
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("code") code: String,
+        @Field("redirect_uri") redirectUri: String? = "pixels-android-auth://callback",
+        @Field("grant_type") grantType: String? = "authorization_code"
+    ): Call<AccessToken>
 }
