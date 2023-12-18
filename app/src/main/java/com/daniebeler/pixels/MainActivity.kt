@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Icon
@@ -39,6 +40,7 @@ import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LoggedInComposable
 import com.daniebeler.pixels.ui.components.OwnProfileComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
+import com.daniebeler.pixels.ui.components.SettingsComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
@@ -123,6 +125,11 @@ sealed class Destinations(
         icon = Icons.Outlined.Favorite
     )
 
+    object Settings : Destinations(
+        route = "settings_screen",
+        icon = Icons.Outlined.Settings
+    )
+
     object SinglePost : Destinations(
         route = "single_post_screen/{postid}",
         icon = Icons.Outlined.Favorite
@@ -144,6 +151,10 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
                 ProfileComposable(navController, userId = id)
             }
 
+        }
+
+        composable(Destinations.Settings.route) {
+            SettingsComposable(navController)
         }
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(viewModel, navController)

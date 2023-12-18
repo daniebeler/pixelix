@@ -1,17 +1,15 @@
 package com.daniebeler.pixels.models.api
 
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.daniebeler.pixels.MainViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
 class CountryRepositoryImpl: CountryRepository {
 
-    private val BASE_URL = "https://pixelfed.social/"
+    private var BASE_URL = "https://pixelfed.social/"
+    private var accessToken: String = ""
 
     private val pixelfedApi: PixelfedApi
 
@@ -31,6 +29,14 @@ class CountryRepositoryImpl: CountryRepository {
             .build()
 
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
+    }
+
+    override fun setBaseUrl(baseUrl: String) {
+        BASE_URL = baseUrl
+    }
+
+    override fun setAccessToken(token: String) {
+        this.accessToken = "Bearer $token"
     }
 
     override suspend fun getTrendingPosts(range: String): List<Post> {
@@ -94,7 +100,7 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getAccount(accountId: String): Account {
         return try {
-            val response = pixelfedApi.getAccount(accountId).awaitResponse()
+            val response = pixelfedApi.getAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
                 val countries: Account = response.body() ?: Account("", "null", "null", "null",0, 0, "", "")
                 countries
@@ -108,7 +114,7 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getPostsByAccountId(accountId: String): List<Post> {
         return try {
-            val response = pixelfedApi.getPostsByAccountId(accountId).awaitResponse()
+            val response = pixelfedApi.getPostsByAccountId(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }
@@ -123,7 +129,7 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post> {
         return try {
-            val response = pixelfedApi.getPostsByAccountId(accountId, maxPostId).awaitResponse()
+            val response = pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
             if (response.isSuccessful) {
                 val countries = response.body() ?: emptyList()
                 countries.map { it.toModel() }

@@ -4,6 +4,8 @@ import retrofit2.Call
 import retrofit2.http.Path
 
 interface CountryRepository {
+    fun setBaseUrl(baseUrl: String)
+    fun setAccessToken(token: String)
     suspend fun getTrendingPosts(range: String): List<Post>
 
     suspend fun getLocalTimeline(): List<Post>

@@ -55,6 +55,8 @@ fun ProfileComposable(navController: NavController, userId: String) {
 
     val uriHandler = LocalUriHandler.current
 
+
+
     var account: Account by remember {
         mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", ""))
     }
@@ -66,8 +68,8 @@ fun ProfileComposable(navController: NavController, userId: String) {
     val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        account = repository.getAccount(userId)
-        posts = repository.getPostsByAccountId(userId)
+        //account = repository.getAccount(userId)
+        //posts = repository.getPostsByAccountId(userId)
     }
 
     fun loadMorePosts() {

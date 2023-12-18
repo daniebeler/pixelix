@@ -23,13 +23,13 @@ interface PixelfedApi {
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
-    fun getAccount(@Path("accountid") accountId: String): Call<Account>
+    fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=10")
-    fun getPostsByAccountId(@Path("accountid") accountId: String): Call<List<PostDTO>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<PostDTO>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=10")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Query("max_id") maxId: String): Call<List<PostDTO>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDTO>>
 
     @GET("api/v1/statuses/{postid}")
     fun getPostById(@Path("postid") postId: String): Call<Post>

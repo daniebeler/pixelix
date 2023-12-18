@@ -18,9 +18,13 @@ import com.daniebeler.pixels.models.api.CountryRepository
 import com.daniebeler.pixels.models.api.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,11 +47,17 @@ class MainViewModel @Inject constructor(
     private var _localTimeline by mutableStateOf(emptyList<Post>())
     private var _homeTimeline by mutableStateOf(emptyList<Post>())
 
-    private var _accessToken = ""
+
 
     private var _ownAccount: Account? by mutableStateOf(null)
 
     private var _verified: Account? by mutableStateOf(null)
+
+    private var _gotDataFromDataStore = MutableStateFlow(false)
+    val gotDataFromDataStore: StateFlow<Boolean> get() = _gotDataFromDataStore.asStateFlow()
+
+    private var _accessToken = MutableStateFlow("")
+    val accessToken: StateFlow<String> get() = _accessToken.asStateFlow()
 
     init {
         collectTokenFlow()
@@ -102,7 +112,7 @@ class MainViewModel @Inject constructor(
 
     fun getHomeTimeline() {
         viewModelScope.launch {
-            _homeTimeline = repository.getHomeTimeline(_accessToken)
+            _homeTimeline = repository.getHomeTimeline(accessToken.value)
         }
     }
 
@@ -114,7 +124,7 @@ class MainViewModel @Inject constructor(
 
     fun checkToken() {
         viewModelScope.launch {
-            _verified = repository.verifyToken(_accessToken)
+            _verified = repository.verifyToken(accessToken.value)
         }
     }
 
@@ -162,10 +172,16 @@ class MainViewModel @Inject constructor(
 
     private fun collectTokenFlow() {
         viewModelScope.launch {
-            getAccessTokenFromStorage().collect {
-                _accessToken = it
+            getAccessTokenFromStorage().collect {token ->
+                _accessToken.update {
+                    token
+                }
                 println("emitted")
-                println(it)
+                println(token)
+                repository.setBaseUrl("https://pixelfed.social/")
+                _gotDataFromDataStore.update {
+                    (_accessToken.value.isNotEmpty())
+                }
             }
         }
     }
