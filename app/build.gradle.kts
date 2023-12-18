@@ -94,6 +94,9 @@ dependencies {
 
     implementation ("androidx.browser:browser:1.7.0")
 
+    implementation ("androidx.compose.material:material-icons-extended")
+
+
 
 }
 

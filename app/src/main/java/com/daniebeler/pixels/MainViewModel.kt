@@ -45,6 +45,8 @@ class MainViewModel @Inject constructor(
 
     private var _accessToken = ""
 
+    private var _ownAccount: Account? by mutableStateOf(null)
+
     private var _verified: Account? by mutableStateOf(null)
 
     init {
@@ -67,6 +69,9 @@ class MainViewModel @Inject constructor(
 
     val homeTimeline: List<Post>
         get() = _homeTimeline
+
+    val ownAccount: Account?
+        get() = _ownAccount
 
     val verified: Account?
         get() = _verified
@@ -98,6 +103,12 @@ class MainViewModel @Inject constructor(
     fun getHomeTimeline() {
         viewModelScope.launch {
             _homeTimeline = repository.getHomeTimeline(_accessToken)
+        }
+    }
+
+    fun getOwnAccount() {
+        viewModelScope.launch {
+            _ownAccount = repository.getAccount("497910174831013185")
         }
     }
 

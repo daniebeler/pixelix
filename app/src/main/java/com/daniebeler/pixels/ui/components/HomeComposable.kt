@@ -55,7 +55,15 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                 Button(onClick = {
                     viewModel.checkToken()
                 }) {
+                    Text(text = "check token")
+                }
+            }
 
+            item {
+                Button(onClick = {
+                    viewModel.getHomeTimeline()
+                }) {
+                    Text(text = "load home feed")
                 }
             }
 

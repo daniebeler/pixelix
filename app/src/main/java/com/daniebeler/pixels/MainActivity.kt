@@ -9,9 +9,13 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.daniebeler.pixels.ui.components.HomeComposable
 import com.daniebeler.pixels.ui.components.LoggedInComposable
+import com.daniebeler.pixels.ui.components.OwnProfileComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
@@ -96,37 +101,31 @@ fun gotoLoginActivity(context: Context){
 
 sealed class Destinations(
     val route: String,
-    val title: String? = null,
     val icon: ImageVector? = null
 ) {
     object HomeScreen : Destinations(
         route = "home_screen",
-        title = "Home",
         icon = Icons.Outlined.Home
     )
 
-    object Favourite : Destinations(
-        route = "favourite_screen",
-        title = "Favorite",
-        icon = Icons.Outlined.Favorite
+    object TrendingScreen : Destinations(
+        route = "trending_screen",
+        icon = Icons.AutoMirrored.Outlined.TrendingUp
+    )
+
+    object OwnProfile : Destinations(
+        route = "own_profile_screen",
+        icon = Icons.Outlined.AccountCircle
     )
 
     object Profile : Destinations(
         route = "profile_screen/{userid}",
-        title = "Profile",
         icon = Icons.Outlined.Favorite
     )
 
     object SinglePost : Destinations(
         route = "single_post_screen/{postid}",
-        title = "SinglePost",
         icon = Icons.Outlined.Favorite
-    )
-
-    object Notification : Destinations(
-        route = "notification_screen",
-        title = "Notification",
-        icon = Icons.Outlined.Notifications
     )
 }
 
@@ -136,7 +135,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.HomeScreen.route) {
             HomeComposable(viewModel = viewModel, navController)
         }
-        composable(Destinations.Favourite.route) {
+        composable(Destinations.TrendingScreen.route) {
             TrendingPostsComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.Profile.route) { navBackStackEntry ->
@@ -146,8 +145,8 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             }
 
         }
-        composable(Destinations.Notification.route) {
-            Text(text = "Profile page")
+        composable(Destinations.OwnProfile.route) {
+            OwnProfileComposable(viewModel, navController)
         }
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
@@ -175,7 +174,7 @@ fun BottomBar(
     navController: NavHostController, state: MutableState<Boolean>, modifier: Modifier = Modifier
 ) {
     val screens = listOf(
-        Destinations.HomeScreen, Destinations.Favourite, Destinations.Notification
+        Destinations.HomeScreen, Destinations.TrendingScreen, Destinations.OwnProfile
     )
 
     NavigationBar {
