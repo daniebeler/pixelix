@@ -1,5 +1,6 @@
 package com.daniebeler.pixels.ui.components
 
+import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,8 @@ fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
     }
 
     viewModel.registerApplication()
+
+
 
 
     Scaffold (

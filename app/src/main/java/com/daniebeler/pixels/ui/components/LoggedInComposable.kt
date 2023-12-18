@@ -26,6 +26,8 @@ import com.daniebeler.pixels.models.api.CountryRepository
 import com.daniebeler.pixels.models.api.CountryRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +43,13 @@ fun LoggedInComposable(viewModel: MainViewModel, navController: NavController, c
     println("ausgabe")
     println(code)
     println(viewModel._authApplication)
+    println(viewModel.dailyTrendingPosts)
+
+    CoroutineScope(Dispatchers.Default).launch {
+        println(viewModel.getClientIdFromStorage().first())
+    }
+
+
 
     if (viewModel._authApplication != null) {
         println("auth not null")

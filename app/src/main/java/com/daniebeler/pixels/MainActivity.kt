@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.datastore.dataStore
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -41,6 +42,7 @@ import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,6 +56,8 @@ class MainActivity : ComponentActivity() {
         mainViewModel.getDailyTrendingPosts()
         mainViewModel.getMonthlyTrendingPosts()
         mainViewModel.getYearlyTrendingPosts()
+
+
 
         setContent {
             PixelsTheme {
