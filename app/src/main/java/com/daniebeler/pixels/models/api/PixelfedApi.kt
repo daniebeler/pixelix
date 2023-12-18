@@ -4,6 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -14,6 +15,9 @@ interface PixelfedApi {
 
     @GET("api/pixelfed/v1/timelines/public")
     fun getLocalTimeline(): Call<List<PostDTO>>
+
+    @GET("api/pixelfed/v1/timelines/home")
+    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDTO>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
@@ -43,4 +47,7 @@ interface PixelfedApi {
         @Field("redirect_uri") redirectUri: String? = "pixels-android-auth://callback",
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessToken>
+
+    @GET("api/v1/accounts/verify_credentials")
+    fun verifyToken(@Header("Authorization") token: String): Call<Account>
 }

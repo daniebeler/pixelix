@@ -1,5 +1,7 @@
 package com.daniebeler.pixels.models.api
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.daniebeler.pixels.MainViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -55,6 +57,23 @@ class CountryRepositoryImpl: CountryRepository {
                 emptyList()
             }
         } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getHomeTimeline(accessToken: String): List<Post> {
+        return try {
+            val response = pixelfedApi.getHomeTimeline("Bearer $accessToken").awaitResponse()
+            println(response)
+            if (response.isSuccessful) {
+                val countries = response.body() ?: emptyList()
+                countries.map { it.toModel() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            println("foooof")
+            println(exception)
             emptyList()
         }
     }
@@ -159,6 +178,27 @@ class CountryRepositoryImpl: CountryRepository {
                 println("uccess")
                 println(response.body())
                 val countries: AccessToken? = response.body()
+                countries
+            } else {
+                println("not success")
+                println(response)
+                null
+            }
+        } catch (exception: Exception) {
+            println("errorr")
+            println(exception)
+            null
+        }
+    }
+
+    override suspend fun verifyToken(token: String): Account? {
+        return try {
+            println("im api call")
+            val response = pixelfedApi.verifyToken("Bearer " + token).awaitResponse()
+            if (response.isSuccessful) {
+                println("uccess")
+                println(response.body())
+                val countries: Account? = response.body()
                 countries
             } else {
                 println("not success")

@@ -8,6 +8,8 @@ interface CountryRepository {
 
     suspend fun getLocalTimeline(): List<Post>
 
+    suspend fun getHomeTimeline(accessToken: String): List<Post>
+
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 
     suspend fun getAccount(accountId: String): Account
@@ -20,4 +22,6 @@ interface CountryRepository {
     suspend fun createApplication(): Application?
 
     suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken?
+
+    suspend fun verifyToken(token: String): Account?
 }

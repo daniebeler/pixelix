@@ -2,6 +2,7 @@ package com.daniebeler.pixels
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,11 +12,14 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixels.models.api.Account
 import com.daniebeler.pixels.models.api.Application
 import com.daniebeler.pixels.models.api.CountryRepository
 import com.daniebeler.pixels.models.api.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,6 +41,15 @@ class MainViewModel @Inject constructor(
     private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _localTimeline by mutableStateOf(emptyList<Post>())
+    private var _homeTimeline by mutableStateOf(emptyList<Post>())
+
+    private var _accessToken = ""
+
+    private var _verified: Account? by mutableStateOf(null)
+
+    init {
+        collectTokenFlow()
+    }
 
     var _authApplication: Application? = null
 
@@ -51,6 +64,12 @@ class MainViewModel @Inject constructor(
 
     val localTimeline: List<Post>
         get() = _localTimeline
+
+    val homeTimeline: List<Post>
+        get() = _homeTimeline
+
+    val verified: Account?
+        get() = _verified
 
     fun getDailyTrendingPosts() {
         viewModelScope.launch {
@@ -73,6 +92,18 @@ class MainViewModel @Inject constructor(
     fun getLocalTimeline() {
         viewModelScope.launch {
             _localTimeline = repository.getLocalTimeline()
+        }
+    }
+
+    fun getHomeTimeline() {
+        viewModelScope.launch {
+            _homeTimeline = repository.getHomeTimeline(_accessToken)
+        }
+    }
+
+    fun checkToken() {
+        viewModelScope.launch {
+            _verified = repository.verifyToken(_accessToken)
         }
     }
 
@@ -116,6 +147,16 @@ class MainViewModel @Inject constructor(
 
     fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
         preferences[stringPreferencesKey("access_token")] ?: ""
+    }
+
+    private fun collectTokenFlow() {
+        viewModelScope.launch {
+            getAccessTokenFromStorage().collect {
+                _accessToken = it
+                println("emitted")
+                println(it)
+            }
+        }
     }
 
 }
