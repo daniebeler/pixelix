@@ -50,13 +50,11 @@ fun LoggedInComposable(viewModel: MainViewModel, navController: NavController, c
         val clientSecret: String? = viewModel.getClientSecretFromStorage().first()
 
         if (clientId != null && clientSecret != null) {
-            CoroutineScope(Dispatchers.Default).launch {
                 token = repository.obtainToken(clientId, clientSecret, code)
 
                 if (token != null) {
                     viewModel.storeAccessToken(token!!.accessToken)
                 }
-            }
         }
     }
 

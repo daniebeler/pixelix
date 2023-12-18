@@ -1,17 +1,17 @@
 package com.daniebeler.pixels
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,8 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import androidx.datastore.dataStore
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,24 +32,32 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.daniebeler.pixels.ui.components.HomeComposable
-import com.daniebeler.pixels.ui.components.LocalTimeline
 import com.daniebeler.pixels.ui.components.LoggedInComposable
-import com.daniebeler.pixels.ui.components.LoginComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
      private val mainViewModel: MainViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            val accessToken: String = mainViewModel.getAccessTokenFromStorage().first()
+
+            if (accessToken.isEmpty()) {
+                gotoLoginActivity(this@MainActivity)
+            }
+        }
 
         mainViewModel.getDailyTrendingPosts()
         mainViewModel.getMonthlyTrendingPosts()
@@ -83,7 +89,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+fun gotoLoginActivity(context: Context){
+    context.startActivity(Intent(context, LoginActivity::class.java))
+}
 
 
 sealed class Destinations(
@@ -139,7 +147,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         }
         composable(Destinations.Notification.route) {
-            LoginComposable(viewModel = viewModel, navController = navController)
+            Text(text = "Profile page")
         }
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
