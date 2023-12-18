@@ -29,13 +29,11 @@ class LoginActivity : ComponentActivity() {
 
         setContent {
             PixelsTheme {
-                val navController: NavHostController = rememberNavController()
-
                 Scaffold { paddingValues ->
                     Column (Modifier.padding(paddingValues)) {
 
                     }
-                    LoginComposable(viewModel = mainViewModel, navController = navController)
+                    LoginComposable(viewModel = mainViewModel)
                 }
             }
         }

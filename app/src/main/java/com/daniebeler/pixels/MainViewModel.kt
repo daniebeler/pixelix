@@ -186,4 +186,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    suspend fun logout() {
+        storeAccessToken("")
+        storeClientId("")
+        storeClientSecret("")
+
+    }
+
 }

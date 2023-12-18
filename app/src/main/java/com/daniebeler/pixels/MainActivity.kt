@@ -13,15 +13,11 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -97,7 +93,9 @@ class MainActivity : ComponentActivity() {
 }
 
 fun gotoLoginActivity(context: Context){
-    context.startActivity(Intent(context, LoginActivity::class.java))
+    val intent = Intent(context, LoginActivity::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    context.startActivity(intent)
 }
 
 
@@ -154,7 +152,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         }
 
         composable(Destinations.Settings.route) {
-            SettingsComposable(navController)
+            SettingsComposable(navController, viewModel)
         }
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(viewModel, navController)

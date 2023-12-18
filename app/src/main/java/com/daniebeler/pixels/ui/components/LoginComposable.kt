@@ -20,7 +20,7 @@ import com.daniebeler.pixels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
+fun LoginComposable(viewModel: MainViewModel) {
 
     val context = LocalContext.current
 
