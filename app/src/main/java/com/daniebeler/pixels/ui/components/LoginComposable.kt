@@ -1,6 +1,8 @@
 package com.daniebeler.pixels.ui.components
 
-import android.preference.PreferenceManager
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -10,35 +12,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.models.api.Application
-import com.daniebeler.pixels.models.api.CountryRepository
-import com.daniebeler.pixels.models.api.CountryRepositoryImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
 
-    val repository: CountryRepository = CountryRepositoryImpl()
-
-    val uriHandler = LocalUriHandler.current
-
-    var account: Application by remember {
-        mutableStateOf(Application("null", "null", "null", "null", "null"))
-    }
+    val context = LocalContext.current
 
     viewModel.registerApplication()
-
-
-
 
     Scaffold (
         topBar = {
@@ -56,11 +42,17 @@ fun LoginComposable(viewModel: MainViewModel, navController: NavController) {
         ) {
             Button(onClick = {
                 if (viewModel._authApplication?.clientId != null) {
-                    uriHandler.openUri("https://pixelfed.social/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + viewModel._authApplication?.clientId)
+                    openUrl(context, viewModel._authApplication?.clientId!!)
                 }
             }) {
                 Text(text = "Pixelfed.social")
             }
         }
     }
+}
+
+fun openUrl(context: Context, clientId: String){
+    val intent = CustomTabsIntent.Builder().build()
+    val url = "https://pixelfed.social/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
+    intent.launchUrl(context, Uri.parse(url))
 }

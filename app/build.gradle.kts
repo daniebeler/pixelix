@@ -92,6 +92,9 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation ("androidx.browser:browser:1.7.0")
+
+
 }
 
 kapt {
