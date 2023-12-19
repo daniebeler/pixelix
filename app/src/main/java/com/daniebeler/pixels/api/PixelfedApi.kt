@@ -35,10 +35,10 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=10")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
     fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<PostDTO>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=10")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
     fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDTO>>
 
     @GET("api/v1/statuses/{postid}")

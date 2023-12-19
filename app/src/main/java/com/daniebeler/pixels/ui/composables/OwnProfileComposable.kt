@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +56,7 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
         viewModel.gotDataFromDataStore.collect { state ->
             if (state) {
                 viewModel.getOwnAccount()
+                viewModel.getOwnPosts()
             }
         }
     }
@@ -65,16 +67,14 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
     var account = viewModel.ownAccount
 
-
-
-    val repository: CountryRepository = CountryRepositoryImpl()
+    posts = viewModel.ownPosts
 
     fun loadMorePosts() {
         if (posts.isNotEmpty()) {
-            var maxId = posts.last().id
+            val maxId = posts.last().id
 
             CoroutineScope(Dispatchers.Default).launch {
-                //posts = posts + repository.getPostsByAccountId(userId, maxId)
+                viewModel.getMoreOwnPosts(maxId)
             }
         }
     }
@@ -104,10 +104,6 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
         }
     ) {paddingValues ->
         if (account != null) {
-            Column (Modifier.padding(paddingValues)) {
-
-
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -149,13 +145,9 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
                                     HashtagsMentionsTextView(text = account!!.note, onClick = {})
                                 }
 
-                                account!!.website?.let {
-                                    Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "", modifier = Modifier.size(18.dp))
-                                        Text(text = account!!.website, modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website)}))
-                                    }
-
-
+                                Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(imageVector = Icons.Outlined.Link, contentDescription = "", modifier = Modifier.size(18.dp))
+                                    Text(text = account!!.website, modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website)}))
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))
@@ -176,8 +168,6 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
                     }
                 )
-
-            }
         }
 
     }

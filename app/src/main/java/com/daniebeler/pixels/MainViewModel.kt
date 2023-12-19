@@ -49,6 +49,7 @@ class MainViewModel @Inject constructor(
 
 
     private var _ownAccount: Account? by mutableStateOf(null)
+    private var _ownPosts: List<Post> by mutableStateOf(emptyList())
 
     private var _verified: Account? by mutableStateOf(null)
 
@@ -84,6 +85,9 @@ class MainViewModel @Inject constructor(
 
     val ownAccount: Account?
         get() = _ownAccount
+
+    val ownPosts: List<Post>
+        get() = _ownPosts
 
     val verified: Account?
         get() = _verified
@@ -127,6 +131,18 @@ class MainViewModel @Inject constructor(
     fun getOwnAccount() {
         viewModelScope.launch {
             _ownAccount = repository.getAccount("497910174831013185")
+        }
+    }
+
+    fun getOwnPosts() {
+        viewModelScope.launch {
+            _ownPosts = repository.getPostsByAccountId("497910174831013185")
+        }
+    }
+
+    fun getMoreOwnPosts(maxPostId: String) {
+        viewModelScope.launch {
+            _ownPosts = ownPosts + repository.getPostsByAccountId("497910174831013185", maxPostId)
         }
     }
 
