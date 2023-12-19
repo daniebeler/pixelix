@@ -1,10 +1,7 @@
-package com.daniebeler.pixels.ui.components
+package com.daniebeler.pixels.ui.composables
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,15 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.daniebeler.pixels.models.api.CountryRepository
-import com.daniebeler.pixels.models.api.CountryRepositoryImpl
-import com.daniebeler.pixels.models.api.Post
-import com.daniebeler.pixels.models.api.PostDTO
-import com.daniebeler.pixels.models.api.Reply
+import com.daniebeler.pixels.api.CountryRepository
+import com.daniebeler.pixels.api.CountryRepositoryImpl
+import com.daniebeler.pixels.api.models.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

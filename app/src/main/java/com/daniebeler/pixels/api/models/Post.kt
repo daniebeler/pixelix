@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.models.api
+package com.daniebeler.pixels.api.models
 
 data class Post(
     val id: String,

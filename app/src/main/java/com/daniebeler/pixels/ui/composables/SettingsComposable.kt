@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.components
+package com.daniebeler.pixels.ui.composables
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column

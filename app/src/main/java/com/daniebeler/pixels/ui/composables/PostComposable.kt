@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.components
+package com.daniebeler.pixels.ui.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,10 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.models.api.CountryRepository
-import com.daniebeler.pixels.models.api.CountryRepositoryImpl
-import com.daniebeler.pixels.models.api.Post
-import com.daniebeler.pixels.models.api.Reply
+import com.daniebeler.pixels.api.CountryRepository
+import com.daniebeler.pixels.api.CountryRepositoryImpl
+import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Reply
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

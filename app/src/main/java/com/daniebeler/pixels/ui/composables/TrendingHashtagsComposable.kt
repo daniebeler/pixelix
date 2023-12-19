@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.components
+package com.daniebeler.pixels.ui.composables
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.models.api.Hashtag
+import com.daniebeler.pixels.api.models.Hashtag
 
 @Composable
 fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavController) {

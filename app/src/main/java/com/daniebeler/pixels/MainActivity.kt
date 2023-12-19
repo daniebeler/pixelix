@@ -2,7 +2,6 @@ package com.daniebeler.pixels
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,14 +31,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
-import com.daniebeler.pixels.ui.components.HomeComposable
-import com.daniebeler.pixels.ui.components.OwnProfileComposable
-import com.daniebeler.pixels.ui.components.ProfileComposable
-import com.daniebeler.pixels.ui.components.SettingsComposable
-import com.daniebeler.pixels.ui.components.SinglePostComposable
-import com.daniebeler.pixels.ui.components.TrendingComposable
-import com.daniebeler.pixels.ui.components.TrendingPostsComposable
+import com.daniebeler.pixels.ui.composables.HomeComposable
+import com.daniebeler.pixels.ui.composables.OwnProfileComposable
+import com.daniebeler.pixels.ui.composables.ProfileComposable
+import com.daniebeler.pixels.ui.composables.SettingsComposable
+import com.daniebeler.pixels.ui.composables.SinglePostComposable
+import com.daniebeler.pixels.ui.composables.TrendingComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

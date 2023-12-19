@@ -1,5 +1,12 @@
-package com.daniebeler.pixels.models.api
+package com.daniebeler.pixels.api
 
+import com.daniebeler.pixels.api.models.AccessToken
+import com.daniebeler.pixels.api.models.Account
+import com.daniebeler.pixels.api.models.ApiReplyElement
+import com.daniebeler.pixels.api.models.Application
+import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.PostDTO
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

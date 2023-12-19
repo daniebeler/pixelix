@@ -1,5 +1,12 @@
-package com.daniebeler.pixels.models.api
+package com.daniebeler.pixels.api
 
+import com.daniebeler.pixels.api.models.AccessToken
+import com.daniebeler.pixels.api.models.Account
+import com.daniebeler.pixels.api.models.Application
+import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Reply
+import com.daniebeler.pixels.api.models.toModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

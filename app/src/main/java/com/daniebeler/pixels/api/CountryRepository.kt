@@ -1,7 +1,11 @@
-package com.daniebeler.pixels.models.api
+package com.daniebeler.pixels.api
 
-import retrofit2.Call
-import retrofit2.http.Path
+import com.daniebeler.pixels.api.models.AccessToken
+import com.daniebeler.pixels.api.models.Account
+import com.daniebeler.pixels.api.models.Application
+import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Reply
 
 interface CountryRepository {
     fun setBaseUrl(baseUrl: String)

@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.models.api
+package com.daniebeler.pixels.api.models
 
 import com.google.gson.annotations.SerializedName
 
