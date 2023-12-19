@@ -128,15 +128,28 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun registerApplication() {
-        viewModelScope.launch {
-            _authApplication = repository.createApplication()
-            if (_authApplication != null) {
-                storeClientId(_authApplication!!.clientId)
-                storeClientSecret(_authApplication!!.clientSecret)
-            }
-
+    suspend fun registerApplication(): String {
+        _authApplication = repository.createApplication()
+        if (_authApplication != null) {
+            storeClientId(_authApplication!!.clientId)
+            storeClientSecret(_authApplication!!.clientSecret)
+            return _authApplication!!.clientId
         }
+        return ""
+    }
+
+    suspend fun obtainToken(code: String): Boolean {
+        val clientId: String = getClientIdFromStorage().first()
+        val clientSecret: String = getClientSecretFromStorage().first()
+
+        val token = repository.obtainToken(clientId, clientSecret, code)
+
+        if (token != null) {
+            storeAccessToken(token.accessToken)
+            return true
+        }
+
+        return false
     }
 
 
