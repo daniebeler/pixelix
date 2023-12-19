@@ -52,22 +52,22 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
     val uriHandler = LocalUriHandler.current
 
+    var account = viewModel.ownAccount
+
+    val posts = viewModel.ownPosts
+
     CoroutineScope(Dispatchers.Default).launch {
         viewModel.gotDataFromDataStore.collect { state ->
             if (state) {
                 viewModel.getOwnAccount()
-                viewModel.getOwnPosts()
+
+                if (posts.isEmpty()) {
+                    viewModel.getOwnPosts()
+                }
+
             }
         }
     }
-
-    var posts: List<Post> by remember {
-        mutableStateOf(emptyList())
-    }
-
-    var account = viewModel.ownAccount
-
-    posts = viewModel.ownPosts
 
     fun loadMorePosts() {
         if (posts.isNotEmpty()) {
@@ -138,8 +138,6 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
                                 }
                                 Text(text = account!!.displayname, fontWeight = FontWeight.Bold)
-                                println("laaal")
-                                println(account.toString())
 
                                 account!!.note?.let {
                                     HashtagsMentionsTextView(text = account!!.note, onClick = {})

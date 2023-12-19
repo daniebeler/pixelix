@@ -86,7 +86,7 @@ fun PostComposable(post: Post, navController: NavController) {
             Modifier.fillMaxSize(), contentScale = ContentScale.FillWidth)
 
         Column (Modifier.padding(8.dp)) {
-            Text(text = post.likes.toString() + " likes")
+            Text(text = post.liked_by.toString() + " likes")
 
             HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {})
 
@@ -95,8 +95,6 @@ fun PostComposable(post: Post, navController: NavController) {
 
                     CoroutineScope(Dispatchers.Default).launch {
                         replies = repository.getReplies(post.account.id, post.id)
-                        println("fof")
-                        println(replies.toString())
                     }
                     showBottomSheet = true
                 }) {

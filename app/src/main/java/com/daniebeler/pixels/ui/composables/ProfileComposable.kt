@@ -51,8 +51,6 @@ fun ProfileComposable(navController: NavController, userId: String) {
 
     val uriHandler = LocalUriHandler.current
 
-
-
     var account: Account by remember {
         mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", ""))
     }
@@ -138,8 +136,6 @@ fun ProfileComposable(navController: NavController, userId: String) {
 
                                 }
                                 Text(text = account.displayname, fontWeight = FontWeight.Bold)
-                                println("laaal")
-                                println(account.toString())
 
                                 account.note?.let {
                                     HashtagsMentionsTextView(text = account.note, onClick = {})

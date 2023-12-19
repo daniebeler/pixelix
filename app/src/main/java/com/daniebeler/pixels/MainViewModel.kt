@@ -49,7 +49,8 @@ class MainViewModel @Inject constructor(
 
 
     private var _ownAccount: Account? by mutableStateOf(null)
-    private var _ownPosts: List<Post> by mutableStateOf(emptyList())
+    var ownPosts: List<Post> by mutableStateOf(emptyList())
+        private set
 
     private var _verified: Account? by mutableStateOf(null)
 
@@ -85,9 +86,6 @@ class MainViewModel @Inject constructor(
 
     val ownAccount: Account?
         get() = _ownAccount
-
-    val ownPosts: List<Post>
-        get() = _ownPosts
 
     val verified: Account?
         get() = _verified
@@ -136,13 +134,13 @@ class MainViewModel @Inject constructor(
 
     fun getOwnPosts() {
         viewModelScope.launch {
-            _ownPosts = repository.getPostsByAccountId("497910174831013185")
+            ownPosts = repository.getPostsByAccountId("497910174831013185")
         }
     }
 
     fun getMoreOwnPosts(maxPostId: String) {
         viewModelScope.launch {
-            _ownPosts = ownPosts + repository.getPostsByAccountId("497910174831013185", maxPostId)
+            ownPosts += repository.getPostsByAccountId("497910174831013185", maxPostId)
         }
     }
 
@@ -213,8 +211,6 @@ class MainViewModel @Inject constructor(
                 _accessToken.update {
                     token
                 }
-                println("emitted")
-                println(token)
                 repository.setBaseUrl("https://pixelfed.social/")
                 _gotDataFromDataStore.update {
                     (_accessToken.value.isNotEmpty())

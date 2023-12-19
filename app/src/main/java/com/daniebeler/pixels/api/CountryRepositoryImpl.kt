@@ -50,8 +50,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
-                val countries = response.body() ?: emptyList()
-                countries.map { it.toModel() }
+                response.body() ?: emptyList()
             } else {
                 emptyList()
             }
@@ -77,8 +76,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getLocalTimeline().awaitResponse()
             if (response.isSuccessful) {
-                val countries = response.body() ?: emptyList()
-                countries.map { it.toModel() }
+                response.body() ?: emptyList()
             } else {
                 emptyList()
             }
@@ -90,16 +88,12 @@ class CountryRepositoryImpl: CountryRepository {
     override suspend fun getHomeTimeline(accessToken: String): List<Post> {
         return try {
             val response = pixelfedApi.getHomeTimeline("Bearer $accessToken").awaitResponse()
-            println(response)
             if (response.isSuccessful) {
-                val countries = response.body() ?: emptyList()
-                countries.map { it.toModel() }
+                response.body() ?: emptyList()
             } else {
                 emptyList()
             }
         } catch (exception: Exception) {
-            println("foooof")
-            println(exception)
             emptyList()
         }
     }
@@ -136,8 +130,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val countries = response.body() ?: emptyList()
-                countries.map { it.toModel() }
+                response.body() ?: emptyList()
             } else {
                 emptyList()
             }
@@ -151,8 +144,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
             if (response.isSuccessful) {
-                val countries = response.body() ?: emptyList()
-                countries.map { it.toModel() }
+                response.body() ?: emptyList()
             } else {
                 emptyList()
             }
@@ -195,45 +187,28 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken? {
         return try {
-            println("im api call")
-            println(clientId)
-            println(clientSecret)
-            println(code)
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
-                println("uccess")
-                println(response.body())
                 val countries: AccessToken? = response.body()
                 countries
             } else {
-                println("not success")
-                println(response)
                 null
             }
         } catch (exception: Exception) {
-            println("errorr")
-            println(exception)
             null
         }
     }
 
     override suspend fun verifyToken(token: String): Account? {
         return try {
-            println("im api call")
             val response = pixelfedApi.verifyToken("Bearer " + token).awaitResponse()
             if (response.isSuccessful) {
-                println("uccess")
-                println(response.body())
                 val countries: Account? = response.body()
                 countries
             } else {
-                println("not success")
-                println(response)
                 null
             }
         } catch (exception: Exception) {
-            println("errorr")
-            println(exception)
             null
         }
     }

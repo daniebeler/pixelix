@@ -18,16 +18,16 @@ import retrofit2.http.Query
 
 interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
-    fun getTrendingPosts(@Query("range") range: String): Call<List<PostDTO>>
+    fun getTrendingPosts(@Query("range") range: String): Call<List<Post>>
 
     @GET("api/v1/trends")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<Hashtag>>
 
     @GET("api/pixelfed/v1/timelines/public")
-    fun getLocalTimeline(): Call<List<PostDTO>>
+    fun getLocalTimeline(): Call<List<Post>>
 
     @GET("api/pixelfed/v1/timelines/home")
-    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDTO>>
+    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<Post>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
@@ -36,10 +36,10 @@ interface PixelfedApi {
     fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<PostDTO>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<Post>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDTO>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<Post>>
 
     @GET("api/v1/statuses/{postid}")
     fun getPostById(@Path("postid") postId: String): Call<Post>

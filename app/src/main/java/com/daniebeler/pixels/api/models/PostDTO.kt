@@ -19,14 +19,6 @@ data class PostDTO(
     val replyCount: Int
 )
 
-data class MediaAttachment(
-    @SerializedName("id")
-    val id: String,
-    @SerializedName("url")
-    val url: String,
-    @SerializedName("preview_url")
-    val previewUrl: String
-)
 
 data class AccountDTO(
     @SerializedName("id")
@@ -46,17 +38,5 @@ data class Tag(
     val url: String
 )
 
-data class LikedBy(
-    @SerializedName("total_count")
-    val total_count: Int
-)
 
-fun PostDTO.toModel() = Post(
-    id = this.id,
-    mediaAttachments = this.mediaAttachments,
-    account = this.account,
-    tags = this.tags,
-    likes = this.liked_by.total_count,
-    replyCount = this.replyCount,
-    content = this.content
-)
+

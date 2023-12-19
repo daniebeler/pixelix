@@ -28,8 +28,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SinglePostComposable(navController: NavController, postId: String) {
 
-    println(postId)
-
     var post: Post? by remember {
         mutableStateOf(null)
     }
