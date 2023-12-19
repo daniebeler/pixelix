@@ -34,11 +34,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.daniebeler.pixels.ui.components.HomeComposable
-import com.daniebeler.pixels.ui.components.LoggedInComposable
 import com.daniebeler.pixels.ui.components.OwnProfileComposable
 import com.daniebeler.pixels.ui.components.ProfileComposable
 import com.daniebeler.pixels.ui.components.SettingsComposable
 import com.daniebeler.pixels.ui.components.SinglePostComposable
+import com.daniebeler.pixels.ui.components.TrendingComposable
 import com.daniebeler.pixels.ui.components.TrendingPostsComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -142,7 +142,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             HomeComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.TrendingScreen.route) {
-            TrendingPostsComposable(viewModel = viewModel, navController)
+            TrendingComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
@@ -162,18 +162,6 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             val uId = navBackStackEntry.arguments?.getString("postid")
             uId?.let { id->
                 SinglePostComposable(navController, postId = id)
-            }
-        }
-
-        composable(
-            "fief",
-            deepLinks = listOf(navDeepLink {
-                uriPattern = "pixels-android-auth://callback?code={code}"
-            }),
-        ) { backStackEntry ->
-            val code = backStackEntry.arguments?.getString("code")
-            code?.let {
-                LoggedInComposable(viewModel, navController, it)
             }
         }
     }
