@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
         mainViewModel.getDailyTrendingPosts()
         mainViewModel.getMonthlyTrendingPosts()
         mainViewModel.getYearlyTrendingPosts()
+        mainViewModel.getTrendingHashtags()
 
 
 

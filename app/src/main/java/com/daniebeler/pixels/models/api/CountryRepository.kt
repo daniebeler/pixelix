@@ -7,6 +7,7 @@ interface CountryRepository {
     fun setBaseUrl(baseUrl: String)
     fun setAccessToken(token: String)
     suspend fun getTrendingPosts(range: String): List<Post>
+    suspend fun getTrendingHashtags(): List<Hashtag>
 
     suspend fun getLocalTimeline(): List<Post>
 

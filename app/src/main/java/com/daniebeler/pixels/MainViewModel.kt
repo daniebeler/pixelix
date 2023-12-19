@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.models.api.Account
 import com.daniebeler.pixels.models.api.Application
 import com.daniebeler.pixels.models.api.CountryRepository
+import com.daniebeler.pixels.models.api.Hashtag
 import com.daniebeler.pixels.models.api.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +45,7 @@ class MainViewModel @Inject constructor(
     private var _dailyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
+    private var _trendingHashtags by mutableStateOf(emptyList<Hashtag>())
     private var _localTimeline by mutableStateOf(emptyList<Post>())
     private var _homeTimeline by mutableStateOf(emptyList<Post>())
 
@@ -74,6 +76,9 @@ class MainViewModel @Inject constructor(
     val yearlyTrendingPosts: List<Post>
         get() = _yearlyTrendingPosts
 
+    val trendingHashtags: List<Hashtag>
+        get() = _trendingHashtags
+
     val localTimeline: List<Post>
         get() = _localTimeline
 
@@ -101,6 +106,12 @@ class MainViewModel @Inject constructor(
     fun getYearlyTrendingPosts() {
         viewModelScope.launch {
             _yearlyTrendingPosts = repository.getTrendingPosts("yearly")
+        }
+    }
+
+    fun getTrendingHashtags() {
+        viewModelScope.launch {
+            _trendingHashtags = repository.getTrendingHashtags()
         }
     }
 

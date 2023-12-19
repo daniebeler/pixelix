@@ -53,6 +53,19 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
+    override suspend fun getTrendingHashtags(): List<Hashtag> {
+        return try {
+            val response = pixelfedApi.getTrendingHashtags(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
     override suspend fun getLocalTimeline(): List<Post> {
         return try {
             val response = pixelfedApi.getLocalTimeline().awaitResponse()

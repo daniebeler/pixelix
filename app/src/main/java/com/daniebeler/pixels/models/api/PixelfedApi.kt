@@ -13,6 +13,9 @@ interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDTO>>
 
+    @GET("api/v1/trends")
+    fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<Hashtag>>
+
     @GET("api/pixelfed/v1/timelines/public")
     fun getLocalTimeline(): Call<List<PostDTO>>
 
