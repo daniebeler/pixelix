@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -32,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.composables.HomeComposable
+import com.daniebeler.pixels.ui.composables.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
 import com.daniebeler.pixels.ui.composables.SettingsComposable
@@ -112,6 +114,11 @@ sealed class Destinations(
         icon = Icons.AutoMirrored.Outlined.TrendingUp
     )
 
+    object NotificationsScreen : Destinations(
+        route = "notifications_screen",
+        icon = Icons.Outlined.Mail
+    )
+
     object OwnProfile : Destinations(
         route = "own_profile_screen",
         icon = Icons.Outlined.AccountCircle
@@ -142,6 +149,11 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.TrendingScreen.route) {
             TrendingComposable(viewModel = viewModel, navController)
         }
+
+        composable(Destinations.NotificationsScreen.route) {
+            NotificationsComposable(viewModel = viewModel, navController)
+        }
+
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
             uId?.let { id->
@@ -170,7 +182,7 @@ fun BottomBar(
     navController: NavHostController, state: MutableState<Boolean>, modifier: Modifier = Modifier
 ) {
     val screens = listOf(
-        Destinations.HomeScreen, Destinations.TrendingScreen, Destinations.OwnProfile
+        Destinations.HomeScreen, Destinations.TrendingScreen, Destinations.NotificationsScreen, Destinations.OwnProfile
     )
 
     NavigationBar {

@@ -4,6 +4,7 @@ import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
@@ -123,6 +124,19 @@ class CountryRepositoryImpl: CountryRepository {
             }
         } catch (exception: Exception) {
             Account("", "null", "null", "null",0, 0, "", "")
+        }
+    }
+
+    override suspend fun getNotifications(): List<Notification> {
+        return try {
+            val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
         }
     }
 

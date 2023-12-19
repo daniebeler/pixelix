@@ -14,6 +14,7 @@ import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +34,6 @@ class MainViewModel @Inject constructor(
     application: android.app.Application
 ): AndroidViewModel(application) {
 
-    //private val application.dataStore by preferencesDataStore("app_preferences")
     @SuppressLint("StaticFieldLeak")
     private val context = getApplication<android.app.Application>().applicationContext
 
@@ -50,6 +50,9 @@ class MainViewModel @Inject constructor(
 
     private var _ownAccount: Account? by mutableStateOf(null)
     var ownPosts: List<Post> by mutableStateOf(emptyList())
+        private set
+
+    var notifications: List<Notification> by mutableStateOf(emptyList())
         private set
 
     private var _verified: Account? by mutableStateOf(null)
@@ -135,6 +138,12 @@ class MainViewModel @Inject constructor(
     fun getOwnPosts() {
         viewModelScope.launch {
             ownPosts = repository.getPostsByAccountId("497910174831013185")
+        }
+    }
+
+    fun getNotifications() {
+        viewModelScope.launch {
+            notifications = repository.getNotifications()
         }
     }
 

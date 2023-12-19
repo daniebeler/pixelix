@@ -5,6 +5,7 @@ import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.ApiReplyElement
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.PostDTO
 import retrofit2.Call
@@ -34,6 +35,9 @@ interface PixelfedApi {
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
+
+    @GET("api/pixelfed/v1/notifications")
+    fun getNotifications(@Header("Authorization") token: String): Call<List<Notification>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
     fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<Post>>

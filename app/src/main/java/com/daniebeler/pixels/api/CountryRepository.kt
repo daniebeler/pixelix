@@ -4,6 +4,7 @@ import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Reply
 
@@ -20,6 +21,7 @@ interface CountryRepository {
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 
     suspend fun getAccount(accountId: String): Account
+    suspend fun getNotifications(): List<Notification>
 
     suspend fun getPostsByAccountId(accountId: String): List<Post>
     suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>
