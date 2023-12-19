@@ -8,9 +8,9 @@ data class Post(
     @SerializedName("media_attachments")
     val mediaAttachments: List<MediaAttachment>,
     @SerializedName("account")
-    val account: AccountDTO,
+    val account: Account,
     @SerializedName("tags")
-    val tags: List<Tag>,
+    val tags: List<Hashtag>,
     @SerializedName("liked_by")
     val liked_by: LikedBy,
     @SerializedName("content_text")

@@ -64,9 +64,6 @@ fun PostComposable(post: Post, navController: NavController) {
             .padding(start = 8.dp)
             .clickable(onClick = {
                 navController.navigate("profile_screen/" + post.account.id) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
                     launchSingleTop = true
                     restoreState = true
                 }

@@ -217,6 +217,7 @@ class MainViewModel @Inject constructor(
     private fun collectTokenFlow() {
         viewModelScope.launch {
             getAccessTokenFromStorage().collect {token ->
+                repository.setAccessToken(token)
                 _accessToken.update {
                     token
                 }

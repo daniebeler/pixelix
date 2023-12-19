@@ -7,7 +7,6 @@ import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
-import com.daniebeler.pixels.api.models.PostDTO
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -36,7 +35,7 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
 
-    @GET("api/pixelfed/v1/notifications")
+    @GET("api/v1/notifications")
     fun getNotifications(@Header("Authorization") token: String): Call<List<Notification>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")

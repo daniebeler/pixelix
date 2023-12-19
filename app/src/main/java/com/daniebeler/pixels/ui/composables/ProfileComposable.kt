@@ -62,8 +62,8 @@ fun ProfileComposable(navController: NavController, userId: String) {
     val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        //account = repository.getAccount(userId)
-        //posts = repository.getPostsByAccountId(userId)
+        account = repository.getAccount(userId)
+        posts = repository.getPostsByAccountId(userId)
     }
 
     fun loadMorePosts() {
@@ -99,14 +99,10 @@ fun ProfileComposable(navController: NavController, userId: String) {
     ) {paddingValues ->
         if (account.id != "null") {
             Column (Modifier.padding(paddingValues)) {
-
-
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(paddingValues),
                     content = {
                         item (
                             span = { GridItemSpan(3) }

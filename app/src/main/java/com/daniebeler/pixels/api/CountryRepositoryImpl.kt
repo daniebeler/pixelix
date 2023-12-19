@@ -129,6 +129,8 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getNotifications(): List<Notification> {
         return try {
+            println("atoken")
+            println("fief" + accessToken)
             val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body() ?: emptyList()

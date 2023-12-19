@@ -6,5 +6,7 @@ data class Notification(
     @SerializedName("type")
     val type: String,
     @SerializedName("account")
-    val account: Account
+    val account: Account,
+    @SerializedName("status")
+    val post: Post?
 )
