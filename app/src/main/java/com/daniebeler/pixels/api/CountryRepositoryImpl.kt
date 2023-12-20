@@ -6,6 +6,7 @@ import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
 import okhttp3.OkHttpClient
@@ -171,6 +172,20 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
             if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getRelationships(userId: String): List<Relationship> {
+        return try {
+            val response = pixelfedApi.getRelationships(userId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                println("sussss")
                 response.body() ?: emptyList()
             } else {
                 emptyList()

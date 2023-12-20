@@ -163,7 +163,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
             uId?.let { id->
-                ProfileComposable(navController, userId = id)
+                ProfileComposable(viewModel, navController, userId = id)
             }
         }
 

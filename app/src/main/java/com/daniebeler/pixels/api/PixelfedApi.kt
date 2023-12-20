@@ -7,6 +7,7 @@ import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Relationship
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -49,6 +50,9 @@ interface PixelfedApi {
 
     @GET("api/v1/statuses/{postid}")
     fun getPostById(@Path("postid") postId: String): Call<Post>
+
+    @GET("api/v1/accounts/relationships")
+    fun getRelationships(@Query("id[]") userId: String, @Header("Authorization") token: String): Call<List<Relationship>>
 
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")

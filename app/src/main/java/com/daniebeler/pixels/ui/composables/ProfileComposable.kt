@@ -50,10 +50,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
 import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Relationship
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +63,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComposable(navController: NavController, userId: String) {
+fun ProfileComposable(viewModel: MainViewModel, navController: NavController, userId: String) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -74,6 +76,10 @@ fun ProfileComposable(navController: NavController, userId: String) {
         mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", "", ""))
     }
 
+    var relationships: List<Relationship> by remember {
+        mutableStateOf(emptyList())
+    }
+
     var posts: List<Post> by remember {
         mutableStateOf(emptyList())
     }
@@ -81,8 +87,20 @@ fun ProfileComposable(navController: NavController, userId: String) {
     val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        account = repository.getAccount(userId)
-        posts = repository.getPostsByAccountId(userId)
+        viewModel.gotDataFromDataStore.collect { state ->
+            if (state) {
+                account = repository.getAccount(userId)
+                relationships = viewModel.returnRelationships(userId)
+                println("relatii")
+                println(relationships)
+
+
+                if (posts.isEmpty()) {
+                    posts = repository.getPostsByAccountId(userId)
+                }
+
+            }
+        }
     }
 
     fun loadMorePosts() {
@@ -173,6 +191,19 @@ fun ProfileComposable(navController: NavController, userId: String) {
                                     }
 
 
+                                }
+
+                                if (relationships.isNotEmpty()) {
+                                    if (relationships[0].following) {
+                                        Button(onClick = { /*TODO*/ }) {
+                                            Text(text = "unfollow")
+                                        }
+                                    }
+                                    else {
+                                        Button(onClick = { /*TODO*/ }) {
+                                            Text(text = "follow")
+                                        }
+                                    }
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))

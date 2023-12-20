@@ -26,6 +26,7 @@ fun HomeTimelineComposable(viewModel: MainViewModel, navController: NavControlle
         }
     }
 
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {

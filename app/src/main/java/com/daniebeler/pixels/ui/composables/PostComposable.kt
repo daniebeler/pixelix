@@ -83,7 +83,7 @@ fun PostComposable(post: Post, navController: NavController) {
             )
             Column (modifier = Modifier.padding(start = 8.dp)) {
                 Text(text = post.account.username)
-                Text(text = timeAgoString, fontSize = 12.sp)
+                Text(text = timeAgoString, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
             }
         }
 

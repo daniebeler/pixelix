@@ -6,6 +6,7 @@ import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 
 interface CountryRepository {
@@ -19,6 +20,8 @@ interface CountryRepository {
     suspend fun getLocalTimeline(): List<Post>
 
     suspend fun getHomeTimeline(): List<Post>
+
+    suspend fun getRelationships(userId: String): List<Relationship>
 
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 

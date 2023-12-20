@@ -16,6 +16,7 @@ import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.api.models.Relationship
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -94,6 +95,10 @@ class MainViewModel @Inject constructor(
 
     suspend fun returnHashtagTimeline(hashtag: String): List<Post> {
         return repository.getHashtagTimeline(hashtag)
+    }
+
+    suspend fun returnRelationships(userId: String): List<Relationship> {
+        return repository.getRelationships(userId)
     }
 
     fun getLocalTimeline() {
