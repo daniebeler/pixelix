@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -95,6 +93,8 @@ dependencies {
     implementation ("androidx.browser:browser:1.7.0")
 
     implementation ("androidx.compose.material:material-icons-extended")
+
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
 }
 
