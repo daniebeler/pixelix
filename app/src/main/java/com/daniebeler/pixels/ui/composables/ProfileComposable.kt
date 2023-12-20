@@ -50,12 +50,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
+import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -72,10 +74,10 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
 
     val context = LocalContext.current
 
-    val uriHandler = LocalUriHandler.current
 
-    var account: Account by remember {
-        mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", "", ""))
+
+    var account: Account? by remember {
+        mutableStateOf(null)
     }
 
     var relationships: List<Relationship> by remember {
@@ -96,13 +98,19 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
     CoroutineScope(Dispatchers.Default).launch {
         viewModel.gotDataFromDataStore.collect { state ->
             if (state) {
-                account = repository.getAccount(userId)
-                relationships = viewModel.returnRelationships(userId)
-                mutalFollowers = viewModel.returnMutalFollowers(userId)
-                println("mutl")
-                println(mutalFollowers)
+                CoroutineScope(Dispatchers.Default).launch {
+                    account = viewModel.returnAccount(userId)
+                }
 
-                if (posts.isEmpty()) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    relationships = viewModel.returnRelationships(userId)
+                }
+
+                CoroutineScope(Dispatchers.Default).launch {
+                    mutalFollowers = viewModel.returnMutalFollowers(userId)
+                }
+
+                CoroutineScope(Dispatchers.Default).launch {
                     posts = repository.getPostsByAccountId(userId)
                 }
 
@@ -125,7 +133,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = account.username)
+                    Text(text = account?.username ?: "")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -151,64 +159,27 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
 
         }
     ) {paddingValues ->
-        if (account.id != "null") {
+        if (account != null) {
             Column (Modifier.padding(paddingValues)) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
+
+                        if (account != null) {
+                            item (
+                                span = { GridItemSpan(3) }
+                            ) {
+                                ProfileTopSection(account!!)
+                            }
+                        }
+
+
                         item (
                             span = { GridItemSpan(3) }
                         ) {
-                            Column (Modifier.padding(12.dp)) {
-                                Row (verticalAlignment = Alignment.CenterVertically) {
-                                    AsyncImage(
-                                        model = account.avatar,
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .height(64.dp)
-                                            .clip(CircleShape))
-
-                                    Row (horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                                        Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text(text = account.followersCount.toString())
-                                            Text(text = "Followers")
-                                        }
-
-                                        Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text(text = account.followingCount.toString())
-                                            Text(text = "Following")
-                                        }
-                                    }
-
-
-
-                                }
-                                Text(text = account.displayname, fontWeight = FontWeight.Bold)
-
-                                account.note?.let {
-                                    HashtagsMentionsTextView(text = account.note, onClick = {})
-                                }
-
-                                account.website?.let {
-                                    Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                            contentDescription = "",
-                                            modifier = Modifier.size(18.dp),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        Text(
-                                            text = account.website,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website)})
-                                        )
-                                    }
-
-
-                                }
-
+                            Column {
                                 if (relationships.isNotEmpty()) {
                                     if (relationships[0].following) {
                                         Button(onClick = { /*TODO*/ }) {
@@ -221,7 +192,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                                         }
                                     }
                                 }
-                                
+
                                 if (mutalFollowers.isNotEmpty()) {
                                     Text(text = "MUTAL FOLLOWERS!!!", color = Color.Red)
                                 }
@@ -230,6 +201,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                                 Text(text = "Posts")
                             }
                         }
+
                         items(posts) { photo ->
                             CustomPost(post = photo, navController = navController)
                         }
@@ -262,11 +234,11 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                 modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
             ) {
                 Text(text = "Open in browser", Modifier.clickable {
-                    openUrl(context, account.url)
+                    openUrl(context, account!!.url)
                 })
 
                 Text(text = "Share this profile", Modifier.clickable {
-                    shareProfile(context, account.url)
+                    shareProfile(context, account!!.url)
                 })
             }
         }
@@ -286,4 +258,66 @@ private fun shareProfile(context: Context, url: String) {
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
     context.startActivity(shareIntent)
+}
+
+@Composable
+fun ProfileTopSection(account: Account) {
+    val uriHandler = LocalUriHandler.current
+
+    Column (Modifier.padding(12.dp)) {
+        Row (verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                model = account!!.avatar,
+                contentDescription = "",
+                modifier = Modifier
+                    .height(76.dp)
+                    .clip(CircleShape))
+
+            Row (horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = account!!.postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(text = "Posts", fontSize = 12.sp)
+                }
+
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = account!!.followersCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(text = "Followers", fontSize = 12.sp)
+                }
+
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = account!!.followingCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(text = "Following", fontSize = 12.sp)
+                }
+            }
+
+
+
+        }
+        Text(text = account!!.displayname, fontWeight = FontWeight.Bold)
+
+        account!!.note?.let {
+            HashtagsMentionsTextView(text = account!!.note, onClick = {})
+        }
+
+        account!!.website?.let {
+            Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "",
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = account!!.website,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website)})
+                )
+            }
+
+
+        }
+
+
+    }
+
 }
