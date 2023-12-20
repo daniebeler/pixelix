@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.daniebeler.pixels.ui.composables.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
 import com.daniebeler.pixels.ui.composables.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
@@ -134,6 +135,11 @@ sealed class Destinations(
         icon = Icons.Outlined.Settings
     )
 
+    object Hashtag : Destinations(
+        route = "hashtag_timeline_screen/{hashtag}",
+        icon = Icons.Outlined.Settings
+    )
+
     object SinglePost : Destinations(
         route = "single_post_screen/{postid}",
         icon = Icons.Outlined.Favorite
@@ -159,7 +165,13 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             uId?.let { id->
                 ProfileComposable(navController, userId = id)
             }
+        }
 
+        composable(Destinations.Hashtag.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("hashtag")
+            uId?.let { id->
+                HashtagTimelineComposable(viewModel, navController, id)
+            }
         }
 
         composable(Destinations.Settings.route) {

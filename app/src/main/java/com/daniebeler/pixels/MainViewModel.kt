@@ -42,7 +42,8 @@ class MainViewModel @Inject constructor(
     private var _dailyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
-    private var _trendingHashtags by mutableStateOf(emptyList<Hashtag>())
+    var trendingHashtags: List<Hashtag> by mutableStateOf(emptyList())
+        private set
     private var _localTimeline by mutableStateOf(emptyList<Post>())
 
 
@@ -79,9 +80,6 @@ class MainViewModel @Inject constructor(
     val yearlyTrendingPosts: List<Post>
         get() = _yearlyTrendingPosts
 
-    val trendingHashtags: List<Hashtag>
-        get() = _trendingHashtags
-
     val localTimeline: List<Post>
         get() = _localTimeline
 
@@ -111,7 +109,7 @@ class MainViewModel @Inject constructor(
 
     fun getTrendingHashtags() {
         viewModelScope.launch {
-            _trendingHashtags = repository.getTrendingHashtags()
+            trendingHashtags = repository.getTrendingHashtags()
         }
     }
 

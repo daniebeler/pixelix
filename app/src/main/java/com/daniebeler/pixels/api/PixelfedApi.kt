@@ -20,7 +20,7 @@ interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<Post>>
 
-    @GET("api/v1/trends")
+    @GET("api/v1.1/discover/posts/hashtags")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<Hashtag>>
 
     @GET("api/pixelfed/v1/timelines/public")
