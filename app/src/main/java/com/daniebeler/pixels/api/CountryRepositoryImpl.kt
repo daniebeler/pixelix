@@ -88,7 +88,7 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getLocalTimeline(): List<Post> {
         return try {
-            val response = pixelfedApi.getLocalTimeline().awaitResponse()
+            val response = pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body() ?: emptyList()
             } else {

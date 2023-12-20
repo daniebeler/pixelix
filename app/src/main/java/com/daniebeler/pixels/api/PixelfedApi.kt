@@ -26,8 +26,8 @@ interface PixelfedApi {
     @GET("api/v1/timelines/tag/{tag}")
     fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<Post>>
 
-    @GET("api/pixelfed/v1/timelines/public")
-    fun getLocalTimeline(): Call<List<Post>>
+    @GET("api/v1/timelines/public")
+    fun getLocalTimeline(@Header("Authorization") token: String): Call<List<Post>>
 
     @GET("api/v1/timelines/home")
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<Post>>
