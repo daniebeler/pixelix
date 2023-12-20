@@ -11,8 +11,8 @@ data class Post(
     val account: Account,
     @SerializedName("tags")
     val tags: List<Hashtag>,
-    @SerializedName("liked_by")
-    val liked_by: LikedBy,
+    @SerializedName("favourites_count")
+    val likes: Int,
     @SerializedName("content_text")
     val content: String,
     @SerializedName("reply_count")
@@ -26,9 +26,4 @@ data class MediaAttachment(
     val url: String,
     @SerializedName("preview_url")
     val previewUrl: String
-)
-
-data class LikedBy(
-    @SerializedName("total_count")
-    val total_count: Int
 )

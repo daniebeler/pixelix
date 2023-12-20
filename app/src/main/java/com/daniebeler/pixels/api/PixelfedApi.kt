@@ -26,7 +26,7 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/timelines/public")
     fun getLocalTimeline(): Call<List<Post>>
 
-    @GET("api/pixelfed/v1/timelines/home")
+    @GET("api/v1/timelines/home")
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<Post>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")

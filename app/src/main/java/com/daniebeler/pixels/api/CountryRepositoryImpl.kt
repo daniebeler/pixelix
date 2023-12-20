@@ -86,9 +86,9 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
-    override suspend fun getHomeTimeline(accessToken: String): List<Post> {
+    override suspend fun getHomeTimeline(): List<Post> {
         return try {
-            val response = pixelfedApi.getHomeTimeline("Bearer $accessToken").awaitResponse()
+            val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body() ?: emptyList()
             } else {
@@ -129,8 +129,6 @@ class CountryRepositoryImpl: CountryRepository {
 
     override suspend fun getNotifications(): List<Notification> {
         return try {
-            println("atoken")
-            println("fief" + accessToken)
             val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body() ?: emptyList()

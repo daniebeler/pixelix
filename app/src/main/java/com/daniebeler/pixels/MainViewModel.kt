@@ -44,7 +44,6 @@ class MainViewModel @Inject constructor(
     private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
     private var _trendingHashtags by mutableStateOf(emptyList<Hashtag>())
     private var _localTimeline by mutableStateOf(emptyList<Post>())
-    private var _homeTimeline by mutableStateOf(emptyList<Post>())
 
 
 
@@ -54,6 +53,8 @@ class MainViewModel @Inject constructor(
 
     var notifications: List<Notification> by mutableStateOf(emptyList())
         private set
+
+    var homeTimeline: List<Post> by mutableStateOf(emptyList())
 
     private var _verified: Account? by mutableStateOf(null)
 
@@ -83,9 +84,6 @@ class MainViewModel @Inject constructor(
 
     val localTimeline: List<Post>
         get() = _localTimeline
-
-    val homeTimeline: List<Post>
-        get() = _homeTimeline
 
     val ownAccount: Account?
         get() = _ownAccount
@@ -125,7 +123,7 @@ class MainViewModel @Inject constructor(
 
     fun getHomeTimeline() {
         viewModelScope.launch {
-            _homeTimeline = repository.getHomeTimeline(accessToken.value)
+            homeTimeline = repository.getHomeTimeline()
         }
     }
 
