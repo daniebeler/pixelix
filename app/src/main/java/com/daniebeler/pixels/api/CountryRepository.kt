@@ -14,6 +14,8 @@ interface CountryRepository {
     suspend fun getTrendingPosts(range: String): List<Post>
     suspend fun getTrendingHashtags(): List<Hashtag>
 
+    suspend fun getHashtagTimeline(hashtag: String): List<Post>
+
     suspend fun getLocalTimeline(): List<Post>
 
     suspend fun getHomeTimeline(): List<Post>

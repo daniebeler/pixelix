@@ -73,6 +73,19 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
+    override suspend fun getHashtagTimeline(hashtag: String): List<Post> {
+        return try {
+            val response = pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
     override suspend fun getLocalTimeline(): List<Post> {
         return try {
             val response = pixelfedApi.getLocalTimeline().awaitResponse()

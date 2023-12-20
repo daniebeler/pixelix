@@ -25,5 +25,17 @@ data class MediaAttachment(
     @SerializedName("url")
     val url: String,
     @SerializedName("preview_url")
-    val previewUrl: String
+    val previewUrl: String,
+    @SerializedName("meta")
+    val meta: Meta?
+)
+
+data class Meta(
+    @SerializedName("original")
+    val original: OriginalDataClass?
+)
+
+data class OriginalDataClass(
+    @SerializedName("aspect")
+    val aspect: Float?
 )

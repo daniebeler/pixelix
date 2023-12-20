@@ -39,11 +39,12 @@ class MainViewModel @Inject constructor(
 
     private val settingsDataStore = context.dataStore
 
-    private var _dailyTrendingPosts by mutableStateOf(emptyList<Post>())
-    private var _monthlyTrendingPosts by mutableStateOf(emptyList<Post>())
-    private var _yearlyTrendingPosts by mutableStateOf(emptyList<Post>())
+    var dailyTrendingPosts: List<Post> by mutableStateOf(emptyList())
+    var monthlyTrendingPosts: List<Post> by mutableStateOf(emptyList())
+    var yearlyTrendingPosts: List<Post> by mutableStateOf(emptyList())
     var trendingHashtags: List<Hashtag> by mutableStateOf(emptyList())
-        private set
+
+
     private var _localTimeline by mutableStateOf(emptyList<Post>())
 
 
@@ -71,15 +72,6 @@ class MainViewModel @Inject constructor(
 
     var _authApplication: Application? = null
 
-    val dailyTrendingPosts: List<Post>
-        get() = _dailyTrendingPosts
-
-    val monthlyTrendingPosts: List<Post>
-        get() = _monthlyTrendingPosts
-
-    val yearlyTrendingPosts: List<Post>
-        get() = _yearlyTrendingPosts
-
     val localTimeline: List<Post>
         get() = _localTimeline
 
@@ -91,19 +83,19 @@ class MainViewModel @Inject constructor(
 
     fun getDailyTrendingPosts() {
         viewModelScope.launch {
-            _dailyTrendingPosts = repository.getTrendingPosts("daily")
+            dailyTrendingPosts = repository.getTrendingPosts("daily")
         }
     }
 
     fun getMonthlyTrendingPosts() {
         viewModelScope.launch {
-            _monthlyTrendingPosts = repository.getTrendingPosts("monthly")
+            monthlyTrendingPosts = repository.getTrendingPosts("monthly")
         }
     }
 
     fun getYearlyTrendingPosts() {
         viewModelScope.launch {
-            _yearlyTrendingPosts = repository.getTrendingPosts("yearly")
+            yearlyTrendingPosts = repository.getTrendingPosts("yearly")
         }
     }
 
@@ -111,6 +103,10 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             trendingHashtags = repository.getTrendingHashtags()
         }
+    }
+
+    suspend fun returnHashtagTimeline(hashtag: String): List<Post> {
+        return repository.getHashtagTimeline(hashtag)
     }
 
     fun getLocalTimeline() {

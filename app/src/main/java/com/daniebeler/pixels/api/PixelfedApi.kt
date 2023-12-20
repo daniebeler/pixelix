@@ -23,6 +23,9 @@ interface PixelfedApi {
     @GET("api/v1.1/discover/posts/hashtags")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<Hashtag>>
 
+    @GET("api/v1/timelines/tag/{tag}")
+    fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<Post>>
+
     @GET("api/pixelfed/v1/timelines/public")
     fun getLocalTimeline(): Call<List<Post>>
 

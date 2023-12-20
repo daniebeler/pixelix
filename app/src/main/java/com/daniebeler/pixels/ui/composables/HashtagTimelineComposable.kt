@@ -14,11 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.api.CountryRepository
+import com.daniebeler.pixels.api.CountryRepositoryImpl
+import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.api.models.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,14 +34,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavController, hashtag: String) {
 
-    val items = viewModel.homeTimeline
+    var posts: List<Post> by mutableStateOf(emptyList())
 
     CoroutineScope(Dispatchers.Default).launch {
         viewModel.gotDataFromDataStore.collect { state ->
             if (state) {
-                if (items.isEmpty()) {
-                    viewModel.getHomeTimeline()
-                }
+                posts = viewModel.returnHashtagTimeline(hashtag)
             }
         }
     }
@@ -68,7 +73,7 @@ fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavContro
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(items) { item ->
+            items(posts) { item ->
                 PostComposable(post = item, navController)
             }
         }

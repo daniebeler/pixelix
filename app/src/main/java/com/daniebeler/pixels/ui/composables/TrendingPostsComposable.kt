@@ -26,6 +26,11 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
     val monthlyTrendingPosts = viewModel.monthlyTrendingPosts
     val yearlyTrendingPosts = viewModel.yearlyTrendingPosts
 
+    viewModel.getDailyTrendingPosts()
+    viewModel.getMonthlyTrendingPosts()
+    viewModel.getYearlyTrendingPosts()
+    viewModel.getTrendingHashtags()
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
