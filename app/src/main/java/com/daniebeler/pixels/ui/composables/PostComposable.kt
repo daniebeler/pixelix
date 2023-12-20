@@ -36,16 +36,18 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Reply
+import com.daniebeler.pixels.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +59,9 @@ fun PostComposable(post: Post, navController: NavController) {
     var replies by remember {
         mutableStateOf(emptyList<Reply>())
     }
+
+    val timeAgo = TimeAgo()
+    val timeAgoString = timeAgo.covertTimeToText(post.createdAt) ?: ""
 
     val repository: CountryRepository = CountryRepositoryImpl()
 
@@ -76,14 +81,19 @@ fun PostComposable(post: Post, navController: NavController) {
                     .height(32.dp)
                     .clip(CircleShape)
             )
-            Text(text = post.account.username, modifier = Modifier.padding(start = 8.dp))
+            Column (modifier = Modifier.padding(start = 8.dp)) {
+                Text(text = post.account.username)
+                Text(text = timeAgoString, fontSize = 12.sp)
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         if (post.mediaAttachments[0].meta?.original?.aspect != null) {
             AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
-                Modifier.fillMaxWidth().aspectRatio(post.mediaAttachments[0].meta!!.original!!.aspect!!), contentScale = ContentScale.FillWidth)
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(post.mediaAttachments[0].meta!!.original!!.aspect!!), contentScale = ContentScale.FillWidth)
         }
         else {
             AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
@@ -122,7 +132,10 @@ fun PostComposable(post: Post, navController: NavController) {
             },
             sheetState = sheetState
         ) {
-            Column (Modifier.fillMaxSize().padding(12.dp)) {
+            Column (
+                Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)) {
                 Text(text = post.content)
                 HorizontalDivider(Modifier.padding(12.dp))
 

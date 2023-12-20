@@ -16,7 +16,9 @@ data class Post(
     @SerializedName("content_text")
     val content: String,
     @SerializedName("reply_count")
-    val replyCount: Int
+    val replyCount: Int,
+    @SerializedName("created_at")
+    val createdAt: String
 )
 
 data class MediaAttachment(
