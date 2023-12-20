@@ -18,5 +18,7 @@ data class Account(
     @SerializedName("website")
     val website: String,
     @SerializedName("note_text")
-    val note: String
+    val note: String,
+    @SerializedName("url")
+    val url: String
 )

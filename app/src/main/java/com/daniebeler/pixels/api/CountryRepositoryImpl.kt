@@ -130,13 +130,13 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val countries: Account = response.body() ?: Account("", "null", "null", "null",0, 0, "", "")
+                val countries: Account = response.body() ?: Account("", "null", "null", "null",0, 0, "", "", "")
                 countries
             } else {
-                Account("", "null", "null", "null",0, 0, "", "")
+                Account("", "null", "null", "null",0, 0, "", "", "")
             }
         } catch (exception: Exception) {
-            Account("", "null", "null", "null",0, 0, "", "")
+            Account("", "null", "null", "null",0, 0, "", "", "")
         }
     }
 

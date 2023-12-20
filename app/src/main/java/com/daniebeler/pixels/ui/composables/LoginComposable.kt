@@ -77,7 +77,7 @@ fun LoginComposable(viewModel: MainViewModel) {
     }
 }
 
-fun openUrl(context: Context, clientId: String){
+private fun openUrl(context: Context, clientId: String){
     val intent = CustomTabsIntent.Builder().build()
     val url = "https://pixelfed.social/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
     intent.launchUrl(context, Uri.parse(url))

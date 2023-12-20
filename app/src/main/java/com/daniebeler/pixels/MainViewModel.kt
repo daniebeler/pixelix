@@ -45,20 +45,16 @@ class MainViewModel @Inject constructor(
     var trendingHashtags: List<Hashtag> by mutableStateOf(emptyList())
 
 
-    private var _localTimeline by mutableStateOf(emptyList<Post>())
+    var localTimeline: List<Post> by mutableStateOf(emptyList())
 
-
-
-    private var _ownAccount: Account? by mutableStateOf(null)
+    var ownAccount: Account? by mutableStateOf(null)
     var ownPosts: List<Post> by mutableStateOf(emptyList())
-        private set
 
     var notifications: List<Notification> by mutableStateOf(emptyList())
-        private set
 
     var homeTimeline: List<Post> by mutableStateOf(emptyList())
 
-    private var _verified: Account? by mutableStateOf(null)
+    var verified: Account? by mutableStateOf(null)
 
     private var _gotDataFromDataStore = MutableStateFlow(false)
     val gotDataFromDataStore: StateFlow<Boolean> get() = _gotDataFromDataStore.asStateFlow()
@@ -71,15 +67,6 @@ class MainViewModel @Inject constructor(
     }
 
     var _authApplication: Application? = null
-
-    val localTimeline: List<Post>
-        get() = _localTimeline
-
-    val ownAccount: Account?
-        get() = _ownAccount
-
-    val verified: Account?
-        get() = _verified
 
     fun getDailyTrendingPosts() {
         viewModelScope.launch {
@@ -111,7 +98,7 @@ class MainViewModel @Inject constructor(
 
     fun getLocalTimeline() {
         viewModelScope.launch {
-            _localTimeline = repository.getLocalTimeline()
+            localTimeline = repository.getLocalTimeline()
         }
     }
 
@@ -123,7 +110,7 @@ class MainViewModel @Inject constructor(
 
     fun getOwnAccount() {
         viewModelScope.launch {
-            _ownAccount = repository.getAccount("497910174831013185")
+            ownAccount = repository.getAccount("497910174831013185")
         }
     }
 
@@ -147,7 +134,7 @@ class MainViewModel @Inject constructor(
 
     fun checkToken() {
         viewModelScope.launch {
-            _verified = repository.verifyToken(accessToken.value)
+            verified = repository.verifyToken(accessToken.value)
         }
     }
 

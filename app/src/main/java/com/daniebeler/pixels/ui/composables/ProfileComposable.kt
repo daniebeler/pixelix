@@ -1,30 +1,41 @@
 package com.daniebeler.pixels.ui.composables
 
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,6 +53,7 @@ import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
 import com.daniebeler.pixels.api.models.Post
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,10 +62,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileComposable(navController: NavController, userId: String) {
 
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
     val uriHandler = LocalUriHandler.current
 
     var account: Account by remember {
-        mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", ""))
+        mutableStateOf(Account("null", "null", "null", "null", 0, 0, "", "", ""))
     }
 
     var posts: List<Post> by remember {
@@ -89,6 +107,16 @@ fun ProfileComposable(navController: NavController, userId: String) {
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        showBottomSheet = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.MoreVert,
                             contentDescription = ""
                         )
                     }
@@ -169,4 +197,27 @@ fun ProfileComposable(navController: NavController, userId: String) {
         }
 
     }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+                modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+            ) {
+                Text(text = "Open in Browser", Modifier.clickable {
+                    openUrl(context, account.url)
+                })
+            }
+        }
+    }
+}
+
+private fun openUrl(context: Context, url: String){
+    val intent = CustomTabsIntent.Builder().build()
+    intent.launchUrl(context, Uri.parse(url))
 }
