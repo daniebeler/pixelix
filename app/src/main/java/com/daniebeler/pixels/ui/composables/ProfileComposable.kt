@@ -1,6 +1,7 @@
 package com.daniebeler.pixels.ui.composables
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
@@ -209,8 +210,12 @@ fun ProfileComposable(navController: NavController, userId: String) {
                 verticalArrangement = Arrangement.spacedBy(32.dp),
                 modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
             ) {
-                Text(text = "Open in Browser", Modifier.clickable {
+                Text(text = "Open in browser", Modifier.clickable {
                     openUrl(context, account.url)
+                })
+
+                Text(text = "Share this profile", Modifier.clickable {
+                    shareProfile(context, account.url)
                 })
             }
         }
@@ -220,4 +225,14 @@ fun ProfileComposable(navController: NavController, userId: String) {
 private fun openUrl(context: Context, url: String){
     val intent = CustomTabsIntent.Builder().build()
     intent.launchUrl(context, Uri.parse(url))
+}
+
+private fun shareProfile(context: Context, url: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, url)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }

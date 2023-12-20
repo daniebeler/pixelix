@@ -22,9 +22,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.CountryRepositoryImpl
-import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +50,7 @@ fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavContro
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text(hashtag)
+                    Text("#$hashtag")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
