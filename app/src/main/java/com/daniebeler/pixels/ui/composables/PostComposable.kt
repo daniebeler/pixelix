@@ -146,7 +146,10 @@ fun PostComposable(post: Post, navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
                     items(replies) { reply ->
-                        HashtagsMentionsTextView(text = reply.content, onClick = {})
+                        HashtagsMentionsTextView(text = reply.content, onClick = {
+                            println("clicked")
+                            println(it)
+                        })
                     }
                 }
             }
@@ -163,7 +166,7 @@ fun HashtagsMentionsTextView(text: String, modifier: Modifier = Modifier, onClic
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.error)
 
-    val hashtags = Regex("((?=[^\\w!])[#@][\\u4e00-\\u9fa5\\w]+)")
+    val hashtags = Regex("((?=[^\\w!])[#][\\u4e00-\\u9fa5\\w]+)")
 
     val annotatedStringList = remember {
 
@@ -222,7 +225,7 @@ fun HashtagsMentionsTextView(text: String, modifier: Modifier = Modifier, onClic
 
     ClickableText(
         text = annotatedString,
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
         onClick = { position ->
             val annotatedStringRange =

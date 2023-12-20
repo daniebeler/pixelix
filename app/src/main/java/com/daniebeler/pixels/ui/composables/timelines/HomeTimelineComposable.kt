@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.timelines
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.ui.composables.PostComposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

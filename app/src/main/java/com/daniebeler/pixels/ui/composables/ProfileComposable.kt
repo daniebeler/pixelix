@@ -198,7 +198,6 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))
-                                Text(text = "Posts")
                             }
                         }
 
@@ -293,6 +292,7 @@ fun ProfileTopSection(account: Account) {
 
 
         }
+        Spacer(modifier = Modifier.height(12.dp))
         Text(text = account!!.displayname, fontWeight = FontWeight.Bold)
 
         account!!.note?.let {
