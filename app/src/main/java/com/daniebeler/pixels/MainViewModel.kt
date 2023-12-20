@@ -101,6 +101,10 @@ class MainViewModel @Inject constructor(
         return repository.getRelationships(userId)
     }
 
+    suspend fun returnMutalFollowers(userId: String): List<Account> {
+        return repository.getMutalFollowers(userId)
+    }
+
     fun getLocalTimeline() {
         viewModelScope.launch {
             localTimeline = repository.getLocalTimeline()

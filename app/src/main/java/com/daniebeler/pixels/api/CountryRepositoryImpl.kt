@@ -185,7 +185,19 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getRelationships(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                println("sussss")
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getMutalFollowers(userId: String): List<Account> {
+        return try {
+            val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
                 response.body() ?: emptyList()
             } else {
                 emptyList()

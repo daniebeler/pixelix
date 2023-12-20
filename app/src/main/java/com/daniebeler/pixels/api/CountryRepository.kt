@@ -22,6 +22,7 @@ interface CountryRepository {
     suspend fun getHomeTimeline(): List<Post>
 
     suspend fun getRelationships(userId: String): List<Relationship>
+    suspend fun getMutalFollowers(userId: String): List<Account>
 
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 

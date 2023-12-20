@@ -30,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
@@ -80,6 +82,11 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
         mutableStateOf(emptyList())
     }
 
+    var mutalFollowers: List<Account> by remember {
+        mutableStateOf(emptyList())
+    }
+
+
     var posts: List<Post> by remember {
         mutableStateOf(emptyList())
     }
@@ -91,9 +98,9 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
             if (state) {
                 account = repository.getAccount(userId)
                 relationships = viewModel.returnRelationships(userId)
-                println("relatii")
-                println(relationships)
-
+                mutalFollowers = viewModel.returnMutalFollowers(userId)
+                println("mutl")
+                println(mutalFollowers)
 
                 if (posts.isEmpty()) {
                     posts = repository.getPostsByAccountId(userId)
@@ -186,8 +193,17 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
 
                                 account.website?.let {
                                     Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "", modifier = Modifier.size(18.dp))
-                                        Text(text = account.website, modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website)}))
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                            contentDescription = "",
+                                            modifier = Modifier.size(18.dp),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text(
+                                            text = account.website,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website)})
+                                        )
                                     }
 
 
@@ -204,6 +220,10 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                                             Text(text = "follow")
                                         }
                                     }
+                                }
+                                
+                                if (mutalFollowers.isNotEmpty()) {
+                                    Text(text = "MUTAL FOLLOWERS!!!", color = Color.Red)
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))
