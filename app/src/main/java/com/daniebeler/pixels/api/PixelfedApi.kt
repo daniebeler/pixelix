@@ -57,6 +57,11 @@ interface PixelfedApi {
     @GET("api/v1.1/accounts/mutals/{id}")
     fun getMutalFollowers(@Query("id") userId: String, @Header("Authorization") token: String): Call<List<Account>>
 
+    @POST("api/v1/accounts/{id}/follow")
+    fun followAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<Relationship>
+
+    @POST("api/v1/accounts/{id}/unfollow")
+    fun unfollowAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<Relationship>
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<Application>

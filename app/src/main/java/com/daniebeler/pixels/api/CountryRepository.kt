@@ -28,6 +28,11 @@ interface CountryRepository {
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 
     suspend fun getAccount(accountId: String): Account?
+
+    suspend fun followAccount(accountId: String): Relationship?
+
+    suspend fun unfollowAccount(accountId: String): Relationship?
+
     suspend fun getNotifications(): List<Notification>
 
     suspend fun getPostsByAccountId(accountId: String): List<Post>

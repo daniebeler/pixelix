@@ -109,6 +109,14 @@ class MainViewModel @Inject constructor(
         return repository.getAccount(userId)
     }
 
+    suspend fun followAccount(userId: String): Relationship? {
+        return repository.followAccount(userId)
+    }
+
+    suspend fun unfollowAccount(userId: String): Relationship? {
+        return repository.unfollowAccount(userId)
+    }
+
     fun getLocalTimeline() {
         viewModelScope.launch {
             localTimeline = repository.getLocalTimeline()

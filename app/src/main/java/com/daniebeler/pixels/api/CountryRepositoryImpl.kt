@@ -140,6 +140,32 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
+    override suspend fun followAccount(accountId: String): Relationship? {
+        return try {
+            val response = pixelfedApi.followAccount(accountId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
+    override suspend fun unfollowAccount(accountId: String): Relationship? {
+        return try {
+            val response = pixelfedApi.unfollowAccount(accountId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
     override suspend fun getNotifications(): List<Notification> {
         return try {
             val response = pixelfedApi.getNotifications(accessToken).awaitResponse()

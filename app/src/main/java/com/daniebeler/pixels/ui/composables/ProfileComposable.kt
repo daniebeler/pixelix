@@ -80,8 +80,8 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
         mutableStateOf(null)
     }
 
-    var relationships: List<Relationship> by remember {
-        mutableStateOf(emptyList())
+    var relationship: Relationship? by remember {
+        mutableStateOf(null)
     }
 
     var mutalFollowers: List<Account> by remember {
@@ -103,7 +103,12 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                 }
 
                 CoroutineScope(Dispatchers.Default).launch {
-                    relationships = viewModel.returnRelationships(userId)
+                    var res = viewModel.returnRelationships(userId)
+                    if (res != null) {
+                        if (res.isNotEmpty()) {
+                            relationship = res[0]
+                        }
+                    }
                 }
 
                 CoroutineScope(Dispatchers.Default).launch {
@@ -179,15 +184,31 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                         item (
                             span = { GridItemSpan(3) }
                         ) {
-                            Column {
-                                if (relationships.isNotEmpty()) {
-                                    if (relationships[0].following) {
-                                        Button(onClick = { /*TODO*/ }) {
+                            Column (Modifier.padding(12.dp)) {
+                                if (relationship != null) {
+                                    if (relationship!!.following) {
+                                        Button(onClick = {
+                                            CoroutineScope(Dispatchers.Default).launch {
+
+                                                var res = viewModel.unfollowAccount(userId)
+                                                if (res != null) {
+                                                    relationship = res
+                                                }
+                                            }
+                                        }) {
                                             Text(text = "unfollow")
                                         }
                                     }
                                     else {
-                                        Button(onClick = { /*TODO*/ }) {
+                                        Button(onClick = {
+                                            CoroutineScope(Dispatchers.Default).launch {
+
+                                                var res = viewModel.followAccount(userId)
+                                                if (res != null) {
+                                                    relationship = res
+                                                }
+                                            }
+                                        }) {
                                             Text(text = "follow")
                                         }
                                     }
