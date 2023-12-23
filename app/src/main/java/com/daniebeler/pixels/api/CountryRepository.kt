@@ -1,13 +1,13 @@
 package com.daniebeler.pixels.api
 
 import com.daniebeler.pixels.api.models.AccessToken
-import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
+import com.daniebeler.pixels.domain.model.Account
 
 interface CountryRepository {
     fun setBaseUrl(baseUrl: String)

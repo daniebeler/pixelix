@@ -1,13 +1,13 @@
 package com.daniebeler.pixels.data.remote
 
 import com.daniebeler.pixels.api.models.AccessToken
-import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.ApiReplyElement
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
+import com.daniebeler.pixels.data.remote.dto.AccountDto
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -37,7 +37,7 @@ interface PixelfedApi {
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
-    fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<Account>
+    fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<AccountDto>
 
     @GET("api/v1/notifications")
     fun getNotifications(@Header("Authorization") token: String): Call<List<Notification>>
@@ -55,7 +55,7 @@ interface PixelfedApi {
     fun getRelationships(@Query("id[]") userId: String, @Header("Authorization") token: String): Call<List<Relationship>>
 
     @GET("api/v1.1/accounts/mutals/{id}")
-    fun getMutalFollowers(@Query("id") userId: String, @Header("Authorization") token: String): Call<List<Account>>
+    fun getMutalFollowers(@Query("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
 
     @POST("api/v1/accounts/{id}/follow")
     fun followAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<Relationship>
@@ -77,5 +77,5 @@ interface PixelfedApi {
     ): Call<AccessToken>
 
     @GET("api/v1/accounts/verify_credentials")
-    fun verifyToken(@Header("Authorization") token: String): Call<Account>
+    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
 }

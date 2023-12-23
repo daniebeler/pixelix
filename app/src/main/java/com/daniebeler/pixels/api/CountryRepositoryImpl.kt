@@ -1,7 +1,6 @@
 package com.daniebeler.pixels.api
 
 import com.daniebeler.pixels.api.models.AccessToken
-import com.daniebeler.pixels.api.models.Account
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
 import com.daniebeler.pixels.api.models.Notification
@@ -10,6 +9,8 @@ import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
 import com.daniebeler.pixels.data.remote.PixelfedApi
+import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.toAccount
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -132,7 +133,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()
+                response.body()?.toAccount()
             } else {
                 null
             }
@@ -224,7 +225,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toAccount() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -283,8 +284,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.verifyToken("Bearer " + token).awaitResponse()
             if (response.isSuccessful) {
-                val countries: Account? = response.body()
-                countries
+                response.body()?.toAccount()
             } else {
                 null
             }

@@ -1,5 +1,7 @@
 package com.daniebeler.pixels.api.models
 
+import com.daniebeler.pixels.data.remote.dto.AccountDto
+import com.daniebeler.pixels.domain.model.Account
 import com.google.gson.annotations.SerializedName
 
 data class Post(
@@ -8,7 +10,7 @@ data class Post(
     @SerializedName("media_attachments")
     val mediaAttachments: List<MediaAttachment>,
     @SerializedName("account")
-    val account: Account,
+    val account: AccountDto,
     @SerializedName("tags")
     val tags: List<Hashtag>,
     @SerializedName("favourites_count")

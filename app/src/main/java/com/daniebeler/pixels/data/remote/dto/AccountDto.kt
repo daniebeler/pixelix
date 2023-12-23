@@ -3,7 +3,7 @@ package com.daniebeler.pixels.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class ProfileDto(
+data class AccountDto(
     @SerializedName("acct")
     val acct: String,
     @SerializedName("avatar")

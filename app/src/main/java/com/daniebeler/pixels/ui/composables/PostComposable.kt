@@ -85,7 +85,7 @@ fun PostComposable(post: Post, navController: NavController) {
                     .clip(CircleShape)
             )
             Column (modifier = Modifier.padding(start = 8.dp)) {
-                Text(text = post.account.displayname)
+                Text(text = post.account.displayName)
                 Text(text = timeAgoString + " • @" + post.account.acct, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
             }
         }
@@ -118,7 +118,7 @@ fun PostComposable(post: Post, navController: NavController) {
                 TextButton(onClick = {
 
                     CoroutineScope(Dispatchers.Default).launch {
-                        replies = repository.getReplies(post.account.id, post.id)
+                        //replies = repository.getReplies(post.account.id, post.id)
                     }
                     showBottomSheet = true
                 }) {
