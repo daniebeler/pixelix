@@ -9,6 +9,7 @@ import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
+import com.daniebeler.pixels.data.remote.PixelfedApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

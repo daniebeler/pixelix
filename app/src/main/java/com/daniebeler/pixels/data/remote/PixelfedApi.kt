@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.api
+package com.daniebeler.pixels.data.remote
 
 import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Account

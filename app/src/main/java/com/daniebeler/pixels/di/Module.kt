@@ -1,5 +1,7 @@
-package com.daniebeler.pixels.api
+package com.daniebeler.pixels.di
 
+import com.daniebeler.pixels.api.CountryRepository
+import com.daniebeler.pixels.api.CountryRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
