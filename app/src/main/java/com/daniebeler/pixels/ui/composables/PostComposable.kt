@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Reply
 import com.daniebeler.pixels.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

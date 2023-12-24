@@ -1,12 +1,12 @@
 package com.daniebeler.pixels.api
 
-import com.daniebeler.pixels.api.models.AccessToken
-import com.daniebeler.pixels.api.models.Application
-import com.daniebeler.pixels.api.models.Relationship
-import com.daniebeler.pixels.api.models.Reply
+import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Application
 import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Relationship
+import com.daniebeler.pixels.domain.model.Reply
 import com.daniebeler.pixels.domain.model.Tag
 
 interface CountryRepository {

@@ -1,8 +1,8 @@
-package com.daniebeler.pixels.api.models
+package com.daniebeler.pixels.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class AccessToken(
+data class AccessTokenDto(
     @SerializedName("access_token")
     val accessToken: String,
     @SerializedName("scope")

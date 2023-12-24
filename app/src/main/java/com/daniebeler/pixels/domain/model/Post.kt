@@ -1,6 +1,5 @@
 package com.daniebeler.pixels.domain.model
 
-import com.daniebeler.pixels.data.remote.dto.AccountDto
 import com.daniebeler.pixels.data.remote.dto.PostDto
 
 data class Post(
@@ -21,7 +20,7 @@ fun PostDto.toPost(): Post {
         account = account.toAccount(),
         tags = tags.map { it.toTag() },
         favouritesCount = favouritesCount,
-        content = content,
+        content = contentText ?: "",
         replyCount = replyCount,
         createdAt= createdAt
     )

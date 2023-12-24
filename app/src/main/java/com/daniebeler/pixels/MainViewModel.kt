@@ -10,12 +10,12 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Application
 import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.domain.model.Tag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

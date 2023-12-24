@@ -27,7 +27,7 @@ fun AccountDto.toAccount(): Account {
         followingCount = followingCount,
         postsCount = statusesCount,
         website = website,
-        note = note,
+        note = noteText ?: "",
         url = url
     )
 }

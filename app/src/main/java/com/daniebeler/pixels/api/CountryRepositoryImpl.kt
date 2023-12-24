@@ -1,18 +1,21 @@
 package com.daniebeler.pixels.api
 
-import com.daniebeler.pixels.api.models.AccessToken
-import com.daniebeler.pixels.api.models.Application
-import com.daniebeler.pixels.api.models.Relationship
-import com.daniebeler.pixels.api.models.Reply
-import com.daniebeler.pixels.api.models.toModel
 import com.daniebeler.pixels.data.remote.PixelfedApi
+import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Application
 import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Relationship
+import com.daniebeler.pixels.domain.model.Reply
 import com.daniebeler.pixels.domain.model.Tag
+import com.daniebeler.pixels.domain.model.toAccessToken
 import com.daniebeler.pixels.domain.model.toAccount
+import com.daniebeler.pixels.domain.model.toApplication
 import com.daniebeler.pixels.domain.model.toNotification
 import com.daniebeler.pixels.domain.model.toPost
+import com.daniebeler.pixels.domain.model.toRelationship
+import com.daniebeler.pixels.domain.model.toReply
 import com.daniebeler.pixels.domain.model.toTag
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -110,6 +113,7 @@ class CountryRepositoryImpl: CountryRepository {
             val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 println("success")
+                println(response.body())
                 response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
@@ -125,8 +129,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
             if (response.isSuccessful) {
-                val countries = response.body()?.data ?: emptyList()
-                countries.map { it.toModel() }
+                response.body()?.data?.map { it.toReply() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -152,7 +155,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.followAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()
+                response.body()?.toRelationship()
             } else {
                 null
             }
@@ -165,7 +168,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.unfollowAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()
+                response.body()?.toRelationship()
             } else {
                 null
             }
@@ -219,7 +222,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getRelationships(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toRelationship() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -262,8 +265,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.createApplication().awaitResponse()
             if (response.isSuccessful) {
-                val countries: Application? = response.body()
-                countries
+                response.body()?.toApplication()
             } else {
                 null
             }
@@ -276,8 +278,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
-                val countries: AccessToken? = response.body()
-                countries
+                response.body()?.toAccessToken()
             } else {
                 null
             }
