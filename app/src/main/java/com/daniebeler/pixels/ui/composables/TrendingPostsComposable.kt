@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.domain.model.Post
 
 
 @Composable

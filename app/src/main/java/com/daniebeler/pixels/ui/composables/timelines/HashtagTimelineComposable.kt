@@ -22,7 +22,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.ui.composables.PostComposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

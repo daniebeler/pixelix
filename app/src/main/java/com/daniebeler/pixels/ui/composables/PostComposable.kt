@@ -39,10 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.CountryRepositoryImpl
-import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Reply
+import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,8 +61,6 @@ fun PostComposable(post: Post, navController: NavController) {
     val timeAgo = TimeAgo()
     val timeAgoString = timeAgo.covertTimeToText(post.createdAt) ?: ""
 
-    val repository: CountryRepository = CountryRepositoryImpl()
-
 
     Column {
         Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier
@@ -82,7 +78,7 @@ fun PostComposable(post: Post, navController: NavController) {
                     .clip(CircleShape)
             )
             Column (modifier = Modifier.padding(start = 8.dp)) {
-                Text(text = post.account.displayName)
+                Text(text = post.account.displayname)
                 Text(text = timeAgoString + " • @" + post.account.acct, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
             }
         }
@@ -93,7 +89,7 @@ fun PostComposable(post: Post, navController: NavController) {
             AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(post.mediaAttachments[0].meta!!.original!!.aspect!!), contentScale = ContentScale.FillWidth)
+                    .aspectRatio(post.mediaAttachments[0].meta!!.original!!.aspect!!.toFloat()), contentScale = ContentScale.FillWidth)
         }
         else {
             AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
@@ -101,7 +97,7 @@ fun PostComposable(post: Post, navController: NavController) {
         }
 
         Column (Modifier.padding(8.dp)) {
-            Text(text = post.likes.toString() + " likes")
+            Text(text = post.favouritesCount.toString() + " likes")
 
             HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {
                 val newHastag = it

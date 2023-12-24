@@ -51,9 +51,9 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
-import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

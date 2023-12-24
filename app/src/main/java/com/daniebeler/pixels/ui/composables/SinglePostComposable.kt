@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.CountryRepositoryImpl
-import com.daniebeler.pixels.api.models.Post
+import com.daniebeler.pixels.domain.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

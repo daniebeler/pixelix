@@ -1,8 +1,9 @@
-package com.daniebeler.pixels.api.models
+package com.daniebeler.pixels.data.remote.dto
+
 
 import com.google.gson.annotations.SerializedName
 
-data class Hashtag(
+data class TagDto(
     @SerializedName("name")
     val name: String,
     @SerializedName("url")

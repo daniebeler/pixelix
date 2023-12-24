@@ -2,18 +2,18 @@ package com.daniebeler.pixels.api
 
 import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Application
-import com.daniebeler.pixels.api.models.Hashtag
-import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Notification
+import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Tag
 
 interface CountryRepository {
     fun setBaseUrl(baseUrl: String)
     fun setAccessToken(token: String)
     suspend fun getTrendingPosts(range: String): List<Post>
-    suspend fun getTrendingHashtags(): List<Hashtag>
+    suspend fun getTrendingHashtags(): List<Tag>
 
     suspend fun getHashtagTimeline(hashtag: String): List<Post>
 

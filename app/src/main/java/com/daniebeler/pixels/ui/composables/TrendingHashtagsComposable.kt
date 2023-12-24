@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.api.models.Hashtag
+import com.daniebeler.pixels.domain.model.Tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavContr
 }
 
 @Composable
-fun CustomHashtag(hashtag: Hashtag, navController: NavController) {
+fun CustomHashtag(hashtag: Tag, navController: NavController) {
    Text(text = hashtag.name, Modifier.clickable {
        val newHastag = hashtag.name.drop(1)
        navController.navigate("hashtag_timeline_screen/$newHastag") {

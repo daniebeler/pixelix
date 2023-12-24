@@ -2,16 +2,18 @@ package com.daniebeler.pixels.api
 
 import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Application
-import com.daniebeler.pixels.api.models.Hashtag
-import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
 import com.daniebeler.pixels.data.remote.PixelfedApi
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Notification
+import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.domain.model.Tag
 import com.daniebeler.pixels.domain.model.toAccount
 import com.daniebeler.pixels.domain.model.toNotification
+import com.daniebeler.pixels.domain.model.toPost
+import com.daniebeler.pixels.domain.model.toTag
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -55,7 +57,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -64,11 +66,11 @@ class CountryRepositoryImpl: CountryRepository {
         }
     }
 
-    override suspend fun getTrendingHashtags(): List<Hashtag> {
+    override suspend fun getTrendingHashtags(): List<Tag> {
         return try {
             val response = pixelfedApi.getTrendingHashtags(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toTag() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -81,7 +83,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -94,7 +96,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -107,11 +109,14 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                println("success")
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
         } catch (exception: Exception) {
+            println("exception")
+            println(exception)
             emptyList()
         }
     }
@@ -187,7 +192,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -201,7 +206,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
@@ -241,8 +246,7 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getPostById(postId).awaitResponse()
             if (response.isSuccessful) {
-                val countries: Post? = response.body()
-                countries
+                response.body()?.toPost()
             } else {
                 null
             }

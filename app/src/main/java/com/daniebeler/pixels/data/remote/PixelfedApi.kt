@@ -3,11 +3,11 @@ package com.daniebeler.pixels.data.remote
 import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.ApiReplyElement
 import com.daniebeler.pixels.api.models.Application
-import com.daniebeler.pixels.api.models.Hashtag
-import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.data.remote.dto.AccountDto
 import com.daniebeler.pixels.data.remote.dto.NotificationDto
+import com.daniebeler.pixels.data.remote.dto.PostDto
+import com.daniebeler.pixels.data.remote.dto.TagDto
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -19,19 +19,19 @@ import retrofit2.http.Query
 
 interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
-    fun getTrendingPosts(@Query("range") range: String): Call<List<Post>>
+    fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
     @GET("api/v1.1/discover/posts/hashtags")
-    fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<Hashtag>>
+    fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>
 
     @GET("api/v1/timelines/tag/{tag}")
-    fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<Post>>
+    fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public")
-    fun getLocalTimeline(@Header("Authorization") token: String): Call<List<Post>>
+    fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home")
-    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<Post>>
+    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElement>
@@ -43,13 +43,13 @@ interface PixelfedApi {
     fun getNotifications(@Header("Authorization") token: String): Call<List<NotificationDto>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<Post>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<PostDto>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<Post>>
+    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postid}")
-    fun getPostById(@Path("postid") postId: String): Call<Post>
+    fun getPostById(@Path("postid") postId: String): Call<PostDto>
 
     @GET("api/v1/accounts/relationships")
     fun getRelationships(@Query("id[]") userId: String, @Header("Authorization") token: String): Call<List<Relationship>>
