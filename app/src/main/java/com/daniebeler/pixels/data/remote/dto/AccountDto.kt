@@ -45,5 +45,5 @@ data class AccountDto(
     @SerializedName("username")
     val username: String,
     @SerializedName("website")
-    val website: Any
+    val website: String
 )

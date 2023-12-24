@@ -13,10 +13,10 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.api.models.Hashtag
-import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Notification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

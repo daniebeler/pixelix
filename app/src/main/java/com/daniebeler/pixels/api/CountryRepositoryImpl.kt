@@ -3,14 +3,15 @@ package com.daniebeler.pixels.api
 import com.daniebeler.pixels.api.models.AccessToken
 import com.daniebeler.pixels.api.models.Application
 import com.daniebeler.pixels.api.models.Hashtag
-import com.daniebeler.pixels.api.models.Notification
 import com.daniebeler.pixels.api.models.Post
 import com.daniebeler.pixels.api.models.Relationship
 import com.daniebeler.pixels.api.models.Reply
 import com.daniebeler.pixels.api.models.toModel
 import com.daniebeler.pixels.data.remote.PixelfedApi
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.toAccount
+import com.daniebeler.pixels.domain.model.toNotification
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -172,7 +173,8 @@ class CountryRepositoryImpl: CountryRepository {
         return try {
             val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body() ?: emptyList()
+                val res = response.body() ?: emptyList()
+                res.map { it.toNotification() }
             } else {
                 emptyList()
             }

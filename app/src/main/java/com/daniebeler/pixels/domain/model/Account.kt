@@ -11,7 +11,7 @@ data class Account(
     val followersCount: Int,
     val followingCount: Int,
     val postsCount: Int,
-    val website: Any,
+    val website: String?,
     val note: String,
     val url: String
 )
