@@ -138,7 +138,9 @@ fun PostComposable(post: Post, navController: NavController) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
-                    items(replies) { reply ->
+                    items(replies, key = {
+                        it.id
+                    }) { reply ->
                         HashtagsMentionsTextView(text = reply.content, onClick = {
                             println("clicked")
                             println(it)

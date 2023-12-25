@@ -71,7 +71,9 @@ fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavContro
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(posts) { item ->
+            items(posts, key = {
+                it.id
+            }) { item ->
                 PostComposable(post = item, navController)
             }
         }

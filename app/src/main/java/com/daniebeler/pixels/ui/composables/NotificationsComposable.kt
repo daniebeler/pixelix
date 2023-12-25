@@ -58,7 +58,9 @@ fun NotificationsComposable(viewModel: MainViewModel, navController: NavControll
     ) { paddingValues ->
         LazyColumn(Modifier.padding(paddingValues),
             content = {
-            items(notifications) {
+            items(notifications, key = {
+                it.id
+            }) {
                 CustomNotificaiton(notification = it, navController = navController)
             }
         })

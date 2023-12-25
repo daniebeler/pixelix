@@ -31,7 +31,9 @@ fun HomeTimelineComposable(viewModel: MainViewModel, navController: NavControlle
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        items(items) { item ->
+        items(items, key = {
+            it.id
+        }) { item ->
             PostComposable(post = item, navController)
         }
     }

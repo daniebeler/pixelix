@@ -215,7 +215,9 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                             }
                         }
 
-                        items(posts) { photo ->
+                        items(posts, key = {
+                            it.id
+                        }) { photo ->
                             CustomPost(post = photo, navController = navController)
                         }
 

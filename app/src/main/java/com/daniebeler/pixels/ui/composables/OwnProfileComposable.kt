@@ -94,7 +94,9 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
                             }
                         }
 
-                        items(posts) { photo ->
+                        items(posts, key = {
+                            it.id
+                        }) { photo ->
                             CustomPost(post = photo, navController = navController)
                         }
 

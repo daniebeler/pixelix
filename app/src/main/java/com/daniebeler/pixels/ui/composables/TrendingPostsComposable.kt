@@ -41,7 +41,9 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending today")
             }
-            items(dailyTrendingPosts) { photo ->
+            items(dailyTrendingPosts, key = {
+                it.id
+            }) { photo ->
                 CustomPost(post = photo, navController = navController)
             }
 
@@ -50,7 +52,9 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending this month")
             }
-            items(monthlyTrendingPosts) { photo ->
+            items(monthlyTrendingPosts, key = {
+                it.id
+            }) { photo ->
                 CustomPost(post = photo, navController = navController)
             }
 
@@ -59,7 +63,9 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending this year")
             }
-            items(yearlyTrendingPosts) { photo ->
+            items(yearlyTrendingPosts, key = {
+                it.id
+            }) { photo ->
                 CustomPost(post = photo, navController = navController)
             }
         }

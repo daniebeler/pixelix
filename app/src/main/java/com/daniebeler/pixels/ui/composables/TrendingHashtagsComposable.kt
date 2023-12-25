@@ -31,7 +31,9 @@ fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavContr
     }
 
     LazyColumn(content = {
-        items(trendingHashtags) {
+        items(trendingHashtags, key = {
+            it.name
+        }) {
             CustomHashtag(hashtag = it, navController = navController)
         }
     })

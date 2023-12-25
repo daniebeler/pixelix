@@ -30,7 +30,9 @@ fun LocalTimelineComposable(viewModel: MainViewModel, navController: NavControll
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        items(items) { item ->
+        items(items, key = {
+            it.id
+        }) { item ->
             PostComposable(post = item, navController)
         }
     }
