@@ -7,5 +7,5 @@ data class MetaDto(
     @SerializedName("focus")
     val focus: FocusDto,
     @SerializedName("original")
-    val original: OriginalDto
+    val original: OriginalDto?
 )

@@ -14,6 +14,6 @@ fun MediaAttachmentDto.toMediaAttachment(): MediaAttachment {
         id = id,
         url = url,
         previewUrl = previewUrl,
-        meta = meta.toMeta()
+        meta = meta?.toMeta()
     )
 }

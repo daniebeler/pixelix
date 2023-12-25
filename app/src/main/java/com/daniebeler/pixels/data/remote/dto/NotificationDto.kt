@@ -13,5 +13,7 @@ data class NotificationDto(
     @SerializedName("relationship")
     val relationship: RelationshipDto,
     @SerializedName("type")
-    val type: String
+    val type: String,
+    @SerializedName("status")
+    val post: PostDto?
 )

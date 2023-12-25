@@ -19,7 +19,7 @@ data class MediaAttachmentDto(
     @SerializedName("license")
     val license: LicenseDto,
     @SerializedName("meta")
-    val meta: MetaDto,
+    val meta: MetaDto?,
     @SerializedName("mime")
     val mime: String,
     @SerializedName("optimized_url")

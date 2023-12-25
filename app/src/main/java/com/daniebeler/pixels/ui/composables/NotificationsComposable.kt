@@ -93,7 +93,7 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         if (notification.type == "follow") {
             Text(text = " followed you")
         }
-        /*else if (notification.type == "favourite") {
+        else if (notification.type == "favourite") {
             Text(text = " liked your post")
             Spacer(modifier = Modifier.width(10.dp))
             AsyncImage(
@@ -103,7 +103,7 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
                     .height(32.dp)
                     .aspectRatio(1f)
             )
-        }*/
+        }
 
     }
 
