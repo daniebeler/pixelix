@@ -153,14 +153,14 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
             uId?.let { id->
-                ProfileComposable(viewModel, navController, userId = id)
+                ProfileComposable(navController, userId = id)
             }
         }
 
         composable(Destinations.Hashtag.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("hashtag")
             uId?.let { id->
-                HashtagTimelineComposable(viewModel, navController, id)
+                HashtagTimelineComposable(navController, id)
             }
         }
 

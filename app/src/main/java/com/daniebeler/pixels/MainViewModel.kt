@@ -8,10 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.api.CountryRepository
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Application
-import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
-import com.daniebeler.pixels.domain.model.Relationship
-import com.daniebeler.pixels.domain.model.Tag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -28,30 +25,6 @@ class MainViewModel @Inject constructor(
     var ownPosts: List<Post> by mutableStateOf(emptyList())
 
     var _authApplication: Application? = null
-
-    suspend fun returnHashtagTimeline(hashtag: String): List<Post> {
-        return repository.getHashtagTimeline(hashtag)
-    }
-
-    suspend fun returnRelationships(userId: String): List<Relationship> {
-        return repository.getRelationships(userId)
-    }
-
-    suspend fun returnMutalFollowers(userId: String): List<Account> {
-        return repository.getMutalFollowers(userId)
-    }
-
-    suspend fun returnAccount(userId: String): Account? {
-        return repository.getAccount(userId)
-    }
-
-    suspend fun followAccount(userId: String): Relationship? {
-        return repository.followAccount(userId)
-    }
-
-    suspend fun unfollowAccount(userId: String): Relationship? {
-        return repository.unfollowAccount(userId)
-    }
 
     fun getOwnAccount() {
         viewModelScope.launch {

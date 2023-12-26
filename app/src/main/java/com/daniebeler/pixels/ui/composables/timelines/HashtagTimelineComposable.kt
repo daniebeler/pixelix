@@ -14,30 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.ui.composables.PostComposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavController, hashtag: String) {
+fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel()) {
 
-    var posts: List<Post> by mutableStateOf(emptyList())
-
-    CoroutineScope(Dispatchers.Default).launch {
-        posts = viewModel.returnHashtagTimeline(hashtag)
-    }
-
+    viewModel.loadPosts(hashtag)
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -67,7 +55,7 @@ fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavContro
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(posts, key = {
+            items(viewModel.posts, key = {
                 it.id
             }) { item ->
                 PostComposable(post = item, navController)

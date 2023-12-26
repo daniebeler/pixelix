@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
@@ -58,7 +59,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComposable(viewModel: MainViewModel, navController: NavController, userId: String) {
+fun ProfileComposable(navController: NavController, userId: String, viewModel: ProfileViewModel = hiltViewModel()) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -66,65 +67,14 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
     val context = LocalContext.current
 
 
-
-    var account: Account? by remember {
-        mutableStateOf(null)
-    }
-
-    var relationship: Relationship? by remember {
-        mutableStateOf(null)
-    }
-
-    var mutalFollowers: List<Account> by remember {
-        mutableStateOf(emptyList())
-    }
-
-
-    var posts: List<Post> by remember {
-        mutableStateOf(emptyList())
-    }
-
-    //val repository: CountryRepository = CountryRepositoryImpl()
-
-    CoroutineScope(Dispatchers.Default).launch {
-        CoroutineScope(Dispatchers.Default).launch {
-            account = viewModel.returnAccount(userId)
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            var res = viewModel.returnRelationships(userId)
-            if (res != null) {
-                if (res.isNotEmpty()) {
-                    relationship = res[0]
-                }
-            }
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            mutalFollowers = viewModel.returnMutalFollowers(userId)
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            //posts = repository.getPostsByAccountId(userId)
-        }
-    }
-
-    fun loadMorePosts() {
-        if (posts.isNotEmpty()) {
-            var maxId = posts.last().id
-
-            CoroutineScope(Dispatchers.Default).launch {
-                //posts = posts + repository.getPostsByAccountId(userId, maxId)
-            }
-        }
-    }
+    viewModel.loadData(userId)
 
 
     Scaffold (
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = account?.username ?: "")
+                    Text(text = viewModel.account?.username ?: "")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -150,7 +100,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
 
         }
     ) {paddingValues ->
-        if (account != null) {
+        if (viewModel.account != null) {
             Column (Modifier.padding(paddingValues)) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
@@ -158,11 +108,11 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
 
-                        if (account != null) {
+                        if (viewModel.account != null) {
                             item (
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(account!!)
+                                ProfileTopSection(viewModel.account!!)
                             }
                         }
 
@@ -171,36 +121,24 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                             span = { GridItemSpan(3) }
                         ) {
                             Column (Modifier.padding(12.dp)) {
-                                if (relationship != null) {
-                                    if (relationship!!.following) {
+                                if (viewModel.relationship != null) {
+                                    if (viewModel.relationship!!.following) {
                                         Button(onClick = {
-                                            CoroutineScope(Dispatchers.Default).launch {
-
-                                                var res = viewModel.unfollowAccount(userId)
-                                                if (res != null) {
-                                                    relationship = res
-                                                }
-                                            }
+                                            viewModel.unfollowAccount(userId)
                                         }) {
                                             Text(text = "unfollow")
                                         }
                                     }
                                     else {
                                         Button(onClick = {
-                                            CoroutineScope(Dispatchers.Default).launch {
-
-                                                var res = viewModel.followAccount(userId)
-                                                if (res != null) {
-                                                    relationship = res
-                                                }
-                                            }
+                                            viewModel.followAccount(userId)
                                         }) {
                                             Text(text = "follow")
                                         }
                                     }
                                 }
 
-                                if (mutalFollowers.isNotEmpty()) {
+                                if (viewModel.mutalFollowers.isNotEmpty()) {
                                     Text(text = "MUTAL FOLLOWERS!!!", color = Color.Red)
                                 }
 
@@ -208,7 +146,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                             }
                         }
 
-                        items(posts, key = {
+                        items(viewModel.posts, key = {
                             it.id
                         }) { photo ->
                             CustomPost(post = photo, navController = navController)
@@ -216,7 +154,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
 
                         item {
                             Button(onClick = {
-                                loadMorePosts()
+                                viewModel.loadMorePosts(userId)
                             }) {
                                 Text(text = "Load More")
                             }
@@ -242,11 +180,11 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                 modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
             ) {
                 Text(text = "Open in browser", Modifier.clickable {
-                    openUrl(context, account!!.url)
+                    openUrl(context, viewModel.account!!.url)
                 })
 
                 Text(text = "Share this profile", Modifier.clickable {
-                    shareProfile(context, account!!.url)
+                    shareProfile(context, viewModel.account!!.url)
                 })
             }
         }
