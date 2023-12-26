@@ -143,7 +143,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             HomeComposable(viewModel = viewModel, navController)
         }
         composable(Destinations.TrendingScreen.route) {
-            TrendingComposable(viewModel = viewModel, navController)
+            TrendingComposable(navController)
         }
 
         composable(Destinations.NotificationsScreen.route) {

@@ -14,22 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.domain.model.Post
 
-
 @Composable
-fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavController) {
-    val dailyTrendingPosts = viewModel.dailyTrendingPosts
-    val monthlyTrendingPosts = viewModel.monthlyTrendingPosts
-    val yearlyTrendingPosts = viewModel.yearlyTrendingPosts
-
-    viewModel.getDailyTrendingPosts()
-    viewModel.getMonthlyTrendingPosts()
-    viewModel.getYearlyTrendingPosts()
-    viewModel.getTrendingHashtags()
+fun TrendingPostsComposable(navController: NavController, viewModel: TrendingPostsViewModel = hiltViewModel()) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -41,7 +32,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending today")
             }
-            items(dailyTrendingPosts, key = {
+            items(viewModel.dailyTrendingPosts, key = {
                 it.id
             }) { photo ->
                 CustomPost(post = photo, navController = navController)
@@ -52,7 +43,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending this month")
             }
-            items(monthlyTrendingPosts, key = {
+            items(viewModel.monthlyTrendingPosts, key = {
                 it.id
             }) { photo ->
                 CustomPost(post = photo, navController = navController)
@@ -63,7 +54,7 @@ fun TrendingPostsComposable(viewModel: MainViewModel, navController: NavControll
             ) {
                 Heading(text = "Trending this year")
             }
-            items(yearlyTrendingPosts, key = {
+            items(viewModel.yearlyTrendingPosts, key = {
                 it.id
             }) { photo ->
                 CustomPost(post = photo, navController = navController)
@@ -78,12 +69,14 @@ fun CustomPost(post: Post, navController: NavController) {
         model = post.mediaAttachments[0].previewUrl,
         contentScale = ContentScale.Crop,
         contentDescription = null,
-        modifier = Modifier.aspectRatio(1f).clickable(onClick = {
-            navController.navigate("single_post_screen/" + post.id) {
-                launchSingleTop = true
-                restoreState = true
-            }
-        })
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clickable(onClick = {
+                navController.navigate("single_post_screen/" + post.id) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            })
     )
 }
 

@@ -79,12 +79,12 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                 when (tabIndex) {
                     0 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            HomeTimelineComposable(viewModel = viewModel, navController = navController)
+                            HomeTimelineComposable(navController)
                         }
 
                     1 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            LocalTimelineComposable(viewModel = viewModel, navController)
+                            LocalTimelineComposable(navController)
                         }
 
                 }

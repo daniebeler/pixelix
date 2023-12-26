@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun TrendingComposable(viewModel: MainViewModel, navController: NavController) {
+fun TrendingComposable(navController: NavController) {
 
     val pagerState = rememberPagerState { 2 }
 
@@ -81,12 +81,12 @@ fun TrendingComposable(viewModel: MainViewModel, navController: NavController) {
                 when (tabIndex) {
                     0 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingPostsComposable(viewModel = viewModel, navController = navController)
+                            TrendingPostsComposable(navController = navController)
                         }
 
                     1 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingHashtagsComposable(viewModel = viewModel, navController = navController)
+                            TrendingHashtagsComposable(navController = navController)
                         }
 
                 }

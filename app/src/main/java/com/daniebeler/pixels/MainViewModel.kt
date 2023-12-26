@@ -24,46 +24,10 @@ class MainViewModel @Inject constructor(
     application: android.app.Application
 ): AndroidViewModel(application) {
 
-    var dailyTrendingPosts: List<Post> by mutableStateOf(emptyList())
-    var monthlyTrendingPosts: List<Post> by mutableStateOf(emptyList())
-    var yearlyTrendingPosts: List<Post> by mutableStateOf(emptyList())
-    var trendingHashtags: List<Tag> by mutableStateOf(emptyList())
-
-
-    var localTimeline: List<Post> by mutableStateOf(emptyList())
-
     var ownAccount: Account? by mutableStateOf(null)
     var ownPosts: List<Post> by mutableStateOf(emptyList())
 
-    var homeTimeline: List<Post> by mutableStateOf(emptyList())
-
-    var verified: Account? by mutableStateOf(null)
-
     var _authApplication: Application? = null
-
-    fun getDailyTrendingPosts() {
-        viewModelScope.launch {
-            dailyTrendingPosts = repository.getTrendingPosts("daily")
-        }
-    }
-
-    fun getMonthlyTrendingPosts() {
-        viewModelScope.launch {
-            monthlyTrendingPosts = repository.getTrendingPosts("monthly")
-        }
-    }
-
-    fun getYearlyTrendingPosts() {
-        viewModelScope.launch {
-            yearlyTrendingPosts = repository.getTrendingPosts("yearly")
-        }
-    }
-
-    fun getTrendingHashtags() {
-        viewModelScope.launch {
-            trendingHashtags = repository.getTrendingHashtags()
-        }
-    }
 
     suspend fun returnHashtagTimeline(hashtag: String): List<Post> {
         return repository.getHashtagTimeline(hashtag)
@@ -89,18 +53,6 @@ class MainViewModel @Inject constructor(
         return repository.unfollowAccount(userId)
     }
 
-    fun getLocalTimeline() {
-        viewModelScope.launch {
-            localTimeline = repository.getLocalTimeline()
-        }
-    }
-
-    fun getHomeTimeline() {
-        viewModelScope.launch {
-            homeTimeline = repository.getHomeTimeline()
-        }
-    }
-
     fun getOwnAccount() {
         viewModelScope.launch {
             ownAccount = repository.getAccount("497910174831013185")
@@ -116,12 +68,6 @@ class MainViewModel @Inject constructor(
     fun getMoreOwnPosts(maxPostId: String) {
         viewModelScope.launch {
             ownPosts += repository.getPostsByAccountId("497910174831013185", maxPostId)
-        }
-    }
-
-    fun checkToken() {
-        viewModelScope.launch {
-            //verified = repository.verifyToken(accessToken.value)
         }
     }
 

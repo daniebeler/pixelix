@@ -8,26 +8,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.domain.model.Tag
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
-fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavController) {
-
-    val trendingHashtags = viewModel.trendingHashtags
-
-    CoroutineScope(Dispatchers.Default).launch {
-        if (trendingHashtags.isEmpty()) {
-            viewModel.getTrendingHashtags()
-        }
-    }
+fun TrendingHashtagsComposable(navController: NavController, viewModel: TrendingHashtagsViewModel = hiltViewModel()) {
 
     LazyColumn(content = {
-        items(trendingHashtags, key = {
+        items(viewModel.trendingHashtags, key = {
             it.name
         }) {
             CustomHashtag(hashtag = it, navController = navController)
@@ -37,13 +26,15 @@ fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavContr
 
 @Composable
 fun CustomHashtag(hashtag: Tag, navController: NavController) {
-   Text(text = hashtag.name, Modifier.clickable {
-       val newHastag = hashtag.name.drop(1)
-       navController.navigate("hashtag_timeline_screen/$newHastag") {
-           launchSingleTop = true
-           restoreState = true
-       }
-   }
-       .padding(start = 6.dp, top = 6.dp)
+   Text(text = hashtag.name,
+       Modifier
+           .clickable {
+               val newHastag = hashtag.name.drop(1)
+               navController.navigate("hashtag_timeline_screen/$newHastag") {
+                   launchSingleTop = true
+                   restoreState = true
+               }
+           }
+           .padding(start = 6.dp, top = 6.dp)
    )
 }
