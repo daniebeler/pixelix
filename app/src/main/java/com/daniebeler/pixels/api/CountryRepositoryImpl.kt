@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.daniebeler.pixels.common.Constants
 import com.daniebeler.pixels.data.remote.PixelfedApi
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
@@ -73,32 +74,32 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
     override suspend fun storeClientId(clientId: String) {
         settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("client_id")] = clientId
+            preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] = clientId
         }
     }
 
     override fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("client_id")] ?: ""
+        preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
     }
 
     override suspend fun storeClientSecret(clientSecret: String) {
         settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("client_secret")] = clientSecret
+            preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] = clientSecret
         }
     }
 
     override fun getClientSecretFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("client_secret")] ?: ""
+        preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
     }
 
     override suspend fun storeAccessToken(accessToken: String) {
         settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("access_token")] = accessToken
+            preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
         }
     }
 
     override fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("access_token")] ?: ""
+        preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
     }
 
     override fun setBaseUrl(baseUrl: String) {
