@@ -87,30 +87,25 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
     //val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    account = viewModel.returnAccount(userId)
-                }
+        CoroutineScope(Dispatchers.Default).launch {
+            account = viewModel.returnAccount(userId)
+        }
 
-                CoroutineScope(Dispatchers.Default).launch {
-                    var res = viewModel.returnRelationships(userId)
-                    if (res != null) {
-                        if (res.isNotEmpty()) {
-                            relationship = res[0]
-                        }
-                    }
+        CoroutineScope(Dispatchers.Default).launch {
+            var res = viewModel.returnRelationships(userId)
+            if (res != null) {
+                if (res.isNotEmpty()) {
+                    relationship = res[0]
                 }
-
-                CoroutineScope(Dispatchers.Default).launch {
-                    mutalFollowers = viewModel.returnMutalFollowers(userId)
-                }
-
-                CoroutineScope(Dispatchers.Default).launch {
-                    //posts = repository.getPostsByAccountId(userId)
-                }
-
             }
+        }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            mutalFollowers = viewModel.returnMutalFollowers(userId)
+        }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            //posts = repository.getPostsByAccountId(userId)
         }
     }
 

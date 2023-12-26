@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -61,16 +62,17 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            var fief = context.dataStore.data.map { preferences ->
-                preferences[stringPreferencesKey("client_id")] ?: ""
-            }.first()
-
-            println("meeee")
-            println(fief)
+        runBlocking {
+            accessToken = "Bearer " + getAccessTokenFromStorage().first()
+            println("tokn")
+            println(accessToken)
         }
+    }
 
-
+    override fun doesAccessTokenExist(): Boolean {
+        println("accesstoken")
+        println(accessToken)
+        return accessToken.isNotEmpty()
     }
 
     override suspend fun storeClientId(clientId: String) {
@@ -108,7 +110,7 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
     }
 
     override fun setAccessToken(token: String) {
-        this.accessToken = "Bearer $token"
+        this.accessToken = token
     }
 
     override suspend fun getTrendingPosts(range: String): List<Post> {
@@ -165,6 +167,8 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
     override suspend fun getHomeTimeline(): List<Post> {
         return try {
+            println("netok")
+            println(accessToken)
             val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 println("success")

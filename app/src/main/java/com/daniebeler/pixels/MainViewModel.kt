@@ -14,11 +14,7 @@ import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.domain.model.Tag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,16 +40,6 @@ class MainViewModel @Inject constructor(
     var homeTimeline: List<Post> by mutableStateOf(emptyList())
 
     var verified: Account? by mutableStateOf(null)
-
-    private var _gotDataFromDataStore = MutableStateFlow(false)
-    val gotDataFromDataStore: StateFlow<Boolean> get() = _gotDataFromDataStore.asStateFlow()
-
-    private var _accessToken = MutableStateFlow("")
-    val accessToken: StateFlow<String> get() = _accessToken.asStateFlow()
-
-    init {
-        collectTokenFlow()
-    }
 
     var _authApplication: Application? = null
 
@@ -143,7 +129,7 @@ class MainViewModel @Inject constructor(
 
     fun checkToken() {
         viewModelScope.launch {
-            verified = repository.verifyToken(accessToken.value)
+            //verified = repository.verifyToken(accessToken.value)
         }
     }
 
@@ -159,6 +145,8 @@ class MainViewModel @Inject constructor(
 
     suspend fun obtainToken(code: String): Boolean {
         val clientId: String = getClientIdFromStorage().first()
+        println("obtainToken: clientId")
+        println(clientId)
         val clientSecret: String = getClientSecretFromStorage().first()
 
         val token = repository.obtainToken(clientId, clientSecret, code)
@@ -171,13 +159,17 @@ class MainViewModel @Inject constructor(
         return false
     }
 
+    fun doesTokenExist(): Boolean {
+        return repository.doesAccessTokenExist()
+    }
+
 
     suspend fun storeClientId(clientId: String) {
         repository.storeClientId(clientId)
     }
 
     fun getClientIdFromStorage(): Flow<String> {
-        return getClientIdFromStorage()
+        return repository.getClientIdFromStorage()
     }
 
     suspend fun storeClientSecret(clientSecret: String) {
@@ -185,34 +177,15 @@ class MainViewModel @Inject constructor(
     }
 
     fun getClientSecretFromStorage(): Flow<String> {
-        return getClientSecretFromStorage()
+        return repository.getClientSecretFromStorage()
     }
 
     suspend fun storeAccessToken(accessToken: String) {
         repository.storeAccessToken(accessToken)
     }
 
-    fun getAccessTokenFromStorage(): Flow<String> {
-        return repository.getAccessTokenFromStorage()
-    }
-
-    private fun collectTokenFlow() {
-        viewModelScope.launch {
-            getAccessTokenFromStorage().collect {token ->
-                repository.setAccessToken(token)
-                _accessToken.update {
-                    token
-                }
-                repository.setBaseUrl("https://pixelfed.social/")
-                _gotDataFromDataStore.update {
-                    (_accessToken.value.isNotEmpty())
-                }
-            }
-        }
-    }
-
     suspend fun logout() {
-        storeAccessToken("")
+        repository.setAccessToken("")
         storeClientId("")
         storeClientSecret("")
 

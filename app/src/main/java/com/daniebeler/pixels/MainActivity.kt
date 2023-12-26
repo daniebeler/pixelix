@@ -54,42 +54,33 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            val accessToken: String = mainViewModel.getAccessTokenFromStorage().first()
+        if (!mainViewModel.doesTokenExist()) {
+            gotoLoginActivity(this@MainActivity)
+        } else {
+            setContent {
+                PixelsTheme {
+                    val navController: NavHostController = rememberNavController()
 
-            if (accessToken.isEmpty()) {
-                gotoLoginActivity(this@MainActivity)
-            }
-        }
+                    var buttonsVisible = remember { mutableStateOf(true) }
 
-        //mainViewModel.getDailyTrendingPosts()
-        //mainViewModel.getMonthlyTrendingPosts()
-        //mainViewModel.getYearlyTrendingPosts()
-        //mainViewModel.getTrendingHashtags()
-
-
-
-        setContent {
-            PixelsTheme {
-                val navController: NavHostController = rememberNavController()
-
-                var buttonsVisible = remember { mutableStateOf(true) }
-
-                Scaffold(
-                    bottomBar = {
-                        BottomBar(
-                            navController = navController,
-                            state = buttonsVisible
-                        )
-                    }) { paddingValues ->
-                    Box(
-                        modifier = Modifier.padding(paddingValues)
-                    ) {
-                        NavigationGraph(navController = navController, viewModel = mainViewModel)
+                    Scaffold(
+                        bottomBar = {
+                            BottomBar(
+                                navController = navController,
+                                state = buttonsVisible
+                            )
+                        }) { paddingValues ->
+                        Box(
+                            modifier = Modifier.padding(paddingValues)
+                        ) {
+                            NavigationGraph(navController = navController, viewModel = mainViewModel)
+                        }
                     }
                 }
             }
         }
+
+
     }
 }
 

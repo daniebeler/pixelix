@@ -33,15 +33,8 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
     val posts = viewModel.ownPosts
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                viewModel.getOwnAccount()
-
-                if (posts.isEmpty()) {
-                    viewModel.getOwnPosts()
-                }
-
-            }
+        if (posts.isEmpty()) {
+            viewModel.getOwnPosts()
         }
     }
 

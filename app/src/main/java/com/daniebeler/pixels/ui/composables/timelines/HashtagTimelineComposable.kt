@@ -35,11 +35,7 @@ fun HashtagTimelineComposable(viewModel: MainViewModel, navController: NavContro
     var posts: List<Post> by mutableStateOf(emptyList())
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                posts = viewModel.returnHashtagTimeline(hashtag)
-            }
-        }
+        posts = viewModel.returnHashtagTimeline(hashtag)
     }
 
 

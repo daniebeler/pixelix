@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
 
+    fun doesAccessTokenExist(): Boolean
+
     suspend fun storeClientId(clientId: String)
     fun getClientIdFromStorage(): Flow<String>
     suspend fun storeClientSecret(clientSecret: String)

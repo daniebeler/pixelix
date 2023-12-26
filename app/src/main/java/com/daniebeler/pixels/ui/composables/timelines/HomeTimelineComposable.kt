@@ -18,13 +18,7 @@ fun HomeTimelineComposable(viewModel: MainViewModel, navController: NavControlle
     val items = viewModel.homeTimeline
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                if (items.isEmpty()) {
-                    viewModel.getHomeTimeline()
-                }
-            }
-        }
+        viewModel.getHomeTimeline()
     }
 
 

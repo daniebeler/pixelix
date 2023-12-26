@@ -21,12 +21,8 @@ fun TrendingHashtagsComposable(viewModel: MainViewModel, navController: NavContr
     val trendingHashtags = viewModel.trendingHashtags
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                if (trendingHashtags.isEmpty()) {
-                    viewModel.getTrendingHashtags()
-                }
-            }
+        if (trendingHashtags.isEmpty()) {
+            viewModel.getTrendingHashtags()
         }
     }
 

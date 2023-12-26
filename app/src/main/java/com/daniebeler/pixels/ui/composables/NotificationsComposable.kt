@@ -37,12 +37,8 @@ fun NotificationsComposable(viewModel: MainViewModel, navController: NavControll
     val notifications = viewModel.notifications
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                if (notifications.isEmpty()) {
-                    viewModel.getNotifications()
-                }
-            }
+        if (notifications.isEmpty()) {
+            viewModel.getNotifications()
         }
     }
 

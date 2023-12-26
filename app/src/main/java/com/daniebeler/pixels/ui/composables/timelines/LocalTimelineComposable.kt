@@ -18,13 +18,7 @@ fun LocalTimelineComposable(viewModel: MainViewModel, navController: NavControll
     val items = viewModel.localTimeline
 
     CoroutineScope(Dispatchers.Default).launch {
-        viewModel.gotDataFromDataStore.collect { state ->
-            if (state) {
-                if (items.isEmpty()) {
-                    viewModel.getLocalTimeline()
-                }
-            }
-        }
+        viewModel.getLocalTimeline()
     }
 
     LazyColumn(
