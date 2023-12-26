@@ -37,6 +37,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Post
@@ -49,18 +50,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostComposable(post: Post, navController: NavController) {
+fun PostComposable(post: Post, navController: NavController, viewModel: PostViewModel = hiltViewModel()) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    var replies by remember {
-        mutableStateOf(emptyList<Reply>())
-    }
-
-    val timeAgo = TimeAgo()
-    val timeAgoString = timeAgo.covertTimeToText(post.createdAt) ?: ""
-
+    viewModel.convertTime(post.createdAt)
 
     Column {
         Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier
@@ -79,7 +74,7 @@ fun PostComposable(post: Post, navController: NavController) {
             )
             Column (modifier = Modifier.padding(start = 8.dp)) {
                 Text(text = post.account.displayname)
-                Text(text = timeAgoString + " • @" + post.account.acct, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = viewModel.timeAgoString + " • @" + post.account.acct, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
             }
         }
 
@@ -109,10 +104,7 @@ fun PostComposable(post: Post, navController: NavController) {
 
             if (post.replyCount > 0) {
                 TextButton(onClick = {
-
-                    CoroutineScope(Dispatchers.Default).launch {
-                        //replies = repository.getReplies(post.account.id, post.id)
-                    }
+                    viewModel.loadReplies(post.account.id, post.id)
                     showBottomSheet = true
                 }) {
                     Text(text = "View " + post.replyCount + " comments")
@@ -138,7 +130,7 @@ fun PostComposable(post: Post, navController: NavController) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
-                    items(replies, key = {
+                    items(viewModel.replies, key = {
                         it.id
                     }) { reply ->
                         HashtagsMentionsTextView(text = reply.content, onClick = {
