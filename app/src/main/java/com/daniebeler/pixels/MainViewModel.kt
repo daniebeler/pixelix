@@ -35,8 +35,6 @@ class MainViewModel @Inject constructor(
     var ownAccount: Account? by mutableStateOf(null)
     var ownPosts: List<Post> by mutableStateOf(emptyList())
 
-    var notifications: List<Notification> by mutableStateOf(emptyList())
-
     var homeTimeline: List<Post> by mutableStateOf(emptyList())
 
     var verified: Account? by mutableStateOf(null)
@@ -112,12 +110,6 @@ class MainViewModel @Inject constructor(
     fun getOwnPosts() {
         viewModelScope.launch {
             ownPosts = repository.getPostsByAccountId("497910174831013185")
-        }
-    }
-
-    fun getNotifications() {
-        viewModelScope.launch {
-            notifications = repository.getNotifications()
         }
     }
 

@@ -147,7 +147,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         }
 
         composable(Destinations.NotificationsScreen.route) {
-            NotificationsComposable(viewModel = viewModel, navController)
+            NotificationsComposable(navController)
         }
 
         composable(Destinations.Profile.route) { navBackStackEntry ->

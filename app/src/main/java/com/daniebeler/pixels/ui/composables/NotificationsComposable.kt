@@ -22,25 +22,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.domain.model.Notification
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationsComposable(viewModel: MainViewModel, navController: NavController) {
+fun NotificationsComposable(navController: NavController, viewModel: NotificationsViewModel = hiltViewModel()) {
 
-    val notifications = viewModel.notifications
 
-    CoroutineScope(Dispatchers.Default).launch {
-        if (notifications.isEmpty()) {
-            viewModel.getNotifications()
-        }
-    }
 
     Scaffold (
         topBar = {
@@ -54,7 +45,7 @@ fun NotificationsComposable(viewModel: MainViewModel, navController: NavControll
     ) { paddingValues ->
         LazyColumn(Modifier.padding(paddingValues),
             content = {
-            items(notifications, key = {
+            items(viewModel.notifications, key = {
                 it.id
             }) {
                 CustomNotificaiton(notification = it, navController = navController)
@@ -67,7 +58,10 @@ fun NotificationsComposable(viewModel: MainViewModel, navController: NavControll
 
 @Composable
 fun CustomNotificaiton(notification: Notification, navController: NavController) {
-    Row (Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row (
+        Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
 
         Row (verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
