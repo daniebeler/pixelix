@@ -49,8 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.CountryRepositoryImpl
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.domain.model.Relationship
@@ -86,7 +84,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
         mutableStateOf(emptyList())
     }
 
-    val repository: CountryRepository = CountryRepositoryImpl()
+    //val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
         viewModel.gotDataFromDataStore.collect { state ->
@@ -109,7 +107,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
                 }
 
                 CoroutineScope(Dispatchers.Default).launch {
-                    posts = repository.getPostsByAccountId(userId)
+                    //posts = repository.getPostsByAccountId(userId)
                 }
 
             }
@@ -121,7 +119,7 @@ fun ProfileComposable(viewModel: MainViewModel, navController: NavController, us
             var maxId = posts.last().id
 
             CoroutineScope(Dispatchers.Default).launch {
-                posts = posts + repository.getPostsByAccountId(userId, maxId)
+                //posts = posts + repository.getPostsByAccountId(userId, maxId)
             }
         }
     }

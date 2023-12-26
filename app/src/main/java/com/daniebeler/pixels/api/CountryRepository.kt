@@ -8,8 +8,16 @@ import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.domain.model.Reply
 import com.daniebeler.pixels.domain.model.Tag
+import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
+
+    suspend fun storeClientId(clientId: String)
+    fun getClientIdFromStorage(): Flow<String>
+    suspend fun storeClientSecret(clientSecret: String)
+    fun getClientSecretFromStorage(): Flow<String>
+    suspend fun storeAccessToken(accessToken: String)
+    fun getAccessTokenFromStorage(): Flow<String>
     fun setBaseUrl(baseUrl: String)
     fun setAccessToken(token: String)
     suspend fun getTrendingPosts(range: String): List<Post>

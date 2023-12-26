@@ -1,13 +1,8 @@
 package com.daniebeler.pixels
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.api.CountryRepository
@@ -23,22 +18,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private val Context.dataStore by preferencesDataStore("settings")
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: CountryRepository,
     application: android.app.Application
 ): AndroidViewModel(application) {
-
-    @SuppressLint("StaticFieldLeak")
-    private val context = getApplication<android.app.Application>().applicationContext
-
-    private val settingsDataStore = context.dataStore
 
     var dailyTrendingPosts: List<Post> by mutableStateOf(emptyList())
     var monthlyTrendingPosts: List<Post> by mutableStateOf(emptyList())
@@ -185,33 +173,27 @@ class MainViewModel @Inject constructor(
 
 
     suspend fun storeClientId(clientId: String) {
-        settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("client_id")] = clientId
-        }
+        repository.storeClientId(clientId)
     }
 
-    fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("client_id")] ?: ""
+    fun getClientIdFromStorage(): Flow<String> {
+        return getClientIdFromStorage()
     }
 
     suspend fun storeClientSecret(clientSecret: String) {
-        settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("client_secret")] = clientSecret
-        }
+        repository.storeClientSecret(clientSecret)
     }
 
-    fun getClientSecretFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("client_secret")] ?: ""
+    fun getClientSecretFromStorage(): Flow<String> {
+        return getClientSecretFromStorage()
     }
 
     suspend fun storeAccessToken(accessToken: String) {
-        settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey("access_token")] = accessToken
-        }
+        repository.storeAccessToken(accessToken)
     }
 
-    fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey("access_token")] ?: ""
+    fun getAccessTokenFromStorage(): Flow<String> {
+        return repository.getAccessTokenFromStorage()
     }
 
     private fun collectTokenFlow() {

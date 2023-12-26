@@ -17,8 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.CountryRepositoryImpl
 import com.daniebeler.pixels.domain.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,10 +30,10 @@ fun SinglePostComposable(navController: NavController, postId: String) {
         mutableStateOf(null)
     }
 
-    val repository: CountryRepository = CountryRepositoryImpl()
+    //val repository: CountryRepository = CountryRepositoryImpl()
 
     CoroutineScope(Dispatchers.Default).launch {
-        post = repository.getPostById(postId)
+        //post = repository.getPostById(postId)
     }
 
     Scaffold (

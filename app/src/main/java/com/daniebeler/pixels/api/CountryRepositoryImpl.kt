@@ -1,5 +1,9 @@
 package com.daniebeler.pixels.api
 
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixels.data.remote.PixelfedApi
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
@@ -17,13 +21,23 @@ import com.daniebeler.pixels.domain.model.toPost
 import com.daniebeler.pixels.domain.model.toRelationship
 import com.daniebeler.pixels.domain.model.toReply
 import com.daniebeler.pixels.domain.model.toTag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
-class CountryRepositoryImpl: CountryRepository {
+private val Context.dataStore by preferencesDataStore("settings")
+
+class CountryRepositoryImpl(context: Context): CountryRepository {
+
+    private val settingsDataStore = context.dataStore
 
     private var BASE_URL = "https://pixelfed.social/"
     private var accessToken: String = ""
@@ -46,6 +60,47 @@ class CountryRepositoryImpl: CountryRepository {
             .build()
 
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            var fief = context.dataStore.data.map { preferences ->
+                preferences[stringPreferencesKey("client_id")] ?: ""
+            }.first()
+
+            println("meeee")
+            println(fief)
+        }
+
+
+    }
+
+    override suspend fun storeClientId(clientId: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("client_id")] = clientId
+        }
+    }
+
+    override fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey("client_id")] ?: ""
+    }
+
+    override suspend fun storeClientSecret(clientSecret: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("client_secret")] = clientSecret
+        }
+    }
+
+    override fun getClientSecretFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey("client_secret")] ?: ""
+    }
+
+    override suspend fun storeAccessToken(accessToken: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("access_token")] = accessToken
+        }
+    }
+
+    override fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey("access_token")] ?: ""
     }
 
     override fun setBaseUrl(baseUrl: String) {
