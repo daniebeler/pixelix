@@ -1,7 +1,7 @@
 package com.daniebeler.pixels
 
 import androidx.lifecycle.AndroidViewModel
-import com.daniebeler.pixels.api.CountryRepository
+import com.daniebeler.pixels.domain.repository.CountryRepository
 import com.daniebeler.pixels.domain.model.Application
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

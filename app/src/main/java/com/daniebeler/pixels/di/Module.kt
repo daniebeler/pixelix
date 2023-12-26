@@ -1,8 +1,8 @@
 package com.daniebeler.pixels.di
 
 import android.content.Context
-import com.daniebeler.pixels.api.CountryRepository
-import com.daniebeler.pixels.api.CountryRepositoryImpl
+import com.daniebeler.pixels.domain.repository.CountryRepository
+import com.daniebeler.pixels.data.repository.CountryRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

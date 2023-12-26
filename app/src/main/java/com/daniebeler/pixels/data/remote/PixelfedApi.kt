@@ -49,7 +49,7 @@ interface PixelfedApi {
     fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postid}")
-    fun getPostById(@Path("postid") postId: String): Call<PostDto>
+    fun getPostById(@Path("postid") postId: String, @Header("Authorization") token: String): Call<PostDto>
 
     @GET("api/v1/accounts/relationships")
     fun getRelationships(@Query("id[]") userId: String, @Header("Authorization") token: String): Call<List<RelationshipDto>>

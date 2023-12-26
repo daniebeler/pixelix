@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.api
+package com.daniebeler.pixels.domain.repository
 
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account

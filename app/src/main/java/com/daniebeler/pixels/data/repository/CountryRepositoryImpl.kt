@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.api
+package com.daniebeler.pixels.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
@@ -22,12 +22,10 @@ import com.daniebeler.pixels.domain.model.toPost
 import com.daniebeler.pixels.domain.model.toRelationship
 import com.daniebeler.pixels.domain.model.toReply
 import com.daniebeler.pixels.domain.model.toTag
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.daniebeler.pixels.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -50,8 +48,7 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         val mHttpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        val mOkHttpClient = OkHttpClient
-            .Builder()
+        val mOkHttpClient = OkHttpClient.Builder()
             .addInterceptor(mHttpLoggingInterceptor)
             .build()
 
@@ -294,10 +291,9 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
-    // Does not work
     override suspend fun getPostById(postId: String): Post? {
         return try {
-            val response = pixelfedApi.getPostById(postId).awaitResponse()
+            val response = pixelfedApi.getPostById(postId, accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body()?.toPost()
             } else {

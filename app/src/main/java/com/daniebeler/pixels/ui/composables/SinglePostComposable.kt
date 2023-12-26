@@ -11,30 +11,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.domain.model.Post
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SinglePostComposable(navController: NavController, postId: String) {
+fun SinglePostComposable(navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()) {
 
-    var post: Post? by remember {
-        mutableStateOf(null)
-    }
-
-    //val repository: CountryRepository = CountryRepositoryImpl()
-
-    CoroutineScope(Dispatchers.Default).launch {
-        //post = repository.getPostById(postId)
-    }
+    viewModel.loadPost(postId)
 
     Scaffold (
         topBar = {
@@ -57,7 +42,9 @@ fun SinglePostComposable(navController: NavController, postId: String) {
         }
     ) {paddingValues ->
         Column (Modifier.padding(paddingValues)) {
-            post?.let { PostComposable(it, navController) }
+            if (viewModel.post != null) {
+                PostComposable(viewModel.post!!, navController)
+            }
         }
     }
 }
