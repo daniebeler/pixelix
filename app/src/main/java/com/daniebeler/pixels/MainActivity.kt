@@ -168,7 +168,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             SettingsComposable(navController, viewModel)
         }
         composable(Destinations.OwnProfile.route) {
-            OwnProfileComposable(viewModel, navController)
+            OwnProfileComposable(navController)
         }
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")

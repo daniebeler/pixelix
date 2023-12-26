@@ -18,42 +18,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.MainViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController) {
-
-    var account = viewModel.ownAccount
-
-    val posts = viewModel.ownPosts
-
-    CoroutineScope(Dispatchers.Default).launch {
-        if (posts.isEmpty()) {
-            viewModel.getOwnPosts()
-        }
-    }
-
-    fun loadMorePosts() {
-        if (posts.isNotEmpty()) {
-            val maxId = posts.last().id
-
-            CoroutineScope(Dispatchers.Default).launch {
-                viewModel.getMoreOwnPosts(maxId)
-            }
-        }
-    }
-
+fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()) {
 
     Scaffold (
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = account?.username ?: "")
+                    Text(text = viewModel.ownAccount?.username ?: "")
                 },
                 actions = {
                     IconButton(onClick = {
@@ -72,22 +48,22 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
         }
     ) {paddingValues ->
-        if (account != null) {
+        if (viewModel.ownAccount != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier.padding(paddingValues),
                     content = {
-                        if (account != null) {
+                        if (viewModel.ownAccount != null) {
                             item (
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(account = account)
+                                ProfileTopSection(account = viewModel.ownAccount!!)
                             }
                         }
 
-                        items(posts, key = {
+                        items(viewModel.ownPosts, key = {
                             it.id
                         }) { photo ->
                             CustomPost(post = photo, navController = navController)
@@ -95,7 +71,7 @@ fun OwnProfileComposable(viewModel: MainViewModel, navController: NavController)
 
                         item {
                             Button(onClick = {
-                                loadMorePosts()
+                                viewModel.loadMorePosts()
                             }) {
                                 Text(text = "Load More")
                             }

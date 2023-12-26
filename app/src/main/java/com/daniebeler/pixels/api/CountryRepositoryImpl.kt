@@ -64,14 +64,10 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
         runBlocking {
             accessToken = "Bearer " + getAccessTokenFromStorage().first()
-            println("tokn")
-            println(accessToken)
         }
     }
 
     override fun doesAccessTokenExist(): Boolean {
-        println("accesstoken")
-        println(accessToken)
         return accessToken.isNotEmpty()
     }
 
@@ -167,19 +163,13 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
     override suspend fun getHomeTimeline(): List<Post> {
         return try {
-            println("netok")
-            println(accessToken)
             val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                println("success")
-                println(response.body())
                 response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
             }
         } catch (exception: Exception) {
-            println("exception")
-            println(exception)
             emptyList()
         }
     }
