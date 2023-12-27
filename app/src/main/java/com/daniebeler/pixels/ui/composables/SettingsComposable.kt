@@ -61,6 +61,16 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
                     Text(text = "Logout")
                 }
 
+
+                Button(onClick = {
+                    navController.navigate("muted_accounts_screen") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
+                    Text(text = "Show muted accounts")
+                }
+
         }
 
     }

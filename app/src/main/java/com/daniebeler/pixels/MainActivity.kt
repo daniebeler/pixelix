@@ -33,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.composables.timelines.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
+import com.daniebeler.pixels.ui.composables.MutedAccountsComposable
 import com.daniebeler.pixels.ui.composables.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
@@ -125,6 +126,11 @@ sealed class Destinations(
         icon = Icons.Outlined.Settings
     )
 
+    object MutedAccounts : Destinations(
+        route = "muted_accounts_screen",
+        icon = Icons.Outlined.Settings
+    )
+
     object Hashtag : Destinations(
         route = "hashtag_timeline_screen/{hashtag}",
         icon = Icons.Outlined.Settings
@@ -167,6 +173,11 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.Settings.route) {
             SettingsComposable(navController, viewModel)
         }
+
+        composable(Destinations.MutedAccounts.route) {
+            MutedAccountsComposable(navController)
+        }
+
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(navController)
         }
