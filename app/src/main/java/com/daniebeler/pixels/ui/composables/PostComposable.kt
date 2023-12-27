@@ -56,6 +56,9 @@ import com.daniebeler.pixels.domain.model.Post
 @Composable
 fun PostComposable(post: Post, navController: NavController, viewModel: PostViewModel = hiltViewModel()) {
 
+    println("postincomposable")
+    println(post)
+
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()

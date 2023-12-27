@@ -24,4 +24,10 @@ class HomeTimelineViewModel @Inject constructor(
             homeTimeline = repository.getHomeTimeline()
         }
     }
+
+    fun loadMorePosts() {
+        CoroutineScope(Dispatchers.Default).launch {
+            homeTimeline += repository.getHomeTimeline(homeTimeline.last().id)
+        }
+    }
 }

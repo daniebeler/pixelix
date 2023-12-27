@@ -1,7 +1,9 @@
 package com.daniebeler.pixels.domain.model
 
 import com.daniebeler.pixels.data.remote.dto.PostDto
+import javax.annotation.concurrent.Immutable
 
+@Immutable
 data class Post(
     val id: String,
     val mediaAttachments: List<MediaAttachment>,

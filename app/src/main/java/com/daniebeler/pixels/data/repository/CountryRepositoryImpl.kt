@@ -111,6 +111,8 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         return try {
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
+                println("success")
+                println(response.body())
                 response.body()?.map { it.toPost() } ?: emptyList()
             } else {
                 emptyList()
@@ -162,6 +164,19 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
     override suspend fun getHomeTimeline(): List<Post> {
         return try {
             val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.map { it.toPost() } ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getHomeTimeline(maxPostId: String): List<Post> {
+        return try {
+            val response = pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
             if (response.isSuccessful) {
                 response.body()?.map { it.toPost() } ?: emptyList()
             } else {
