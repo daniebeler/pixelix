@@ -39,12 +39,27 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
     private val settingsDataStore = context.dataStore
 
-    private var BASE_URL = "https://pixelfed.social/"
+    private var BASE_URL = ""
     private var accessToken: String = ""
 
-    private val pixelfedApi: PixelfedApi
+    private lateinit var pixelfedApi: PixelfedApi
 
     init {
+        runBlocking {
+            val accessTokenFromStorage = getAccessTokenFromStorage().first()
+            if (accessTokenFromStorage.isNotEmpty()) {
+                accessToken = "Bearer $accessTokenFromStorage"
+            }
+            val baseUrl = getBaseUrlFromStorage().first()
+            if (baseUrl.isNotEmpty()) {
+                BASE_URL = baseUrl
+                buildPixelFedApi()
+            }
+        }
+    }
+
+    private fun buildPixelFedApi() {
+        println("BASE_URL: $BASE_URL")
         val mHttpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -58,14 +73,7 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
             .client(mOkHttpClient)
             .build()
 
-        pixelfedApi = retrofit.create(PixelfedApi::class.java)
-
-        runBlocking {
-            val accessTokenFromStorage = getAccessTokenFromStorage().first()
-            if (accessTokenFromStorage.isNotEmpty()) {
-                accessToken = "Bearer $accessTokenFromStorage"
-            }
-        }
+        pixelfedApi =  retrofit.create(PixelfedApi::class.java)
     }
 
     override fun doesAccessTokenExist(): Boolean {
@@ -78,9 +86,22 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun storeBaseUrl(baseUrl: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = baseUrl
+        }
+        BASE_URL = baseUrl
+        buildPixelFedApi()
+    }
+
     override fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
     }
+
+    override fun getBaseUrlFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
+    }
+
 
     override suspend fun storeClientSecret(clientSecret: String) {
         settingsDataStore.edit { preferences ->
@@ -370,11 +391,14 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         return try {
             val response = pixelfedApi.createApplication().awaitResponse()
             if (response.isSuccessful) {
+                println("Success_Body ${response.body()}")
                 response.body()?.toApplication()
             } else {
+                println("FOOOF")
                 null
             }
         } catch (exception: Exception) {
+            println("Fief")
             null
         }
     }

@@ -14,17 +14,7 @@ class MainViewModel @Inject constructor(
     application: android.app.Application
 ): AndroidViewModel(application) {
 
-    var _authApplication: Application? = null
 
-    suspend fun registerApplication(): String {
-        _authApplication = repository.createApplication()
-        if (_authApplication != null) {
-            storeClientId(_authApplication!!.clientId)
-            storeClientSecret(_authApplication!!.clientSecret)
-            return _authApplication!!.clientId
-        }
-        return ""
-    }
 
     suspend fun obtainToken(code: String): Boolean {
         val clientId: String = getClientIdFromStorage().first()
@@ -66,7 +56,7 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun logout() {
-        repository.setAccessToken("")
+        storeAccessToken("")
         storeClientId("")
         storeClientSecret("")
 

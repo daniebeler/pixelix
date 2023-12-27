@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -13,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pixels.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,17 +32,15 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginComposable(viewModel: MainViewModel) {
+fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
-
-
 
     var loading: Boolean by remember {
         mutableStateOf(false)
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -48,7 +49,7 @@ fun LoginComposable(viewModel: MainViewModel) {
             )
 
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
@@ -56,15 +57,21 @@ fun LoginComposable(viewModel: MainViewModel) {
             Button(onClick = {
                 loading = true
                 CoroutineScope(Dispatchers.Default).launch {
-                    val clientId: String = viewModel.registerApplication()
+                    val clientId = viewModel.setBaseUrl(viewModel.customUrl)
+
                     if (clientId.isNotEmpty()) {
-                        openUrl(context, clientId)
+                        openUrl(context, clientId, viewModel.customUrl)
                     }
                 }
             }) {
                 Text(text = "Pixelfed.social")
             }
 
+            TextField(
+                value = viewModel.customUrl,
+                onValueChange = { viewModel.customUrl = it },
+                modifier = Modifier.fillMaxWidth()
+            )
 
             if (loading) {
                 CircularProgressIndicator(
@@ -77,8 +84,9 @@ fun LoginComposable(viewModel: MainViewModel) {
     }
 }
 
-private fun openUrl(context: Context, clientId: String){
+private fun openUrl(context: Context, clientId: String, baseUrl: String) {
     val intent = CustomTabsIntent.Builder().build()
-    val url = "https://pixelfed.social/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
+    val url =
+        "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
     intent.launchUrl(context, Uri.parse(url))
 }

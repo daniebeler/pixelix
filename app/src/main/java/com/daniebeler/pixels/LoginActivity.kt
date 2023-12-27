@@ -32,7 +32,7 @@ class LoginActivity : ComponentActivity() {
                     Column (Modifier.padding(paddingValues)) {
 
                     }
-                    LoginComposable(viewModel = mainViewModel)
+                    LoginComposable()
                 }
             }
         }
