@@ -13,7 +13,9 @@ data class Post(
     val content: String,
     val replyCount: Int,
     val createdAt: String,
-    val url: String
+    val url: String,
+    val sensitive: Boolean,
+    val spoilerText: String
 )
 
 fun PostDto.toPost(): Post {
@@ -26,6 +28,8 @@ fun PostDto.toPost(): Post {
         content = contentText ?: "",
         replyCount = replyCount,
         createdAt = createdAt,
-        url = url
+        url = url,
+        sensitive = sensitive,
+        spoilerText = spoilerText ?: ""
     )
 }

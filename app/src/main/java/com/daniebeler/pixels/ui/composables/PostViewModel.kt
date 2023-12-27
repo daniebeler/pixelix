@@ -22,6 +22,12 @@ class PostViewModel @Inject constructor(
 
     var timeAgoString: String by mutableStateOf("")
 
+    var showPost: Boolean by mutableStateOf(false)
+
+    fun toggleShowPost() {
+        showPost = !showPost
+    }
+
     fun convertTime(createdAt: String) {
         timeAgoString = TimeAgo().covertTimeToText(createdAt) ?: ""
     }

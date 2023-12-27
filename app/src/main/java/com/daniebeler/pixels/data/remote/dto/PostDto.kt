@@ -67,7 +67,7 @@ data class PostDto(
     @SerializedName("shortcode")
     val shortcode: String,
     @SerializedName("spoiler_text")
-    val spoilerText: String,
+    val spoilerText: String?,
     @SerializedName("taggedPeople")
     val taggedPeople: List<Any>,
     @SerializedName("tags")

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -100,15 +102,33 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (post.mediaAttachments[0].meta?.original?.aspect != null) {
-            AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(post.mediaAttachments[0].meta!!.original!!.aspect!!.toFloat()), contentScale = ContentScale.FillWidth)
+        if (post.sensitive && !viewModel.showPost) {
+            Column (
+                Modifier.aspectRatio(post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f).background(MaterialTheme.colorScheme.surfaceVariant),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                if (post.spoilerText.isNotEmpty()) {
+                    Text(text = post.spoilerText)
+                }
+                else {
+                    Text(text = "This post may contain sensitive content.")
+                }
+
+
+                Button(onClick = {
+                    viewModel.toggleShowPost()
+                }) {
+                    Text(text = "Show post")
+                }
+            }
         }
         else {
             AsyncImage(model = post.mediaAttachments[0].url, contentDescription = "",
-                Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth)
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f), contentScale = ContentScale.FillWidth)
         }
 
         Column (Modifier.padding(8.dp)) {
