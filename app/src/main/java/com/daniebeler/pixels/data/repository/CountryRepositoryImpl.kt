@@ -61,7 +61,10 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
 
         runBlocking {
-            accessToken = "Bearer " + getAccessTokenFromStorage().first()
+            val accessTokenFromStorage = getAccessTokenFromStorage().first()
+            if (accessTokenFromStorage.isNotEmpty()) {
+                accessToken = "Bearer $accessTokenFromStorage"
+            }
         }
     }
 
