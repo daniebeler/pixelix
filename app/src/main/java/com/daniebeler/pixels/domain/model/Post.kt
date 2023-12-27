@@ -10,7 +10,8 @@ data class Post(
     val favouritesCount: Int,
     val content: String,
     val replyCount: Int,
-    val createdAt: String
+    val createdAt: String,
+    val url: String
 )
 
 fun PostDto.toPost(): Post {
@@ -22,6 +23,7 @@ fun PostDto.toPost(): Post {
         favouritesCount = favouritesCount,
         content = contentText ?: "",
         replyCount = replyCount,
-        createdAt= createdAt
+        createdAt = createdAt,
+        url = url
     )
 }

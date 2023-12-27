@@ -1,5 +1,9 @@
 package com.daniebeler.pixels.ui.composables
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,8 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -31,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -47,8 +56,10 @@ import com.daniebeler.pixels.domain.model.Post
 @Composable
 fun PostComposable(post: Post, navController: NavController, viewModel: PostViewModel = hiltViewModel()) {
 
+    val context = LocalContext.current
+
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(0) }
 
     viewModel.convertTime(post.createdAt)
 
@@ -70,6 +81,17 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
             Column (modifier = Modifier.padding(start = 8.dp)) {
                 Text(text = post.account.displayname)
                 Text(text = viewModel.timeAgoString + " • @" + post.account.acct, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
+            }
+            
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(onClick = {
+                showBottomSheet = 2
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.MoreVert,
+                    contentDescription = ""
+                )
             }
         }
 
@@ -100,7 +122,7 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
             if (post.replyCount > 0) {
                 TextButton(onClick = {
                     viewModel.loadReplies(post.account.id, post.id)
-                    showBottomSheet = true
+                    showBottomSheet = 1
                 }) {
                     Text(text = "View " + post.replyCount + " comments")
                 }
@@ -108,36 +130,67 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
         }
     }
 
-    if (showBottomSheet) {
+    if (showBottomSheet > 0) {
         ModalBottomSheet(
             onDismissRequest = {
-                showBottomSheet = false
+                showBottomSheet = 0
             },
             sheetState = sheetState
         ) {
-            Column (
-                Modifier
-                    .fillMaxSize()
-                    .padding(12.dp)) {
-                Text(text = post.content)
-                HorizontalDivider(Modifier.padding(12.dp))
+            if (showBottomSheet == 1) {
+                Column (
+                    Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)) {
+                    Text(text = post.content)
+                    HorizontalDivider(Modifier.padding(12.dp))
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(32.dp)
-                ) {
-                    items(viewModel.replies, key = {
-                        it.id
-                    }) { reply ->
-                        HashtagsMentionsTextView(text = reply.content, onClick = {
-                            println("clicked")
-                            println(it)
-                        })
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(32.dp)
+                    ) {
+                        items(viewModel.replies, key = {
+                            it.id
+                        }) { reply ->
+                            HashtagsMentionsTextView(text = reply.content, onClick = {
+                                println("clicked")
+                                println(it)
+                            })
+                        }
                     }
                 }
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+                ) {
+                    Text(text = "Open in browser", Modifier.clickable {
+                        openUrl(context, post.url)
+                    })
+
+                    Text(text = "Share this post", Modifier.clickable {
+                        shareProfile(context, post.url)
+                    })
+                }
             }
+
         }
     }
 
+}
+
+private fun openUrl(context: Context, url: String){
+    val intent = CustomTabsIntent.Builder().build()
+    intent.launchUrl(context, Uri.parse(url))
+}
+
+private fun shareProfile(context: Context, url: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, url)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }
 
 
