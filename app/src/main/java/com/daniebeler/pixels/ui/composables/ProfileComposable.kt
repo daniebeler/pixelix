@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -179,6 +180,25 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                 verticalArrangement = Arrangement.spacedBy(32.dp),
                 modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
             ) {
+
+
+                if (viewModel.relationship != null) {
+                    if (viewModel.relationship!!.muting) {
+                        Text(text = "Unmute this profile", Modifier.clickable {
+                            viewModel.unmuteAccount()
+                        })
+                    }
+                    else {
+                        Text(text = "Mute this profile", Modifier.clickable {
+                            viewModel.muteAccount()
+                        })
+                    }
+                }
+
+
+
+                HorizontalDivider(Modifier.padding(12.dp))
+
                 Text(text = "Open in browser", Modifier.clickable {
                     openUrl(context, viewModel.account!!.url)
                 })

@@ -75,4 +75,26 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun muteAccount() {
+        if (account != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                var res = repository.muteAccount(account!!.id)
+                if (res != null) {
+                    relationship = res
+                }
+            }
+        }
+    }
+
+    fun unmuteAccount() {
+        if (account != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                var res = repository.unmuteAccount(account!!.id)
+                if (res != null) {
+                    relationship = res
+                }
+            }
+        }
+    }
 }

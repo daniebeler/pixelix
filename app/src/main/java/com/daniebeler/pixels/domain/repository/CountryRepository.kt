@@ -43,6 +43,8 @@ interface CountryRepository {
     suspend fun followAccount(accountId: String): Relationship?
 
     suspend fun unfollowAccount(accountId: String): Relationship?
+    suspend fun muteAccount(accountId: String): Relationship?
+    suspend fun unmuteAccount(accountId: String): Relationship?
 
     suspend fun getNotifications(): List<Notification>
 
