@@ -15,12 +15,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -40,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -104,7 +108,9 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
 
         if (post.sensitive && !viewModel.showPost) {
             Column (
-                Modifier.aspectRatio(post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f).background(MaterialTheme.colorScheme.surfaceVariant),
+                Modifier
+                    .aspectRatio(post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -183,14 +189,13 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
                 }
             } else {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                    modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+                    modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-                    Text(text = "Open in browser", Modifier.clickable {
+                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = "Open in browser", onClick = {
                         openUrl(context, post.url)
                     })
-
-                    Text(text = "Share this post", Modifier.clickable {
+                    
+                    CustomBottomSheetElement(icon = Icons.Outlined.Share, text = "Share this post", onClick = {
                         shareProfile(context, post.url)
                     })
                 }
@@ -214,6 +219,27 @@ private fun shareProfile(context: Context, url: String) {
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
     context.startActivity(shareIntent)
+}
+
+@Composable
+fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Unit) {
+
+    Row (verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "",
+            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(text = text)
+    }
 }
 
 

@@ -21,7 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -177,33 +180,30 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
             sheetState = sheetState
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(32.dp),
-                modifier = Modifier.padding(bottom = 32.dp, start = 12.dp)
+                modifier = Modifier.padding(bottom = 32.dp)
             ) {
 
 
                 if (viewModel.relationship != null) {
                     if (viewModel.relationship!!.muting) {
-                        Text(text = "Unmute this profile", Modifier.clickable {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Unmute this profile", onClick = {
                             viewModel.unmuteAccount()
                         })
                     }
                     else {
-                        Text(text = "Mute this profile", Modifier.clickable {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Mute this profile", onClick = {
                             viewModel.muteAccount()
                         })
                     }
                 }
 
-
-
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                Text(text = "Open in browser", Modifier.clickable {
+                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = "Open in browser", onClick = {
                     openUrl(context, viewModel.account!!.url)
                 })
 
-                Text(text = "Share this profile", Modifier.clickable {
+                CustomBottomSheetElement(icon = Icons.Outlined.Share, text = "Share this profile", onClick = {
                     shareProfile(context, viewModel.account!!.url)
                 })
             }
