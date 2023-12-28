@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -36,10 +37,6 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
 
-    var loading: Boolean by remember {
-        mutableStateOf(false)
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,17 +51,23 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            Button(onClick = {
-                loading = true
-                CoroutineScope(Dispatchers.Default).launch {
-                    val clientId = viewModel.setBaseUrl(viewModel.customUrl)
-
-                    if (clientId.isNotEmpty()) {
-                        openUrl(context, clientId, viewModel.customUrl)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Button(onClick = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.login("pixelfed.social", context)
                     }
+                }) {
+                    Text(text = "Pixelfed.social")
                 }
-            }) {
-                Text(text = "Pixelfed.social")
+                Button(onClick = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.login("pixelfed.de", context)
+                    }
+                }) {
+                    Text(text = "Pixelfed.de")
+                }
             }
 
             TextField(
@@ -73,7 +76,15 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            if (loading) {
+            Button(onClick = {
+                CoroutineScope(Dispatchers.Default).launch {
+                    viewModel.login(viewModel.customUrl, context)
+                }
+            }) {
+                Text(text = "login")
+            }
+
+            if (viewModel.loading) {
                 CircularProgressIndicator(
                     modifier = Modifier.width(64.dp),
                     color = MaterialTheme.colorScheme.secondary,
@@ -84,9 +95,3 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
     }
 }
 
-private fun openUrl(context: Context, clientId: String, baseUrl: String) {
-    val intent = CustomTabsIntent.Builder().build()
-    val url =
-        "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
-    intent.launchUrl(context, Uri.parse(url))
-}
