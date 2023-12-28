@@ -21,6 +21,8 @@ interface CountryRepository {
     suspend fun storeClientSecret(clientSecret: String)
     fun getClientSecretFromStorage(): Flow<String>
     suspend fun storeAccessToken(accessToken: String)
+    suspend fun storeAccountId(accountId: String)
+    suspend fun getAccountId(): Flow<String>
     fun getAccessTokenFromStorage(): Flow<String>
     fun setBaseUrl(baseUrl: String)
     fun setAccessToken(token: String)

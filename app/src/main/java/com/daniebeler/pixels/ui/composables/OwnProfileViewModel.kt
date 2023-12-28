@@ -10,6 +10,7 @@ import com.daniebeler.pixels.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,15 +21,18 @@ class OwnProfileViewModel @Inject constructor(
 
     var ownAccount: Account? by mutableStateOf(null)
     var ownPosts: List<Post> by mutableStateOf(emptyList())
-
+    private var accountId: String = ""
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            ownPosts = repository.getPostsByAccountId("497910174831013185")
-        }
+            accountId = repository.getAccountId().first()
+            CoroutineScope(Dispatchers.Default).launch {
+                ownPosts = repository.getPostsByAccountId(accountId)
+            }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            ownAccount = repository.getAccount("497910174831013185")
+            CoroutineScope(Dispatchers.Default).launch {
+                ownAccount = repository.getAccount(accountId)
+            }
         }
     }
 
@@ -37,7 +41,7 @@ class OwnProfileViewModel @Inject constructor(
             val maxId = ownPosts.last().id
 
             CoroutineScope(Dispatchers.Default).launch {
-                ownPosts += repository.getPostsByAccountId("497910174831013185", maxId)
+                ownPosts += repository.getPostsByAccountId(accountId, maxId)
             }
         }
     }

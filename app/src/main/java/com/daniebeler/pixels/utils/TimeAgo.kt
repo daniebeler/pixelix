@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit
 
 class TimeAgo {
 
-    fun covertTimeToText(dataDate: String?): String? {
-        var convTime: String? = null
+    fun covertTimeToText(dataDate: String): String {
+        var convTime: String = ""
         val suffix = "ago"
         try {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")

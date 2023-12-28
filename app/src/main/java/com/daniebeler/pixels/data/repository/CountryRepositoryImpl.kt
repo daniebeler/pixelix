@@ -2,6 +2,7 @@ package com.daniebeler.pixels.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixels.common.Constants
@@ -117,6 +118,16 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         settingsDataStore.edit { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
         }
+    }
+
+    override suspend fun storeAccountId(accountId: String) {
+        settingsDataStore.edit { preferences ->
+            preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] = accountId
+        }
+    }
+
+    override suspend fun getAccountId(): Flow<String> = settingsDataStore.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
     }
 
     override fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->

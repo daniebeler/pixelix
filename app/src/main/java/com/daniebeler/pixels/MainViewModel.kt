@@ -2,7 +2,6 @@ package com.daniebeler.pixels
 
 import androidx.lifecycle.AndroidViewModel
 import com.daniebeler.pixels.domain.repository.CountryRepository
-import com.daniebeler.pixels.domain.model.Application
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -12,23 +11,22 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: CountryRepository,
     application: android.app.Application
-): AndroidViewModel(application) {
-
+) : AndroidViewModel(application) {
 
 
     suspend fun obtainToken(code: String): Boolean {
         val clientId: String = getClientIdFromStorage().first()
         val clientSecret: String = getClientSecretFromStorage().first()
 
-        val token = repository.obtainToken(clientId, clientSecret, code)
+        val token = repository.obtainToken(clientId, clientSecret, code) ?: return false
 
-        if (token != null) {
-            storeAccessToken(token.accessToken)
-            return true
-        }
+        storeAccessToken(token.accessToken)
+        val account = repository.verifyToken(token.accessToken) ?: return false
+        repository.storeAccountId(account.id)
+        return true
 
-        return false
     }
+
 
     fun doesTokenExist(): Boolean {
         return repository.doesAccessTokenExist()
