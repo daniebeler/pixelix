@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -74,7 +75,10 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(0) }
 
-    viewModel.convertTime(post.createdAt)
+    DisposableEffect(post.createdAt) {
+        viewModel.convertTime(post.createdAt)
+        onDispose {}
+    }
 
     Column {
         Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier
