@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.followers
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,10 +18,17 @@ class FollowersViewModel @Inject constructor(
 ): ViewModel() {
 
     var account: Account? by mutableStateOf(null)
+    var followers: List<Account> by mutableStateOf(emptyList())
 
     fun loadAccount(accountId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             account = repository.getAccount(accountId)
+        }
+    }
+
+    fun loadFollowers(accountId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            followers = repository.getAccountsFollowers(accountId)
         }
     }
 }

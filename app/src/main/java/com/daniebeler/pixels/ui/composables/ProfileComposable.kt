@@ -53,13 +53,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pixels.MainViewModel
 import com.daniebeler.pixels.domain.model.Account
-import com.daniebeler.pixels.domain.model.Post
-import com.daniebeler.pixels.domain.model.Relationship
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.daniebeler.pixels.ui.composables.trending.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
