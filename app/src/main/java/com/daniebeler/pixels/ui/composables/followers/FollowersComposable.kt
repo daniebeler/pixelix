@@ -1,5 +1,6 @@
 package com.daniebeler.pixels.ui.composables.followers
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,24 +32,25 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
 
 @Composable
-fun FollowersComposable(navController: NavController, userId: String, viewModel: FollowersViewModel = hiltViewModel()) {
-
-    viewModel.loadAccount(userId)
-    viewModel.loadFollowers(userId)
-
+fun FollowersComposable(navController: NavController, viewModel: FollowersViewModel = hiltViewModel()) {
 
     LazyColumn(content = {
         items(viewModel.followers, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it)
+            CustomFollowerElement(account = it, navController)
         }
     })
 }
 
 @Composable
-private fun CustomFollowerElement(account: Account) {
-    Row (modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+fun CustomFollowerElement(account: Account, navController: NavController) {
+    Row (modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).clickable {
+        navController.navigate("profile_screen/" + account.id) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }) {
         AsyncImage(
             model = account.avatar, contentDescription = "",
             modifier = Modifier

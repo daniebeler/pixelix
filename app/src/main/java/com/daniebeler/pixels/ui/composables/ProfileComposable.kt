@@ -250,7 +250,12 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                     Text(text = "Followers", fontSize = 12.sp)
                 }
 
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
+                    navController.navigate("followers_screen/" + account.id) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
                     Text(text = account!!.followingCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(text = "Following", fontSize = 12.sp)
                 }

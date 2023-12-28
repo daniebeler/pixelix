@@ -340,6 +340,20 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun getAccountsFollowing(accountId: String): List<Account> {
+        return try {
+            val response = pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body() ?: emptyList()
+                res.map { it.toAccount() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
     override suspend fun getMutedAccounts(): List<Account> {
         return try {
             val response = pixelfedApi.getMutedAccounts(accessToken).awaitResponse()

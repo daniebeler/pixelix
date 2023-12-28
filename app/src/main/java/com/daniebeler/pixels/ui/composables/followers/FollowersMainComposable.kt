@@ -26,16 +26,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.ui.composables.trending.TrendingHashtagsComposable
-import com.daniebeler.pixels.ui.composables.trending.TrendingPostsComposable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FollowersMainComposable(navController: NavController, accountId: String) {
+fun FollowersMainComposable(navController: NavController, accountId: String, viewModel: FollowersViewModel = hiltViewModel()) {
+
+    viewModel.loadAccount(accountId)
+    viewModel.loadFollowers(accountId)
+    viewModel.loadFollowing(accountId)
 
     val pagerState = rememberPagerState { 2 }
+
+
 
     val scope = rememberCoroutineScope()
 
@@ -46,7 +51,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Account")
+                    Text("@" + viewModel.account?.acct)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -70,7 +75,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    text = { Text("Followers") },
+                    text = { Text(viewModel.account?.followersCount.toString() + " Followers") },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {
@@ -80,7 +85,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String) {
                     })
 
                 Tab(
-                    text = { Text("Following") },
+                    text = { Text(viewModel.account?.followingCount.toString() + " Following") },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {
@@ -98,12 +103,12 @@ fun FollowersMainComposable(navController: NavController, accountId: String) {
                 when (tabIndex) {
                     0 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            FollowersComposable(navController = navController, userId = accountId)
+                            FollowersComposable(navController = navController)
                         }
 
                     1 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-
+                            FollowingComposable(navController = navController)
                         }
 
                 }

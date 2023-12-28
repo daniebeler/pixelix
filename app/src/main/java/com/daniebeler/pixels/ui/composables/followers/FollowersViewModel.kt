@@ -19,6 +19,7 @@ class FollowersViewModel @Inject constructor(
 
     var account: Account? by mutableStateOf(null)
     var followers: List<Account> by mutableStateOf(emptyList())
+    var following: List<Account> by mutableStateOf(emptyList())
 
     fun loadAccount(accountId: String) {
         CoroutineScope(Dispatchers.Default).launch {
@@ -29,6 +30,12 @@ class FollowersViewModel @Inject constructor(
     fun loadFollowers(accountId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             followers = repository.getAccountsFollowers(accountId)
+        }
+    }
+
+    fun loadFollowing(accountId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            following = repository.getAccountsFollowing(accountId)
         }
     }
 }

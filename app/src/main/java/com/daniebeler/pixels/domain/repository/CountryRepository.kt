@@ -54,6 +54,7 @@ interface CountryRepository {
     suspend fun unmuteAccount(accountId: String): Relationship?
 
     suspend fun getAccountsFollowers(accountId: String): List<Account>
+    suspend fun getAccountsFollowing(accountId: String): List<Account>
 
     suspend fun getMutedAccounts(): List<Account>
 

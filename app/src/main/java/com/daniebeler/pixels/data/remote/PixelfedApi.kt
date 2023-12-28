@@ -81,6 +81,9 @@ interface PixelfedApi {
     @GET("api/v1/accounts/{id}/followers")
     fun getAccountsFollowers(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
 
+    @GET("api/v1/accounts/{id}/following")
+    fun getAccountsFollowing(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 
