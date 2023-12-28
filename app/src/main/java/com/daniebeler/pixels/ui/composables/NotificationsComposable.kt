@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -61,6 +62,19 @@ fun NotificationsComposable(
 
 @Composable
 fun CustomNotificaiton(notification: Notification, navController: NavController) {
+
+    var showImage = false
+    var text = ""
+    if (notification.type == "follow") {
+        text = " followed you"
+    } else if (notification.type == "favourite") {
+        text = " liked your post"
+        showImage = true
+    } else if (notification.type == "reblog") {
+        text = " reblogged your post"
+        showImage = true
+    }
+
     Row(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -82,29 +96,26 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
                     }
                 }
             ) {
-
-
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold)
-                if (notification.type == "follow") {
-                    Text(text = " followed you")
-                } else if (notification.type == "favourite") {
-                    Text(text = " liked your post")
-                    Spacer(modifier = Modifier.weight(1f))
-                    AsyncImage(
-                        model = notification.post?.mediaAttachments?.get(0)?.previewUrl,
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(32.dp)
-                            .aspectRatio(1f)
-                    )
-                }
+
+                Text(text = text)
             }
 
 
-            Text(text = notification.timeAgo)
+            Text(text = notification.timeAgo, fontSize = 12.sp)
         }
 
+        if (showImage) {
+            Spacer(modifier = Modifier.weight(1f))
+            AsyncImage(
+                model = notification.post?.mediaAttachments?.get(0)?.previewUrl,
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(36.dp)
+                    .aspectRatio(1f)
+            )
+        }
 
     }
 

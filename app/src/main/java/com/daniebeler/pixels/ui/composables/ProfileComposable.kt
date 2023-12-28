@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
@@ -181,13 +182,24 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
 
                 if (viewModel.relationship != null) {
                     if (viewModel.relationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Unmute this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Unmute this profile", onClick = {
                             viewModel.unmuteAccount()
                         })
                     }
                     else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Mute this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Mute this profile", onClick = {
                             viewModel.muteAccount()
+                        })
+                    }
+
+                    if (viewModel.relationship!!.blocking) {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Unblock this profile", onClick = {
+                            viewModel.unblockAccount()
+                        })
+                    }
+                    else {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Block this profile", onClick = {
+                            viewModel.blockAccount()
                         })
                     }
                 }

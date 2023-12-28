@@ -31,16 +31,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.daniebeler.pixels.ui.composables.followers.FollowersComposable
 import com.daniebeler.pixels.ui.composables.timelines.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
-import com.daniebeler.pixels.ui.composables.MutedAccountsComposable
+import com.daniebeler.pixels.ui.composables.settings.MutedAccountsComposable
 import com.daniebeler.pixels.ui.composables.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
-import com.daniebeler.pixels.ui.composables.SettingsComposable
+import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
+import com.daniebeler.pixels.ui.composables.settings.BlockedAccountsComposable
 import com.daniebeler.pixels.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -129,6 +129,11 @@ sealed class Destinations(
         icon = Icons.Outlined.Settings
     )
 
+    object BlockedAccounts : Destinations(
+        route = "blocked_accounts_screen",
+        icon = Icons.Outlined.Settings
+    )
+
     object Hashtag : Destinations(
         route = "hashtag_timeline_screen/{hashtag}",
         icon = Icons.Outlined.Settings
@@ -179,6 +184,10 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.MutedAccounts.route) {
             MutedAccountsComposable(navController)
+        }
+
+        composable(Destinations.BlockedAccounts.route) {
+            BlockedAccountsComposable(navController)
         }
 
         composable(Destinations.OwnProfile.route) {

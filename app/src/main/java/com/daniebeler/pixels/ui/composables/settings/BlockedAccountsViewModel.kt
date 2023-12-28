@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.settings
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,28 +13,26 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MutedAccountsViewModel @Inject constructor(
+class BlockedAccountsViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
+    var blockedAccounts: List<Account> by mutableStateOf(emptyList())
 
-    var mutedAccounts: List<Account> by mutableStateOf(emptyList())
-
-    var unmuteAlert: String by mutableStateOf("")
+    var unblockAlert: String by mutableStateOf("")
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            mutedAccounts = repository.getMutedAccounts()
+            blockedAccounts = repository.getBlockedAccounts()
         }
     }
 
-    fun unmuteAccount(accountId: String) {
+    fun unblockAccount(accountId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            var res = repository.unmuteAccount(accountId)
+            var res = repository.unblockAccount(accountId)
             if (res != null) {
-                mutedAccounts = repository.getMutedAccounts()
+                blockedAccounts = repository.getBlockedAccounts()
             }
         }
     }
-
 }

@@ -97,4 +97,26 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun blockAccount() {
+        if (account != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                var res = repository.blockAccount(account!!.id)
+                if (res != null) {
+                    relationship = res
+                }
+            }
+        }
+    }
+
+    fun unblockAccount() {
+        if (account != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                var res = repository.unblockAccount(account!!.id)
+                if (res != null) {
+                    relationship = res
+                }
+            }
+        }
+    }
 }

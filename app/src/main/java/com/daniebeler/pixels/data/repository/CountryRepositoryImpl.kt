@@ -326,6 +326,32 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun blockAccount(accountId: String): Relationship? {
+        return try {
+            val response = pixelfedApi.blockAccount(accountId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.toRelationship()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
+    override suspend fun unblockAccount(accountId: String): Relationship? {
+        return try {
+            val response = pixelfedApi.unblockAccount(accountId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.toRelationship()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
     override suspend fun getAccountsFollowers(accountId: String): List<Account> {
         return try {
             val response = pixelfedApi.getAccountsFollowers(accountId, accessToken).awaitResponse()
@@ -357,6 +383,20 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
     override suspend fun getMutedAccounts(): List<Account> {
         return try {
             val response = pixelfedApi.getMutedAccounts(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body() ?: emptyList()
+                res.map { it.toAccount() }
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getBlockedAccounts(): List<Account> {
+        return try {
+            val response = pixelfedApi.getBlockedAccounts(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body() ?: emptyList()
                 res.map { it.toAccount() }

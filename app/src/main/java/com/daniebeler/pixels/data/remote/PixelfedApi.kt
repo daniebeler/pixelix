@@ -72,6 +72,12 @@ interface PixelfedApi {
     @POST("api/v1/accounts/{id}/unmute")
     fun unmuteAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
 
+    @POST("api/v1/accounts/{id}/block")
+    fun blockAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+
+    @POST("api/v1/accounts/{id}/unblock")
+    fun unblockAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+
     @POST("api/v1/statuses/{id}/favourite")
     fun likePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
@@ -86,6 +92,9 @@ interface PixelfedApi {
 
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
+
+    @GET("api/v1/blocks")
+    fun getBlockedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>
