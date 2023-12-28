@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.daniebeler.pixels.ui.composables.FollowersComposable
 import com.daniebeler.pixels.ui.composables.timelines.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
 import com.daniebeler.pixels.ui.composables.MutedAccountsComposable
@@ -140,6 +141,11 @@ sealed class Destinations(
         route = "single_post_screen/{postid}",
         icon = Icons.Outlined.Favorite
     )
+
+    object Followers : Destinations(
+        route = "followers_screen/{userid}",
+        icon = Icons.Outlined.Favorite
+    )
 }
 
 @Composable
@@ -181,6 +187,14 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(navController)
         }
+
+        composable(Destinations.Followers.route) {navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("userid")
+            uId?.let { id ->
+                FollowersComposable(navController, userId = id)
+            }
+        }
+
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
             uId?.let { id->

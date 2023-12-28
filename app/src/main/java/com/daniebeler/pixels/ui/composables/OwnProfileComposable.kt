@@ -59,7 +59,7 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
                             item (
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(account = viewModel.ownAccount!!)
+                                ProfileTopSection(account = viewModel.ownAccount!!, navController)
                             }
                         }
 

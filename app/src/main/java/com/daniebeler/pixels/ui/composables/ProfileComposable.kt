@@ -116,7 +116,7 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                             item (
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(viewModel.account!!)
+                                ProfileTopSection(viewModel.account!!, navController)
                             }
                         }
 
@@ -227,7 +227,7 @@ private fun shareProfile(context: Context, url: String) {
 }
 
 @Composable
-fun ProfileTopSection(account: Account) {
+fun ProfileTopSection(account: Account, navController: NavController) {
     val uriHandler = LocalUriHandler.current
 
     Column (Modifier.padding(12.dp)) {
@@ -245,7 +245,12 @@ fun ProfileTopSection(account: Account) {
                     Text(text = "Posts", fontSize = 12.sp)
                 }
 
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
+                    navController.navigate("followers_screen/" + account.id) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
                     Text(text = account!!.followersCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(text = "Followers", fontSize = 12.sp)
                 }
