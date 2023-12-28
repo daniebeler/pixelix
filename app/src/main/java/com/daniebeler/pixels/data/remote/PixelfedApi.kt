@@ -78,6 +78,9 @@ interface PixelfedApi {
     @POST("api/v1/statuses/{id}/unfavourite")
     fun unlikePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
+    @GET("api/v1/accounts/{id}/followers")
+    fun getAccountsFollowers(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 
