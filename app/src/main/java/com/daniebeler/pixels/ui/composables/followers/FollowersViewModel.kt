@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.followers
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

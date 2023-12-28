@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.trending
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
