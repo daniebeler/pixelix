@@ -72,6 +72,12 @@ interface PixelfedApi {
     @POST("api/v1/accounts/{id}/unmute")
     fun unmuteAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
 
+    @POST("api/v1/statuses/{id}/favourite")
+    fun likePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+
+    @POST("api/v1/statuses/{id}/unfavourite")
+    fun unlikePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 

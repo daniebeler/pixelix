@@ -21,7 +21,7 @@ data class PostDto(
     @SerializedName("emojis")
     val emojis: List<Any>,
     @SerializedName("favourited")
-    val favourited: Any,
+    val favourited: Boolean,
     @SerializedName("favourites_count")
     val favouritesCount: Int,
     @SerializedName("id")

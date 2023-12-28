@@ -38,4 +38,22 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun likePost(postId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            var res = repository.likePost(postId)
+            if (res != null) {
+
+            }
+        }
+    }
+
+    fun unlikePost(postId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            var res = repository.unlikePost(postId)
+            if (res != null) {
+
+            }
+        }
+    }
+
 }

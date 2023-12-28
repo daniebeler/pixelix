@@ -21,6 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
@@ -138,6 +142,30 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
         }
 
         Column (Modifier.padding(8.dp)) {
+            println("fav: " + post.favourited)
+
+            if (post.favourited) {
+                println("hallo")
+                IconButton(onClick = {
+                    viewModel.unlikePost(post.id)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = ""
+                    )
+                }
+            } else {
+                IconButton(onClick = {
+                    viewModel.likePost(post.id)
+                }) {
+                    Icon(
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        contentDescription = ""
+                    )
+                }
+            }
+
+
             Text(text = post.favouritesCount.toString() + " likes")
 
             HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {

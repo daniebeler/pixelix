@@ -1,5 +1,6 @@
 package com.daniebeler.pixels.domain.repository
 
+import android.net.http.UrlRequest.Status
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Application
@@ -47,6 +48,8 @@ interface CountryRepository {
     suspend fun followAccount(accountId: String): Relationship?
 
     suspend fun unfollowAccount(accountId: String): Relationship?
+    suspend fun likePost(postId: String): Post?
+    suspend fun unlikePost(postId: String): Post?
     suspend fun muteAccount(accountId: String): Relationship?
     suspend fun unmuteAccount(accountId: String): Relationship?
 

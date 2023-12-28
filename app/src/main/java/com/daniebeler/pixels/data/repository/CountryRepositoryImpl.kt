@@ -274,6 +274,32 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun likePost(postId: String): Post? {
+        return try {
+            val response = pixelfedApi.likePost(postId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.toPost()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
+    override suspend fun unlikePost(postId: String): Post? {
+        return try {
+            val response = pixelfedApi.unlikePost(postId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.toPost()
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            null
+        }
+    }
+
     override suspend fun muteAccount(accountId: String): Relationship? {
         return try {
             val response = pixelfedApi.muteAccount(accountId, accessToken).awaitResponse()
