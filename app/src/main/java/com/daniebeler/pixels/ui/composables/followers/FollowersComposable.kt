@@ -30,27 +30,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @Composable
 fun FollowersComposable(navController: NavController, viewModel: FollowersViewModel = hiltViewModel()) {
-
+    
     LazyColumn(content = {
-        items(viewModel.followers, key = {
+        items(viewModel.followersState.followers, key = {
             it.id
         }) {
             CustomFollowerElement(account = it, navController)
         }
     })
+    
+    LoadingComposable(isLoading = viewModel.followersState.isLoading)
+    ErrorComposable(message = viewModel.followersState.error)
 }
 
 @Composable
 fun CustomFollowerElement(account: Account, navController: NavController) {
-    Row (modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).clickable {
-        navController.navigate("profile_screen/" + account.id) {
-            launchSingleTop = true
-            restoreState = true
-        }
-    }) {
+    Row (modifier = Modifier
+        .padding(horizontal = 12.dp, vertical = 8.dp)
+        .clickable {
+            navController.navigate("profile_screen/" + account.id) {
+                launchSingleTop = true
+                restoreState = true
+            }
+        }) {
         AsyncImage(
             model = account.avatar, contentDescription = "",
             modifier = Modifier

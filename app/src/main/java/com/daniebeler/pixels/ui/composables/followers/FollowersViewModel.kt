@@ -4,11 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.repository.CountryRepository
+import com.daniebeler.pixels.ui.composables.trending.trending_posts.TrendingPostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,8 +23,8 @@ class FollowersViewModel @Inject constructor(
 ): ViewModel() {
 
     var account: Account? by mutableStateOf(null)
-    var followers: List<Account> by mutableStateOf(emptyList())
-    var following: List<Account> by mutableStateOf(emptyList())
+    var followersState by mutableStateOf(FollowersState())
+    var followingState by mutableStateOf(FollowingState())
 
     fun loadAccount(accountId: String) {
         CoroutineScope(Dispatchers.Default).launch {
@@ -27,15 +32,39 @@ class FollowersViewModel @Inject constructor(
         }
     }
 
-    fun loadFollowers(accountId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            followers = repository.getAccountsFollowers(accountId)
-        }
+    fun getFollowers(accountId: String) {
+        repository.getAccountsFollowers(accountId).onEach { result ->
+            followersState = when (result) {
+                is Resource.Success -> {
+                    FollowersState(followers = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    FollowersState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    FollowersState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
-    fun loadFollowing(accountId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            following = repository.getAccountsFollowing(accountId)
-        }
+    fun getFollowing(accountId: String) {
+        repository.getAccountsFollowing(accountId).onEach { result ->
+            followingState = when (result) {
+                is Resource.Success -> {
+                    FollowingState(following = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    FollowingState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    FollowingState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 }

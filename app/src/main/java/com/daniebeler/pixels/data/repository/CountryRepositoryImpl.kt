@@ -405,31 +405,33 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getAccountsFollowers(accountId: String): List<Account> {
-        return try {
+    override fun getAccountsFollowers(accountId: String): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getAccountsFollowers(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body() ?: emptyList()
-                res.map { it.toAccount() }
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
-    override suspend fun getAccountsFollowing(accountId: String): List<Account> {
-        return try {
+    override fun getAccountsFollowing(accountId: String): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body() ?: emptyList()
-                res.map { it.toAccount() }
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error("Unknown Error"))
         }
     }
 

@@ -35,8 +35,8 @@ import kotlinx.coroutines.launch
 fun FollowersMainComposable(navController: NavController, accountId: String, viewModel: FollowersViewModel = hiltViewModel()) {
 
     viewModel.loadAccount(accountId)
-    viewModel.loadFollowers(accountId)
-    viewModel.loadFollowing(accountId)
+    viewModel.getFollowers(accountId)
+    viewModel.getFollowing(accountId)
 
     val pagerState = rememberPagerState { 2 }
 

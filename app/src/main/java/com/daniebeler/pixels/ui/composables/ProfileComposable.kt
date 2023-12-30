@@ -290,6 +290,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = account!!.displayname, fontWeight = FontWeight.Bold)
+        Text(text = "@" + account!!.acct, fontSize = 12.sp)
 
         account!!.note?.let {
             HashtagsMentionsTextView(text = account!!.note, onClick = {})

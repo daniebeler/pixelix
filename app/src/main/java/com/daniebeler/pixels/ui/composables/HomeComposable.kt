@@ -37,7 +37,7 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Pixels")
+                    Text("Burning Pixels")
                 }
             )
 
