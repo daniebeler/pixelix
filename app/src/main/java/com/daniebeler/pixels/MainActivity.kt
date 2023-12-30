@@ -31,9 +31,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.daniebeler.pixels.ui.composables.timelines.HashtagTimelineComposable
+import com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
-import com.daniebeler.pixels.ui.composables.settings.MutedAccountsComposable
+import com.daniebeler.pixels.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pixels.ui.composables.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
@@ -41,9 +41,9 @@ import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixels.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
-import com.daniebeler.pixels.ui.composables.settings.BookmarkedPostsComposable
-import com.daniebeler.pixels.ui.composables.settings.FollowedHashtagsComposable
-import com.daniebeler.pixels.ui.composables.settings.LikedPostsComposable
+import com.daniebeler.pixels.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
+import com.daniebeler.pixels.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
+import com.daniebeler.pixels.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pixels.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
 import dagger.hilt.android.AndroidEntryPoint

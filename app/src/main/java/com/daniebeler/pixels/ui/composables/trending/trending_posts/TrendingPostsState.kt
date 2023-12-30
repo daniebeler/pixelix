@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables.trending.posts
+package com.daniebeler.pixels.ui.composables.trending.trending_posts
 
 import com.daniebeler.pixels.domain.model.Post
 

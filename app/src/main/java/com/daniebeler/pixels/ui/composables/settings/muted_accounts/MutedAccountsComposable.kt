@@ -1,8 +1,10 @@
-package com.daniebeler.pixels.ui.composables.settings
+package com.daniebeler.pixels.ui.composables.settings.muted_accounts
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,15 +60,22 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
 
         }
     ) {paddingValues ->
-        LazyColumn (Modifier.padding(paddingValues)) {
-            items(viewModel.mutedAccounts, key = {
-                it.id
-            }) {
-                Row {
-                    CustomMutedAccountRow(account = it, navController = navController, viewModel)
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            LazyColumn {
+                items(viewModel.mutedAccountsState.mutedAccounts, key = {
+                    it.id
+                }) {
+                    Row {
+                        CustomMutedAccountRow(account = it, navController = navController, viewModel)
+                    }
                 }
             }
+            
+            LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
+            
+            ErrorComposable(message = viewModel.mutedAccountsState.error)
         }
+        
     }
 
     if (viewModel.unmuteAlert.isNotEmpty()) {

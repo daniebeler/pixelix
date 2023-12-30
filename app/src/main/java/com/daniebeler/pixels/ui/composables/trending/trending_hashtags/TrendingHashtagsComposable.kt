@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables.trending
+package com.daniebeler.pixels.ui.composables.trending.trending_hashtags
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -11,17 +11,22 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixels.domain.model.Tag
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @Composable
 fun TrendingHashtagsComposable(navController: NavController, viewModel: TrendingHashtagsViewModel = hiltViewModel()) {
 
     LazyColumn(content = {
-        items(viewModel.trendingHashtags, key = {
+        items(viewModel.trendingHashtagsState.trendingHashtags, key = {
             it.name
         }) {
             CustomHashtag(hashtag = it, navController = navController)
         }
     })
+    
+    LoadingComposable(isLoading = viewModel.trendingHashtagsState.isLoading)
+    ErrorComposable(message = viewModel.trendingHashtagsState.error)
 }
 
 @Composable

@@ -20,8 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
-import com.daniebeler.pixels.ui.composables.timelines.HomeTimelineComposable
-import com.daniebeler.pixels.ui.composables.timelines.LocalTimelineComposable
+import com.daniebeler.pixels.ui.composables.timelines.home_timeline.HomeTimelineComposable
+import com.daniebeler.pixels.ui.composables.timelines.local_timeline.LocalTimelineComposable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)

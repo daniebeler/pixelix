@@ -1,6 +1,8 @@
-package com.daniebeler.pixels.ui.composables.settings
+package com.daniebeler.pixels.ui.composables.settings.bookmarked_posts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,17 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixels.ui.composables.trending.posts.CustomPost
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
+import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LikedPostsComposable(navController: NavController, viewModel: LikedPostsViewModel = hiltViewModel()) {
+fun BookmarkedPostsComposable(navController: NavController, viewModel: BookmarkedPostsViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Liked Posts")
+                    Text("Bookmarked Posts")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -44,17 +48,24 @@ fun LikedPostsComposable(navController: NavController, viewModel: LikedPostsView
 
         }
     ) { paddingValues ->
-        LazyVerticalGrid(
-            modifier = Modifier.padding(paddingValues),
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            content = {
-                items(viewModel.likedPosts, key = {
-                    it.id
-                }) { photo ->
-                    CustomPost(post = photo, navController = navController)
-                }
-            })
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                content = {
+                    items(viewModel.bookmarkedPostsState.bookmarkedPosts, key = {
+                        it.id
+                    }) { photo ->
+                        CustomPost(post = photo, navController = navController)
+                    }
+                })
+            
+            LoadingComposable(isLoading = viewModel.bookmarkedPostsState.isLoading)
+            ErrorComposable(message = viewModel.bookmarkedPostsState.error)
+        }
+        
     }
 }

@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables.timelines
+package com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,21 +13,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeTimelineViewModel @Inject constructor(
+class HashtagTimelineViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    var homeTimeline: List<Post> by mutableStateOf(emptyList())
+    var posts: List<Post> by mutableStateOf(emptyList())
 
-    init {
+    fun loadPosts(hashtag: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            homeTimeline = repository.getHomeTimeline()
-        }
-    }
-
-    fun loadMorePosts() {
-        CoroutineScope(Dispatchers.Default).launch {
-            homeTimeline += repository.getHomeTimeline(homeTimeline.last().id)
+            posts = repository.getHashtagTimeline(hashtag)
         }
     }
 }

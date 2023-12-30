@@ -21,7 +21,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavController
-import com.daniebeler.pixels.ui.composables.trending.posts.TrendingPostsComposable
+import com.daniebeler.pixels.ui.composables.trending.trending_posts.TrendingPostsComposable
+import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)

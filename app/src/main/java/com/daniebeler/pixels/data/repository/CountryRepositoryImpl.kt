@@ -164,16 +164,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
 
-    override suspend fun getTrendingHashtags(): List<Tag> {
-        return try {
+    override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getTrendingHashtags(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toTag() } ?: emptyList()
+                val res = response.body()?.map { it.toTag() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
@@ -229,42 +231,48 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getLikedPosts(): List<Post> {
-        return try {
+    override fun getLikedPosts(): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getLikedPosts(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
-    override suspend fun getBookmarkedPosts(): List<Post> {
-        return try {
+    override fun getBookmarkedPosts(): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getBookmarkedPosts(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
-    override suspend fun getFollowedHashtags(): List<Tag> {
-        return try {
+    override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getFollowedHashtags(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toTag() } ?: emptyList()
+                val res = response.body()?.map { it.toTag() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
@@ -426,17 +434,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getMutedAccounts(): List<Account> {
-        return try {
+    override fun getMutedAccounts(): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getMutedAccounts(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body() ?: emptyList()
-                res.map { it.toAccount() }
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

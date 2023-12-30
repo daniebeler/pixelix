@@ -40,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,19 +82,9 @@ fun BlockedAccountsComposable (navController: NavController, viewModel: BlockedA
                 }
             }
 
-            if (viewModel.blockedAccounts.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
+            LoadingComposable(isLoading = viewModel.blockedAccounts.isLoading)
             
-            if (viewModel.blockedAccounts.error.isNotBlank()) {
-                Text(text = viewModel.blockedAccounts.error, Modifier.fillMaxSize().wrapContentSize(Alignment.Center))
-            }
+            ErrorComposable(message = viewModel.blockedAccounts.error)
         }
     }
 

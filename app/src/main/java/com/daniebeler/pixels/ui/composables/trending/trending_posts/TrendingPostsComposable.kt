@@ -1,14 +1,14 @@
-package com.daniebeler.pixels.ui.composables.trending.posts
+package com.daniebeler.pixels.ui.composables.trending.trending_posts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Post
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @Composable
 fun TrendingPostsComposable(
@@ -26,52 +28,26 @@ fun TrendingPostsComposable(
     viewModel: TrendingPostsViewModel = hiltViewModel()
 ) {
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            item(
-                span = { GridItemSpan(3) }
-            ) {
-                Heading(text = "Trending today")
-            }
-            if (viewModel.dailyState.isLoading) {
-                item { CircularProgressIndicator() }
-            } else if (viewModel.dailyState.error.isNotBlank()) {
-                item { Text(text = viewModel.dailyState.error) }
-            } else {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
                 items(viewModel.dailyState.trendingPosts, key = {
                     it.id
                 }) { photo ->
                     CustomPost(post = photo, navController = navController)
                 }
+
             }
+        )
+        
+        LoadingComposable(isLoading = viewModel.dailyState.isLoading)
+        ErrorComposable(message = viewModel.dailyState.error)
+    }
 
-            /*
-                        item (
-                            span = { GridItemSpan(3) }
-                        ) {
-                            Heading(text = "Trending this month")
-                        }
-                        items(viewModel.monthlyTrendingPosts, key = {
-                            it.id
-                        }) { photo ->
-                            CustomPost(post = photo, navController = navController)
-                        }
 
-                        item (
-                            span = { GridItemSpan(3) }
-                        ) {
-                            Heading(text = "Trending this year")
-                        }
-                        items(viewModel.yearlyTrendingPosts, key = {
-                            it.id
-                        }) { photo ->
-                            CustomPost(post = photo, navController = navController)
-                        }*/
-        }
-    )
 }
 
 @Composable

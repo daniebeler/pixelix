@@ -1,6 +1,5 @@
-package com.daniebeler.pixels.ui.composables.trending.posts
+package com.daniebeler.pixels.ui.composables.trending.trending_posts
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,12 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.repository.CountryRepository
-import com.daniebeler.pixels.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
