@@ -440,17 +440,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getBlockedAccounts(): List<Account> {
-        return try {
+    override fun getBlockedAccounts(): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getBlockedAccounts(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body() ?: emptyList()
-                res.map { it.toAccount() }
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

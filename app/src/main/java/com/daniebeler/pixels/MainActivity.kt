@@ -40,7 +40,7 @@ import com.daniebeler.pixels.ui.composables.ProfileComposable
 import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
-import com.daniebeler.pixels.ui.composables.settings.BlockedAccountsComposable
+import com.daniebeler.pixels.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixels.ui.composables.settings.BookmarkedPostsComposable
 import com.daniebeler.pixels.ui.composables.settings.FollowedHashtagsComposable
 import com.daniebeler.pixels.ui.composables.settings.LikedPostsComposable

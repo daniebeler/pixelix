@@ -64,7 +64,7 @@ interface CountryRepository {
     suspend fun getAccountsFollowing(accountId: String): List<Account>
 
     suspend fun getMutedAccounts(): List<Account>
-    suspend fun getBlockedAccounts(): List<Account>
+    fun getBlockedAccounts(): Flow<Resource<List<Account>>>
 
     suspend fun getNotifications(): List<Notification>
 
