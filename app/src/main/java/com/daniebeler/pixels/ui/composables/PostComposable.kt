@@ -65,10 +65,7 @@ import com.daniebeler.pixels.domain.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostComposable(post: Post, navController: NavController, viewModel: PostViewModel = hiltViewModel()) {
-
-    println("postincomposable")
-    println(post)
+fun PostComposable(post: Post, navController: NavController, viewModel: PostViewModel = hiltViewModel(key = post.id)) {
 
     val context = LocalContext.current
 
