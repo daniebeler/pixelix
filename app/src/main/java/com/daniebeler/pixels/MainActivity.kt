@@ -41,6 +41,7 @@ import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixels.ui.composables.settings.BlockedAccountsComposable
+import com.daniebeler.pixels.ui.composables.settings.BookmarkedPostsComposable
 import com.daniebeler.pixels.ui.composables.settings.LikedPostsComposable
 import com.daniebeler.pixels.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixels.ui.theme.PixelsTheme
@@ -139,6 +140,10 @@ sealed class Destinations(
         route = "liked_posts_screen",
         icon = Icons.Outlined.Settings
     )
+    object BookmarkedPosts : Destinations(
+        route = "bookmarked_posts_screen",
+        icon = Icons.Outlined.Settings
+    )
 
     object Hashtag : Destinations(
         route = "hashtag_timeline_screen/{hashtag}",
@@ -198,6 +203,10 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.LikedPosts.route) {
             LikedPostsComposable(navController)
+        }
+
+        composable(Destinations.BookmarkedPosts.route) {
+            BookmarkedPostsComposable(navController)
         }
 
         composable(Destinations.OwnProfile.route) {

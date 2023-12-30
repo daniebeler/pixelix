@@ -39,6 +39,9 @@ interface PixelfedApi {
     @GET("api/v1/favourites?limit=12")
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
+    @GET("api/v1/bookmarks?limit=12")
+    fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+
     @GET("api/v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElementDto>
 

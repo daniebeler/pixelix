@@ -22,13 +22,13 @@ import com.daniebeler.pixels.ui.composables.trending.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LikedPostsComposable(navController: NavController, viewModel: LikedPostsViewModel = hiltViewModel()) {
+fun BookmarkedPostsComposable(navController: NavController, viewModel: BookmarkedPostsViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Liked Posts")
+                    Text("Bookmarked Posts")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -50,7 +50,7 @@ fun LikedPostsComposable(navController: NavController, viewModel: LikedPostsView
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             content = {
-                items(viewModel.likedPosts, key = {
+                items(viewModel.bookmarkedPosts, key = {
                     it.id
                 }) { photo ->
                     CustomPost(post = photo, navController = navController)

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -64,6 +65,13 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 
                 CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder, text = "Liked Posts", onClick = {
                     navController.navigate("liked_posts_screen") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                })
+
+                CustomSettingsElement(icon = Icons.Outlined.Bookmarks, text = "Bookmarked Posts", onClick = {
+                    navController.navigate("bookmarked_posts_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
