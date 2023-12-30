@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">pixels</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="liked_posts">Gelikte Posts</string>
+    <string name="bookmarked_posts">Gespeicherte Posts</string>
+    <string name="followed_hashtags">Gefolgte Hashtags</string>
+    <string name="blocked_accounts">Blockierte Accounts</string>
+    <string name="muted_accounts">Stummgeschaltete Accounts</string>
+    <string name="logout">Ausloggen</string>
+    <string name="open_in_browser">Im Browser öffnen</string>
+    <string name="share_this_profile">Profil teilen</string>
+    <string name="block_this_profile">Profil blockieren</string>
+    <string name="unblock_this_profile">Profil entblockieren</string>
+    <string name="mute_this_profile">Profil stummschalten</string>
+    <string name="unmute_this_profile">Profil entstummschalten</string>
+    <string name="load_more">Mehr laden</string>
+    <string name="follow">folgen</string>
+    <string name="unfollow">entfolgen</string>
+    <string name="followers">Follower</string>
+    <string name="following">Gefolgt</string>
+    <string name="posts">Beiträge</string>
+    <string name="hashtags">Hashtags</string>
+    <string name="reblogged_your_post">hat deinen Beitrag geteilt</string>
+    <string name="liked_your_post">gefällt dein Beitrag</string>
+    <string name="followed_you">folgt dir jetzt</string>
+    <string name="share_this_post">Beitrag teilen</string>
+    <string name="trending">Beliebt</string>
+</resources>

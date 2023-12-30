@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.TrendingPostsComposable
 import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
 import kotlinx.coroutines.launch
@@ -40,7 +42,7 @@ fun TrendingComposable(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Trending")
+                    Text(stringResource(R.string.trending))
                 }
             )
 
@@ -54,7 +56,7 @@ fun TrendingComposable(navController: NavController) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    text = { Text("Posts") },
+                    text = { Text(stringResource(id = R.string.posts)) },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {
@@ -64,7 +66,7 @@ fun TrendingComposable(navController: NavController) {
                     })
 
                 Tab(
-                    text = { Text("Hashtags") },
+                    text = { Text(stringResource(R.string.hashtags)) },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {

@@ -28,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixels.LoginActivity
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,7 +48,7 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Settings")
+                    Text(text = stringResource(R.string.settings))
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -64,42 +66,44 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
     ) {paddingValues ->
             Column (Modifier.padding(paddingValues)) {
 
-                CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder, text = "Liked Posts", onClick = {
+                CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder, text = stringResource(R.string.liked_posts), onClick = {
                     navController.navigate("liked_posts_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Bookmarks, text = "Bookmarked Posts", onClick = {
+                CustomSettingsElement(icon = Icons.Outlined.Bookmarks, text = stringResource(R.string.bookmarked_posts), onClick = {
                     navController.navigate("bookmarked_posts_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Tag, text = "Followed Hashtags", onClick = {
+                CustomSettingsElement(icon = Icons.Outlined.Tag, text = stringResource(R.string.followed_hashtags), onClick = {
                     navController.navigate("followed_hashtags_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Muted Accounts", onClick = {
+                CustomSettingsElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(R.string.muted_accounts), onClick = {
                     navController.navigate("muted_accounts_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Block, text = "Blocked Accounts", onClick = {
+                CustomSettingsElement(icon = Icons.Outlined.Block, text = stringResource(R.string.blocked_accounts), onClick = {
                     navController.navigate("blocked_accounts_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }
                 })
 
-                CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = "Logout", onClick = {
+                CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
+                    R.string.logout
+                ), onClick = {
                     CoroutineScope(Dispatchers.Default).launch {
                         viewModel.logout()
                         val intent = Intent(context, LoginActivity::class.java)

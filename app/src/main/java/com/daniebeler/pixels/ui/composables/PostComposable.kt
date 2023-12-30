@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Post
 
 
@@ -220,11 +222,12 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = "Open in browser", onClick = {
+                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                        R.string.open_in_browser), onClick = {
                         openUrl(context, post.url)
                     })
                     
-                    CustomBottomSheetElement(icon = Icons.Outlined.Share, text = "Share this post", onClick = {
+                    CustomBottomSheetElement(icon = Icons.Outlined.Share, text = stringResource(R.string.share_this_post), onClick = {
                         shareProfile(context, post.url)
                     })
                 }

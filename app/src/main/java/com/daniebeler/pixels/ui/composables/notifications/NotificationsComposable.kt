@@ -80,12 +80,12 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
     var showImage = false
     var text = ""
     if (notification.type == "follow") {
-        text = " followed you"
+        text = " " + stringResource(R.string.followed_you)
     } else if (notification.type == "favourite") {
-        text = " liked your post"
+        text = " " + stringResource(R.string.liked_your_post)
         showImage = true
     } else if (notification.type == "reblog") {
-        text = " reblogged your post"
+        text = " " + stringResource(R.string.reblogged_your_post)
         showImage = true
     }
 

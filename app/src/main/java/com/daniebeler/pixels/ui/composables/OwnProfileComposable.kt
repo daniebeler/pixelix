@@ -17,9 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +76,7 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
                             Button(onClick = {
                                 viewModel.loadMorePosts()
                             }) {
-                                Text(text = "Load More")
+                                Text(text = stringResource(R.string.load_more))
                             }
                         }
 

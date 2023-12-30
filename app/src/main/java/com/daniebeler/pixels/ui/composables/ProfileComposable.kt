@@ -48,12 +48,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
@@ -126,14 +128,14 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                                         Button(onClick = {
                                             viewModel.unfollowAccount(userId)
                                         }) {
-                                            Text(text = "unfollow")
+                                            Text(text = stringResource(R.string.unfollow))
                                         }
                                     }
                                     else {
                                         Button(onClick = {
                                             viewModel.followAccount(userId)
                                         }) {
-                                            Text(text = "follow")
+                                            Text(text = stringResource(R.string.follow))
                                         }
                                     }
                                 }
@@ -156,7 +158,7 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                             Button(onClick = {
                                 viewModel.loadMorePosts(userId)
                             }) {
-                                Text(text = "Load More")
+                                Text(text = stringResource(R.string.load_more))
                             }
                         }
 
@@ -182,23 +184,31 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
 
                 if (viewModel.relationship != null) {
                     if (viewModel.relationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Unmute this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(
+                            R.string.unmute_this_profile
+                        ), onClick = {
                             viewModel.unmuteAccount()
                         })
                     }
                     else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Mute this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(
+                            R.string.mute_this_profile
+                        ), onClick = {
                             viewModel.muteAccount()
                         })
                     }
 
                     if (viewModel.relationship!!.blocking) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Unblock this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                            R.string.unblock_this_profile
+                        ), onClick = {
                             viewModel.unblockAccount()
                         })
                     }
                     else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = "Block this profile", onClick = {
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                            R.string.block_this_profile
+                        ), onClick = {
                             viewModel.blockAccount()
                         })
                     }
@@ -206,11 +216,13 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = "Open in browser", onClick = {
+                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                    R.string.open_in_browser
+                ), onClick = {
                     openUrl(context, viewModel.account!!.url)
                 })
 
-                CustomBottomSheetElement(icon = Icons.Outlined.Share, text = "Share this profile", onClick = {
+                CustomBottomSheetElement(icon = Icons.Outlined.Share, text = stringResource(R.string.share_this_profile), onClick = {
                     shareProfile(context, viewModel.account!!.url)
                 })
             }
@@ -249,7 +261,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
             Row (horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                 Column (horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = account!!.postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = "Posts", fontSize = 12.sp)
+                    Text(text = stringResource(R.string.posts), fontSize = 12.sp)
                 }
 
                 Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
@@ -259,7 +271,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                     }
                 }) {
                     Text(text = account!!.followersCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = "Followers", fontSize = 12.sp)
+                    Text(text = stringResource(R.string.followers), fontSize = 12.sp)
                 }
 
                 Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
@@ -269,7 +281,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                     }
                 }) {
                     Text(text = account!!.followingCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = "Following", fontSize = 12.sp)
+                    Text(text = stringResource(R.string.following), fontSize = 12.sp)
                 }
             }
 

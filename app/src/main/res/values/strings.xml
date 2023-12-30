@@ -1,4 +1,29 @@
 <resources>
     <string name="app_name">pixels</string>
     <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
+    <string name="liked_posts">Liked Posts</string>
+    <string name="bookmarked_posts">Bookmarked Posts</string>
+    <string name="followed_hashtags">Followed Hashtags</string>
+    <string name="blocked_accounts">Blocked Accounts</string>
+    <string name="muted_accounts">Muted Accounts</string>
+    <string name="logout">Logout</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="share_this_profile">Share this profile</string>
+    <string name="block_this_profile">Block this profile</string>
+    <string name="unblock_this_profile">Unblock this profile</string>
+    <string name="mute_this_profile">Mute this profile</string>
+    <string name="unmute_this_profile">Unmute this profile</string>
+    <string name="load_more">Load More</string>
+    <string name="follow">follow</string>
+    <string name="unfollow">unfollow</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="posts">Posts</string>
+    <string name="hashtags">Hashtags</string>
+    <string name="reblogged_your_post">reblogged your post</string>
+    <string name="liked_your_post">liked your post</string>
+    <string name="followed_you">followed you</string>
+    <string name="share_this_post">Share this post</string>
+    <string name="trending">Trending</string>
 </resources>
