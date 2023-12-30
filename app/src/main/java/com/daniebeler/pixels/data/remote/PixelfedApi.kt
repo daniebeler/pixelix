@@ -36,6 +36,9 @@ interface PixelfedApi {
     @GET("api/v1/timelines/home")
     fun getHomeTimeline(@Query("max_id") maxPostId: String, @Header("Authorization") accessToken: String): Call<List<PostDto>>
 
+    @GET("api/v1/favourites?limit=12")
+    fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+
     @GET("api/v2/comments/{userid}/status/{postid}")
     fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElementDto>
 

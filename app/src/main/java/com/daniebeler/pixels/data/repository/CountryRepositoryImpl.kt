@@ -222,6 +222,19 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun getLikedPosts(): List<Post> {
+        return try {
+            val response = pixelfedApi.getLikedPosts(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.map { it.toPost() } ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
     override suspend fun getReplies(userid: String, postid: String): List<Reply> {
         return try {
             val response = pixelfedApi.getReplies(userid, postid).awaitResponse()

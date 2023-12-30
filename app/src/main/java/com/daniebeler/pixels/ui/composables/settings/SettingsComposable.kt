@@ -13,6 +13,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,6 +61,13 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
         }
     ) {paddingValues ->
             Column (Modifier.padding(paddingValues)) {
+
+                CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder, text = "Liked Posts", onClick = {
+                    navController.navigate("liked_posts_screen") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                })
 
                 CustomSettingsElement(icon = Icons.Outlined.DoNotDisturbOn, text = "Muted Accounts", onClick = {
                     navController.navigate("muted_accounts_screen") {
