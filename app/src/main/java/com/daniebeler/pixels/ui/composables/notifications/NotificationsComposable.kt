@@ -1,10 +1,12 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.notifications
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,13 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Notification
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,20 +47,28 @@ fun NotificationsComposable(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Notifications")
+                    Text(stringResource(R.string.notifications))
                 }
             )
 
         }
     ) { paddingValues ->
-        LazyColumn(Modifier.padding(paddingValues),
-            content = {
-                items(viewModel.notifications, key = {
-                    it.id
-                }) {
-                    CustomNotificaiton(notification = it, navController = navController)
-                }
-            })
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
+            LazyColumn(
+                content = {
+                    items(viewModel.notificationsState.notifications, key = {
+                        it.id
+                    }) {
+                        CustomNotificaiton(notification = it, navController = navController)
+                    }
+                })
+            
+            LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
+            ErrorComposable(message = viewModel.notificationsState.error)
+        }
+
     }
 
 

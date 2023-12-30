@@ -33,10 +33,9 @@ interface CountryRepository {
 
     suspend fun getHashtagTimeline(hashtag: String): List<Post>
 
-    suspend fun getLocalTimeline(): List<Post>
+    fun getLocalTimeline(): Flow<Resource<List<Post>>>
 
-    suspend fun getHomeTimeline(): List<Post>
-    suspend fun getHomeTimeline(maxPostId: String): List<Post>
+    fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getLikedPosts(): Flow<Resource<List<Post>>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
@@ -66,7 +65,7 @@ interface CountryRepository {
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
 
-    suspend fun getNotifications(): List<Notification>
+    fun getNotifications(): Flow<Resource<List<Notification>>>
 
     suspend fun getPostsByAccountId(accountId: String): List<Post>
     suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>

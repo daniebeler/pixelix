@@ -34,7 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pixels.ui.composables.HomeComposable
 import com.daniebeler.pixels.ui.composables.settings.muted_accounts.MutedAccountsComposable
-import com.daniebeler.pixels.ui.composables.NotificationsComposable
+import com.daniebeler.pixels.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
 import com.daniebeler.pixels.ui.composables.settings.SettingsComposable

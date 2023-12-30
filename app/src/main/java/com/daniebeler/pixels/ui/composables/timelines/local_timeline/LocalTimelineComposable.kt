@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.PostComposable
 
 @Composable
@@ -15,10 +17,13 @@ fun LocalTimelineComposable(navController: NavController, viewModel: LocalTimeli
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        items(viewModel.localTimeline, key = {
+        items(viewModel.localTimelineState.localTimeline, key = {
             it.id
         }) { item ->
             PostComposable(post = item, navController)
         }
     }
+
+    LoadingComposable(isLoading = viewModel.localTimelineState.isLoading)
+    ErrorComposable(message = viewModel.localTimelineState.error)
 }

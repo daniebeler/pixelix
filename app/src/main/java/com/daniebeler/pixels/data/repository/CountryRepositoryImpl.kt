@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixels.common.Constants
 import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.data.remote.PixelfedApi
+import com.daniebeler.pixels.data.remote.dto.PostDto
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Application
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
@@ -159,7 +161,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 emit(Resource.Error("an error occurred"))
             }
         } catch (exception: Exception) {
-            emit(Resource.Error("an error occurred"))
+            emit(Resource.Error(exception.message ?: "an error occurred"))
         }
     }
 
@@ -192,42 +194,39 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getLocalTimeline(): List<Post> {
-        return try {
+    override fun getLocalTimeline(): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
-    override suspend fun getHomeTimeline(): List<Post> {
-        return try {
-            val response = pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+    override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
+            var response: Response<List<PostDto>>? = null
+            response = if (maxPostId.isNotEmpty()) {
+                pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
             } else {
-                emptyList()
+                pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
             }
-        } catch (exception: Exception) {
-            emptyList()
-        }
-    }
 
-    override suspend fun getHomeTimeline(maxPostId: String): List<Post> {
-        return try {
-            val response = pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
@@ -465,17 +464,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
 
-    override suspend fun getNotifications(): List<Notification> {
-        return try {
+    override fun getNotifications(): Flow<Resource<List<Notification>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body() ?: emptyList()
-                res.map { it.toNotification() }
+                val res = response.body()?.map { it.toNotification() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

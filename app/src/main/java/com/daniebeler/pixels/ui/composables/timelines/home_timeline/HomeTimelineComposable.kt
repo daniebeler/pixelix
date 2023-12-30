@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.PostComposable
 
 @Composable
@@ -17,13 +19,13 @@ fun HomeTimelineComposable(navController: NavController, viewModel: HomeTimeline
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        items(viewModel.homeTimeline, key = {
+        items(viewModel.homeTimelineState.homeTimeline, key = {
             it.id
         }) { item ->
             PostComposable(post = item, navController)
         }
 
-        if (viewModel.homeTimeline.isNotEmpty()) {
+        if (viewModel.homeTimelineState.homeTimeline.isNotEmpty()) {
             item {
                 Button(onClick = {
                     viewModel.loadMorePosts()
@@ -33,4 +35,7 @@ fun HomeTimelineComposable(navController: NavController, viewModel: HomeTimeline
             }
         }
     }
+
+    LoadingComposable(isLoading = viewModel.homeTimelineState.isLoading)
+    ErrorComposable(message = viewModel.homeTimelineState.error)
 }
