@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,6 +73,13 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 
                 CustomSettingsElement(icon = Icons.Outlined.Bookmarks, text = "Bookmarked Posts", onClick = {
                     navController.navigate("bookmarked_posts_screen") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                })
+
+                CustomSettingsElement(icon = Icons.Outlined.Tag, text = "Followed Hashtags", onClick = {
+                    navController.navigate("followed_hashtags_screen") {
                         launchSingleTop = true
                         restoreState = true
                     }

@@ -248,6 +248,19 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
+    override suspend fun getFollowedHashtags(): List<Tag> {
+        return try {
+            val response = pixelfedApi.getFollowedHashtags(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                response.body()?.map { it.toTag() } ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (exception: Exception) {
+            emptyList()
+        }
+    }
+
     override suspend fun getReplies(userid: String, postid: String): List<Reply> {
         return try {
             val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
