@@ -55,7 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
-import com.daniebeler.pixels.ui.composables.trending.CustomPost
+import com.daniebeler.pixels.ui.composables.trending.posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

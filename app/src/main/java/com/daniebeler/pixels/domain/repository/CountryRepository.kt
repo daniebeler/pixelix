@@ -1,6 +1,7 @@
 package com.daniebeler.pixels.domain.repository
 
 import android.net.http.UrlRequest.Status
+import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Application
@@ -27,7 +28,7 @@ interface CountryRepository {
     fun getAccessTokenFromStorage(): Flow<String>
     fun setBaseUrl(baseUrl: String)
     fun setAccessToken(token: String)
-    suspend fun getTrendingPosts(range: String): List<Post>
+    fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     suspend fun getTrendingHashtags(): List<Tag>
 
     suspend fun getHashtagTimeline(hashtag: String): List<Post>

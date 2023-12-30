@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables.trending
+package com.daniebeler.pixels.ui.composables.trending.posts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,45 +21,55 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Post
 
 @Composable
-fun TrendingPostsComposable(navController: NavController, viewModel: TrendingPostsViewModel = hiltViewModel()) {
+fun TrendingPostsComposable(
+    navController: NavController,
+    viewModel: TrendingPostsViewModel = hiltViewModel()
+) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         content = {
-            item (
+            item(
                 span = { GridItemSpan(3) }
             ) {
                 Heading(text = "Trending today")
             }
-            items(viewModel.dailyTrendingPosts, key = {
-                it.id
-            }) { photo ->
-                CustomPost(post = photo, navController = navController)
+            if (viewModel.dailyState.isLoading) {
+                item { CircularProgressIndicator() }
+            } else if (viewModel.dailyState.error.isNotBlank()) {
+                item { Text(text = viewModel.dailyState.error) }
+            } else {
+                items(viewModel.dailyState.trendingPosts, key = {
+                    it.id
+                }) { photo ->
+                    CustomPost(post = photo, navController = navController)
+                }
             }
 
-            item (
-                span = { GridItemSpan(3) }
-            ) {
-                Heading(text = "Trending this month")
-            }
-            items(viewModel.monthlyTrendingPosts, key = {
-                it.id
-            }) { photo ->
-                CustomPost(post = photo, navController = navController)
-            }
+            /*
+                        item (
+                            span = { GridItemSpan(3) }
+                        ) {
+                            Heading(text = "Trending this month")
+                        }
+                        items(viewModel.monthlyTrendingPosts, key = {
+                            it.id
+                        }) { photo ->
+                            CustomPost(post = photo, navController = navController)
+                        }
 
-            item (
-                span = { GridItemSpan(3) }
-            ) {
-                Heading(text = "Trending this year")
-            }
-            items(viewModel.yearlyTrendingPosts, key = {
-                it.id
-            }) { photo ->
-                CustomPost(post = photo, navController = navController)
-            }
+                        item (
+                            span = { GridItemSpan(3) }
+                        ) {
+                            Heading(text = "Trending this year")
+                        }
+                        items(viewModel.yearlyTrendingPosts, key = {
+                            it.id
+                        }) { photo ->
+                            CustomPost(post = photo, navController = navController)
+                        }*/
         }
     )
 }

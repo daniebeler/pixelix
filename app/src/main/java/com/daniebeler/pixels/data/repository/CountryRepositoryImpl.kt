@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixels.common.Constants
+import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.data.remote.PixelfedApi
 import com.daniebeler.pixels.domain.model.AccessToken
 import com.daniebeler.pixels.domain.model.Account
@@ -26,6 +27,7 @@ import com.daniebeler.pixels.domain.model.toTag
 import com.daniebeler.pixels.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -36,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 private val Context.dataStore by preferencesDataStore("settings")
 
-class CountryRepositoryImpl(context: Context): CountryRepository {
+class CountryRepositoryImpl(context: Context) : CountryRepository {
 
     private val settingsDataStore = context.dataStore
 
@@ -74,7 +76,7 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
             .client(mOkHttpClient)
             .build()
 
-        pixelfedApi =  retrofit.create(PixelfedApi::class.java)
+        pixelfedApi = retrofit.create(PixelfedApi::class.java)
     }
 
     override fun doesAccessTokenExist(): Boolean {
@@ -95,9 +97,10 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         buildPixelFedApi()
     }
 
-    override fun getClientIdFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
-    }
+    override fun getClientIdFromStorage(): Flow<String> =
+        settingsDataStore.data.map { preferences ->
+            preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
+        }
 
     override fun getBaseUrlFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
@@ -110,9 +113,10 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
-    override fun getClientSecretFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
-    }
+    override fun getClientSecretFromStorage(): Flow<String> =
+        settingsDataStore.data.map { preferences ->
+            preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
+        }
 
     override suspend fun storeAccessToken(accessToken: String) {
         settingsDataStore.edit { preferences ->
@@ -130,9 +134,10 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
     }
 
-    override fun getAccessTokenFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
-    }
+    override fun getAccessTokenFromStorage(): Flow<String> =
+        settingsDataStore.data.map { preferences ->
+            preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
+        }
 
     override fun setBaseUrl(baseUrl: String) {
         BASE_URL = baseUrl
@@ -142,20 +147,22 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         this.accessToken = token
     }
 
-    override suspend fun getTrendingPosts(range: String): List<Post> {
-        return try {
+    override fun getTrendingPosts(range: String): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
-                println("success")
                 println(response.body())
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val result = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(result))
             } else {
-                emptyList()
+                emit(Resource.Error("an error occurred"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error("an error occurred"))
         }
     }
+
 
     override suspend fun getTrendingHashtags(): List<Tag> {
         return try {
@@ -478,7 +485,8 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
 
     override suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post> {
         return try {
-            val response = pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
+            val response =
+                pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
             if (response.isSuccessful) {
                 response.body()?.map { it.toPost() } ?: emptyList()
             } else {
@@ -529,7 +537,7 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
     }
 
 
-    // Auth
+// Auth
 
     override suspend fun createApplication(): Application? {
         return try {
@@ -547,7 +555,11 @@ class CountryRepositoryImpl(context: Context): CountryRepository {
         }
     }
 
-    override suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken? {
+    override suspend fun obtainToken(
+        clientId: String,
+        clientSecret: String,
+        code: String
+    ): AccessToken? {
         return try {
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
