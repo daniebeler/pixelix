@@ -38,6 +38,7 @@ interface CountryRepository {
     suspend fun getHomeTimeline(maxPostId: String): List<Post>
     suspend fun getLikedPosts(): List<Post>
     suspend fun getBookmarkedPosts(): List<Post>
+    suspend fun getFollowedHashtags(): List<Tag>
 
     suspend fun getRelationships(userId: String): List<Relationship>
 
