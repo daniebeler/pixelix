@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -52,6 +53,7 @@ fun FollowersComposable(navController: NavController, viewModel: FollowersViewMo
 fun CustomFollowerElement(account: Account, navController: NavController) {
     Row (modifier = Modifier
         .padding(horizontal = 12.dp, vertical = 8.dp)
+        .fillMaxWidth()
         .clickable {
             navController.navigate("profile_screen/" + account.id) {
                 launchSingleTop = true

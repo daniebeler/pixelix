@@ -1,6 +1,8 @@
 package com.daniebeler.pixels.ui.composables.trending.trending_hashtags
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,7 +17,10 @@ import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @Composable
-fun TrendingHashtagsComposable(navController: NavController, viewModel: TrendingHashtagsViewModel = hiltViewModel()) {
+fun TrendingHashtagsComposable(
+    navController: NavController,
+    viewModel: TrendingHashtagsViewModel = hiltViewModel()
+) {
 
     LazyColumn(content = {
         items(viewModel.trendingHashtagsState.trendingHashtags, key = {
@@ -24,22 +29,23 @@ fun TrendingHashtagsComposable(navController: NavController, viewModel: Trending
             CustomHashtag(hashtag = it, navController = navController)
         }
     })
-    
+
     LoadingComposable(isLoading = viewModel.trendingHashtagsState.isLoading)
     ErrorComposable(message = viewModel.trendingHashtagsState.error)
 }
 
 @Composable
 fun CustomHashtag(hashtag: Tag, navController: NavController) {
-   Text(text = hashtag.name,
-       Modifier
-           .clickable {
-               val newHastag = hashtag.name.drop(1)
-               navController.navigate("hashtag_timeline_screen/$newHastag") {
-                   launchSingleTop = true
-                   restoreState = true
-               }
-           }
-           .padding(start = 6.dp, top = 6.dp)
-   )
+    Row(Modifier.padding(vertical = 12.dp, horizontal = 5.dp).fillMaxWidth()) {
+        Text(text = hashtag.name,
+            Modifier
+                .clickable {
+                    val newHastag = hashtag.name.drop(1)
+                    navController.navigate("hashtag_timeline_screen/$newHastag") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+        )
+    }
 }
