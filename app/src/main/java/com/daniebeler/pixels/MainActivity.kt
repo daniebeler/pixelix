@@ -163,7 +163,7 @@ sealed class Destinations(
     )
 
     object Followers : Destinations(
-        route = "followers_screen/{userid}",
+        route = "followers_screen/{page}/{userid}",
         icon = Icons.Outlined.Favorite
     )
 }
@@ -226,8 +226,9 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.Followers.route) {navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
-            uId?.let { id ->
-                FollowersMainComposable(navController, accountId = id)
+            val page = navBackStackEntry.arguments?.getString("page")
+            if (uId != null && page != null) {
+                FollowersMainComposable(navController, accountId = uId, page = page)
             }
         }
 

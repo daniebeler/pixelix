@@ -32,15 +32,21 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FollowersMainComposable(navController: NavController, accountId: String, viewModel: FollowersViewModel = hiltViewModel()) {
+fun FollowersMainComposable(navController: NavController, accountId: String, page: String, viewModel: FollowersViewModel = hiltViewModel()) {
 
     viewModel.loadAccount(accountId)
     viewModel.getFollowers(accountId)
     viewModel.getFollowing(accountId)
 
-    val pagerState = rememberPagerState { 2 }
-
-
+    val pageId = if (page == "followers") {
+        0
+    } else {
+        1
+    }
+    val pagerState = rememberPagerState(
+        initialPage = pageId,
+        pageCount = { 2 }
+    )
 
     val scope = rememberCoroutineScope()
 

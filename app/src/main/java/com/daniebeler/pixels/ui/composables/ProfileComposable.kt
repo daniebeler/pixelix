@@ -371,7 +371,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 }
 
                 Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
-                    navController.navigate("followers_screen/" + account.id) {
+                    navController.navigate("followers_screen/" + "followers/" + account.id) {
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -381,7 +381,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 }
 
                 Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
-                    navController.navigate("followers_screen/" + account.id) {
+                    navController.navigate("followers_screen/" + "following/" + account.id) {
                         launchSingleTop = true
                         restoreState = true
                     }
