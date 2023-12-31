@@ -66,8 +66,8 @@ interface PixelfedApi {
     @GET("api/v1/accounts/relationships")
     fun getRelationships(@Query("id[]") userId: String, @Header("Authorization") token: String): Call<List<RelationshipDto>>
 
-    @GET("api/v1.1/accounts/mutals/{id}")
-    fun getMutalFollowers(@Query("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+    @GET("api/v1.1/accounts/mutuals/{id}")
+    fun getMutalFollowers(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
 
     @POST("api/v1/accounts/{id}/follow")
     fun followAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>

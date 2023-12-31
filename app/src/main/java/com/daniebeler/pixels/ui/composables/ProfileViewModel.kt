@@ -25,6 +25,8 @@ class ProfileViewModel @Inject constructor(
     var posts: List<Post> by mutableStateOf(emptyList())
 
 
+
+
     fun loadData(userId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             account = repository.getAccount(userId)

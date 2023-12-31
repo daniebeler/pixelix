@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -49,7 +52,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,6 +129,110 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                             span = { GridItemSpan(3) }
                         ) {
                             Column (Modifier.padding(12.dp)) {
+
+                                if (viewModel.mutalFollowers.isNotEmpty()) {
+
+                                    val listSize = viewModel.mutalFollowers.size
+
+                                    val annotatedString = buildAnnotatedString {
+                                        append("Followed by ")
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                            append(viewModel.mutalFollowers.first().username)
+                                        }
+
+                                        if (listSize == 2) {
+                                            append(" and ")
+                                        }
+                                        if (listSize > 2) {
+                                            append(", ")
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append(viewModel.mutalFollowers[1].username)
+                                            }
+                                        }
+
+                                        if (listSize == 3) {
+                                            append(" and ")
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append(viewModel.mutalFollowers[2].username)
+                                            }
+                                        }
+                                        if (listSize > 3) {
+                                            append(", ")
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append(viewModel.mutalFollowers[2].username)
+                                            }
+                                            append(" and ")
+                                            append((listSize - 3).toString())
+                                            if (listSize == 4) {
+                                                append(" other")
+                                            }
+                                            else {
+                                                append(" others")
+                                            }
+                                        }
+
+
+                                    }
+
+                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                        Box {
+                                            AsyncImage(
+                                                model = viewModel.mutalFollowers.first().avatar, contentDescription = "",
+                                                modifier = Modifier
+                                                    .height(36.dp)
+                                                    .width(36.dp)
+                                                    .clip(CircleShape)
+                                                    .border(
+                                                        width = 2.dp,
+                                                        shape = CircleShape,
+                                                        color = MaterialTheme.colorScheme.background
+                                                    )
+                                            )
+
+                                            if (listSize > 1) {
+                                                Row {
+                                                    Spacer(modifier = Modifier.width(18.dp))
+                                                    AsyncImage(
+                                                        model = viewModel.mutalFollowers[1].avatar, contentDescription = "",
+                                                        modifier = Modifier
+                                                            .height(36.dp)
+                                                            .width(36.dp)
+                                                            .clip(CircleShape)
+                                                            .border(
+                                                                width = 2.dp,
+                                                                shape = CircleShape,
+                                                                color = MaterialTheme.colorScheme.background
+                                                            )
+                                                    )
+                                                }
+                                            }
+                                            if (listSize > 2) {
+                                                Row {
+                                                    Spacer(modifier = Modifier.width(36.dp))
+                                                    AsyncImage(
+                                                        model = viewModel.mutalFollowers[2].avatar, contentDescription = "",
+                                                        modifier = Modifier
+                                                            .height(36.dp)
+                                                            .width(36.dp)
+                                                            .clip(CircleShape)
+                                                            .border(
+                                                                width = 2.dp,
+                                                                shape = CircleShape,
+                                                                color = MaterialTheme.colorScheme.background
+                                                            )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        Text(text = annotatedString, fontSize = 12.sp, lineHeight = 18.sp)
+                                    }
+                                }
+                                
+                                Spacer(modifier = Modifier.height(12.dp))
+
                                 if (viewModel.relationship != null) {
                                     if (viewModel.relationship!!.following) {
                                         Button(onClick = {
@@ -138,10 +248,6 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                                             Text(text = stringResource(R.string.follow))
                                         }
                                     }
-                                }
-
-                                if (viewModel.mutalFollowers.isNotEmpty()) {
-                                    Text(text = "MUTAL FOLLOWERS!!!", color = Color.Red)
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))

@@ -523,6 +523,8 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override suspend fun getMutalFollowers(userId: String): List<Account> {
+        println("mtls")
+        println(userId)
         return try {
             val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
