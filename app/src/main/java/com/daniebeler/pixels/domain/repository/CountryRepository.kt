@@ -30,6 +30,8 @@ interface CountryRepository {
     fun setAccessToken(token: String)
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
+
+    fun getHashtag(hashtag: String): Flow<Resource<Tag>>
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
     fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
 
@@ -51,6 +53,11 @@ interface CountryRepository {
     suspend fun followAccount(accountId: String): Relationship?
 
     suspend fun unfollowAccount(accountId: String): Relationship?
+
+    fun followHashtag(tagId: String): Flow<Resource<Tag>>
+
+    fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
+
     suspend fun likePost(postId: String): Post?
     suspend fun unlikePost(postId: String): Post?
     suspend fun muteAccount(accountId: String): Relationship?

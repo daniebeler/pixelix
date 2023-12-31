@@ -30,6 +30,9 @@ interface PixelfedApi {
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
     fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<PostDto>>
 
+    @GET("api/v1/tags/{tag}?_pe=1")
+    fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
+
     @GET("api/v1/timelines/public?_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
@@ -77,6 +80,12 @@ interface PixelfedApi {
 
     @POST("api/v1/accounts/{id}/unfollow")
     fun unfollowAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+
+    @POST("api/v1/tags/{id}/follow")
+    fun followHashtag(@Path("id") tagId: String, @Header("Authorization") token: String): Call<TagDto>
+
+    @POST("api/v1/tags/{id}/unfollow")
+    fun unfollowHashtag(@Path("id") tagId: String, @Header("Authorization") token: String): Call<TagDto>
 
     @POST("api/v1/accounts/{id}/mute")
     fun muteAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>

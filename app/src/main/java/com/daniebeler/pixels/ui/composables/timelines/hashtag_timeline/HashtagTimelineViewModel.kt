@@ -23,6 +23,7 @@ class HashtagTimelineViewModel @Inject constructor(
 ): ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
+    var hashtagState by mutableStateOf(HashtagState())
 
     fun getHashtagTimeline(hashtag: String) {
         repository.getHashtagTimeline(hashtag).onEach { result ->
@@ -37,6 +38,60 @@ class HashtagTimelineViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     HashtagTimelineState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getHashtagInfo(hashtag: String) {
+        repository.getHashtag(hashtag).onEach { result ->
+            hashtagState = when (result) {
+                is Resource.Success -> {
+                    HashtagState(hashtag = result.data)
+                }
+
+                is Resource.Error -> {
+                    HashtagState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    HashtagState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun followHashtag(hashtag: String) {
+        repository.followHashtag(hashtag).onEach { result ->
+            hashtagState = when (result) {
+                is Resource.Success -> {
+                    HashtagState(hashtag = result.data)
+                }
+
+                is Resource.Error -> {
+                    HashtagState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    HashtagState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun unfollowHashtag(hashtag: String) {
+        repository.unfollowHashtag(hashtag).onEach { result ->
+            hashtagState = when (result) {
+                is Resource.Success -> {
+                    HashtagState(hashtag = result.data)
+                }
+
+                is Resource.Error -> {
+                    HashtagState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    HashtagState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

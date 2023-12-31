@@ -179,6 +179,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    override fun getHashtag(hashtag: String): Flow<Resource<Tag>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.getHashtag(hashtag, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toTag()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
+    }
+
     override fun getTrendingAccounts(): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
@@ -338,6 +353,36 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             }
         } catch (exception: Exception) {
             null
+        }
+    }
+
+    override fun followHashtag(tagId: String): Flow<Resource<Tag>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.followHashtag(tagId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toTag()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error("Unknown Error"))
+        }
+    }
+
+    override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.unfollowHashtag(tagId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toTag()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
