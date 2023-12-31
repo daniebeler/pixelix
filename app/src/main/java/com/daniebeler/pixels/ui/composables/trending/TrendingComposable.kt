@@ -23,6 +23,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.daniebeler.pixels.R
+import com.daniebeler.pixels.ui.composables.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.TrendingPostsComposable
 import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrendingComposable(navController: NavController) {
 
-    val pagerState = rememberPagerState { 2 }
+    val pagerState = rememberPagerState { 3 }
 
     val scope = rememberCoroutineScope()
 
@@ -66,11 +67,20 @@ fun TrendingComposable(navController: NavController) {
                     })
 
                 Tab(
-                    text = { Text(stringResource(R.string.hashtags)) },
+                    text = { Text(stringResource(R.string.accounts)) },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
+                        }
+                    })
+
+                Tab(
+                    text = { Text(stringResource(R.string.hashtags)) },
+                    selected = pagerState.currentPage == 0,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(2)
                         }
                     })
             }
@@ -88,6 +98,11 @@ fun TrendingComposable(navController: NavController) {
                         }
 
                     1 ->
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            TrendingAccountsComposable(navController = navController)
+                        }
+
+                    2 ->
                         Box(modifier = Modifier.fillMaxSize()) {
                             TrendingHashtagsComposable(navController = navController)
                         }

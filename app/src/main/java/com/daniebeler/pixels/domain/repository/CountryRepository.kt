@@ -70,7 +70,7 @@ interface CountryRepository {
     suspend fun getPostsByAccountId(accountId: String): List<Post>
     suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>
 
-    suspend fun getPostById(postId: String): Post?
+    fun getPostById(postId: String): Flow<Resource<Post?>>
 
     suspend fun createApplication(): Application?
 

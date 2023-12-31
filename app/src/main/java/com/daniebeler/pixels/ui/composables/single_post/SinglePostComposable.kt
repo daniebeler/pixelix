@@ -1,6 +1,8 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.single_post
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -14,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
+import com.daniebeler.pixels.ui.composables.PostComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()) {
 
-    viewModel.loadPost(postId)
+    viewModel.getPost(postId)
 
     Scaffold (
         topBar = {
@@ -41,10 +46,15 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
 
         }
     ) {paddingValues ->
-        Column (Modifier.padding(paddingValues)) {
-            if (viewModel.post != null) {
-                PostComposable(viewModel.post!!, navController)
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            Column {
+                if (viewModel.postState.post != null) {
+                    PostComposable(viewModel.postState.post!!, navController)
+                }
             }
+
+            LoadingComposable(isLoading = viewModel.postState.isLoading)
+            ErrorComposable(message = viewModel.postState.error)
         }
     }
 }

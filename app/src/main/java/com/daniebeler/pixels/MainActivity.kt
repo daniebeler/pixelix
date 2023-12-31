@@ -38,7 +38,7 @@ import com.daniebeler.pixels.ui.composables.notifications.NotificationsComposabl
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
 import com.daniebeler.pixels.ui.composables.ProfileComposable
 import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
-import com.daniebeler.pixels.ui.composables.SinglePostComposable
+import com.daniebeler.pixels.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixels.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixels.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable

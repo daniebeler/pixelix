@@ -534,16 +534,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getPostById(postId: String): Post? {
-        return try {
+    override fun getPostById(postId: String): Flow<Resource<Post?>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getPostById(postId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toPost()
+                val res = response.body()?.toPost()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
