@@ -523,16 +523,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getRelationships(userId: String): List<Relationship> {
-        return try {
-            val response = pixelfedApi.getRelationships(userId, accessToken).awaitResponse()
+    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.getRelationships(userIds, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toRelationship() } ?: emptyList()
+                val result = response.body()?.map { it.toRelationship() } ?: emptyList()
+                emit(Resource.Success(result))
             } else {
-                emptyList()
+                emit(Resource.Error("unknown error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "unknown error"))
         }
     }
 

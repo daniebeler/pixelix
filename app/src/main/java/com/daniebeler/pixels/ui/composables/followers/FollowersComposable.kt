@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
 
@@ -41,7 +43,7 @@ fun FollowersComposable(navController: NavController, viewModel: FollowersViewMo
         items(viewModel.followersState.followers, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it, navController)
+            CustomFollowerElement(account = it, null, navController)
         }
     })
     
@@ -50,7 +52,7 @@ fun FollowersComposable(navController: NavController, viewModel: FollowersViewMo
 }
 
 @Composable
-fun CustomFollowerElement(account: Account, navController: NavController) {
+fun CustomFollowerElement(account: Account,relationship: Relationship?, navController: NavController) {
     Row (modifier = Modifier
         .padding(horizontal = 12.dp, vertical = 8.dp)
         .fillMaxWidth()
@@ -69,5 +71,19 @@ fun CustomFollowerElement(account: Account, navController: NavController) {
         Spacer(modifier = Modifier.width(10.dp))
 
         Text(text = account.displayname)
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (relationship != null) {
+            if (relationship.following) {
+                Button(onClick = { /*TODO*/ },) {
+                    Text(text = "unfollow")
+                }
+            } else {
+                Button(onClick = { /*TODO*/ },) {
+                    Text(text = "follow")
+                }
+            }
+
+        }
     }
 }

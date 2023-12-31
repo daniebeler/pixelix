@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixels.R
+import com.daniebeler.pixels.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)

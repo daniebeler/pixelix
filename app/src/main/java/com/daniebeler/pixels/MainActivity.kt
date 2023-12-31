@@ -36,7 +36,7 @@ import com.daniebeler.pixels.ui.composables.HomeComposable
 import com.daniebeler.pixels.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pixels.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pixels.ui.composables.OwnProfileComposable
-import com.daniebeler.pixels.ui.composables.ProfileComposable
+import com.daniebeler.pixels.ui.composables.profile.ProfileComposable
 import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable

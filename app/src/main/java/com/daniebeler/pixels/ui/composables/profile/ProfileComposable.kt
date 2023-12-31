@@ -1,4 +1,4 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.profile
 
 import android.content.Context
 import android.content.Intent
@@ -48,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -63,6 +62,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Account
+import com.daniebeler.pixels.ui.composables.CustomBottomSheetElement
+import com.daniebeler.pixels.ui.composables.HashtagsMentionsTextView
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -233,8 +234,8 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                                 
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                if (viewModel.relationship != null) {
-                                    if (viewModel.relationship!!.following) {
+                                if (viewModel.relationshipState.accountRelationship != null) {
+                                    if (viewModel.relationshipState.accountRelationship!!.following) {
                                         Button(onClick = {
                                             viewModel.unfollowAccount(userId)
                                         }) {
@@ -288,8 +289,8 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
             ) {
 
 
-                if (viewModel.relationship != null) {
-                    if (viewModel.relationship!!.muting) {
+                if (viewModel.relationshipState.accountRelationship != null) {
+                    if (viewModel.relationshipState.accountRelationship!!.muting) {
                         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(
                             R.string.unmute_this_profile
                         ), onClick = {
@@ -304,7 +305,7 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                         })
                     }
 
-                    if (viewModel.relationship!!.blocking) {
+                    if (viewModel.relationshipState.accountRelationship!!.blocking) {
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {

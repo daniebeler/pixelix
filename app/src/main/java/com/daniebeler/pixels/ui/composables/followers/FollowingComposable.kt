@@ -15,7 +15,7 @@ fun FollowingComposable(navController: NavController, viewModel: FollowersViewMo
         items(viewModel.followingState.following, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it, navController)
+            CustomFollowerElement(account = it, null, navController)
         }
     })
 

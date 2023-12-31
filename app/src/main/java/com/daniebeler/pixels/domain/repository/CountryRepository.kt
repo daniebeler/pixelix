@@ -40,7 +40,7 @@ interface CountryRepository {
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
-    suspend fun getRelationships(userId: String): List<Relationship>
+    fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
 
     suspend fun getMutalFollowers(userId: String): List<Account>
 

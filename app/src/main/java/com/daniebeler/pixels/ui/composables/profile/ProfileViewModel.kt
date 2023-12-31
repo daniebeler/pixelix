@@ -1,16 +1,20 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.profile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.repository.CountryRepository
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Post
-import com.daniebeler.pixels.domain.model.Relationship
+import com.daniebeler.pixels.ui.composables.trending.trending_accounts.TrendingAccountsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +24,7 @@ class ProfileViewModel @Inject constructor(
 ): ViewModel() {
 
     var account: Account? by mutableStateOf(null)
-    var relationship: Relationship? by mutableStateOf(null)
+    var relationshipState by mutableStateOf(RelationshipState())
     var mutalFollowers: List<Account> by mutableStateOf(emptyList())
     var posts: List<Post> by mutableStateOf(emptyList())
 
@@ -36,18 +40,29 @@ class ProfileViewModel @Inject constructor(
             posts = repository.getPostsByAccountId(userId)
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            var res = repository.getRelationships(userId)
-            if (res != null) {
-                if (res.isNotEmpty()) {
-                    relationship = res[0]
-                }
-            }
-        }
+        getRelationship(userId)
 
         CoroutineScope(Dispatchers.Default).launch {
             mutalFollowers = repository.getMutalFollowers(userId)
         }
+    }
+
+    private fun getRelationship(userId: String) {
+        repository.getRelationships(List<String>(1) {userId}).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data!![0])
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun loadMorePosts(userId: String) {
@@ -64,7 +79,7 @@ class ProfileViewModel @Inject constructor(
         CoroutineScope(Dispatchers.Default).launch {
             var res = repository.followAccount(userId)
             if (res != null) {
-                relationship = res
+                getRelationship(userId)
             }
         }
     }
@@ -73,7 +88,7 @@ class ProfileViewModel @Inject constructor(
         CoroutineScope(Dispatchers.Default).launch {
             var res = repository.unfollowAccount(userId)
             if (res != null) {
-                relationship = res
+                getRelationship(userId)
             }
         }
     }
@@ -83,7 +98,7 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.muteAccount(account!!.id)
                 if (res != null) {
-                    relationship = res
+                    getRelationship(account!!.id)
                 }
             }
         }
@@ -94,7 +109,7 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.unmuteAccount(account!!.id)
                 if (res != null) {
-                    relationship = res
+                    getRelationship(account!!.id)
                 }
             }
         }
@@ -105,7 +120,7 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.blockAccount(account!!.id)
                 if (res != null) {
-                    relationship = res
+                    getRelationship(account!!.id)
                 }
             }
         }
@@ -116,7 +131,7 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.unblockAccount(account!!.id)
                 if (res != null) {
-                    relationship = res
+                    getRelationship(account!!.id)
                 }
             }
         }

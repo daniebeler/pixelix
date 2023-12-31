@@ -13,12 +13,21 @@ import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.CustomHas
 import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.TrendingHashtagsViewModel
 
 @Composable
-fun TrendingAccountsComposable(navController: NavController, viewModel: TrendingAccountsViewModel = hiltViewModel()) {
+fun TrendingAccountsComposable(
+    navController: NavController,
+    viewModel: TrendingAccountsViewModel = hiltViewModel()
+) {
     LazyColumn(content = {
         items(viewModel.trendingAccountsState.trendingAccounts, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it, navController = navController)
+            CustomFollowerElement(
+                account = it,
+                relationship = viewModel.accountRelationShipsState.accountRelationships.find { relationship ->
+                    relationship.id == it.id
+                },
+                navController = navController
+            )
         }
     })
 
