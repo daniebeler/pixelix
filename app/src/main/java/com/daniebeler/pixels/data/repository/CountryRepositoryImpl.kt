@@ -179,6 +179,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    override fun getTrendingAccounts(): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.getTrendingAccounts(accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
+    }
+
     override fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())

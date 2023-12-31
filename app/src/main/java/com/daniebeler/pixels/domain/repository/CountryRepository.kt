@@ -30,7 +30,7 @@ interface CountryRepository {
     fun setAccessToken(token: String)
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
-
+    fun getTrendingAccounts(): Flow<Resource<List<Account>>>
     fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
 
     fun getLocalTimeline(): Flow<Resource<List<Post>>>

@@ -24,6 +24,9 @@ interface PixelfedApi {
     @GET("api/v1.1/discover/posts/hashtags?range=daily")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>
 
+    @GET("/api/v1.1/discover/accounts/popular?range=daily")
+    fun getTrendingAccounts(@Header("Authorization") token: String): Call<List<AccountDto>>
+
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
     fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<PostDto>>
 
