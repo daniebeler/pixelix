@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -61,11 +62,13 @@ fun CustomFollowerElement(account: Account,relationship: Relationship?, navContr
                 launchSingleTop = true
                 restoreState = true
             }
-        }) {
+        },
+        verticalAlignment = Alignment.CenterVertically
+        ) {
         AsyncImage(
             model = account.avatar, contentDescription = "",
             modifier = Modifier
-                .height(32.dp)
+                .height(40.dp).width(40.dp)
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
