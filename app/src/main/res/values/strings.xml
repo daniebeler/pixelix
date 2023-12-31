@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">pixels</string>
+    <string name="app_name" translatable="false">Burning Pixels</string>
     <string name="notifications">Notifications</string>
     <string name="settings">Settings</string>
     <string name="liked_posts">Liked Posts</string>
