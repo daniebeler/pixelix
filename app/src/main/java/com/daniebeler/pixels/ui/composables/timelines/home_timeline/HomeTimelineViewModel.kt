@@ -47,9 +47,6 @@ class HomeTimelineViewModel @Inject constructor(
                     HomeTimelineState(isLoading = true)
                 }
             }
-
-            println("lul")
-            println(homeTimelineState.homeTimeline)
         }.launchIn(viewModelScope)
 
     }

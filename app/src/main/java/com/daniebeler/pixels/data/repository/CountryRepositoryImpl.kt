@@ -64,7 +64,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     private fun buildPixelFedApi() {
-        println("BASE_URL: $BASE_URL")
         val mHttpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -154,7 +153,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             emit(Resource.Loading())
             val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
             if (response.isSuccessful) {
-                println(response.body())
                 val result = response.body()?.map { it.toPost() } ?: emptyList()
                 emit(Resource.Success(result))
             } else {
@@ -212,8 +210,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            var response: Response<List<PostDto>>? = null
-            response = if (maxPostId.isNotEmpty()) {
+            var response = if (maxPostId.isNotEmpty()) {
                 pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
             } else {
                 pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
@@ -523,8 +520,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override suspend fun getMutalFollowers(userId: String): List<Account> {
-        println("mtls")
-        println(userId)
         return try {
             val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
@@ -557,14 +552,11 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return try {
             val response = pixelfedApi.createApplication().awaitResponse()
             if (response.isSuccessful) {
-                println("Success_Body ${response.body()}")
                 response.body()?.toApplication()
             } else {
-                println("FOOOF")
                 null
             }
         } catch (exception: Exception) {
-            println("Fief")
             null
         }
     }

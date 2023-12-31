@@ -145,10 +145,7 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
         }
 
         Column (Modifier.padding(8.dp)) {
-            println("fav: " + post.favourited)
-
             if (post.favourited) {
-                println("hallo")
                 IconButton(onClick = {
                     viewModel.unlikePost(post.id)
                 }) {
@@ -171,13 +168,17 @@ fun PostComposable(post: Post, navController: NavController, viewModel: PostView
 
             Text(text = post.favouritesCount.toString() + " likes")
 
-            HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {
-                val newHastag = it
-                navController.navigate("hashtag_timeline_screen/$newHastag") {
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            })
+            if (post.content.isNotBlank()) {
+                HashtagsMentionsTextView(text = post.account.username + " " + post.content, onClick = {
+                    val newHastag = it.drop(1)
+                    navController.navigate("hashtag_timeline_screen/$newHastag") {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                })
+            }
+
+
 
             if (post.replyCount > 0) {
                 TextButton(onClick = {
@@ -280,7 +281,7 @@ fun HashtagsMentionsTextView(text: String, modifier: Modifier = Modifier, onClic
 
     val colorScheme = MaterialTheme.colorScheme
     val textStyle = SpanStyle(color = colorScheme.onBackground)
-    val primaryStyle = SpanStyle(color = colorScheme.error)
+    val primaryStyle = SpanStyle(color = colorScheme.primary)
 
     val hashtags = Regex("((?=[^\\w!])[#][\\u4e00-\\u9fa5\\w]+)")
 

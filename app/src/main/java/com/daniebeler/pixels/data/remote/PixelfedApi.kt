@@ -24,16 +24,16 @@ interface PixelfedApi {
     @GET("api/v1.1/discover/posts/hashtags?range=daily")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>
 
-    @GET("api/v1/timelines/tag/{tag}")
+    @GET("api/v1/timelines/tag/{tag}?_pe=1")
     fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public")
+    @GET("api/v1/timelines/public?_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home")
+    @GET("api/v1/timelines/home?_pe=1")
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home")
+    @GET("api/v1/timelines/home?_pe=1")
     fun getHomeTimeline(@Query("max_id") maxPostId: String, @Header("Authorization") accessToken: String): Call<List<PostDto>>
 
     @GET("api/v1/favourites?limit=12")
