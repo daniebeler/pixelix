@@ -19,6 +19,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.PostComposable
 import com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline.HashtagTimelineViewModel
 
@@ -26,7 +28,7 @@ import com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline.HashtagTi
 @Composable
 fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel()) {
 
-    viewModel.loadPosts(hashtag)
+    viewModel.getHashtagTimeline(hashtag)
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -56,11 +58,14 @@ fun HashtagTimelineComposable(navController: NavController, hashtag: String, vie
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(viewModel.posts, key = {
+            items(viewModel.postsState.hashtagTimeline, key = {
                 it.id
             }) { item ->
                 PostComposable(post = item, navController)
             }
         }
+        
+        LoadingComposable(isLoading = viewModel.postsState.isLoading)
+        ErrorComposable(message = viewModel.postsState.error)
     }
 }

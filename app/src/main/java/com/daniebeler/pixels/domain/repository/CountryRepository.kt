@@ -31,7 +31,7 @@ interface CountryRepository {
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
 
-    suspend fun getHashtagTimeline(hashtag: String): List<Post>
+    fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
 
     fun getLocalTimeline(): Flow<Resource<List<Post>>>
 

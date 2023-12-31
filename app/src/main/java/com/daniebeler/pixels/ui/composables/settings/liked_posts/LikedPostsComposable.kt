@@ -17,9 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
@@ -35,7 +37,7 @@ fun LikedPostsComposable(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Liked Posts")
+                    Text(stringResource(id = R.string.liked_posts))
                 },
                 navigationIcon = {
                     IconButton(onClick = {

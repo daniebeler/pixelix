@@ -179,16 +179,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getHashtagTimeline(hashtag: String): List<Post> {
-        return try {
+    override fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toPost() } ?: emptyList()
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

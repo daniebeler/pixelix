@@ -34,11 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
@@ -51,7 +53,7 @@ fun BlockedAccountsComposable (navController: NavController, viewModel: BlockedA
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Blocked accounts")
+                    Text(text = stringResource(id = R.string.blocked_accounts))
                 },
                 navigationIcon = {
                     IconButton(onClick = {
