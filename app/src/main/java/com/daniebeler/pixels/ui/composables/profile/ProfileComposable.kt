@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +74,7 @@ import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 fun ProfileComposable(
     navController: NavController,
     userId: String,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel(key = userId)
 ) {
 
     val sheetState = rememberModalBottomSheetState()
@@ -82,7 +83,9 @@ fun ProfileComposable(
     val context = LocalContext.current
 
 
-    viewModel.loadData(userId)
+    LaunchedEffect(Unit) {
+        viewModel.loadData(userId)
+    }
 
 
     Scaffold(

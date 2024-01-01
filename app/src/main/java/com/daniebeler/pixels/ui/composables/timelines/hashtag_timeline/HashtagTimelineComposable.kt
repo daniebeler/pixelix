@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,8 +40,10 @@ import com.daniebeler.pixels.ui.composables.timelines.hashtag_timeline.HashtagTi
 @Composable
 fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel()) {
 
-    viewModel.getHashtagTimeline(hashtag)
-    viewModel.getHashtagInfo(hashtag)
+    LaunchedEffect(Unit) {
+        viewModel.getHashtagTimeline(hashtag)
+        viewModel.getHashtagInfo(hashtag)
+    }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
