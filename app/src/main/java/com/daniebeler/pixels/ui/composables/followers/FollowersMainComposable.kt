@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FollowersMainComposable(navController: NavController, accountId: String, page: String, viewModel: FollowersViewModel = hiltViewModel()) {
 
-    viewModel.loadAccount(accountId)
+    viewModel.getAccount(accountId)
     viewModel.getFollowers(accountId)
     viewModel.getFollowing(accountId)
 
@@ -57,7 +57,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String, pag
         topBar = {
             TopAppBar(
                 title = {
-                    Text("@" + viewModel.account?.acct)
+                    Text("@" + viewModel.accountState.account?.acct)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -81,7 +81,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String, pag
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    text = { Text(viewModel.account?.followersCount.toString() + " Followers") },
+                    text = { Text(viewModel.accountState.account?.followersCount.toString() + " Followers") },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {
@@ -91,7 +91,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String, pag
                     })
 
                 Tab(
-                    text = { Text(viewModel.account?.followingCount.toString() + " Following") },
+                    text = { Text(viewModel.accountState.account?.followingCount.toString() + " Following") },
                     selected = pagerState.currentPage == 0,
                     onClick = {
                         scope.launch {

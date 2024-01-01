@@ -63,12 +63,18 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixels.R
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.ui.composables.CustomBottomSheetElement
+import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.HashtagsMentionsTextView
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileComposable(navController: NavController, userId: String, viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileComposable(
+    navController: NavController,
+    userId: String,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -79,11 +85,11 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
     viewModel.loadData(userId)
 
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = viewModel.account?.username ?: "")
+                    Text(text = viewModel.accountState.account?.username ?: "")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -108,172 +114,76 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
             )
 
         }
-    ) {paddingValues ->
-        if (viewModel.account != null) {
-            Column (Modifier.padding(paddingValues)) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    content = {
+    ) { paddingValues ->
+        Box {
+            if (viewModel.accountState.account != null) {
+                Column(Modifier.padding(paddingValues)) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        content = {
 
-                        if (viewModel.account != null) {
-                            item (
+                            item(
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(viewModel.account!!, navController)
+                                ProfileTopSection(viewModel.accountState.account!!, navController)
                             }
-                        }
 
 
-                        item (
-                            span = { GridItemSpan(3) }
-                        ) {
-                            Column (Modifier.padding(12.dp)) {
+                            item(
+                                span = { GridItemSpan(3) }
+                            ) {
+                                Column(Modifier.padding(12.dp)) {
 
-                                if (viewModel.mutalFollowers.isNotEmpty()) {
+                                    MutualFollowersComposable(viewModel.mutualFollowersState)
 
-                                    val listSize = viewModel.mutalFollowers.size
+                                    Spacer(modifier = Modifier.height(12.dp))
 
-                                    val annotatedString = buildAnnotatedString {
-                                        append("Followed by ")
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                            append(viewModel.mutalFollowers.first().username)
-                                        }
-
-                                        if (listSize == 2) {
-                                            append(" and ")
-                                        }
-                                        if (listSize > 2) {
-                                            append(", ")
-                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                                append(viewModel.mutalFollowers[1].username)
+                                    if (viewModel.relationshipState.accountRelationship != null) {
+                                        if (viewModel.relationshipState.accountRelationship!!.following) {
+                                            Button(onClick = {
+                                                viewModel.unfollowAccount(userId)
+                                            }) {
+                                                Text(text = stringResource(R.string.unfollow))
+                                            }
+                                        } else {
+                                            Button(onClick = {
+                                                viewModel.followAccount(userId)
+                                            }) {
+                                                Text(text = stringResource(R.string.follow))
                                             }
                                         }
-
-                                        if (listSize == 3) {
-                                            append(" and ")
-                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                                append(viewModel.mutalFollowers[2].username)
-                                            }
-                                        }
-                                        if (listSize > 3) {
-                                            append(", ")
-                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                                append(viewModel.mutalFollowers[2].username)
-                                            }
-                                            append(" and ")
-                                            append((listSize - 3).toString())
-                                            if (listSize == 4) {
-                                                append(" other")
-                                            }
-                                            else {
-                                                append(" others")
-                                            }
-                                        }
-
-
                                     }
 
-                                    Row (verticalAlignment = Alignment.CenterVertically) {
-                                        Box {
-                                            AsyncImage(
-                                                model = viewModel.mutalFollowers.first().avatar, contentDescription = "",
-                                                modifier = Modifier
-                                                    .height(36.dp)
-                                                    .width(36.dp)
-                                                    .clip(CircleShape)
-                                                    .border(
-                                                        width = 2.dp,
-                                                        shape = CircleShape,
-                                                        color = MaterialTheme.colorScheme.background
-                                                    )
-                                            )
-
-                                            if (listSize > 1) {
-                                                Row {
-                                                    Spacer(modifier = Modifier.width(18.dp))
-                                                    AsyncImage(
-                                                        model = viewModel.mutalFollowers[1].avatar, contentDescription = "",
-                                                        modifier = Modifier
-                                                            .height(36.dp)
-                                                            .width(36.dp)
-                                                            .clip(CircleShape)
-                                                            .border(
-                                                                width = 2.dp,
-                                                                shape = CircleShape,
-                                                                color = MaterialTheme.colorScheme.background
-                                                            )
-                                                    )
-                                                }
-                                            }
-                                            if (listSize > 2) {
-                                                Row {
-                                                    Spacer(modifier = Modifier.width(36.dp))
-                                                    AsyncImage(
-                                                        model = viewModel.mutalFollowers[2].avatar, contentDescription = "",
-                                                        modifier = Modifier
-                                                            .height(36.dp)
-                                                            .width(36.dp)
-                                                            .clip(CircleShape)
-                                                            .border(
-                                                                width = 2.dp,
-                                                                shape = CircleShape,
-                                                                color = MaterialTheme.colorScheme.background
-                                                            )
-                                                    )
-                                                }
-                                            }
-                                        }
-                                        
-                                        Spacer(modifier = Modifier.width(10.dp))
-
-                                        Text(text = annotatedString, fontSize = 12.sp, lineHeight = 18.sp)
-                                    }
+                                    Spacer(modifier = Modifier.height(24.dp))
                                 }
-                                
-                                Spacer(modifier = Modifier.height(12.dp))
+                            }
 
-                                if (viewModel.relationshipState.accountRelationship != null) {
-                                    if (viewModel.relationshipState.accountRelationship!!.following) {
-                                        Button(onClick = {
-                                            viewModel.unfollowAccount(userId)
-                                        }) {
-                                            Text(text = stringResource(R.string.unfollow))
-                                        }
-                                    }
-                                    else {
-                                        Button(onClick = {
-                                            viewModel.followAccount(userId)
-                                        }) {
-                                            Text(text = stringResource(R.string.follow))
-                                        }
-                                    }
+                            items(viewModel.posts, key = {
+                                it.id
+                            }) { photo ->
+                                CustomPost(post = photo, navController = navController)
+                            }
+
+                            item {
+                                Button(onClick = {
+                                    viewModel.loadMorePosts(userId)
+                                }) {
+                                    Text(text = stringResource(R.string.load_more))
                                 }
-
-                                Spacer(modifier = Modifier.height(24.dp))
                             }
+
                         }
+                    )
 
-                        items(viewModel.posts, key = {
-                            it.id
-                        }) { photo ->
-                            CustomPost(post = photo, navController = navController)
-                        }
-
-                        item {
-                            Button(onClick = {
-                                viewModel.loadMorePosts(userId)
-                            }) {
-                                Text(text = stringResource(R.string.load_more))
-                            }
-                        }
-
-                    }
-                )
-
+                }
             }
+            
+            LoadingComposable(isLoading = viewModel.accountState.isLoading)
+            ErrorComposable(message = viewModel.accountState.error)
         }
+        
 
     }
 
@@ -291,18 +201,21 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
 
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(
-                            R.string.unmute_this_profile
-                        ), onClick = {
-                            viewModel.unmuteAccount()
-                        })
-                    }
-                    else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(
-                            R.string.mute_this_profile
-                        ), onClick = {
-                            viewModel.muteAccount()
-                        })
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                            text = stringResource(
+                                R.string.unmute_this_profile
+                            ),
+                            onClick = {
+                                viewModel.unmuteAccount()
+                            })
+                    } else {
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                            text = stringResource(
+                                R.string.mute_this_profile
+                            ),
+                            onClick = {
+                                viewModel.muteAccount()
+                            })
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
@@ -311,8 +224,7 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                         ), onClick = {
                             viewModel.unblockAccount()
                         })
-                    }
-                    else {
+                    } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
@@ -326,18 +238,21 @@ fun ProfileComposable(navController: NavController, userId: String, viewModel: P
                 CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
-                    openUrl(context, viewModel.account!!.url)
+                    openUrl(context, viewModel.accountState.account!!.url)
                 })
 
-                CustomBottomSheetElement(icon = Icons.Outlined.Share, text = stringResource(R.string.share_this_profile), onClick = {
-                    shareProfile(context, viewModel.account!!.url)
-                })
+                CustomBottomSheetElement(
+                    icon = Icons.Outlined.Share,
+                    text = stringResource(R.string.share_this_profile),
+                    onClick = {
+                        shareProfile(context, viewModel.accountState.account!!.url)
+                    })
             }
         }
     }
 }
 
-private fun openUrl(context: Context, url: String){
+private fun openUrl(context: Context, url: String) {
     val intent = CustomTabsIntent.Builder().build()
     intent.launchUrl(context, Uri.parse(url))
 }
@@ -356,42 +271,61 @@ private fun shareProfile(context: Context, url: String) {
 fun ProfileTopSection(account: Account, navController: NavController) {
     val uriHandler = LocalUriHandler.current
 
-    Column (Modifier.padding(12.dp)) {
-        Row (verticalAlignment = Alignment.CenterVertically) {
+    Column(Modifier.padding(12.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = account!!.avatar,
                 contentDescription = "",
                 modifier = Modifier
                     .height(76.dp)
-                    .clip(CircleShape))
+                    .clip(CircleShape)
+            )
 
-            Row (horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = account!!.postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = account!!.postsCount.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                     Text(text = stringResource(R.string.posts), fontSize = 12.sp)
                 }
 
-                Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
-                    navController.navigate("followers_screen/" + "followers/" + account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }) {
-                    Text(text = account!!.followersCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable {
+                        navController.navigate("followers_screen/" + "followers/" + account.id) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }) {
+                    Text(
+                        text = account!!.followersCount.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                     Text(text = stringResource(R.string.followers), fontSize = 12.sp)
                 }
 
-                Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {
-                    navController.navigate("followers_screen/" + "following/" + account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }) {
-                    Text(text = account!!.followingCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable {
+                        navController.navigate("followers_screen/" + "following/" + account.id) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }) {
+                    Text(
+                        text = account!!.followingCount.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                     Text(text = stringResource(R.string.following), fontSize = 12.sp)
                 }
             }
-
 
 
         }
@@ -404,7 +338,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
         }
 
         account!!.website?.let {
-            Row (Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = "",
@@ -414,7 +348,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 Text(
                     text = account!!.website.toString(),
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website.toString())})
+                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website.toString()) })
                 )
             }
 

@@ -1,6 +1,7 @@
-package com.daniebeler.pixels.ui.composables
+package com.daniebeler.pixels.ui.composables.own_profile
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -22,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixels.R
+import com.daniebeler.pixels.ui.composables.ErrorComposable
+import com.daniebeler.pixels.ui.composables.LoadingComposable
 import com.daniebeler.pixels.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.CustomPost
 
@@ -33,7 +36,7 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = viewModel.ownAccount?.username ?: "")
+                    Text(text = viewModel.accountState.account?.username ?: "")
                 },
                 actions = {
                     IconButton(onClick = {
@@ -52,18 +55,19 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
 
         }
     ) {paddingValues ->
-        if (viewModel.ownAccount != null) {
+        Box {
+            if (viewModel.accountState.account != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier.padding(paddingValues),
                     content = {
-                        if (viewModel.ownAccount != null) {
+                        if (viewModel.accountState.account != null) {
                             item (
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(account = viewModel.ownAccount!!, navController)
+                                ProfileTopSection(account = viewModel.accountState.account!!, navController)
                             }
                         }
 
@@ -83,7 +87,12 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
 
                     }
                 )
+            }
+            
+            LoadingComposable(isLoading = viewModel.accountState.isLoading)
+            ErrorComposable(message = viewModel.accountState.error)
         }
+        
 
     }
 }

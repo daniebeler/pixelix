@@ -326,16 +326,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getAccount(accountId: String): Account? {
-        return try {
+    override fun getAccount(accountId: String): Flow<Resource<Account?>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toAccount()
+                val res = response.body()?.toAccount()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
@@ -592,16 +594,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getMutalFollowers(userId: String): List<Account> {
-        return try {
+    override fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.map { it.toAccount() } ?: emptyList()
+                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

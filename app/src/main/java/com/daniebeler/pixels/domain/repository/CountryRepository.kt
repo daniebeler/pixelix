@@ -43,11 +43,11 @@ interface CountryRepository {
 
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
 
-    suspend fun getMutalFollowers(userId: String): List<Account>
+    fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>>
 
     suspend fun getReplies(userid: String, postid: String): List<Reply>
 
-    suspend fun getAccount(accountId: String): Account?
+    fun getAccount(accountId: String): Flow<Resource<Account?>>
 
     suspend fun followAccount(accountId: String): Relationship?
 

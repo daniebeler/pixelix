@@ -23,18 +23,14 @@ class ProfileViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    var account: Account? by mutableStateOf(null)
+    var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
-    var mutalFollowers: List<Account> by mutableStateOf(emptyList())
+    var mutualFollowersState by mutableStateOf(MutualFollowersState())
     var posts: List<Post> by mutableStateOf(emptyList())
 
 
-
-
     fun loadData(userId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            account = repository.getAccount(userId)
-        }
+        getAccount(userId)
 
         CoroutineScope(Dispatchers.Default).launch {
             posts = repository.getPostsByAccountId(userId)
@@ -42,13 +38,11 @@ class ProfileViewModel @Inject constructor(
 
         getRelationship(userId)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            mutalFollowers = repository.getMutalFollowers(userId)
-        }
+        getMututalFollowers(userId)
     }
 
     private fun getRelationship(userId: String) {
-        repository.getRelationships(List<String>(1) {userId}).onEach { result ->
+        repository.getRelationships(List(1) {userId}).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data!![0])
@@ -60,6 +54,42 @@ class ProfileViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getMututalFollowers(userId: String) {
+        repository.getMutalFollowers(userId).onEach { result ->
+             mutualFollowersState = when (result) {
+                is Resource.Success -> {
+                    MutualFollowersState(mutualFollowers = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    MutualFollowersState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    MutualFollowersState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getAccount(userId: String) {
+        repository.getAccount(userId).onEach { result ->
+            accountState = when (result) {
+                is Resource.Success -> {
+                    AccountState(account = result.data)
+                }
+
+                is Resource.Error -> {
+                    AccountState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    AccountState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -94,46 +124,46 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun muteAccount() {
-        if (account != null) {
+        /*if (account != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.muteAccount(account!!.id)
                 if (res != null) {
                     getRelationship(account!!.id)
                 }
             }
-        }
+        }*/
     }
 
     fun unmuteAccount() {
-        if (account != null) {
+        /*if (account != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.unmuteAccount(account!!.id)
                 if (res != null) {
                     getRelationship(account!!.id)
                 }
             }
-        }
+        }*/
     }
 
     fun blockAccount() {
-        if (account != null) {
+        /*if (account != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.blockAccount(account!!.id)
                 if (res != null) {
                     getRelationship(account!!.id)
                 }
             }
-        }
+        }*/
     }
 
     fun unblockAccount() {
-        if (account != null) {
+        /*if (account != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 var res = repository.unblockAccount(account!!.id)
                 if (res != null) {
                     getRelationship(account!!.id)
                 }
             }
-        }
+        }*/
     }
 }

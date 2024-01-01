@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.repository.CountryRepository
+import com.daniebeler.pixels.ui.composables.profile.AccountState
 import com.daniebeler.pixels.ui.composables.trending.trending_posts.TrendingPostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -22,14 +23,26 @@ class FollowersViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    var account: Account? by mutableStateOf(null)
+    var accountState by mutableStateOf(AccountState())
     var followersState by mutableStateOf(FollowersState())
     var followingState by mutableStateOf(FollowingState())
 
-    fun loadAccount(accountId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            account = repository.getAccount(accountId)
-        }
+    fun getAccount(userId: String) {
+        repository.getAccount(userId).onEach { result ->
+            accountState = when (result) {
+                is Resource.Success -> {
+                    AccountState(account = result.data)
+                }
+
+                is Resource.Error -> {
+                    AccountState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    AccountState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun getFollowers(accountId: String) {
