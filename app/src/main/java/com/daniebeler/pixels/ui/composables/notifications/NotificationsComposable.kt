@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -97,7 +99,7 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         AsyncImage(
             model = notification.account.avatar, contentDescription = "",
             modifier = Modifier
-                .height(32.dp).width(32.dp)
+                .height(46.dp).width(46.dp)
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
@@ -112,11 +114,11 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
             ) {
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold)
 
-                Text(text = text)
+                Text(text = text, overflow = TextOverflow.Ellipsis)
             }
 
 
-            Text(text = notification.timeAgo, fontSize = 12.sp)
+            Text(text = notification.timeAgo, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
         }
 
         if (showImage) {
