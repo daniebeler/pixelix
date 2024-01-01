@@ -118,7 +118,7 @@ interface PixelfedApi {
     @GET("api/v1/blocks")
     fun getBlockedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 
-    @GET("/api/v2/search")
+    @GET("/api/v2/search?limit=5&_pe=1")
     fun getSearch(@Header("Authorization") accessToken: String, @Query("q") searchText: String): Call<SearchDto>
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixels.ui.composables.followers.CustomFollowerElement
+import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.CustomHashtag
 
 @Composable
 fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
@@ -27,8 +28,17 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
             )
             LazyColumn(content = {
                 if (viewModel.searchState.searchResult != null) {
+                    item {
+                        Text(text = "Accounts")
+                    }
                     items(viewModel.searchState.searchResult!!.accounts) {
                         CustomFollowerElement(account = it, relationship = null, navController = navController)
+                    }
+                    item {
+                        Text(text = "Hashtags")
+                    }
+                    items(viewModel.searchState.searchResult!!.tags) {
+                        CustomHashtag(hashtag = it, navController = navController)
                     }
                 }
             })
