@@ -16,6 +16,7 @@ import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.domain.model.Reply
+import com.daniebeler.pixels.domain.model.Search
 import com.daniebeler.pixels.domain.model.Tag
 import com.daniebeler.pixels.domain.model.toAccessToken
 import com.daniebeler.pixels.domain.model.toAccount
@@ -24,6 +25,7 @@ import com.daniebeler.pixels.domain.model.toNotification
 import com.daniebeler.pixels.domain.model.toPost
 import com.daniebeler.pixels.domain.model.toRelationship
 import com.daniebeler.pixels.domain.model.toReply
+import com.daniebeler.pixels.domain.model.toSearch
 import com.daniebeler.pixels.domain.model.toTag
 import com.daniebeler.pixels.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
@@ -602,6 +604,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             val response = pixelfedApi.getPostById(postId, accessToken).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()?.toPost()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error("Unknown Error"))
+        }
+    }
+
+    override fun search(searchText: String): Flow<Resource<Search>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.getSearch(accessToken, searchText).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toSearch()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))

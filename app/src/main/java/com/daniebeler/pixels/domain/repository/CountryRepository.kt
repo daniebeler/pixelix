@@ -9,6 +9,7 @@ import com.daniebeler.pixels.domain.model.Notification
 import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.domain.model.Relationship
 import com.daniebeler.pixels.domain.model.Reply
+import com.daniebeler.pixels.domain.model.Search
 import com.daniebeler.pixels.domain.model.Tag
 import kotlinx.coroutines.flow.Flow
 
@@ -78,6 +79,8 @@ interface CountryRepository {
     suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>
 
     fun getPostById(postId: String): Flow<Resource<Post?>>
+
+    fun search(searchText: String): Flow<Resource<Search>>
 
     suspend fun createApplication(): Application?
 

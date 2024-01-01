@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Mail
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -40,6 +41,7 @@ import com.daniebeler.pixels.ui.composables.profile.ProfileComposable
 import com.daniebeler.pixels.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixels.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixels.ui.composables.followers.FollowersMainComposable
+import com.daniebeler.pixels.ui.composables.search.SearchComposable
 import com.daniebeler.pixels.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixels.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pixels.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
@@ -51,7 +53,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-     private val mainViewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +77,10 @@ class MainActivity : ComponentActivity() {
                         Box(
                             modifier = Modifier.padding(paddingValues)
                         ) {
-                            NavigationGraph(navController = navController, viewModel = mainViewModel)
+                            NavigationGraph(
+                                navController = navController,
+                                viewModel = mainViewModel
+                            )
                         }
                     }
                 }
@@ -86,7 +91,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun gotoLoginActivity(context: Context){
+fun gotoLoginActivity(context: Context) {
     val intent = Intent(context, LoginActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     context.startActivity(intent)
@@ -166,6 +171,11 @@ sealed class Destinations(
         route = "followers_screen/{page}/{userid}",
         icon = Icons.Outlined.Favorite
     )
+
+    object Search : Destinations(
+        route = "search_screen",
+        icon = Icons.Outlined.Search
+    )
 }
 
 @Composable
@@ -184,14 +194,14 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
-            uId?.let { id->
+            uId?.let { id ->
                 ProfileComposable(navController, userId = id)
             }
         }
 
         composable(Destinations.Hashtag.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("hashtag")
-            uId?.let { id->
+            uId?.let { id ->
                 HashtagTimelineComposable(navController, id)
             }
         }
@@ -224,7 +234,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             OwnProfileComposable(navController)
         }
 
-        composable(Destinations.Followers.route) {navBackStackEntry ->
+        composable(Destinations.Followers.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
             val page = navBackStackEntry.arguments?.getString("page")
             if (uId != null && page != null) {
@@ -234,9 +244,13 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.SinglePost.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
-            uId?.let { id->
+            uId?.let { id ->
                 SinglePostComposable(navController, postId = id)
             }
+        }
+
+        composable(Destinations.Search.route) {
+            SearchComposable(navController)
         }
     }
 }
@@ -246,7 +260,11 @@ fun BottomBar(
     navController: NavHostController, state: MutableState<Boolean>, modifier: Modifier = Modifier
 ) {
     val screens = listOf(
-        Destinations.HomeScreen, Destinations.TrendingScreen, Destinations.NotificationsScreen, Destinations.OwnProfile
+        Destinations.HomeScreen,
+        Destinations.Search,
+        Destinations.TrendingScreen,
+        Destinations.NotificationsScreen,
+        Destinations.OwnProfile
     )
 
     NavigationBar {

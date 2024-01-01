@@ -7,6 +7,7 @@ import com.daniebeler.pixels.data.remote.dto.ApplicationDto
 import com.daniebeler.pixels.data.remote.dto.NotificationDto
 import com.daniebeler.pixels.data.remote.dto.PostDto
 import com.daniebeler.pixels.data.remote.dto.RelationshipDto
+import com.daniebeler.pixels.data.remote.dto.SearchDto
 import com.daniebeler.pixels.data.remote.dto.TagDto
 import retrofit2.Call
 import retrofit2.http.Field
@@ -116,6 +117,9 @@ interface PixelfedApi {
 
     @GET("api/v1/blocks")
     fun getBlockedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
+
+    @GET("/api/v2/search")
+    fun getSearch(@Header("Authorization") accessToken: String, @Query("q") searchText: String): Call<SearchDto>
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>
