@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +26,10 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -33,6 +39,8 @@ import com.daniebeler.pixels.ui.composables.CustomHashtag
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     Scaffold { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Box(Modifier.padding(12.dp, 0.dp)) {
@@ -49,7 +57,16 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         unfocusedBorderColor = MaterialTheme.colorScheme.background
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            viewModel.textInputChange(viewModel.textInput)
+                        }
+                    )
+
                 )
             }
             LazyColumn(content = {
