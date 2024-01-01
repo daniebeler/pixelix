@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixels.ui.composables.CustomAccount
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
 
@@ -15,7 +16,7 @@ fun FollowingComposable(navController: NavController, viewModel: FollowersViewMo
         items(viewModel.followingState.following, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it, null, navController)
+            CustomAccount(account = it, null, navController)
         }
     })
 

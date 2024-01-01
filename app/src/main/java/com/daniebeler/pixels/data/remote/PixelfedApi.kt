@@ -22,7 +22,7 @@ interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
-    @GET("api/v1.1/discover/posts/hashtags?range=daily")
+    @GET("api/v1.1/discover/posts/hashtags?range=daily&_pe=1")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>
 
     @GET("/api/v1.1/discover/accounts/popular?range=daily")
@@ -49,7 +49,7 @@ interface PixelfedApi {
     @GET("api/v1/bookmarks?limit=12")
     fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/followed_tags")
+    @GET("api/v1/followed_tags?_pe=1")
     fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")

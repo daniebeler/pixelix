@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.model.Relationship
+import com.daniebeler.pixels.ui.composables.CustomAccount
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
 
@@ -44,49 +45,10 @@ fun FollowersComposable(navController: NavController, viewModel: FollowersViewMo
         items(viewModel.followersState.followers, key = {
             it.id
         }) {
-            CustomFollowerElement(account = it, null, navController)
+            CustomAccount(account = it, null, navController)
         }
     })
     
     LoadingComposable(isLoading = viewModel.followersState.isLoading)
     ErrorComposable(message = viewModel.followersState.error)
-}
-
-@Composable
-fun CustomFollowerElement(account: Account,relationship: Relationship?, navController: NavController) {
-    Row (modifier = Modifier
-        .padding(horizontal = 12.dp, vertical = 8.dp)
-        .fillMaxWidth()
-        .clickable {
-            navController.navigate("profile_screen/" + account.id) {
-                launchSingleTop = true
-                restoreState = true
-            }
-        },
-        verticalAlignment = Alignment.CenterVertically
-        ) {
-        AsyncImage(
-            model = account.avatar, contentDescription = "",
-            modifier = Modifier
-                .height(40.dp).width(40.dp)
-                .clip(CircleShape)
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Text(text = account.displayname)
-        Spacer(modifier = Modifier.weight(1f))
-
-        if (relationship != null) {
-            if (relationship.following) {
-                Button(onClick = { /*TODO*/ },) {
-                    Text(text = "unfollow")
-                }
-            } else {
-                Button(onClick = { /*TODO*/ },) {
-                    Text(text = "follow")
-                }
-            }
-
-        }
-    }
 }

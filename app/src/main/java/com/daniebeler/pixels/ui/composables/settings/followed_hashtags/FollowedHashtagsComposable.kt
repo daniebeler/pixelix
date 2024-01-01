@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixels.R
+import com.daniebeler.pixels.ui.composables.CustomHashtag
 import com.daniebeler.pixels.ui.composables.ErrorComposable
 import com.daniebeler.pixels.ui.composables.LoadingComposable
-import com.daniebeler.pixels.ui.composables.trending.trending_hashtags.CustomHashtag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

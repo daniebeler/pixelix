@@ -3,7 +3,7 @@ package com.daniebeler.pixels.domain.model
 import com.daniebeler.pixels.data.remote.dto.TagDto
 
 data class Tag(
-    val name: String,
+    var name: String,
     val url: String,
     val following: Boolean,
     val count: Int

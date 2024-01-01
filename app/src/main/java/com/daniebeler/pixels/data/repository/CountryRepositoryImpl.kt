@@ -172,6 +172,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             val response = pixelfedApi.getTrendingHashtags(accessToken).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toTag() } ?: emptyList()
+                res.forEach {
+                    it.name = it.name.drop(1)
+                }
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))
