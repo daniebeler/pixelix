@@ -29,7 +29,10 @@ interface PixelfedApi {
     fun getTrendingAccounts(@Header("Authorization") token: String): Call<List<AccountDto>>
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
-    fun getHashtagTimeline(@Path("tag") tag: String, @Header("Authorization") token: String): Call<List<PostDto>>
+    fun getHashtagTimeline(
+        @Path("tag") tag: String,
+        @Header("Authorization") token: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/tags/{tag}?_pe=1")
     fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
@@ -37,11 +40,20 @@ interface PixelfedApi {
     @GET("api/v1/timelines/public?_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
+    @GET("api/v1/timelines/public?_pe=1")
+    fun getLocalTimeline(
+        @Query("max_id") maxPostId: String,
+        @Header("Authorization") token: String
+    ): Call<List<PostDto>>
+
     @GET("api/v1/timelines/home?_pe=1")
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1")
-    fun getHomeTimeline(@Query("max_id") maxPostId: String, @Header("Authorization") accessToken: String): Call<List<PostDto>>
+    fun getHomeTimeline(
+        @Query("max_id") maxPostId: String,
+        @Header("Authorization") accessToken: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/favourites?limit=12")
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
@@ -53,64 +65,119 @@ interface PixelfedApi {
     fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
 
     @GET("api/v2/comments/{userid}/status/{postid}")
-    fun getReplies(@Path("userid") userid: String, @Path("postid") postid: String): Call<ApiReplyElementDto>
+    fun getReplies(
+        @Path("userid") userid: String,
+        @Path("postid") postid: String
+    ): Call<ApiReplyElementDto>
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
-    fun getAccount(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<AccountDto>
+    fun getAccount(
+        @Path("accountid") accountId: String,
+        @Header("Authorization") token: String
+    ): Call<AccountDto>
 
     @GET("api/v1/notifications")
     fun getNotifications(@Header("Authorization") token: String): Call<List<NotificationDto>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String): Call<List<PostDto>>
+    fun getPostsByAccountId(
+        @Path("accountid") accountId: String,
+        @Header("Authorization") token: String
+    ): Call<List<PostDto>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
-    fun getPostsByAccountId(@Path("accountid") accountId: String, @Header("Authorization") token: String, @Query("max_id") maxId: String): Call<List<PostDto>>
+    fun getPostsByAccountId(
+        @Path("accountid") accountId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postid}?_pe=1")
-    fun getPostById(@Path("postid") postId: String, @Header("Authorization") token: String): Call<PostDto>
+    fun getPostById(
+        @Path("postid") postId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
 
     @GET("api/v1/accounts/relationships")
-    fun getRelationships(@Query("id[]") userId: List<String>, @Header("Authorization") token: String): Call<List<RelationshipDto>>
+    fun getRelationships(
+        @Query("id[]") userId: List<String>,
+        @Header("Authorization") token: String
+    ): Call<List<RelationshipDto>>
 
     @GET("api/v1.1/accounts/mutuals/{id}")
-    fun getMutalFollowers(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+    fun getMutalFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
 
     @POST("api/v1/accounts/{id}/follow")
-    fun followAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun followAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/accounts/{id}/unfollow")
-    fun unfollowAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun unfollowAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/tags/{id}/follow")
-    fun followHashtag(@Path("id") tagId: String, @Header("Authorization") token: String): Call<TagDto>
+    fun followHashtag(
+        @Path("id") tagId: String,
+        @Header("Authorization") token: String
+    ): Call<TagDto>
 
     @POST("api/v1/tags/{id}/unfollow")
-    fun unfollowHashtag(@Path("id") tagId: String, @Header("Authorization") token: String): Call<TagDto>
+    fun unfollowHashtag(
+        @Path("id") tagId: String,
+        @Header("Authorization") token: String
+    ): Call<TagDto>
 
     @POST("api/v1/accounts/{id}/mute")
-    fun muteAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun muteAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/accounts/{id}/unmute")
-    fun unmuteAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun unmuteAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/accounts/{id}/block")
-    fun blockAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun blockAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/accounts/{id}/unblock")
-    fun unblockAccount(@Path("id") userId: String, @Header("Authorization") token: String): Call<RelationshipDto>
+    fun unblockAccount(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<RelationshipDto>
 
     @POST("api/v1/statuses/{id}/favourite")
     fun likePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/unfavourite")
-    fun unlikePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+    fun unlikePost(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
 
     @GET("api/v1/accounts/{id}/followers")
-    fun getAccountsFollowers(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
 
     @GET("api/v1/accounts/{id}/following")
-    fun getAccountsFollowing(@Path("id") userId: String, @Header("Authorization") token: String): Call<List<AccountDto>>
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
 
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
@@ -119,7 +186,10 @@ interface PixelfedApi {
     fun getBlockedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
 
     @GET("/api/v2/search?limit=5&_pe=1")
-    fun getSearch(@Header("Authorization") accessToken: String, @Query("q") searchText: String): Call<SearchDto>
+    fun getSearch(
+        @Header("Authorization") accessToken: String,
+        @Query("q") searchText: String
+    ): Call<SearchDto>
 
     @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>

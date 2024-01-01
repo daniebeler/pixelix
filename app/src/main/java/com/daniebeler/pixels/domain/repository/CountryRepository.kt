@@ -20,7 +20,7 @@ interface CountryRepository {
     suspend fun storeClientId(clientId: String)
     suspend fun storeBaseUrl(baseUrl: String)
     fun getClientIdFromStorage(): Flow<String>
-    fun getBaseUrlFromStorage() : Flow<String>
+    fun getBaseUrlFromStorage(): Flow<String>
     suspend fun storeClientSecret(clientSecret: String)
     fun getClientSecretFromStorage(): Flow<String>
     suspend fun storeAccessToken(accessToken: String)
@@ -35,9 +35,7 @@ interface CountryRepository {
     fun getHashtag(hashtag: String): Flow<Resource<Tag>>
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
     fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
-
-    fun getLocalTimeline(): Flow<Resource<List<Post>>>
-
+    fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getLikedPosts(): Flow<Resource<List<Post>>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>

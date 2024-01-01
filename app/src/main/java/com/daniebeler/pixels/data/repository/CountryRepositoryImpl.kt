@@ -229,10 +229,14 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getLocalTimeline(): Flow<Resource<List<Post>>> = flow {
+    override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
+            var response = if (maxPostId.isNotEmpty()) {
+                pixelfedApi.getLocalTimeline(maxPostId, accessToken).awaitResponse()
+            } else {
+                pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
+            }
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toPost() } ?: emptyList()
                 emit(Resource.Success(res))

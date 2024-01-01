@@ -20,24 +20,45 @@ class LocalTimelineViewModel @Inject constructor(
     var localTimelineState by mutableStateOf(LocalTimelineState())
 
     init {
-        getLocalTimeline()
+        loadMorePosts()
     }
 
-    private fun getLocalTimeline() {
-        repository.getLocalTimeline().onEach { result ->
-            localTimelineState = when (result) {
+    fun loadMorePosts() {
+
+        val maxId = if (localTimelineState.localTimeline.isEmpty()) {
+            ""
+        } else {
+            localTimelineState.localTimeline.last().id
+        }
+
+        repository.getLocalTimeline(maxId).onEach { result ->
+            when (result) {
                 is Resource.Success -> {
-                    LocalTimelineState(localTimeline = result.data ?: emptyList())
+                    localTimelineState = localTimelineState.copy(
+                        localTimeline = localTimelineState.localTimeline + (result.data
+                            ?: emptyList()),
+                        error = "",
+                        isLoading = false
+                    )
                 }
 
                 is Resource.Error -> {
-                    LocalTimelineState(error = result.message ?: "An unexpected error occurred")
+                    localTimelineState = localTimelineState.copy(
+                        localTimeline = localTimelineState.localTimeline,
+                        error = result.message ?: "An unexpected error occurred",
+                        isLoading = false
+                    )
                 }
 
                 is Resource.Loading -> {
-                    LocalTimelineState(isLoading = true)
+                    localTimelineState = localTimelineState.copy(
+                        localTimeline = localTimelineState.localTimeline,
+                        error = "",
+                        isLoading = true
+                    )
                 }
             }
         }.launchIn(viewModelScope)
+
     }
 }

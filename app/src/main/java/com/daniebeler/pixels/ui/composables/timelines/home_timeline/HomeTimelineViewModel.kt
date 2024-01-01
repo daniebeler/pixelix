@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeTimelineViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var homeTimelineState by mutableStateOf(HomeTimelineState())
 
@@ -33,18 +33,30 @@ class HomeTimelineViewModel @Inject constructor(
         }
 
         repository.getHomeTimeline(maxId).onEach { result ->
-            homeTimelineState = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    val newTimeline: List<Post> = homeTimelineState.homeTimeline + (result.data ?: emptyList())
-                    HomeTimelineState(homeTimeline = newTimeline)
+                    homeTimelineState = homeTimelineState.copy(
+                        homeTimeline = homeTimelineState.homeTimeline + (result.data
+                            ?: emptyList()),
+                        error = "",
+                        isLoading = false
+                    )
                 }
 
                 is Resource.Error -> {
-                    HomeTimelineState(error = result.message ?: "An unexpected error occurred")
+                    homeTimelineState = homeTimelineState.copy(
+                        homeTimeline = homeTimelineState.homeTimeline,
+                        error = result.message ?: "An unexpected error occurred",
+                        isLoading = false
+                    )
                 }
 
                 is Resource.Loading -> {
-                    HomeTimelineState(isLoading = true)
+                    homeTimelineState = homeTimelineState.copy(
+                        homeTimeline = homeTimelineState.homeTimeline,
+                        error = "",
+                        isLoading = true
+                    )
                 }
             }
         }.launchIn(viewModelScope)
