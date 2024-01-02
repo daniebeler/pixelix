@@ -435,16 +435,48 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun unlikePost(postId: String): Post? {
-        return try {
+    override fun unlikePost(postId: String): Flow<Resource<Post>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.unlikePost(postId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toPost()
+                val res = response.body()!!.toPost()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error(exception.message ?: "Error"))
+        }
+    }
+
+    override fun bookmarkPost(postId: String): Flow<Resource<Post>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.bookmarkPost(postId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toPost()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Error"))
+        }
+    }
+
+    override fun unbookmarkPost(postId: String): Flow<Resource<Post>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.unbookmarkPost(postId, accessToken).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toPost()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Error"))
         }
     }
 

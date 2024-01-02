@@ -16,7 +16,8 @@ data class Post(
     val url: String,
     val sensitive: Boolean,
     val spoilerText: String,
-    val favourited: Boolean
+    val favourited: Boolean,
+    val bookmarked: Boolean
 )
 
 fun PostDto.toPost(): Post {
@@ -32,6 +33,7 @@ fun PostDto.toPost(): Post {
         url = url,
         sensitive = sensitive,
         spoilerText = spoilerText ?: "",
-        favourited = favourited
+        favourited = favourited,
+        bookmarked = bookmarked
     )
 }

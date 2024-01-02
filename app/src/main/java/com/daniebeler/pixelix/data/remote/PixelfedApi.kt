@@ -176,6 +176,12 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<PostDto>
 
+    @POST("api/v1/statuses/{id}/bookmark")
+    fun bookmarkPost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+
+    @POST("api/v1/statuses/{id}/unbookmark")
+    fun unbookmarkPost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+
     @GET("api/v1/accounts/{id}/followers")
     fun getAccountsFollowers(
         @Path("id") userId: String,

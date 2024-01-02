@@ -27,6 +27,7 @@ class PostViewModel @Inject constructor(
     var repliesState by mutableStateOf(RepliesState())
 
     var likeState by mutableStateOf(LikeState())
+    var bookmarkState by mutableStateOf(BookmarkState())
 
     var timeAgoString: String by mutableStateOf("")
 
@@ -80,10 +81,61 @@ class PostViewModel @Inject constructor(
 
     fun unlikePost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            var res = repository.unlikePost(postId)
-            if (res != null) {
+            repository.unlikePost(postId).onEach {result ->
+                likeState = when (result) {
+                    is Resource.Success -> {
+                        LikeState(liked = result.data?.favourited ?: false)
+                    }
 
-            }
+                    is Resource.Error -> {
+                        LikeState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        LikeState(isLoading = true)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun bookmarkPost(postId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            repository.bookmarkPost(postId).onEach {result ->
+                bookmarkState = when (result) {
+                    is Resource.Success -> {
+                        BookmarkState(bookmarked = result.data?.bookmarked ?: false)
+                    }
+
+                    is Resource.Error -> {
+                        BookmarkState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        BookmarkState(isLoading = true)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun unbookmarkPost(postId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            repository.unbookmarkPost(postId).onEach {result ->
+                bookmarkState = when (result) {
+                    is Resource.Success -> {
+                        BookmarkState(bookmarked = result.data?.bookmarked ?: false)
+                    }
+
+                    is Resource.Error -> {
+                        BookmarkState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        BookmarkState(isLoading = true)
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 

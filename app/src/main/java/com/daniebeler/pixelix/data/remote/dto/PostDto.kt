@@ -81,5 +81,7 @@ data class PostDto(
     @SerializedName("_v")
     val v: Int,
     @SerializedName("visibility")
-    val visibility: String
+    val visibility: String,
+    @SerializedName("bookmarked")
+    val bookmarked: Boolean
 )

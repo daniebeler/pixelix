@@ -58,7 +58,11 @@ interface CountryRepository {
     fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
 
     fun likePost(postId: String): Flow<Resource<Post>>
-    suspend fun unlikePost(postId: String): Post?
+    fun unlikePost(postId: String): Flow<Resource<Post>>
+
+    fun bookmarkPost(postId: String): Flow<Resource<Post>>
+
+    fun unbookmarkPost(postId: String): Flow<Resource<Post>>
     fun muteAccount(accountId: String): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
 

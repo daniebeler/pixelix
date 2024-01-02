@@ -27,7 +27,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
@@ -91,6 +94,7 @@ fun PostComposable(
 
     LaunchedEffect(Unit) {
         viewModel.likeState = LikeState(liked = post.favourited)
+        viewModel.bookmarkState = BookmarkState(bookmarked = post.bookmarked)
     }
 
     val pagerState = rememberPagerState(pageCount = {
@@ -208,32 +212,63 @@ fun PostComposable(
         }
 
         Column(Modifier.padding(8.dp)) {
-            if (viewModel.likeState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            } else {
-                if (viewModel.likeState.liked) {
-                    IconButton(onClick = {
-                        viewModel.unlikePost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = ""
-                        )
-                    }
+            Row {
+                if (viewModel.likeState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
                 } else {
-                    IconButton(onClick = {
-                        viewModel.likePost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder,
-                            contentDescription = ""
-                        )
+                    if (viewModel.likeState.liked) {
+                        IconButton(onClick = {
+                            viewModel.unlikePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Favorite,
+                                contentDescription = ""
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.likePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
+
+
+                if (viewModel.bookmarkState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                } else {
+                    if (viewModel.bookmarkState.bookmarked) {
+                        IconButton(onClick = {
+                            viewModel.unbookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Bookmark,
+                                contentDescription = ""
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.bookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkBorder,
+                                contentDescription = ""
+                            )
+                        }
                     }
                 }
             }
+
 
 
 
