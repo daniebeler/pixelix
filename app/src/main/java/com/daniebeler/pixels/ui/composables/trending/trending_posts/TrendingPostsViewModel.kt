@@ -17,18 +17,12 @@ class TrendingPostsViewModel @Inject constructor(
     private val repository: CountryRepository
 ) : ViewModel() {
 
-    var dailyState by mutableStateOf(TrendingPostsState())
+    var trendingState by mutableStateOf(TrendingPostsState())
         private set
-    //var monthlyTrendingPosts: Flow<Resource<List<Post>>> by mutableStateOf(emptyList())
-    //var yearlyTrendingPosts: Flow<Resource<List<Post>>> by mutableStateOf(emptyList())
 
-    init {
-        getTrendingPosts("daily")
-    }
-
-    private fun getTrendingPosts(timeRange: String) {
+    fun getTrendingPosts(timeRange: String) {
         repository.getTrendingPosts(timeRange).onEach { result ->
-            dailyState = when (result) {
+            trendingState = when (result) {
                 is Resource.Success -> {
                     TrendingPostsState(trendingPosts = result.data ?: emptyList())
                 }

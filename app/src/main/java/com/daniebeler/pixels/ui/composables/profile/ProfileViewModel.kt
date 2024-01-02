@@ -183,25 +183,39 @@ class ProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount() {
-        /*if (account != null) {
-            CoroutineScope(Dispatchers.Default).launch {
-                var res = repository.blockAccount(account!!.id)
-                if (res != null) {
-                    getRelationship(account!!.id)
+    fun blockAccount(userId: String) {
+        repository.blockAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
                 }
             }
-        }*/
+        }.launchIn(viewModelScope)
     }
 
-    fun unblockAccount() {
-        /*if (account != null) {
-            CoroutineScope(Dispatchers.Default).launch {
-                var res = repository.unblockAccount(account!!.id)
-                if (res != null) {
-                    getRelationship(account!!.id)
+    fun unblockAccount(userId: String) {
+        repository.unblockAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
                 }
             }
-        }*/
+        }.launchIn(viewModelScope)
     }
 }

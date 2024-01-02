@@ -8,7 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
@@ -17,7 +26,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -37,6 +50,8 @@ fun TrendingComposable(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var expanded by remember { mutableStateOf(false) }
+    var range by remember { mutableStateOf("daily") }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -44,6 +59,37 @@ fun TrendingComposable(navController: NavController) {
             TopAppBar(
                 title = {
                     Text(stringResource(R.string.trending))
+                },
+                actions = {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("daily") },
+                            onClick = { range = "daily" },
+                            trailingIcon = { if (range == "daily") {
+                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
+                            } }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("monthly") },
+                            onClick = { range = "monthly" },
+                            trailingIcon = { if (range == "monthly") {
+                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
+                            }}
+                        )
+                        DropdownMenuItem(
+                            text = { Text("yearly") },
+                            onClick = { range = "yearly" },
+                            trailingIcon = { if (range == "yearly") {
+                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
+                            }}
+                        )
+                    }
                 }
             )
 
@@ -94,7 +140,7 @@ fun TrendingComposable(navController: NavController) {
                 when (tabIndex) {
                     0 ->
                         Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingPostsComposable(navController = navController)
+                            TrendingPostsComposable(range, navController = navController)
                         }
 
                     1 ->

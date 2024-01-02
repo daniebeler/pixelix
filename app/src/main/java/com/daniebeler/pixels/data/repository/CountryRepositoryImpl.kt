@@ -477,29 +477,33 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun blockAccount(accountId: String): Relationship? {
-        return try {
+    override fun blockAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.blockAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
-    override suspend fun unblockAccount(accountId: String): Relationship? {
-        return try {
+    override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.unblockAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error("Unknown Error"))
         }
     }
 

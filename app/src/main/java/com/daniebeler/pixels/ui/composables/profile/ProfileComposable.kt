@@ -257,13 +257,13 @@ fun ProfileComposable(
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
-                            viewModel.unblockAccount()
+                            viewModel.unblockAccount(userId)
                         })
                     } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
-                            viewModel.blockAccount()
+                            viewModel.blockAccount(userId)
                         })
                     }
                 }

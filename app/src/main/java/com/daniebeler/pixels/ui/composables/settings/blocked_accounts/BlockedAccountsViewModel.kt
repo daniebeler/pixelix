@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixels.common.Resource
+import com.daniebeler.pixels.domain.model.Account
 import com.daniebeler.pixels.domain.repository.CountryRepository
+import com.daniebeler.pixels.ui.composables.settings.muted_accounts.MutedAccountsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -45,11 +47,21 @@ class BlockedAccountsViewModel @Inject constructor(
     }
 
     fun unblockAccount(accountId: String) {
-        viewModelScope.launch {
-            var res = repository.unblockAccount(accountId)
-            if (res != null) {
-                getBlockedAccounts()
+        repository.unblockAccount(accountId).onEach { result ->
+            blockedAccounts = when (result) {
+                is Resource.Success -> {
+                    val newBlockedAccounts = blockedAccounts.blockedAccounts.filter { account: Account -> account.id != accountId }
+                    BlockedAccountsState(blockedAccounts = newBlockedAccounts)
+                }
+
+                is Resource.Error -> {
+                    BlockedAccountsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    BlockedAccountsState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }

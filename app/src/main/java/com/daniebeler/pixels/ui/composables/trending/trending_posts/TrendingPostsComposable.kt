@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -29,9 +30,14 @@ import com.daniebeler.pixels.ui.composables.LoadingComposable
 
 @Composable
 fun TrendingPostsComposable(
+    range: String,
     navController: NavController,
     viewModel: TrendingPostsViewModel = hiltViewModel()
 ) {
+    DisposableEffect(range) {
+        viewModel.getTrendingPosts(range)
+        onDispose {}
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
@@ -39,7 +45,7 @@ fun TrendingPostsComposable(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             content = {
-                items(viewModel.dailyState.trendingPosts, key = {
+                items(viewModel.trendingState.trendingPosts, key = {
                     it.id
                 }) { photo ->
                     CustomPost(post = photo, navController = navController)
@@ -48,8 +54,8 @@ fun TrendingPostsComposable(
             }
         )
         
-        LoadingComposable(isLoading = viewModel.dailyState.isLoading)
-        ErrorComposable(message = viewModel.dailyState.error)
+        LoadingComposable(isLoading = viewModel.trendingState.isLoading)
+        ErrorComposable(message = viewModel.trendingState.error)
     }
 
 
