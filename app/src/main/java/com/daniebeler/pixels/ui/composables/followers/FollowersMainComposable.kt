@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,11 +33,19 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun FollowersMainComposable(navController: NavController, accountId: String, page: String, viewModel: FollowersViewModel = hiltViewModel()) {
+fun FollowersMainComposable(
+    navController: NavController,
+    accountId: String,
+    page: String,
+    viewModel: FollowersViewModel = hiltViewModel()
+) {
 
-    viewModel.getAccount(accountId)
-    viewModel.getFollowers(accountId)
-    viewModel.getFollowing(accountId)
+    LaunchedEffect(Unit) {
+        viewModel.getAccount(accountId)
+        viewModel.getFollowers(accountId)
+        viewModel.getFollowing(accountId)
+    }
+
 
     val pageId = if (page == "followers") {
         0
@@ -52,7 +61,7 @@ fun FollowersMainComposable(navController: NavController, accountId: String, pag
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold (
+    Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(

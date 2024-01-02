@@ -9,6 +9,7 @@ import com.daniebeler.pixels.common.Resource
 import com.daniebeler.pixels.domain.repository.CountryRepository
 import com.daniebeler.pixels.domain.model.Post
 import com.daniebeler.pixels.ui.composables.profile.AccountState
+import com.daniebeler.pixels.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,15 +25,14 @@ class OwnProfileViewModel @Inject constructor(
 ): ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
-    var ownPosts: List<Post> by mutableStateOf(emptyList())
+    var postsState by mutableStateOf(PostsState())
     private var accountId: String = ""
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
             accountId = repository.getAccountId().first()
-            CoroutineScope(Dispatchers.Default).launch {
-                ownPosts = repository.getPostsByAccountId(accountId)
-            }
+
+            getPosts(accountId)
 
             getAccount(accountId)
         }
@@ -56,13 +56,21 @@ class OwnProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun loadMorePosts() {
-        if (ownPosts.isNotEmpty()) {
-            val maxId = ownPosts.last().id
+    fun getPosts(userId: String) {
+        repository.getPostsByAccountId(userId).onEach { result ->
+            postsState = when (result) {
+                is Resource.Success -> {
+                    PostsState(posts = result.data ?: emptyList())
+                }
 
-            CoroutineScope(Dispatchers.Default).launch {
-                ownPosts += repository.getPostsByAccountId(accountId, maxId)
+                is Resource.Error -> {
+                    PostsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    PostsState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }

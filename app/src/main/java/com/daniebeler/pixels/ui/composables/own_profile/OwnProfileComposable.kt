@@ -71,7 +71,7 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
                             }
                         }
 
-                        items(viewModel.ownPosts, key = {
+                        items(viewModel.postsState.posts, key = {
                             it.id
                         }) { photo ->
                             CustomPost(post = photo, navController = navController)
@@ -79,7 +79,7 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
 
                         item {
                             Button(onClick = {
-                                viewModel.loadMorePosts()
+                                //viewModel.loadMorePosts()
                             }) {
                                 Text(text = stringResource(R.string.load_more))
                             }

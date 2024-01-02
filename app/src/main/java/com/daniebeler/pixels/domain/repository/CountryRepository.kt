@@ -73,8 +73,7 @@ interface CountryRepository {
 
     fun getNotifications(): Flow<Resource<List<Notification>>>
 
-    suspend fun getPostsByAccountId(accountId: String): List<Post>
-    suspend fun getPostsByAccountId(accountId: String, maxPostId: String): List<Post>
+    fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
 
     fun getPostById(postId: String): Flow<Resource<Post?>>
 

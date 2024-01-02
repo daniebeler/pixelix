@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -181,20 +182,33 @@ fun ProfileComposable(
                                 }
                             }
 
-                            items(viewModel.posts, key = {
+                            items(viewModel.postsState.posts, key = {
                                 it.id
                             }) { photo ->
                                 CustomPost(post = photo, navController = navController)
                             }
 
-                            item {
-                                Button(onClick = {
-                                    viewModel.loadMorePosts(userId)
-                                }) {
-                                    Text(text = stringResource(R.string.load_more))
+                            if (!viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
+                                item(span = { GridItemSpan(3) }) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.aspectRatio(2f)
+                                    ) {
+                                        Text(text = "No posts")
+                                    }
                                 }
                             }
 
+                            if (!viewModel.postsState.isLoading && viewModel.postsState.posts.isNotEmpty()) {
+                                item {
+                                    Button(onClick = {
+                                        //viewModel.loadMorePosts(userId)
+                                    }) {
+                                        Text(text = stringResource(R.string.load_more))
+                                    }
+                                }
+                            }
                         }
                     )
 

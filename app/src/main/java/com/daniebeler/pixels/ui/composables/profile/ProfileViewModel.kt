@@ -26,15 +26,13 @@ class ProfileViewModel @Inject constructor(
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
-    var posts: List<Post> by mutableStateOf(emptyList())
+    var postsState by mutableStateOf(PostsState())
 
 
     fun loadData(userId: String) {
         getAccount(userId)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            posts = repository.getPostsByAccountId(userId)
-        }
+        getPosts(userId)
 
         getRelationship(userId)
 
@@ -95,14 +93,22 @@ class ProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun loadMorePosts(userId: String) {
-        if (posts.isNotEmpty()) {
-            var maxId = posts.last().id
+    fun getPosts(userId: String) {
+        repository.getPostsByAccountId(userId).onEach { result ->
+            postsState = when (result) {
+                is Resource.Success -> {
+                    PostsState(posts = result.data ?: emptyList())
+                }
 
-            CoroutineScope(Dispatchers.Default).launch {
-                posts = posts + repository.getPostsByAccountId(userId, maxId)
+                is Resource.Error -> {
+                    PostsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    PostsState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun followAccount(userId: String) {
