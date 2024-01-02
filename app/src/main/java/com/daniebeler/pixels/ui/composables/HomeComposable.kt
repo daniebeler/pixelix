@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pixels.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pixels.ui.composables.timelines.local_timeline.LocalTimelineComposable
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
 
-    val pagerState = rememberPagerState { 2 }
+    val pagerState = rememberPagerState { 3 }
 
     val scope = rememberCoroutineScope()
 
@@ -68,6 +69,15 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                             pagerState.animateScrollToPage(1)
                         }
                     })
+
+                Tab(
+                    text = { Text("Global") },
+                    selected = pagerState.currentPage == 0,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(2)
+                        }
+                    })
             }
 
             HorizontalPager(
@@ -85,6 +95,11 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                     1 ->
                         Box(modifier = Modifier.fillMaxSize()) {
                             LocalTimelineComposable(navController)
+                        }
+
+                    2 ->
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            GlobalTimelineComposable(navController)
                         }
 
                 }

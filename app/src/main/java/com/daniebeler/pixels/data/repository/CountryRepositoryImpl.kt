@@ -248,6 +248,25 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    override fun getGlobalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
+        try {
+            emit(Resource.Loading())
+            var response = if (maxPostId.isNotEmpty()) {
+                pixelfedApi.getGlobalTimeline(maxPostId, accessToken).awaitResponse()
+            } else {
+                pixelfedApi.getGlobalTimeline(accessToken).awaitResponse()
+            }
+            if (response.isSuccessful) {
+                val res = response.body()?.map { it.toPost() } ?: emptyList()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
+    }
+
     override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
