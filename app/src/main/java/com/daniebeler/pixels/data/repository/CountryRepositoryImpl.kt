@@ -341,29 +341,33 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun followAccount(accountId: String): Relationship? {
-        return try {
+    override fun followAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.followAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error(exception.message ?: "Error"))
         }
     }
 
-    override suspend fun unfollowAccount(accountId: String): Relationship? {
-        return try {
+    override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.unfollowAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error(exception.message ?: "Error"))
         }
     }
 

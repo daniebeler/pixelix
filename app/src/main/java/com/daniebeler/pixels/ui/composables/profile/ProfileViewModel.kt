@@ -106,21 +106,39 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun followAccount(userId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            var res = repository.followAccount(userId)
-            if (res != null) {
-                getRelationship(userId)
+        repository.followAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun unfollowAccount(userId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            var res = repository.unfollowAccount(userId)
-            if (res != null) {
-                getRelationship(userId)
+        repository.unfollowAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun muteAccount() {

@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -143,17 +146,32 @@ fun ProfileComposable(
 
                                     Spacer(modifier = Modifier.height(12.dp))
 
+                                    if (viewModel.relationshipState.isLoading) {
+                                        Button(onClick = {
+                                            viewModel.unfollowAccount(userId)
+                                        }, modifier = Modifier.width(120.dp)) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(20.dp),
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            )
+                                        }
+                                    }
+
                                     if (viewModel.relationshipState.accountRelationship != null) {
                                         if (viewModel.relationshipState.accountRelationship!!.following) {
-                                            Button(onClick = {
-                                                viewModel.unfollowAccount(userId)
-                                            }) {
+                                            Button(
+                                                onClick = {
+                                                    viewModel.unfollowAccount(userId)
+                                                },
+                                                modifier = Modifier.width(120.dp)
+                                            ) {
                                                 Text(text = stringResource(R.string.unfollow))
                                             }
                                         } else {
                                             Button(onClick = {
                                                 viewModel.followAccount(userId)
-                                            }) {
+                                            }, modifier = Modifier.width(120.dp)) {
                                                 Text(text = stringResource(R.string.follow))
                                             }
                                         }
@@ -182,11 +200,11 @@ fun ProfileComposable(
 
                 }
             }
-            
+
             LoadingComposable(isLoading = viewModel.accountState.isLoading)
             ErrorComposable(message = viewModel.accountState.error)
         }
-        
+
 
     }
 

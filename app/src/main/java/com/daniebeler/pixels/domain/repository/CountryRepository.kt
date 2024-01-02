@@ -49,9 +49,9 @@ interface CountryRepository {
 
     fun getAccount(accountId: String): Flow<Resource<Account?>>
 
-    suspend fun followAccount(accountId: String): Relationship?
+    fun followAccount(accountId: String): Flow<Resource<Relationship>>
 
-    suspend fun unfollowAccount(accountId: String): Relationship?
+    fun unfollowAccount(accountId: String): Flow<Resource<Relationship>>
 
     fun followHashtag(tagId: String): Flow<Resource<Tag>>
 
