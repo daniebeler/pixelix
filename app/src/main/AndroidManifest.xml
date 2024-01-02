@@ -13,13 +13,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Pixels"
+        android:theme="@style/Theme.Pixelix"
         tools:targetApi="31"
         tools:ignore="Instantiatable">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Pixels">
+            android:theme="@style/Theme.Pixelix">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,7 +33,7 @@
             android:name=".LoginActivity"
             android:exported="true"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/Theme.Pixels"
+            android:theme="@style/Theme.Pixelix"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -44,7 +44,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixels-android-auth" />
+                    android:scheme="pixelix-android-auth" />
             </intent-filter>
         </activity>
     </application>

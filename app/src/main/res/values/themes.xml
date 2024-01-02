@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Pixels" parent="Theme.Material3.DayNight" />
+    <style name="Theme.Pixelix" parent="Theme.Material3.DayNight" />
 </resources>

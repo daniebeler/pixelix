@@ -47,7 +47,7 @@ import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.Bookmarke
 import com.daniebeler.pixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
 import com.daniebeler.pixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pixelix.ui.composables.trending.TrendingComposable
-import com.daniebeler.pixelix.ui.theme.PixelsTheme
+import com.daniebeler.pixelix.ui.theme.PixelixTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
             gotoLoginActivity(this@MainActivity)
         } else {
             setContent {
-                PixelsTheme {
+                PixelixTheme {
                     val navController: NavHostController = rememberNavController()
 
                     var buttonsVisible = remember { mutableStateOf(true) }

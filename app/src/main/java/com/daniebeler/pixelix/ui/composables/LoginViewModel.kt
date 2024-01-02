@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
     private fun openUrl(context: Context, clientId: String, baseUrl: String) {
         val intent = CustomTabsIntent.Builder().build()
         val url =
-            "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixels-android-auth://callback&client_id=" + clientId
+            "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixelix-android-auth://callback&client_id=" + clientId
         intent.launchUrl(context, Uri.parse(url))
     }
 }

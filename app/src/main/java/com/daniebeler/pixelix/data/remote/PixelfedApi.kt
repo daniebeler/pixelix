@@ -200,7 +200,7 @@ interface PixelfedApi {
         @Query("q") searchText: String
     ): Call<SearchDto>
 
-    @POST("api/v1/apps?client_name=pixels&redirect_uris=pixels-android-auth://callback")
+    @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>
 
     @FormUrlEncoded
@@ -209,7 +209,7 @@ interface PixelfedApi {
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
         @Field("code") code: String,
-        @Field("redirect_uri") redirectUri: String? = "pixels-android-auth://callback",
+        @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
 

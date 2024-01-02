@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.daniebeler.pixelix.ui.composables.LoginComposable
-import com.daniebeler.pixelix.ui.theme.PixelsTheme
+import com.daniebeler.pixelix.ui.theme.PixelixTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ class LoginActivity : ComponentActivity() {
 
 
         setContent {
-            PixelsTheme {
+            PixelixTheme {
                 Scaffold { paddingValues ->
                     Column (Modifier.padding(paddingValues)) {
 
@@ -43,7 +43,7 @@ class LoginActivity : ComponentActivity() {
         val url: Uri? = intent.data
 
         //Check if the activity was started after the authentication
-        if (url == null || !url.toString().startsWith("pixels-android-auth://callback")) return
+        if (url == null || !url.toString().startsWith("pixelix-android-auth://callback")) return
 
         val code = url.getQueryParameter("code") ?:""
 
