@@ -48,12 +48,22 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun unmuteAccount(accountId: String) {
-        viewModelScope.launch {
-            var res = repository.unmuteAccount(accountId)
-            if (res != null) {
-                getMutedAccounts()
+        repository.unMuteAccount(accountId).onEach { result ->
+            mutedAccountsState = when (result) {
+                is Resource.Success -> {
+                    val newMutedAccounts = mutedAccountsState.mutedAccounts.filter { account: Account -> account.id != accountId }
+                    MutedAccountsState(mutedAccounts = newMutedAccounts)
+                }
+
+                is Resource.Error -> {
+                    MutedAccountsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    MutedAccountsState(isLoading = true)
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
 }

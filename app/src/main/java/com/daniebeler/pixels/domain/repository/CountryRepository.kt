@@ -60,8 +60,8 @@ interface CountryRepository {
 
     suspend fun likePost(postId: String): Post?
     suspend fun unlikePost(postId: String): Post?
-    suspend fun muteAccount(accountId: String): Relationship?
-    suspend fun unmuteAccount(accountId: String): Relationship?
+    fun muteAccount(accountId: String): Flow<Resource<Relationship>>
+    fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
 
     suspend fun blockAccount(accountId: String): Relationship?
     suspend fun unblockAccount(accountId: String): Relationship?

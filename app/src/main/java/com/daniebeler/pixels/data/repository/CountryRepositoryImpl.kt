@@ -447,29 +447,33 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun muteAccount(accountId: String): Relationship? {
-        return try {
+    override fun muteAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.muteAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
-    override suspend fun unmuteAccount(accountId: String): Relationship? {
-        return try {
+    override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.unmuteAccount(accountId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toRelationship()
+                val res = response.body()!!.toRelationship()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error("Unknown Error"))
         }
     }
 

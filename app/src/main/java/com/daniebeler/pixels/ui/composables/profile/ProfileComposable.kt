@@ -241,7 +241,7 @@ fun ProfileComposable(
                                 R.string.unmute_this_profile
                             ),
                             onClick = {
-                                viewModel.unmuteAccount()
+                                viewModel.unmuteAccount(userId)
                             })
                     } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
@@ -249,7 +249,7 @@ fun ProfileComposable(
                                 R.string.mute_this_profile
                             ),
                             onClick = {
-                                viewModel.muteAccount()
+                                viewModel.muteAccount(userId)
                             })
                     }
 
