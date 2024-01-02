@@ -18,8 +18,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.daniebeler.pixels.MainViewModel
+import com.daniebeler.pixels.R
 import com.daniebeler.pixels.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pixels.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pixels.ui.composables.timelines.local_timeline.LocalTimelineComposable
@@ -38,7 +40,7 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Burning Pixels")
+                    Text(stringResource(id = R.string.app_name))
                 }
             )
 
@@ -101,7 +103,6 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             GlobalTimelineComposable(navController)
                         }
-
                 }
             }
         }
