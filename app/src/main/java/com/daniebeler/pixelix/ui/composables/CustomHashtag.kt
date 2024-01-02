@@ -28,7 +28,7 @@ import com.daniebeler.pixelix.domain.model.Tag
 fun CustomHashtag(hashtag: Tag, navController: NavController) {
     Row(
         Modifier
-            .padding(vertical = 12.dp, horizontal = 5.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
                 navController.navigate("hashtag_timeline_screen/${hashtag.name}") {

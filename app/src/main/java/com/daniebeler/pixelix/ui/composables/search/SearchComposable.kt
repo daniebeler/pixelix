@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -64,9 +65,6 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
             }
             LazyColumn(content = {
                 if (viewModel.searchState.searchResult != null) {
-                    item {
-                        Text(text = "Accounts")
-                    }
                     items(viewModel.searchState.searchResult!!.accounts) {
                         CustomAccount(
                             account = it,
@@ -74,9 +72,7 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                             navController = navController
                         )
                     }
-                    item {
-                        Text(text = "Hashtags")
-                    }
+                    item { HorizontalDivider(Modifier.padding(12.dp)) }
                     items(viewModel.searchState.searchResult!!.tags) {
                         CustomHashtag(hashtag = it, navController = navController)
                     }
