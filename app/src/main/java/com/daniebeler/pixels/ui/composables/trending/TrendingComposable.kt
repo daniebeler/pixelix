@@ -61,34 +61,54 @@ fun TrendingComposable(navController: NavController) {
                     Text(stringResource(R.string.trending))
                 },
                 actions = {
-                    IconButton(onClick = { expanded = !expanded }) {
-                        Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("daily") },
-                            onClick = { range = "daily" },
-                            trailingIcon = { if (range == "daily") {
-                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
-                            } }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("monthly") },
-                            onClick = { range = "monthly" },
-                            trailingIcon = { if (range == "monthly") {
-                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
-                            }}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("yearly") },
-                            onClick = { range = "yearly" },
-                            trailingIcon = { if (range == "yearly") {
-                                Icon(imageVector = Icons.Outlined.Check, contentDescription = null)
-                            }}
-                        )
+                    if (pagerState.currentPage == 0) {
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("daily") },
+                                onClick = { range = "daily" },
+                                trailingIcon = {
+                                    if (range == "daily") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("monthly") },
+                                onClick = { range = "monthly" },
+                                trailingIcon = {
+                                    if (range == "monthly") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("yearly") },
+                                onClick = { range = "yearly" },
+                                trailingIcon = {
+                                    if (range == "yearly") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             )
