@@ -7,11 +7,11 @@ plugins {
 
 
 android {
-    namespace = "com.daniebeler.pixels"
+    namespace = "com.daniebeler.pixelix"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.daniebeler.pixels"
+        applicationId = "com.daniebeler.pixelix"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
