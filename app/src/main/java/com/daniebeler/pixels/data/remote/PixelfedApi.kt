@@ -37,19 +37,19 @@ interface PixelfedApi {
     @GET("api/v1/tags/{tag}?_pe=1")
     fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
 
-    @GET("api/v1/timelines/public?_pe=1")
+    @GET("api/v1/timelines/public?local&_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?_pe=1")
+    @GET("api/v1/timelines/public?local&_pe=1")
     fun getLocalTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/network?_pe=1")
+    @GET("api/v1/timelines/public?remote")
     fun getGlobalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/network?_pe=1")
+    @GET("/api/v1/timelines/public?remote")
     fun getGlobalTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") token: String

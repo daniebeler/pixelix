@@ -55,6 +55,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         runBlocking {
             val accessTokenFromStorage = getAccessTokenFromStorage().first()
             if (accessTokenFromStorage.isNotEmpty()) {
+                println("Bearer $accessTokenFromStorage")
                 accessToken = "Bearer $accessTokenFromStorage"
             }
             val baseUrl = getBaseUrlFromStorage().first()
