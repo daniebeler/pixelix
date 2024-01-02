@@ -61,9 +61,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
-import com.daniebeler.pixelix.ui.composables.CustomBottomSheetElement
+import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.HashtagsMentionsTextView
+import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.trending.trending_posts.CustomPost
 

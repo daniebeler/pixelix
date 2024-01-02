@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables
+package com.daniebeler.pixelix.ui.composables.post
 
 import android.content.Context
 import android.content.Intent
@@ -33,6 +33,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -85,6 +87,10 @@ fun PostComposable(
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
         onDispose {}
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.likeState = LikeState(liked = post.favourited)
     }
 
     val pagerState = rememberPagerState(pageCount = {
@@ -202,25 +208,33 @@ fun PostComposable(
         }
 
         Column(Modifier.padding(8.dp)) {
-            if (post.favourited) {
-                IconButton(onClick = {
-                    viewModel.unlikePost(post.id)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Favorite,
-                        contentDescription = ""
-                    )
-                }
+            if (viewModel.likeState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
             } else {
-                IconButton(onClick = {
-                    viewModel.likePost(post.id)
-                }) {
-                    Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = ""
-                    )
+                if (viewModel.likeState.liked) {
+                    IconButton(onClick = {
+                        viewModel.unlikePost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = ""
+                        )
+                    }
+                } else {
+                    IconButton(onClick = {
+                        viewModel.likePost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.FavoriteBorder,
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
+
 
 
             Text(text = post.favouritesCount.toString() + " likes")
@@ -269,7 +283,7 @@ fun PostComposable(
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(32.dp)
                     ) {
-                        items(viewModel.replies, key = {
+                        items(viewModel.repliesState.replies, key = {
                             it.id
                         }) { reply ->
                             HashtagsMentionsTextView(text = reply.content, onClick = {

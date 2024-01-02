@@ -330,16 +330,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun getReplies(userid: String, postid: String): List<Reply> {
-        return try {
+    override fun getReplies(userid: String, postid: String): Flow<Resource<List<Reply>>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.data?.map { it.toReply() } ?: emptyList()
+                val res = response.body()?.data?.map { it.toReply() } ?: emptyList()
+                emit(Resource.Success(res))
             } else {
-                emptyList()
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            emptyList()
+            emit(Resource.Error(exception.message ?: "Error"))
         }
     }
 
@@ -418,16 +420,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun likePost(postId: String): Post? {
-        return try {
+    override fun likePost(postId: String): Flow<Resource<Post>> = flow {
+        try {
+            emit(Resource.Loading())
             val response = pixelfedApi.likePost(postId, accessToken).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toPost()
+                val res = response.body()!!.toPost()
+                emit(Resource.Success(res))
             } else {
-                null
+                emit(Resource.Error("Error"))
             }
         } catch (exception: Exception) {
-            null
+            emit(Resource.Error(exception.message ?: "Error"))
         }
     }
 

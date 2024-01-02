@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
-import com.daniebeler.pixelix.ui.composables.PostComposable
+import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
 @Composable
 fun HomeTimelineComposable(navController: NavController, viewModel: HomeTimelineViewModel = hiltViewModel()) {

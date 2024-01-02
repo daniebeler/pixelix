@@ -27,7 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
-import com.daniebeler.pixelix.ui.composables.PostComposable
+import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

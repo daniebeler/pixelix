@@ -45,7 +45,7 @@ interface CountryRepository {
 
     fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>>
 
-    suspend fun getReplies(userid: String, postid: String): List<Reply>
+    fun getReplies(userid: String, postid: String): Flow<Resource<List<Reply>>>
 
     fun getAccount(accountId: String): Flow<Resource<Account?>>
 
@@ -57,7 +57,7 @@ interface CountryRepository {
 
     fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
 
-    suspend fun likePost(postId: String): Post?
+    fun likePost(postId: String): Flow<Resource<Post>>
     suspend fun unlikePost(postId: String): Post?
     fun muteAccount(accountId: String): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
