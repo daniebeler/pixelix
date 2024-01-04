@@ -49,7 +49,6 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
                     }
                 }
             )
-
         }
     ) {paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {

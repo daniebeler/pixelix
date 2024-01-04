@@ -11,5 +11,7 @@ data class TagDto(
     @SerializedName("following")
     val following: Boolean,
     @SerializedName("count")
-    val count: Int
+    val count: Int?,
+    @SerializedName("total")
+    val total: Int
 )

@@ -54,11 +54,19 @@ fun CustomHashtag(hashtag: Tag, navController: NavController) {
 
         Column {
             Text(text = "#" + hashtag.name)
-            Text(
-                text = hashtag.count.toString() + " posts",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (hashtag.count != null) {
+                Text(
+                    text = hashtag.count.toString() + " posts",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                Text(
+                    text = hashtag.total.toString() + " people are talking",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
