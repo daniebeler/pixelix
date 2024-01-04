@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,6 +49,7 @@ import com.daniebeler.pixelix.ui.composables.settings.followed_hashtags.Followed
 import com.daniebeler.pixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixelix.ui.theme.PixelixTheme
+import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -279,10 +281,7 @@ fun BottomBar(
                 },
                 selected = currentRoute == screen.route,
                 onClick = {
-                    navController.navigate(screen.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate(screen.route, navController)
                 }
             )
         }
