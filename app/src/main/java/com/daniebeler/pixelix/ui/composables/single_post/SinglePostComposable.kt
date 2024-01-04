@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +26,7 @@ import com.daniebeler.pixelix.ui.composables.post.PostComposable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()) {
-
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
         viewModel.getPost(postId)
@@ -51,7 +53,7 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
         }
     ) {paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-            Column {
+            Column ( modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
                     PostComposable(viewModel.postState.post!!, navController)
                 }
