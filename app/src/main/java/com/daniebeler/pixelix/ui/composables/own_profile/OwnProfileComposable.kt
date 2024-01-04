@@ -1,7 +1,10 @@
 package com.daniebeler.pixelix.ui.composables.own_profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -18,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,9 +34,12 @@ import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()) {
+fun OwnProfileComposable(
+    navController: NavController,
+    viewModel: OwnProfileViewModel = hiltViewModel()
+) {
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -54,8 +61,8 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
             )
 
         }
-    ) {paddingValues ->
-        Box {
+    ) { paddingValues ->
+        Column {
             if (viewModel.accountState.account != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
@@ -64,35 +71,47 @@ fun OwnProfileComposable(navController: NavController, viewModel: OwnProfileView
                     modifier = Modifier.padding(paddingValues),
                     content = {
                         if (viewModel.accountState.account != null) {
-                            item (
+                            item(
                                 span = { GridItemSpan(3) }
                             ) {
-                                ProfileTopSection(account = viewModel.accountState.account!!, navController)
+                                ProfileTopSection(
+                                    account = viewModel.accountState.account!!,
+                                    navController
+                                )
                             }
                         }
-
-                        items(viewModel.postsState.posts, key = {
-                            it.id
-                        }) { photo ->
-                            CustomPost(post = photo, navController = navController)
+                        if (viewModel.postsState.posts.isNotEmpty()) {
+                            items(viewModel.postsState.posts, key = {
+                                it.id
+                            }) { photo ->
+                                CustomPost(post = photo, navController = navController)
+                            }
                         }
-
-                        item {
+                        /*item {
                             Button(onClick = {
                                 //viewModel.loadMorePosts()
                             }) {
                                 Text(text = stringResource(R.string.load_more))
                             }
-                        }
+                        }*/
 
                     }
                 )
+                if (viewModel.postsState.posts.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth().padding(36.dp, 20.dp)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.empty_state_no_posts),
+                            contentDescription = null,
+                            Modifier.fillMaxWidth()
+                        )
+                    }
+                }
             }
-            
+
             LoadingComposable(isLoading = viewModel.accountState.isLoading)
             ErrorComposable(message = viewModel.accountState.error)
         }
-        
+
 
     }
 }
