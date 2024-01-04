@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
     private suspend fun setBaseUrl(_baseUrl: String): String {
         var baseUrl = _baseUrl
         if (!baseUrl.startsWith("https://")) {
-            baseUrl = "https://$baseUrl";
+            baseUrl = "https://$baseUrl"
         }
         repository.storeBaseUrl(baseUrl)
         return baseUrl
@@ -41,11 +41,13 @@ class LoginViewModel @Inject constructor(
 
     suspend fun login(baseUrl: String, context: Context) {
         loading = true
-        val newBaseUrl = setBaseUrl(baseUrl)
-        val clientId = registerApplication()
+        if (baseUrl != "") {
+            val newBaseUrl = setBaseUrl(baseUrl)
+            val clientId = registerApplication()
 
-        if (clientId.isNotEmpty()) {
-            openUrl(context, clientId, newBaseUrl)
+            if (clientId.isNotEmpty()) {
+                openUrl(context, clientId, newBaseUrl)
+            }
         }
         loading = false
     }
