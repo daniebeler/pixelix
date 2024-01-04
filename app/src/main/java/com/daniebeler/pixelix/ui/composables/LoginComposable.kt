@@ -4,12 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -120,11 +122,12 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
                     Modifier
                         .height(56.dp)
                         .width(56.dp)
-                        .padding(0.dp), shape = RoundedCornerShape(12.dp),
+                        .padding(0.dp,0.dp), shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "submit"
+                        contentDescription = "submit",
+                        Modifier.fillMaxSize().fillMaxWidth()
                     )
                 }
             }
