@@ -64,7 +64,7 @@ class PostViewModel @Inject constructor(
             repository.likePost(postId).onEach {result ->
                 likeState = when (result) {
                     is Resource.Success -> {
-                        LikeState(liked = result.data?.favourited ?: false)
+                        LikeState(liked = result.data?.favourited ?: false, likesCount = result.data?.favouritesCount ?: likeState.likesCount)
                     }
 
                     is Resource.Error -> {
@@ -84,7 +84,7 @@ class PostViewModel @Inject constructor(
             repository.unlikePost(postId).onEach {result ->
                 likeState = when (result) {
                     is Resource.Success -> {
-                        LikeState(liked = result.data?.favourited ?: false)
+                        LikeState(liked = result.data?.favourited ?: false, likesCount = result.data?.favouritesCount ?: likeState.likesCount)
                     }
 
                     is Resource.Error -> {

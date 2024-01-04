@@ -7,6 +7,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -71,6 +74,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
 
 
@@ -93,7 +97,7 @@ fun PostComposable(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.likeState = LikeState(liked = post.favourited)
+        viewModel.likeState = LikeState(liked = post.favourited, likesCount = post.favouritesCount)
         viewModel.bookmarkState = BookmarkState(bookmarked = post.bookmarked)
     }
 
@@ -174,8 +178,22 @@ fun PostComposable(
                             .aspectRatio(
                                 post.mediaAttachments[page].meta?.original?.aspect?.toFloat()
                                     ?: 1.5f
-                            ), contentScale = ContentScale.FillWidth
+                            )
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onDoubleTap = {
+                                        if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                                            if (viewModel.likeState.liked) {
+                                                viewModel.unlikePost(post.id)
+                                            } else {
+                                                viewModel.likePost(post.id)
+                                            }
+                                        }
+                                    }
+                                )
+                            }, contentScale = ContentScale.FillWidth
                     )
+
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 Row(
@@ -205,8 +223,23 @@ fun PostComposable(
                     Modifier
                         .fillMaxWidth()
                         .aspectRatio(
-                            post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
-                        ), contentScale = ContentScale.FillWidth
+                            post.mediaAttachments[0].meta?.original?.aspect?.toFloat()
+                                ?: 1.5f
+                        )
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                                        if (viewModel.likeState.liked) {
+                                            viewModel.unlikePost(post.id)
+                                        } else {
+
+                                            viewModel.likePost(post.id)
+                                        }
+                                    }
+                                }
+                            )
+                        }, contentScale = ContentScale.FillWidth
                 )
             }
         }
@@ -272,7 +305,7 @@ fun PostComposable(
 
 
 
-            Text(text = post.favouritesCount.toString() + " likes")
+            Text(text = viewModel.likeState.likesCount.toString() + " likes")
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
@@ -468,5 +501,39 @@ fun HashtagsMentionsTextView(
                 annotatedStringList.first { it.start < position && position < it.end }
             if (annotatedStringRange.tag == "link") onClick(annotatedStringRange.item)
         }
+    )
+}
+
+@Composable
+fun PostImage(
+    mediaAttachment: MediaAttachment,
+    liked: MutableState<LikeState>,
+    likePost: () -> Unit,
+    unlikePost: () -> Unit
+) {
+    println("PostImage liked ${liked.value.liked}")
+    AsyncImage(
+        model = mediaAttachment.url, contentDescription = "",
+        Modifier
+            .fillMaxWidth()
+            .aspectRatio(
+                mediaAttachment.meta?.original?.aspect?.toFloat()
+                    ?: 1.5f
+            )
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        if (!liked.value.isLoading && liked.value.error == "") {
+                            if (liked.value.liked) {
+                                println("unlike")
+                                unlikePost()
+                            } else {
+                                println("like $liked")
+                                likePost()
+                            }
+                        }
+                    }
+                )
+            }, contentScale = ContentScale.FillWidth
     )
 }
