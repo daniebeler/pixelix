@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -61,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -483,7 +485,7 @@ fun PostImage(
     mediaAttachment: MediaAttachment, postId: String, viewModel: PostViewModel
 ) {
     var showHeart by remember { mutableStateOf(false) }
-
+    val scale = animateFloatAsState(if (showHeart) 1f else 0f)
     LaunchedEffect(showHeart) {
         if (showHeart) {
             delay(1000)
@@ -520,15 +522,16 @@ fun PostImage(
                     )
                 }, contentScale = ContentScale.FillWidth
         )
-        if (showHeart) {
-            Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(68.dp)
-                    .align(Alignment.Center)
-            )
-        }
+
+        Icon(
+            imageVector = Icons.Filled.Favorite,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(80.dp)
+                .align(Alignment.Center)
+                .scale(scale.value)
+        )
+
     }
 }
