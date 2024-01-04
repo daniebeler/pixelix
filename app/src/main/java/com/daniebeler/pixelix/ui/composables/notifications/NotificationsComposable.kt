@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.notifications
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,21 +54,30 @@ fun NotificationsComposable(
                     Text(stringResource(R.string.notifications))
                 }
             )
-
         }
     ) { paddingValues ->
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
-            LazyColumn(
-                content = {
-                    items(viewModel.notificationsState.notifications, key = {
-                        it.id
-                    }) {
-                        CustomNotificaiton(notification = it, navController = navController)
-                    }
-                })
-            
+            if (viewModel.notificationsState.notifications.isNotEmpty()) {
+                LazyColumn(
+                    content = {
+                        items(viewModel.notificationsState.notifications, key = {
+                            it.id
+                        }) {
+                            CustomNotificaiton(notification = it, navController = navController)
+                        }
+                    })
+            } else {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.empty_state_no_notifications),
+                        contentDescription = null,
+                        Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
             LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             ErrorComposable(message = viewModel.notificationsState.error)
         }
