@@ -240,7 +240,7 @@ fun PostComposable(
                         }
                     }
                 }
-
+                Spacer(modifier = Modifier.weight(1f))
 
                 if (viewModel.bookmarkState.isLoading) {
                     CircularProgressIndicator(
@@ -501,13 +501,9 @@ fun PostImage(
                     detectTapGestures(
                         onDoubleTap = {
                             if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
-                                if (viewModel.likeState.liked) {
-                                    viewModel.unlikePost(postId)
-                                } else {
                                     CoroutineScope(Dispatchers.Default).launch {
                                         viewModel.likePost(postId)
                                         showHeart = true
-                                    }
                                 }
                             }
                         }
