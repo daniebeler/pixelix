@@ -72,7 +72,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        LikeState(isLoading = true)
+                        LikeState(isLoading = true, liked = true, likesCount = if (likeState.liked) {likeState.likesCount} else {likeState.likesCount + 1})
                     }
                 }
             }.launchIn(viewModelScope)
@@ -92,7 +92,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        LikeState(isLoading = true)
+                        LikeState(isLoading = true, liked = false, likesCount = if (!likeState.liked) {likeState.likesCount} else {likeState.likesCount - 1})
                     }
                 }
             }.launchIn(viewModelScope)
@@ -112,7 +112,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        BookmarkState(isLoading = true)
+                        BookmarkState(isLoading = true, bookmarked = true)
                     }
                 }
             }.launchIn(viewModelScope)
@@ -132,7 +132,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        BookmarkState(isLoading = true)
+                        BookmarkState(isLoading = true, bookmarked = false)
                     }
                 }
             }.launchIn(viewModelScope)

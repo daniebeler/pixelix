@@ -214,58 +214,46 @@ fun PostComposable(
 
         Column(Modifier.padding(8.dp)) {
             Row {
-                if (viewModel.likeState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                    )
+
+                if (viewModel.likeState.liked) {
+                    IconButton(onClick = {
+                        viewModel.unlikePost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = ""
+                        )
+                    }
                 } else {
-                    if (viewModel.likeState.liked) {
-                        IconButton(onClick = {
-                            viewModel.unlikePost(post.id)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = ""
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = {
-                            viewModel.likePost(post.id)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.FavoriteBorder,
-                                contentDescription = ""
-                            )
-                        }
+                    IconButton(onClick = {
+                        viewModel.likePost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.FavoriteBorder,
+                            contentDescription = ""
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (viewModel.bookmarkState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                    )
+
+                if (viewModel.bookmarkState.bookmarked) {
+                    IconButton(onClick = {
+                        viewModel.unbookmarkPost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Bookmark,
+                            contentDescription = ""
+                        )
+                    }
                 } else {
-                    if (viewModel.bookmarkState.bookmarked) {
-                        IconButton(onClick = {
-                            viewModel.unbookmarkPost(post.id)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Bookmark,
-                                contentDescription = ""
-                            )
-                        }
-                    } else {
-                        IconButton(onClick = {
-                            viewModel.bookmarkPost(post.id)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.BookmarkBorder,
-                                contentDescription = ""
-                            )
-                        }
+                    IconButton(onClick = {
+                        viewModel.bookmarkPost(post.id)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.BookmarkBorder,
+                            contentDescription = ""
+                        )
                     }
                 }
             }
@@ -501,9 +489,9 @@ fun PostImage(
                     detectTapGestures(
                         onDoubleTap = {
                             if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
-                                    CoroutineScope(Dispatchers.Default).launch {
-                                        viewModel.likePost(postId)
-                                        showHeart = true
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    viewModel.likePost(postId)
+                                    showHeart = true
                                 }
                             }
                         }
