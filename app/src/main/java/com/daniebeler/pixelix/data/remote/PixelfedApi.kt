@@ -46,10 +46,10 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?remote")
+    @GET("api/v1/timelines/public?remote&_pe=1")
     fun getGlobalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("/api/v1/timelines/public?remote")
+    @GET("/api/v1/timelines/public?remote&_pe=1")
     fun getGlobalTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") token: String
