@@ -41,7 +41,7 @@ data class ReplyDto(
     @SerializedName("media_attachments")
     val mediaAttachments: List<Any>,
     @SerializedName("mentions")
-    val mentions: List<MentionDto>,
+    val mentions: List<AccountDto>,
     @SerializedName("muted")
     val muted: Any,
     @SerializedName("parent")

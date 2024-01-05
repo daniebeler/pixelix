@@ -256,27 +256,12 @@ fun PostComposable(
             Text(text = viewModel.likeState.likesCount.toString() + " likes")
 
             if (post.content.isNotBlank()) {
-                HashtagsMentionsTextView(text = post.account.username + " " + post.content,
-                    onClick = { item, tag ->
-                        val newItem = item.drop(1)
-                        val route = if (tag == "link") {
-                            "hashtag_timeline_screen/$newItem"
-                        } else {
-                            val account = post.mentions.find { account: Account -> account.username == newItem }
-                            if (account != null) {
-                                "profile_screen/${account.id}"
-                            } else {""}
-                        }
-                        if (route.isNotBlank() && route.isNotEmpty()) {
-                            navController.navigate(route) {
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    })
+                HashtagsMentionsTextView(
+                    text = post.account.username + " " + post.content,
+                    mentions = post.mentions,
+                    navController = navController
+                )
             }
-
-
 
             if (post.replyCount > 0) {
                 TextButton(onClick = {
@@ -301,9 +286,10 @@ fun PostComposable(
                         .fillMaxSize()
                         .padding(12.dp)
                 ) {
-                    Text(text = post.content)
+                    HashtagsMentionsTextView(
+                        text = post.content, mentions = post.mentions, navController = navController
+                    )
                     HorizontalDivider(Modifier.padding(12.dp))
-
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(32.dp)
                     ) {
@@ -311,11 +297,8 @@ fun PostComposable(
                             it.id
                         }) { reply ->
                             HashtagsMentionsTextView(
-                                text = reply.content,
-                                onClick = { hashtag, tag ->
-                                    println("clicked")
-                                    println(hashtag)
-                                })
+                                text = reply.content, mentions = reply.mentions, navController = navController
+                            )
                         }
                     }
                 }
@@ -383,7 +366,7 @@ fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Uni
 
 @Composable
 fun HashtagsMentionsTextView(
-    text: String, modifier: Modifier = Modifier, onClick: (String, String) -> Unit
+    text: String, modifier: Modifier = Modifier, mentions: List<Account>?, navController: NavController
 ) {
 
     val colorScheme = MaterialTheme.colorScheme
@@ -448,15 +431,39 @@ fun HashtagsMentionsTextView(
         }
     }
 
+
+
     ClickableText(text = annotatedString,
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
         onClick = { position ->
             val annotatedStringRange =
                 annotatedStringList.first { it.start <= position && position < it.end }
-            if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") onClick(
-                annotatedStringRange.item, annotatedStringRange.tag
-            )
+            if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") {
+                val newItem = annotatedStringRange.item.drop(1)
+                val route = if (annotatedStringRange.tag == "link") {
+                    "hashtag_timeline_screen/$newItem"
+                } else {
+                    if (mentions == null) {
+                        ""
+                    } else {
+                        val account =
+                            mentions.find { account: Account -> account.username == newItem }
+                        if (account != null) {
+                            "profile_screen/${account.id}"
+                        } else {
+                            ""
+                        }
+                    }
+
+                }
+                if (route.isNotBlank() && route.isNotEmpty()) {
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            }
         })
 }
 

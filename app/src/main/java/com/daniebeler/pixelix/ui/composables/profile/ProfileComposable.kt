@@ -363,7 +363,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
         Text(text = "@" + account!!.acct, fontSize = 12.sp)
 
         account!!.note?.let {
-            HashtagsMentionsTextView(text = account!!.note, onClick = {hashtag, tag -> })
+            HashtagsMentionsTextView(text = account!!.note, mentions = null, navController = navController)
         }
 
         account!!.website?.let {
