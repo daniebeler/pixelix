@@ -31,9 +31,9 @@ import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel()) {
+fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel(key = hashtag)) {
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(hashtag) {
         viewModel.getHashtagTimeline(hashtag)
         viewModel.getHashtagInfo(hashtag)
     }
