@@ -41,7 +41,7 @@ data class PostDto(
     @SerializedName("media_attachments")
     val mediaAttachments: List<MediaAttachmentDto>,
     @SerializedName("mentions")
-    val mentions: List<Any>,
+    val mentions: List<AccountDto>,
     @SerializedName("muted")
     val muted: Any,
     @SerializedName("parent")

@@ -74,6 +74,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
 import kotlinx.coroutines.CoroutineScope
@@ -112,7 +113,8 @@ fun PostComposable(
 
     Column {
         Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
                 .padding(start = 8.dp)
                 .clickable(onClick = {
                     navController.navigate("profile_screen/" + post.account.id) {
@@ -122,7 +124,8 @@ fun PostComposable(
                 })
         ) {
             AsyncImage(
-                model = post.account.avatar, contentDescription = "",
+                model = post.account.avatar,
+                contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)
                     .clip(CircleShape)
@@ -142,8 +145,7 @@ fun PostComposable(
                 showBottomSheet = 2
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.MoreVert,
-                    contentDescription = ""
+                    imageVector = Icons.Outlined.MoreVert, contentDescription = ""
                 )
             }
         }
@@ -153,7 +155,9 @@ fun PostComposable(
         if (post.sensitive && !viewModel.showPost) {
             Column(
                 Modifier
-                    .aspectRatio(post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f)
+                    .aspectRatio(
+                        post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                    )
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -176,9 +180,7 @@ fun PostComposable(
             if (post.mediaAttachments.count() > 1) {
                 HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) { page ->
                     PostImage(
-                        mediaAttachment = post.mediaAttachments[page],
-                        post.id,
-                        viewModel
+                        mediaAttachment = post.mediaAttachments[page], post.id, viewModel
                     )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -187,8 +189,7 @@ fun PostComposable(
                         .wrapContentHeight()
                         .fillMaxWidth()
                         .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(bottom = 8.dp), horizontalArrangement = Arrangement.Center
                 ) {
                     repeat(pagerState.pageCount) { iteration ->
                         val color =
@@ -205,9 +206,7 @@ fun PostComposable(
                 }
             } else {
                 PostImage(
-                    mediaAttachment = post.mediaAttachments[0],
-                    post.id,
-                    viewModel
+                    mediaAttachment = post.mediaAttachments[0], post.id, viewModel
                 )
             }
         }
@@ -220,8 +219,7 @@ fun PostComposable(
                         viewModel.unlikePost(post.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = ""
+                            imageVector = Icons.Filled.Favorite, contentDescription = ""
                         )
                     }
                 } else {
@@ -229,8 +227,7 @@ fun PostComposable(
                         viewModel.likePost(post.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder,
-                            contentDescription = ""
+                            imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
                         )
                     }
                 }
@@ -242,8 +239,7 @@ fun PostComposable(
                         viewModel.unbookmarkPost(post.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Bookmark,
-                            contentDescription = ""
+                            imageVector = Icons.Filled.Bookmark, contentDescription = ""
                         )
                     }
                 } else {
@@ -251,26 +247,31 @@ fun PostComposable(
                         viewModel.bookmarkPost(post.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.BookmarkBorder,
-                            contentDescription = ""
+                            imageVector = Icons.Outlined.BookmarkBorder, contentDescription = ""
                         )
                     }
                 }
             }
 
-
-
-
             Text(text = viewModel.likeState.likesCount.toString() + " likes")
 
             if (post.content.isNotBlank()) {
-                HashtagsMentionsTextView(
-                    text = post.account.username + " " + post.content,
-                    onClick = {
-                        val newHastag = it.drop(1)
-                        navController.navigate("hashtag_timeline_screen/$newHastag") {
-                            launchSingleTop = true
-                            restoreState = true
+                HashtagsMentionsTextView(text = post.account.username + " " + post.content,
+                    onClick = { item, tag ->
+                        val newItem = item.drop(1)
+                        val route = if (tag == "link") {
+                            "hashtag_timeline_screen/$newItem"
+                        } else {
+                            val account = post.mentions.find { account: Account -> account.username == newItem }
+                            if (account != null) {
+                                "profile_screen/${account.id}"
+                            } else {""}
+                        }
+                        if (route.isNotBlank() && route.isNotEmpty()) {
+                            navController.navigate(route) {
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     })
             }
@@ -292,8 +293,7 @@ fun PostComposable(
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = 0
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
                 Column(
@@ -310,10 +310,12 @@ fun PostComposable(
                         items(viewModel.repliesState.replies, key = {
                             it.id
                         }) { reply ->
-                            HashtagsMentionsTextView(text = reply.content, onClick = {
-                                println("clicked")
-                                println(it)
-                            })
+                            HashtagsMentionsTextView(
+                                text = reply.content,
+                                onClick = { hashtag, tag ->
+                                    println("clicked")
+                                    println(hashtag)
+                                })
                         }
                     }
                 }
@@ -329,8 +331,7 @@ fun PostComposable(
                             openUrl(context, post.url)
                         })
 
-                    CustomBottomSheetElement(
-                        icon = Icons.Outlined.Share,
+                    CustomBottomSheetElement(icon = Icons.Outlined.Share,
                         text = stringResource(R.string.share_this_post),
                         onClick = {
                             shareProfile(context, post.url)
@@ -382,16 +383,14 @@ fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Uni
 
 @Composable
 fun HashtagsMentionsTextView(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: (String) -> Unit
+    text: String, modifier: Modifier = Modifier, onClick: (String, String) -> Unit
 ) {
 
     val colorScheme = MaterialTheme.colorScheme
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
-    val hashtags = Regex("((?=[^\\w!])[#][\\u4e00-\\u9fa5\\w]+)")
+    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+)")
 
     val annotatedStringList = remember {
 
@@ -408,16 +407,20 @@ fun HashtagsMentionsTextView(
             if (start > lastIndex) {
                 annotatedStringList.add(
                     AnnotatedString.Range(
-                        text.substring(lastIndex, start),
-                        lastIndex,
-                        start,
-                        "text"
+                        text.substring(lastIndex, start), lastIndex, start, "text"
                     )
                 )
             }
-            annotatedStringList.add(
-                AnnotatedString.Range(string, start, end, "link")
-            )
+            if (string.startsWith("#")) {
+                annotatedStringList.add(
+                    AnnotatedString.Range(string, start, end, "link")
+                )
+            } else {
+                annotatedStringList.add(
+                    AnnotatedString.Range(string, start, end, "account")
+                )
+            }
+
             lastIndex = end
         }
 
@@ -425,10 +428,7 @@ fun HashtagsMentionsTextView(
         if (lastIndex < text.length) {
             annotatedStringList.add(
                 AnnotatedString.Range(
-                    text.substring(lastIndex, text.length),
-                    lastIndex,
-                    text.length,
-                    "text"
+                    text.substring(lastIndex, text.length), lastIndex, text.length, "text"
                 )
             )
         }
@@ -438,7 +438,7 @@ fun HashtagsMentionsTextView(
     // Build an annotated string
     val annotatedString = buildAnnotatedString {
         annotatedStringList.forEach {
-            if (it.tag == "link") {
+            if (it.tag == "link" || it.tag == "account") {
                 pushStringAnnotation(tag = it.tag, annotation = it.item)
                 withStyle(style = primaryStyle) { append(it.item) }
                 pop()
@@ -448,16 +448,16 @@ fun HashtagsMentionsTextView(
         }
     }
 
-    ClickableText(
-        text = annotatedString,
+    ClickableText(text = annotatedString,
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
         onClick = { position ->
             val annotatedStringRange =
                 annotatedStringList.first { it.start <= position && position < it.end }
-            if (annotatedStringRange.tag == "link") onClick(annotatedStringRange.item)
-        }
-    )
+            if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") onClick(
+                annotatedStringRange.item, annotatedStringRange.tag
+            )
+        })
 }
 
 @Composable
@@ -474,29 +474,27 @@ fun PostImage(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         AsyncImage(
-            model = mediaAttachment.url, contentDescription = "",
+            model = mediaAttachment.url,
+            contentDescription = "",
             Modifier
                 .fillMaxWidth()
                 .aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat()
-                        ?: 1.5f
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
                 )
                 .pointerInput(Unit) {
-                    detectTapGestures(
-                        onDoubleTap = {
-                            if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
-                                CoroutineScope(Dispatchers.Default).launch {
-                                    viewModel.likePost(postId)
-                                    showHeart = true
-                                }
+                    detectTapGestures(onDoubleTap = {
+                        if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                viewModel.likePost(postId)
+                                showHeart = true
                             }
                         }
-                    )
-                }, contentScale = ContentScale.FillWidth
+                    })
+                },
+            contentScale = ContentScale.FillWidth
         )
 
         Icon(

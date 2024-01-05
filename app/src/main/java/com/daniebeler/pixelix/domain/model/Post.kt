@@ -17,7 +17,8 @@ data class Post(
     val sensitive: Boolean,
     val spoilerText: String,
     val favourited: Boolean,
-    val bookmarked: Boolean
+    val bookmarked: Boolean,
+    val mentions: List<Account>
 )
 
 fun PostDto.toPost(): Post {
@@ -34,6 +35,7 @@ fun PostDto.toPost(): Post {
         sensitive = sensitive,
         spoilerText = spoilerText ?: "",
         favourited = favourited,
-        bookmarked = bookmarked
+        bookmarked = bookmarked,
+        mentions = mentions.map { it.toAccount() }
     )
 }
