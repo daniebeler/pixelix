@@ -525,27 +525,33 @@ fun PostImage(
                 mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
             )
         )
-
-        AsyncImage(
-            model = mediaAttachment.url,
-            contentDescription = "",
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                )
-                .pointerInput(Unit) {
-                    detectTapGestures(onDoubleTap = {
-                        if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
-                            CoroutineScope(Dispatchers.Default).launch {
-                                viewModel.likePost(postId)
-                                showHeart = true
+        
+        if (mediaAttachment.mime == "image/png" || mediaAttachment.mime == "image/jpeg") {
+            AsyncImage(
+                model = mediaAttachment.url,
+                contentDescription = "",
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(
+                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                    )
+                    .pointerInput(Unit) {
+                        detectTapGestures(onDoubleTap = {
+                            if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    viewModel.likePost(postId)
+                                    showHeart = true
+                                }
                             }
-                        }
-                    })
-                },
-            contentScale = ContentScale.FillWidth
-        )
+                        })
+                    },
+                contentScale = ContentScale.FillWidth
+            )
+        } else {
+            Text(text = "Mime type not supported (" + mediaAttachment.mime + ")")
+        }
+
+        
 
         Icon(
             imageVector = Icons.Filled.Favorite,
