@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -65,16 +66,22 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
-            LazyColumn {
-                items(viewModel.mutedAccountsState.mutedAccounts, key = {
-                    it.id
-                }) {
-                    Row {
-                        CustomMutedAccountRow(account = it, navController = navController, viewModel)
+            if (viewModel.mutedAccountsState.mutedAccounts.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "no muted accounts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                }
+            } else {
+                LazyColumn {
+                    items(viewModel.mutedAccountsState.mutedAccounts, key = {
+                        it.id
+                    }) {
+                        Row {
+                            CustomMutedAccountRow(account = it, navController = navController, viewModel)
+                        }
                     }
                 }
             }
-            
+
             LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
             
             ErrorComposable(message = viewModel.mutedAccountsState.error)

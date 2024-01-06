@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -40,9 +41,12 @@ import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BlockedAccountsComposable (navController: NavController, viewModel: BlockedAccountsViewModel = hiltViewModel()) {
+fun BlockedAccountsComposable(
+    navController: NavController,
+    viewModel: BlockedAccountsViewModel = hiltViewModel()
+) {
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -61,24 +65,40 @@ fun BlockedAccountsComposable (navController: NavController, viewModel: BlockedA
             )
 
         }
-    ) {paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
-            viewModel.blockedAccounts.blockedAccounts?.let {blockedAccounts ->
-                LazyColumn {
-                    items(blockedAccounts, key = {
-                        it.id
-                    }) {
-                        Row {
-                            CustomBlockedAccountRow(account = it, navController = navController, viewModel)
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            if (viewModel.blockedAccounts.blockedAccounts.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "no blocked accounts",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                viewModel.blockedAccounts.blockedAccounts?.let { blockedAccounts ->
+                    LazyColumn {
+                        items(blockedAccounts, key = {
+                            it.id
+                        }) {
+                            Row {
+                                CustomBlockedAccountRow(
+                                    account = it,
+                                    navController = navController,
+                                    viewModel
+                                )
+                            }
                         }
                     }
                 }
             }
 
             LoadingComposable(isLoading = viewModel.blockedAccounts.isLoading)
-            
+
             ErrorComposable(message = viewModel.blockedAccounts.error)
         }
     }
@@ -118,13 +138,18 @@ fun BlockedAccountsComposable (navController: NavController, viewModel: BlockedA
 }
 
 @Composable
-private fun CustomBlockedAccountRow(account: Account, navController: NavController, viewModel: BlockedAccountsViewModel) {
-    Row (
+private fun CustomBlockedAccountRow(
+    account: Account,
+    navController: NavController,
+    viewModel: BlockedAccountsViewModel
+) {
+    Row(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        Row (verticalAlignment = Alignment.CenterVertically,
+        Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 navController.navigate("profile_screen/" + account.id) {
                     launchSingleTop = true
