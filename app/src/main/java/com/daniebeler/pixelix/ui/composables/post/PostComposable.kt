@@ -2,10 +2,12 @@ package com.daniebeler.pixelix.ui.composables.post
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -59,10 +61,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -77,6 +81,7 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
+import com.daniebeler.pixelix.utils.BlurHashDecoder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -153,29 +158,47 @@ fun PostComposable(
         Spacer(modifier = Modifier.height(8.dp))
 
         if (post.sensitive && !viewModel.showPost) {
-            Column(
-                Modifier
-                    .aspectRatio(
+
+            Box {
+                val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
+                    LocalContext.current.resources,
+                    post.mediaAttachments[0].blurHash
+                )
+
+                Image(
+                    blurHashAsDrawable.bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.aspectRatio(
                         post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
                     )
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                )
 
-                if (post.spoilerText.isNotEmpty()) {
-                    Text(text = post.spoilerText)
-                } else {
-                    Text(text = "This post may contain sensitive content.")
-                }
+                Column(
+                    Modifier
+                        .aspectRatio(
+                            post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                        ),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    if (post.spoilerText.isNotEmpty()) {
+                        Text(text = post.spoilerText)
+                    } else {
+                        Text(text = "This post may contain sensitive content.")
+                    }
 
 
-                Button(onClick = {
-                    viewModel.toggleShowPost()
-                }) {
-                    Text(text = "Show post")
+                    Button(onClick = {
+                        viewModel.toggleShowPost()
+                    }) {
+                        Text(text = "Show post")
+                    }
                 }
             }
+
+
         } else {
             if (post.mediaAttachments.count() > 1) {
                 HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) { page ->
@@ -297,7 +320,9 @@ fun PostComposable(
                             it.id
                         }) { reply ->
                             HashtagsMentionsTextView(
-                                text = reply.content, mentions = reply.mentions, navController = navController
+                                text = reply.content,
+                                mentions = reply.mentions,
+                                navController = navController
                             )
                         }
                     }
@@ -366,7 +391,10 @@ fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Uni
 
 @Composable
 fun HashtagsMentionsTextView(
-    text: String, modifier: Modifier = Modifier, mentions: List<Account>?, navController: NavController
+    text: String,
+    modifier: Modifier = Modifier,
+    mentions: List<Account>?,
+    navController: NavController
 ) {
 
     val colorScheme = MaterialTheme.colorScheme

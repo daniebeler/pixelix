@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import com.daniebeler.pixelix.ui.composables.LoginComposable
 import com.daniebeler.pixelix.ui.theme.PixelixTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,7 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             PixelixTheme {
