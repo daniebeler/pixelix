@@ -511,6 +511,21 @@ fun PostImage(
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
+
+        val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
+            LocalContext.current.resources,
+            mediaAttachment.blurHash,
+        )
+
+        Image(
+            blurHashAsDrawable.bitmap.asImageBitmap(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.aspectRatio(
+                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+            )
+        )
+
         AsyncImage(
             model = mediaAttachment.url,
             contentDescription = "",
