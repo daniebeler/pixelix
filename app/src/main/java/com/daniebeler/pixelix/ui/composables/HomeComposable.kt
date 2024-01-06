@@ -59,16 +59,19 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
                 Tab(
                     text = { Text("Home") },
                     selected = pagerState.currentPage == 0,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(0)
                         }
-
                     })
 
                 Tab(
                     text = { Text("Local") },
-                    selected = pagerState.currentPage == 0,
+                    selected = pagerState.currentPage == 1,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
@@ -77,7 +80,9 @@ fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
 
                 Tab(
                     text = { Text("Global") },
-                    selected = pagerState.currentPage == 0,
+                    selected = pagerState.currentPage == 2,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(2)

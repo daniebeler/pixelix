@@ -123,6 +123,8 @@ fun TrendingComposable(navController: NavController) {
                 Tab(
                     text = { Text(stringResource(id = R.string.posts)) },
                     selected = pagerState.currentPage == 0,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(0)
@@ -132,7 +134,9 @@ fun TrendingComposable(navController: NavController) {
 
                 Tab(
                     text = { Text(stringResource(R.string.accounts)) },
-                    selected = pagerState.currentPage == 0,
+                    selected = pagerState.currentPage == 1,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
@@ -141,7 +145,9 @@ fun TrendingComposable(navController: NavController) {
 
                 Tab(
                     text = { Text(stringResource(R.string.hashtags)) },
-                    selected = pagerState.currentPage == 0,
+                    selected = pagerState.currentPage == 2,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(2)

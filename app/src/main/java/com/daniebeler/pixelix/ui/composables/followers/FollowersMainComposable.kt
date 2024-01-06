@@ -92,6 +92,8 @@ fun FollowersMainComposable(
                 Tab(
                     text = { Text(viewModel.accountState.account?.followersCount.toString() + " Followers") },
                     selected = pagerState.currentPage == 0,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(0)
@@ -101,7 +103,9 @@ fun FollowersMainComposable(
 
                 Tab(
                     text = { Text(viewModel.accountState.account?.followingCount.toString() + " Following") },
-                    selected = pagerState.currentPage == 0,
+                    selected = pagerState.currentPage == 1,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
