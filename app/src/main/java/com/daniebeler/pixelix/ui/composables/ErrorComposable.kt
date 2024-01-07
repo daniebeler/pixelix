@@ -33,21 +33,23 @@ fun ErrorComposable(message: String) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ErrorComposable(message: String, refreshState: PullRefreshState) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(refreshState)
-            .verticalScroll(rememberScrollState())
-            .padding(36.dp, 20.dp)
-    ) {
-        Text(
-            text = message,
-            Modifier
+    if (message.isNotBlank()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(
-                    Alignment.Center
-                )
-        )
+                .pullRefresh(refreshState)
+                .verticalScroll(rememberScrollState())
+                .padding(36.dp, 20.dp)
+        ) {
+            Text(
+                text = message,
+                Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(
+                        Alignment.Center
+                    )
+            )
+        }
     }
 }
