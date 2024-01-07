@@ -58,21 +58,10 @@ fun NotificationsComposable(
     navController: NavController,
     viewModel: NotificationsViewModel = hiltViewModel()
 ) {
-
-
-    val refreshScope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
-    var itemCount by remember { mutableStateOf(15) }
-
-    fun refresh() = refreshScope.launch {
-        refreshing = true
-        delay(1500)
-        itemCount += 5
-        refreshing = false
-    }
-
-    val state = rememberPullRefreshState(refreshing, ::refresh)
-
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.notificationsState.refreshing,
+        onRefresh = { viewModel.getNotifications(true) }
+    )
 
     Scaffold(
         topBar = {
@@ -89,7 +78,7 @@ fun NotificationsComposable(
                 .padding(paddingValues)
         ) {
             if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                Box(modifier = Modifier.pullRefresh(state)) {
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
                     LazyColumn(
                         content = {
                             items(viewModel.notificationsState.notifications, key = {
@@ -99,12 +88,11 @@ fun NotificationsComposable(
                             }
                         })
                 }
-
-            } else {
+            } else if (!viewModel.notificationsState.isLoading) {
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
                         .fillMaxSize()
-                        .pullRefresh(state)
+                        .pullRefresh(pullRefreshState)
                         .verticalScroll(rememberScrollState())
                         .padding(36.dp, 20.dp)
                 ) {
@@ -115,10 +103,15 @@ fun NotificationsComposable(
                     )
                 }
             }
-            PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
+            PullRefreshIndicator(
+                viewModel.notificationsState.refreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
 
-
-            LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
+            if (!viewModel.notificationsState.refreshing) {
+                LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
+            }
             ErrorComposable(message = viewModel.notificationsState.error)
         }
 

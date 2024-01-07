@@ -18,12 +18,11 @@ class NotificationsViewModel @Inject constructor(
 ): ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
-
     init {
-        getNotifications()
+        getNotifications(false)
     }
 
-    private fun getNotifications() {
+    fun getNotifications(refreshing: Boolean) {
         repository.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
@@ -35,7 +34,7 @@ class NotificationsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    NotificationsState(isLoading = true)
+                    NotificationsState(isLoading = true, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
