@@ -66,7 +66,7 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
-            if (viewModel.mutedAccountsState.mutedAccounts.isEmpty()) {
+            if (viewModel.mutedAccountsState.mutedAccounts.isEmpty() && !viewModel.mutedAccountsState.isLoading && viewModel.mutedAccountsState.error.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "no muted accounts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }

@@ -107,10 +107,9 @@ fun OwnProfileComposable(
                                 Text(text = stringResource(R.string.load_more))
                             }
                         }*/
-
                     }
                 )
-                if (viewModel.postsState.posts.isEmpty()) {
+                if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
                     Box(modifier = Modifier.fillMaxWidth().padding(36.dp, 20.dp)) {
                         Image(
                             painter = painterResource(id = R.drawable.empty_state_no_posts),

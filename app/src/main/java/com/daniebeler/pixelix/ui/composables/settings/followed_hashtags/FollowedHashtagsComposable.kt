@@ -60,7 +60,7 @@ fun FollowedHashtagsComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.followedHashtagsState.followedHashtags.isEmpty()) {
+            if (viewModel.followedHashtagsState.followedHashtags.isEmpty() && !viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         text = "no followed hashtags",

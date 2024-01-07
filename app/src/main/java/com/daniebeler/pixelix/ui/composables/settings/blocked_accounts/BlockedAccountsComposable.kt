@@ -71,7 +71,7 @@ fun BlockedAccountsComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.blockedAccounts.blockedAccounts.isEmpty()) {
+            if (viewModel.blockedAccounts.blockedAccounts.isEmpty() && !viewModel.blockedAccounts.isLoading && viewModel.blockedAccounts.error.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         text = "no blocked accounts",

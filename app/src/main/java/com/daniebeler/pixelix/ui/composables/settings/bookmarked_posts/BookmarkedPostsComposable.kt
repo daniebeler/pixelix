@@ -56,7 +56,7 @@ fun BookmarkedPostsComposable(navController: NavController, viewModel: Bookmarke
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)) {
-            if (viewModel.bookmarkedPostsState.bookmarkedPosts.isEmpty()) {
+            if (viewModel.bookmarkedPostsState.bookmarkedPosts.isEmpty() && !viewModel.bookmarkedPostsState.isLoading && viewModel.bookmarkedPostsState.error.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "no bookmarked posts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }

@@ -61,7 +61,7 @@ fun LikedPostsComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.likedPostsState.likedPosts.isEmpty()) {
+            if (viewModel.likedPostsState.likedPosts.isEmpty() && !viewModel.likedPostsState.isLoading && viewModel.likedPostsState.error.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         text = "no liked posts",
