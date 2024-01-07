@@ -28,6 +28,10 @@ class OwnProfileViewModel @Inject constructor(
     private var accountId: String = ""
 
     init {
+        loadData()
+    }
+
+    fun loadData() {
         CoroutineScope(Dispatchers.Default).launch {
             accountId = repository.getAccountId().first()
 

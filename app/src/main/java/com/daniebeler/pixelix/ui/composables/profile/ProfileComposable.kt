@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -29,6 +30,8 @@ import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,12 +65,13 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.ui.composables.CustomPost
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ProfileComposable(
     navController: NavController,
@@ -80,6 +84,9 @@ fun ProfileComposable(
 
     val context = LocalContext.current
 
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading,
+            onRefresh = { viewModel.loadData(userId) })
 
     LaunchedEffect(Unit) {
         viewModel.loadData(userId)
@@ -120,6 +127,7 @@ fun ProfileComposable(
             if (viewModel.accountState.account != null) {
                 Column(Modifier.padding(paddingValues)) {
                     LazyVerticalGrid(
+                        modifier = Modifier.pullRefresh(pullRefreshState),
                         columns = GridCells.Fixed(3),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -208,9 +216,12 @@ fun ProfileComposable(
 
                 }
             }
-
-            LoadingComposable(isLoading = viewModel.accountState.isLoading)
-            ErrorComposable(message = viewModel.accountState.error)
+            CustomPullRefreshIndicator(
+                viewModel.accountState.isLoading,
+                pullRefreshState,
+            )
+            //LoadingComposable(isLoading = viewModel.accountState.isLoading)
+            ErrorComposable(message = viewModel.accountState.error, pullRefreshState)
         }
 
 
