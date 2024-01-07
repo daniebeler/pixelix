@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -30,6 +33,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -43,11 +48,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +84,6 @@ fun NewPostComposable(
     }
 
     var expanded by remember { mutableStateOf(false) }
-    var audience by remember { mutableStateOf("public") }
 
     Scaffold(
         topBar = {
@@ -91,9 +101,11 @@ fun NewPostComposable(
                         )
                     }
                 },
-                actions = {Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Post")
-                }}
+                actions = {
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(text = "Post")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -131,17 +143,31 @@ fun NewPostComposable(
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-            TextField(
-                value = "",
-                label = { Text(text = "Caption") },
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth()
+            OutlinedTextField(
+                value = viewModel.caption,
+                onValueChange = { viewModel.caption = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("caption") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedBorderColor = Color.Transparent,
+                ),
+                shape = RoundedCornerShape(12.dp),
             )
-            TextField(
-                value = "",
-                label = { Text(text = "Alt Text") },
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth()
+            OutlinedTextField(
+                value = viewModel.altText,
+                onValueChange = { viewModel.altText = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Alt Text") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedBorderColor = Color.Transparent,
+                ),
+                shape = RoundedCornerShape(12.dp),
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -149,7 +175,24 @@ fun NewPostComposable(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Sensitive/NSFW Media")
-                Switch(checked = false, onCheckedChange = {})
+                Switch(
+                    checked = viewModel.sensitive,
+                    onCheckedChange = { viewModel.sensitive = it })
+            }
+            if (viewModel.sensitive) {
+                OutlinedTextField(
+                    value = viewModel.sensitiveText,
+                    onValueChange = { viewModel.sensitiveText = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("content warning or spoiler text") },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedBorderColor = Color.Transparent,
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                )
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -159,7 +202,7 @@ fun NewPostComposable(
                 Text(text = "Audience")
                 Box {
                     OutlinedButton(onClick = { expanded = !expanded }) {
-                        Text(text = audience)
+                        Text(text = viewModel.audience)
                     }
                     DropdownMenu(
                         expanded = expanded,
@@ -167,9 +210,9 @@ fun NewPostComposable(
                     ) {
                         DropdownMenuItem(
                             text = { Text("public") },
-                            onClick = { audience = "public" },
+                            onClick = { viewModel.audience = "public" },
                             trailingIcon = {
-                                if (audience == "public") {
+                                if (viewModel.audience == "public") {
                                     Icon(
                                         imageVector = Icons.Outlined.Check,
                                         contentDescription = null,
@@ -180,9 +223,9 @@ fun NewPostComposable(
                         )
                         DropdownMenuItem(
                             text = { Text("unlisted") },
-                            onClick = { audience = "unlisted" },
+                            onClick = { viewModel.audience = "unlisted" },
                             trailingIcon = {
-                                if (audience == "unlisted") {
+                                if (viewModel.audience == "unlisted") {
                                     Icon(
                                         imageVector = Icons.Outlined.Check,
                                         contentDescription = null,
@@ -193,9 +236,9 @@ fun NewPostComposable(
                         )
                         DropdownMenuItem(
                             text = { Text("followers only") },
-                            onClick = { audience = "followers only" },
+                            onClick = { viewModel.audience = "followers only" },
                             trailingIcon = {
-                                if (audience == "followers only") {
+                                if (viewModel.audience == "followers only") {
                                     Icon(
                                         imageVector = Icons.Outlined.Check,
                                         contentDescription = null,
