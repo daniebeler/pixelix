@@ -21,7 +21,7 @@ data class MediaAttachmentDto(
     @SerializedName("meta")
     val meta: MetaDto?,
     @SerializedName("mime")
-    val mime: String,
+    val mime: String?,
     @SerializedName("optimized_url")
     val optimizedUrl: String,
     @SerializedName("orientation")
