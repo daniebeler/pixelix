@@ -23,7 +23,7 @@ class TrendingAccountsViewModel @Inject constructor(
         getTrendingAccountsState()
     }
 
-    private fun getTrendingAccountsState() {
+    fun getTrendingAccountsState() {
         repository.getTrendingAccounts().onEach { result ->
             trendingAccountsState = when (result) {
                 is Resource.Success -> {

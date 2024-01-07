@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,15 +31,23 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.ui.composables.CustomPost
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrendingPostsComposable(
     range: String,
     navController: NavController,
     viewModel: TrendingPostsViewModel = hiltViewModel()
 ) {
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.trendingState.isLoading,
+        onRefresh = { viewModel.getTrendingPosts(range) }
+    )
+
     DisposableEffect(range) {
         viewModel.getTrendingPosts(range)
         onDispose {}
@@ -44,6 +55,7 @@ fun TrendingPostsComposable(
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
+            modifier = Modifier.pullRefresh(pullRefreshState),
             columns = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -57,7 +69,11 @@ fun TrendingPostsComposable(
             }
         )
 
-        LoadingComposable(isLoading = viewModel.trendingState.isLoading)
+        CustomPullRefreshIndicator(
+            viewModel.trendingState.isLoading,
+            pullRefreshState,
+        )
+
         ErrorComposable(message = viewModel.trendingState.error)
     }
 }

@@ -23,7 +23,7 @@ class TrendingHashtagsViewModel @Inject constructor(
         getTrendingHashtags()
     }
 
-    private fun getTrendingHashtags() {
+    fun getTrendingHashtags() {
         repository.getTrendingHashtags().onEach { result ->
             trendingHashtagsState = when (result) {
                 is Resource.Success -> {
