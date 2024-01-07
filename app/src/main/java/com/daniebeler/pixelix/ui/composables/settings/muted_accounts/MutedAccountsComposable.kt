@@ -11,9 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,14 +41,22 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccountsViewModel = hiltViewModel()) {
+fun MutedAccountsComposable(
+    navController: NavController,
+    viewModel: MutedAccountsViewModel = hiltViewModel()
+) {
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.mutedAccountsState.isLoading,
+        onRefresh = { viewModel.getMutedAccounts() }
+    )
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -62,13 +75,25 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
             )
 
         }
-    ) {paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
+                .padding(paddingValues)
+        ) {
             if (viewModel.mutedAccountsState.mutedAccounts.isEmpty() && !viewModel.mutedAccountsState.isLoading && viewModel.mutedAccountsState.error.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "no muted accounts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "no muted accounts",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
                 }
             } else {
                 LazyColumn {
@@ -76,17 +101,24 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
                         it.id
                     }) {
                         Row {
-                            CustomMutedAccountRow(account = it, navController = navController, viewModel)
+                            CustomMutedAccountRow(
+                                account = it,
+                                navController = navController,
+                                viewModel
+                            )
                         }
                     }
                 }
             }
+            CustomPullRefreshIndicator(
+                viewModel.mutedAccountsState.isLoading,
+                pullRefreshState,
+            )
+           // LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
 
-            LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
-            
-            ErrorComposable(message = viewModel.mutedAccountsState.error)
+            ErrorComposable(message = viewModel.mutedAccountsState.error, pullRefreshState)
         }
-        
+
     }
 
     if (viewModel.unmuteAlert.isNotEmpty()) {
@@ -124,13 +156,18 @@ fun MutedAccountsComposable (navController: NavController, viewModel: MutedAccou
 }
 
 @Composable
-private fun CustomMutedAccountRow(account: Account, navController: NavController, viewModel: MutedAccountsViewModel) {
-    Row (
+private fun CustomMutedAccountRow(
+    account: Account,
+    navController: NavController,
+    viewModel: MutedAccountsViewModel
+) {
+    Row(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        Row (verticalAlignment = Alignment.CenterVertically,
+        Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 navController.navigate("profile_screen/" + account.id) {
                     launchSingleTop = true

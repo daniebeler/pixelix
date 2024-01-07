@@ -23,7 +23,7 @@ class LikedPostsViewModel @Inject constructor(
         getLikedPosts()
     }
 
-    private fun getLikedPosts() {
+    fun getLikedPosts() {
         repository.getLikedPosts().onEach { result ->
             likedPostsState = when (result) {
                 is Resource.Success -> {

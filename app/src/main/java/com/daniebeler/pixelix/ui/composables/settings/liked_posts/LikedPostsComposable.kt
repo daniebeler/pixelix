@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,15 +31,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun LikedPostsComposable(
     navController: NavController,
     viewModel: LikedPostsViewModel = hiltViewModel()
 ) {
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.likedPostsState.isLoading,
+        onRefresh = { viewModel.getLikedPosts() }
+    )
 
     Scaffold(
         topBar = {
@@ -59,10 +69,15 @@ fun LikedPostsComposable(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .pullRefresh(pullRefreshState)
                 .padding(paddingValues)
         ) {
             if (viewModel.likedPostsState.likedPosts.isEmpty() && !viewModel.likedPostsState.isLoading && viewModel.likedPostsState.error.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()), contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "no liked posts",
                         modifier = Modifier.fillMaxWidth(),
@@ -82,9 +97,12 @@ fun LikedPostsComposable(
                         }
                     })
             }
-
-            LoadingComposable(isLoading = viewModel.likedPostsState.isLoading)
-            ErrorComposable(message = viewModel.likedPostsState.error)
+            CustomPullRefreshIndicator(
+                viewModel.likedPostsState.isLoading,
+                pullRefreshState,
+            )
+            //LoadingComposable(isLoading = viewModel.likedPostsState.isLoading)
+            ErrorComposable(message = viewModel.likedPostsState.error, pullRefreshState)
         }
 
     }

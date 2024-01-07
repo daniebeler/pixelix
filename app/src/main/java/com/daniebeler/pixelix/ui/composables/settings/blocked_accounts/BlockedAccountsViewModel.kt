@@ -26,7 +26,7 @@ class BlockedAccountsViewModel @Inject constructor(
         getBlockedAccounts()
     }
 
-    private fun getBlockedAccounts() {
+    fun getBlockedAccounts() {
         repository.getBlockedAccounts().onEach { result ->
             blockedAccounts = when (result) {
                 is Resource.Success -> {

@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,16 +30,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomHashtag
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FollowedHashtagsComposable(
     navController: NavController,
     viewModel: FollowedHashtagsViewModel = hiltViewModel()
 ) {
-
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.followedHashtagsState.isLoading,
+        onRefresh = { viewModel.getFollowedHashtags() }
+    )
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,10 +67,16 @@ fun FollowedHashtagsComposable(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .pullRefresh(pullRefreshState)
                 .padding(paddingValues)
         ) {
             if (viewModel.followedHashtagsState.followedHashtags.isEmpty() && !viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "no followed hashtags",
                         modifier = Modifier.fillMaxWidth(),
@@ -77,7 +92,12 @@ fun FollowedHashtagsComposable(
                         }
                     })
             }
-            LoadingComposable(isLoading = viewModel.followedHashtagsState.isLoading)
+
+            CustomPullRefreshIndicator(
+                viewModel.followedHashtagsState.isLoading,
+                pullRefreshState,
+            )
+            //LoadingComposable(isLoading = viewModel.followedHashtagsState.isLoading)
             ErrorComposable(message = viewModel.followedHashtagsState.error)
         }
 

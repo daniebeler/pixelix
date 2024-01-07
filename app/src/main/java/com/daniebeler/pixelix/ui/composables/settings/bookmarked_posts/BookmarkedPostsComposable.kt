@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,12 +31,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun BookmarkedPostsComposable(navController: NavController, viewModel: BookmarkedPostsViewModel = hiltViewModel()) {
+fun BookmarkedPostsComposable(
+    navController: NavController,
+    viewModel: BookmarkedPostsViewModel = hiltViewModel()
+) {
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.bookmarkedPostsState.isLoading,
+        onRefresh = { viewModel.getBookmarkedPosts() }
+    )
 
     Scaffold(
         topBar = {
@@ -53,29 +67,44 @@ fun BookmarkedPostsComposable(navController: NavController, viewModel: Bookmarke
 
         }
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
+                .padding(paddingValues)
+        ) {
             if (viewModel.bookmarkedPostsState.bookmarkedPosts.isEmpty() && !viewModel.bookmarkedPostsState.isLoading && viewModel.bookmarkedPostsState.error.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "no bookmarked posts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "no bookmarked posts",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
                 }
             } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                content = {
-                    items(viewModel.bookmarkedPostsState.bookmarkedPosts, key = {
-                        it.id
-                    }) { photo ->
-                        CustomPost(post = photo, navController = navController)
-                    }
-                })}
-            
-            LoadingComposable(isLoading = viewModel.bookmarkedPostsState.isLoading)
-            ErrorComposable(message = viewModel.bookmarkedPostsState.error)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    content = {
+                        items(viewModel.bookmarkedPostsState.bookmarkedPosts, key = {
+                            it.id
+                        }) { photo ->
+                            CustomPost(post = photo, navController = navController)
+                        }
+                    })
+            }
+            CustomPullRefreshIndicator(
+                viewModel.bookmarkedPostsState.isLoading,
+                pullRefreshState,
+            )
+            //LoadingComposable(isLoading = viewModel.bookmarkedPostsState.isLoading)
+            ErrorComposable(message = viewModel.bookmarkedPostsState.error, pullRefreshState)
         }
-        
+
     }
 }

@@ -27,7 +27,7 @@ class MutedAccountsViewModel @Inject constructor(
         getMutedAccounts()
     }
 
-    private fun getMutedAccounts() {
+    fun getMutedAccounts() {
         repository.getMutedAccounts().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {

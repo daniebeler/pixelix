@@ -23,7 +23,7 @@ class BookmarkedPostsViewModel @Inject constructor(
         getBookmarkedPosts()
     }
 
-    private fun getBookmarkedPosts() {
+    fun getBookmarkedPosts() {
         repository.getBookmarkedPosts().onEach { result ->
             bookmarkedPostsState = when (result) {
                 is Resource.Success -> {

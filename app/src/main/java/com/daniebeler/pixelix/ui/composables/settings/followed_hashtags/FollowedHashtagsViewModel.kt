@@ -23,7 +23,7 @@ class FollowedHashtagsViewModel @Inject constructor(
         getFollowedHashtags()
     }
 
-    private fun getFollowedHashtags() {
+    fun getFollowedHashtags() {
         repository.getFollowedHashtags().onEach { result ->
             followedHashtagsState = when (result) {
                 is Resource.Success -> {

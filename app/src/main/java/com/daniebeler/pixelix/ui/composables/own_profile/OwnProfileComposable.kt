@@ -129,7 +129,7 @@ fun OwnProfileComposable(
                 }
 
                 //LoadingComposable(isLoading = viewModel.accountState.isLoading)
-                ErrorComposable(message = viewModel.accountState.error)
+                ErrorComposable(message = viewModel.accountState.error, pullRefreshState)
             }
             CustomPullRefreshIndicator(
                 viewModel.accountState.isLoading || viewModel.postsState.isLoading,

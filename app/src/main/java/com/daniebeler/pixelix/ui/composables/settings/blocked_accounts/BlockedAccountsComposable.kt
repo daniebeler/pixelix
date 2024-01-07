@@ -11,9 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,15 +41,21 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun BlockedAccountsComposable(
     navController: NavController,
     viewModel: BlockedAccountsViewModel = hiltViewModel()
 ) {
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.blockedAccounts.isLoading,
+        onRefresh = { viewModel.getBlockedAccounts() }
+    )
 
     Scaffold(
         topBar = {
@@ -69,10 +80,16 @@ fun BlockedAccountsComposable(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .pullRefresh(pullRefreshState)
                 .padding(paddingValues)
         ) {
             if (viewModel.blockedAccounts.blockedAccounts.isEmpty() && !viewModel.blockedAccounts.isLoading && viewModel.blockedAccounts.error.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "no blocked accounts",
                         modifier = Modifier.fillMaxWidth(),
@@ -80,8 +97,8 @@ fun BlockedAccountsComposable(
                     )
                 }
             } else {
-                viewModel.blockedAccounts.blockedAccounts?.let { blockedAccounts ->
-                    LazyColumn {
+                viewModel.blockedAccounts.blockedAccounts.let { blockedAccounts ->
+                    LazyColumn() {
                         items(blockedAccounts, key = {
                             it.id
                         }) {
@@ -96,10 +113,13 @@ fun BlockedAccountsComposable(
                     }
                 }
             }
+            CustomPullRefreshIndicator(
+                viewModel.blockedAccounts.isLoading,
+                pullRefreshState,
+            )
+           // LoadingComposable(isLoading = viewModel.blockedAccounts.isLoading)
 
-            LoadingComposable(isLoading = viewModel.blockedAccounts.isLoading)
-
-            ErrorComposable(message = viewModel.blockedAccounts.error)
+            ErrorComposable(message = viewModel.blockedAccounts.error, pullRefreshState)
         }
     }
 
