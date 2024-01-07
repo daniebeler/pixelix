@@ -20,10 +20,10 @@ class HomeTimelineViewModel @Inject constructor(
     var homeTimelineState by mutableStateOf(HomeTimelineState())
 
     init {
-        loadMorePosts()
+        loadMorePosts(false)
     }
 
-    fun loadMorePosts() {
+    fun loadMorePosts(refreshing: Boolean) {
 
         val maxId = if (homeTimelineState.homeTimeline.isEmpty()) {
             ""
@@ -38,7 +38,8 @@ class HomeTimelineViewModel @Inject constructor(
                         homeTimeline = homeTimelineState.homeTimeline + (result.data
                             ?: emptyList()),
                         error = "",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -46,7 +47,8 @@ class HomeTimelineViewModel @Inject constructor(
                     homeTimelineState = homeTimelineState.copy(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = result.message ?: "An unexpected error occurred",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -54,11 +56,17 @@ class HomeTimelineViewModel @Inject constructor(
                     homeTimelineState = homeTimelineState.copy(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = "",
-                        isLoading = true
+                        isLoading = true,
+                        refreshing = refreshing
                     )
                 }
             }
         }.launchIn(viewModelScope)
 
+    }
+
+    fun refresh() {
+        homeTimelineState = HomeTimelineState()
+        loadMorePosts(true)
     }
 }

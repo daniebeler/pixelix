@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Notification
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import kotlinx.coroutines.delay
@@ -88,7 +89,7 @@ fun NotificationsComposable(
                             }
                         })
                 }
-            } else if (!viewModel.notificationsState.isLoading) {
+            } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
                         .fillMaxSize()
@@ -103,16 +104,15 @@ fun NotificationsComposable(
                     )
                 }
             }
-            PullRefreshIndicator(
+            CustomPullRefreshIndicator(
                 viewModel.notificationsState.refreshing,
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter)
+                pullRefreshState
             )
 
             if (!viewModel.notificationsState.refreshing) {
                 LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             }
-            ErrorComposable(message = viewModel.notificationsState.error)
+            ErrorComposable(message = viewModel.notificationsState.error, pullRefreshState)
         }
 
     }
