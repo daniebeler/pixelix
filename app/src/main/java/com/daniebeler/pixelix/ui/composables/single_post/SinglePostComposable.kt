@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.single_post
 
+import com.daniebeler.pixelix.ui.composables.post.PostComposable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +22,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
-import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

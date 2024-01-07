@@ -2,8 +2,9 @@ package com.daniebeler.pixelix.ui.composables.post
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -39,7 +40,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -66,7 +66,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -74,7 +73,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
@@ -495,6 +505,7 @@ fun HashtagsMentionsTextView(
         })
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
     mediaAttachment: MediaAttachment, postId: String, viewModel: PostViewModel
@@ -548,7 +559,7 @@ fun PostImage(
                 contentScale = ContentScale.FillWidth
             )
         } else {
-            Text(text = "Media type not supported (" + mediaAttachment.type + ")")
+            VideoPlayer(uri = Uri.parse(mediaAttachment.url))
         }
 
         
@@ -563,5 +574,47 @@ fun PostImage(
                 .scale(scale.value)
         )
 
+    }
+}
+
+@Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+fun VideoPlayer(uri: Uri) {
+    val context = LocalContext.current
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context)
+            .build()
+            .apply {
+                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                    context,
+                    defaultDataSourceFactory
+                )
+                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri))
+
+                setMediaSource(source)
+                prepare()
+            }
+    }
+
+    exoPlayer.playWhenReady = true
+    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+
+    DisposableEffect(
+        AndroidView(factory = {
+            PlayerView(context).apply {
+                hideController()
+                useController = false
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+
+                player = exoPlayer
+                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            }
+        })
+    ) {
+        onDispose { exoPlayer.release() }
     }
 }
