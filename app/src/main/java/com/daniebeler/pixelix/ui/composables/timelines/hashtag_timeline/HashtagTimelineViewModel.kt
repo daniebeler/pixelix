@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.timelines.local_timeline.LocalTimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,7 +21,7 @@ class HashtagTimelineViewModel @Inject constructor(
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
 
-    fun getHashtagTimeline(hashtag: String) {
+    fun getHashtagTimeline(hashtag: String, refreshing: Boolean) {
         repository.getHashtagTimeline(hashtag).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
@@ -32,10 +33,17 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    HashtagTimelineState(isLoading = true)
+                    HashtagTimelineState(isLoading = true, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun refresh() {
+        if (hashtagState.hashtag != null) {
+            postsState = HashtagTimelineState()
+            getHashtagTimeline(hashtagState.hashtag!!.name, true)
+        }
     }
 
     fun getHashtagInfo(hashtag: String) {

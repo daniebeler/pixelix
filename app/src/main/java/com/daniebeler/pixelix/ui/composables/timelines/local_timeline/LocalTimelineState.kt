@@ -4,6 +4,7 @@ import com.daniebeler.pixelix.domain.model.Post
 
 data class LocalTimelineState(
     val isLoading: Boolean = false,
+    val refreshing: Boolean = false,
     val localTimeline: List<Post> = emptyList(),
     val error: String = ""
 )

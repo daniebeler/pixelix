@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.timelines.local_timeline.LocalTimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,10 +21,10 @@ class GlobalTimelineViewModel @Inject constructor(
     var globalTimelineState by mutableStateOf(GlobalTimelineState())
 
     init {
-        loadMorePosts()
+        loadMorePosts(false)
     }
 
-    fun loadMorePosts() {
+    fun loadMorePosts(refreshing: Boolean) {
 
         val maxId = if (globalTimelineState.globalTimeline.isEmpty()) {
             ""
@@ -38,7 +39,8 @@ class GlobalTimelineViewModel @Inject constructor(
                         globalTimeline = globalTimelineState.globalTimeline + (result.data
                             ?: emptyList()),
                         error = "",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -46,7 +48,8 @@ class GlobalTimelineViewModel @Inject constructor(
                     globalTimelineState = globalTimelineState.copy(
                         globalTimeline = globalTimelineState.globalTimeline,
                         error = result.message ?: "An unexpected error occurred",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -54,11 +57,16 @@ class GlobalTimelineViewModel @Inject constructor(
                     globalTimelineState = globalTimelineState.copy(
                         globalTimeline = globalTimelineState.globalTimeline,
                         error = "",
-                        isLoading = true
+                        isLoading = true,
+                        refreshing = refreshing
                     )
                 }
             }
         }.launchIn(viewModelScope)
+    }
 
+    fun refresh() {
+        globalTimelineState = GlobalTimelineState()
+        loadMorePosts(true)
     }
 }

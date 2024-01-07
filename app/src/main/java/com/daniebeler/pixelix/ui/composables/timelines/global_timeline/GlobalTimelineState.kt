@@ -4,6 +4,7 @@ import com.daniebeler.pixelix.domain.model.Post
 
 data class GlobalTimelineState(
     val isLoading: Boolean = false,
+    val refreshing: Boolean = false,
     val globalTimeline: List<Post> = emptyList(),
     val error: String = ""
 )

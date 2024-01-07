@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.timelines.home_timeline.HomeTimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,10 +21,10 @@ class LocalTimelineViewModel @Inject constructor(
     var localTimelineState by mutableStateOf(LocalTimelineState())
 
     init {
-        loadMorePosts()
+        loadMorePosts(false)
     }
 
-    fun loadMorePosts() {
+    fun loadMorePosts(refreshing: Boolean) {
 
         val maxId = if (localTimelineState.localTimeline.isEmpty()) {
             ""
@@ -38,7 +39,8 @@ class LocalTimelineViewModel @Inject constructor(
                         localTimeline = localTimelineState.localTimeline + (result.data
                             ?: emptyList()),
                         error = "",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -46,7 +48,8 @@ class LocalTimelineViewModel @Inject constructor(
                     localTimelineState = localTimelineState.copy(
                         localTimeline = localTimelineState.localTimeline,
                         error = result.message ?: "An unexpected error occurred",
-                        isLoading = false
+                        isLoading = false,
+                        refreshing = false
                     )
                 }
 
@@ -54,11 +57,16 @@ class LocalTimelineViewModel @Inject constructor(
                     localTimelineState = localTimelineState.copy(
                         localTimeline = localTimelineState.localTimeline,
                         error = "",
-                        isLoading = true
+                        isLoading = true,
+                        refreshing = refreshing
                     )
                 }
             }
         }.launchIn(viewModelScope)
+    }
 
+    fun refresh() {
+        localTimelineState = LocalTimelineState()
+        loadMorePosts(true)
     }
 }

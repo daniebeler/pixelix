@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,22 +28,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun HashtagTimelineComposable(navController: NavController, hashtag: String, viewModel: HashtagTimelineViewModel = hiltViewModel(key = hashtag)) {
+fun HashtagTimelineComposable(
+    navController: NavController,
+    hashtag: String,
+    viewModel: HashtagTimelineViewModel = hiltViewModel(key = hashtag)
+) {
 
     LaunchedEffect(hashtag) {
-        viewModel.getHashtagTimeline(hashtag)
+        viewModel.getHashtagTimeline(hashtag, false)
         viewModel.getHashtagInfo(hashtag)
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold (
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.postsState.refreshing,
+        onRefresh = { viewModel.refresh() }
+    )
+
+    Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
@@ -49,10 +62,15 @@ fun HashtagTimelineComposable(navController: NavController, hashtag: String, vie
                     Column {
                         Text("#$hashtag", lineHeight = 10.sp)
                         if (viewModel.hashtagState.hashtag != null) {
-                            Text(text = viewModel.hashtagState.hashtag!!.count.toString() + " posts", fontSize = 14.sp, lineHeight = 12.sp, color = MaterialTheme.colorScheme.primary)
+                            Text(
+                                text = viewModel.hashtagState.hashtag!!.count.toString() + " posts",
+                                fontSize = 14.sp,
+                                lineHeight = 12.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
-                    
+
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -77,8 +95,7 @@ fun HashtagTimelineComposable(navController: NavController, hashtag: String, vie
                             }) {
                                 Text(text = "unfollow")
                             }
-                        }
-                        else {
+                        } else {
                             Button(onClick = {
                                 viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name)
                             }) {
@@ -90,10 +107,12 @@ fun HashtagTimelineComposable(navController: NavController, hashtag: String, vie
             )
 
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(32.dp),
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .padding(paddingValues)
+                .pullRefresh(pullRefreshState)
         ) {
             items(viewModel.postsState.hashtagTimeline, key = {
                 it.id
@@ -101,8 +120,14 @@ fun HashtagTimelineComposable(navController: NavController, hashtag: String, vie
                 PostComposable(post = item, navController)
             }
         }
-        
-        LoadingComposable(isLoading = viewModel.postsState.isLoading)
-        ErrorComposable(message = viewModel.postsState.error)
+        CustomPullRefreshIndicator(
+            viewModel.postsState.refreshing,
+            pullRefreshState,
+        )
+
+        if (!viewModel.postsState.refreshing) {
+            LoadingComposable(isLoading = viewModel.postsState.isLoading)
+        }
+        ErrorComposable(message = viewModel.postsState.error, pullRefreshState)
     }
 }

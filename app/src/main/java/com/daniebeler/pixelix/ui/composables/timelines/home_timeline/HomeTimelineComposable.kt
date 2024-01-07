@@ -34,36 +34,36 @@ fun HomeTimelineComposable(
         refreshing = viewModel.homeTimelineState.refreshing,
         onRefresh = { viewModel.refresh() }
     )
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(32.dp)
-            ) {
-                items(viewModel.homeTimelineState.homeTimeline, key = {
-                    it.id
-                }) { item ->
-                    PostComposable(post = item, navController)
-                }
 
-                if (viewModel.homeTimelineState.homeTimeline.isNotEmpty()) {
-                    item {
-                        Button(onClick = {
-                            viewModel.loadMorePosts(false)
-                        }) {
-                            Text(text = stringResource(R.string.load_more))
-                        }
-                    }
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(32.dp),
+        modifier = Modifier.pullRefresh(pullRefreshState)
+    ) {
+        items(viewModel.homeTimelineState.homeTimeline, key = {
+            it.id
+        }) { item ->
+            PostComposable(post = item, navController)
+        }
+
+        if (viewModel.homeTimelineState.homeTimeline.isNotEmpty()) {
+            item {
+                Button(onClick = {
+                    viewModel.loadMorePosts(false)
+                }) {
+                    Text(text = stringResource(R.string.load_more))
                 }
             }
         }
-        CustomPullRefreshIndicator(
-            viewModel.homeTimelineState.refreshing,
-            pullRefreshState,
-        )
 
-        if (!viewModel.homeTimelineState.refreshing) {
-            LoadingComposable(isLoading = viewModel.homeTimelineState.isLoading)
-        }
-        ErrorComposable(message = viewModel.homeTimelineState.error, pullRefreshState)
     }
+    CustomPullRefreshIndicator(
+        viewModel.homeTimelineState.refreshing,
+        pullRefreshState,
+    )
+
+    if (!viewModel.homeTimelineState.refreshing) {
+        LoadingComposable(isLoading = viewModel.homeTimelineState.isLoading)
+    }
+    ErrorComposable(message = viewModel.homeTimelineState.error, pullRefreshState)
+
 }
