@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -81,23 +83,31 @@ fun NotificationsComposable(
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.pullRefresh(state)
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                LazyColumn(
-                    content = {
-                        items(viewModel.notificationsState.notifications, key = {
-                            it.id
-                        }) {
-                            CustomNotificaiton(notification = it, navController = navController)
-                        }
-                    })
-
-                PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
+                Box(modifier = Modifier.pullRefresh(state)) {
+                    LazyColumn(
+                        content = {
+                            items(viewModel.notificationsState.notifications, key = {
+                                it.id
+                            }) {
+                                CustomNotificaiton(notification = it, navController = navController)
+                            }
+                        })
+                }
 
             } else {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)) {
+                Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier
+                        .fillMaxSize()
+                        .pullRefresh(state)
+                        .verticalScroll(rememberScrollState())
+                        .padding(36.dp, 20.dp)
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.empty_state_no_notifications),
                         contentDescription = null,
@@ -105,6 +115,8 @@ fun NotificationsComposable(
                     )
                 }
             }
+            PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
+
 
             LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             ErrorComposable(message = viewModel.notificationsState.error)
@@ -138,7 +150,8 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         AsyncImage(
             model = notification.account.avatar, contentDescription = "",
             modifier = Modifier
-                .height(46.dp).width(46.dp)
+                .height(46.dp)
+                .width(46.dp)
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
@@ -157,7 +170,11 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
             }
 
 
-            Text(text = notification.timeAgo, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = notification.timeAgo,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         if (showImage) {
