@@ -8,7 +8,7 @@ data class MediaAttachment(
     val previewUrl: String,
     val meta: Meta?,
     val blurHash: String?,
-    val mime: String?
+    val type: String
 )
 
 fun MediaAttachmentDto.toMediaAttachment(): MediaAttachment {
@@ -18,6 +18,6 @@ fun MediaAttachmentDto.toMediaAttachment(): MediaAttachment {
         previewUrl = previewUrl,
         meta = meta?.toMeta(),
         blurHash = blurhash,
-        mime = mime
+        type = type
     )
 }

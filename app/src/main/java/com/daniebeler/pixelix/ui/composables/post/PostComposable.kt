@@ -526,7 +526,7 @@ fun PostImage(
             )
         )
         
-        if (mediaAttachment.mime == "image/png" || mediaAttachment.mime == "image/jpeg") {
+        if (mediaAttachment.type == "image") {
             AsyncImage(
                 model = mediaAttachment.url,
                 contentDescription = "",
@@ -548,7 +548,7 @@ fun PostImage(
                 contentScale = ContentScale.FillWidth
             )
         } else {
-            Text(text = "Mime type not supported (" + mediaAttachment.mime + ")")
+            Text(text = "Media type not supported (" + mediaAttachment.type + ")")
         }
 
         
