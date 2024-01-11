@@ -1,6 +1,9 @@
 package com.daniebeler.pixelix.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
+import androidx.core.net.toFile
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -10,6 +13,7 @@ import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
+import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Relationship
@@ -19,6 +23,7 @@ import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.model.toAccessToken
 import com.daniebeler.pixelix.domain.model.toAccount
 import com.daniebeler.pixelix.domain.model.toApplication
+import com.daniebeler.pixelix.domain.model.toMediaAttachment
 import com.daniebeler.pixelix.domain.model.toNotification
 import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.domain.model.toRelationship
@@ -31,11 +36,19 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.net.URI
 
 private val Context.dataStore by preferencesDataStore("settings")
 
@@ -64,18 +77,14 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     private fun buildPixelFedApi() {
-        val mHttpLoggingInterceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+        val mHttpLoggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        val mOkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(mHttpLoggingInterceptor)
-            .build()
+        val mOkHttpClient = OkHttpClient.Builder().addInterceptor(mHttpLoggingInterceptor).build()
 
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(mOkHttpClient)
-            .build()
+        val retrofit: Retrofit =
+            Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
+                .client(mOkHttpClient).build()
 
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
     }
@@ -540,7 +549,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getAccountsFollowers(accountId: String, maxId: String): Flow<Resource<List<Account>>> = flow {
+    override fun getAccountsFollowers(
+        accountId: String, maxId: String
+    ): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
             val response = if (maxId.isNotEmpty()) {
@@ -560,7 +571,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getAccountsFollowing(accountId: String, maxId: String): Flow<Resource<List<Account>>> = flow {
+    override fun getAccountsFollowing(
+        accountId: String, maxId: String
+    ): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
             val response = if (maxId.isNotEmpty()) {
@@ -610,28 +623,31 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
 
-    override fun getNotifications(maxNotificationId: String): Flow<Resource<List<Notification>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxNotificationId.isNotEmpty()) {
-                pixelfedApi.getNotifications(accessToken, maxNotificationId).awaitResponse()
-            } else {
-                pixelfedApi.getNotifications(accessToken).awaitResponse()
-            }
+    override fun getNotifications(maxNotificationId: String): Flow<Resource<List<Notification>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val response = if (maxNotificationId.isNotEmpty()) {
+                    pixelfedApi.getNotifications(accessToken, maxNotificationId).awaitResponse()
+                } else {
+                    pixelfedApi.getNotifications(accessToken).awaitResponse()
+                }
 
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toNotification() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
+                if (response.isSuccessful) {
+                    val res = response.body()?.map { it.toNotification() } ?: emptyList()
+                    emit(Resource.Success(res))
+                } else {
+                    emit(Resource.Error("Unknown Error"))
+                }
+            } catch (exception: Exception) {
+                emit(Resource.Error(exception.message ?: "Unknown Error"))
             }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
-    }
 
 
-    override fun getPostsByAccountId(accountId: String, maxPostId: String): Flow<Resource<List<Post>>> = flow {
+    override fun getPostsByAccountId(
+        accountId: String, maxPostId: String
+    ): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
             val response = if (maxPostId.isEmpty()) {
@@ -651,20 +667,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getRelationships(userIds, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val result = response.body()?.map { it.toRelationship() } ?: emptyList()
-                emit(Resource.Success(result))
-            } else {
-                emit(Resource.Error("unknown error"))
+    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val response = pixelfedApi.getRelationships(userIds, accessToken).awaitResponse()
+                if (response.isSuccessful) {
+                    val result = response.body()?.map { it.toRelationship() } ?: emptyList()
+                    emit(Resource.Success(result))
+                } else {
+                    emit(Resource.Error("unknown error"))
+                }
+            } catch (exception: Exception) {
+                emit(Resource.Error(exception.message ?: "unknown error"))
             }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "unknown error"))
         }
-    }
 
     override fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>> = flow {
         try {
@@ -711,6 +728,29 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    @SuppressLint("Recycle")
+    override fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>> = flow {
+        try {
+            emit(Resource.Loading())
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileRequestBody =
+                inputStream?.readBytes()?.toRequestBody("image/*".toMediaTypeOrNull())
+            val file = File(uri.path!!)
+            val multipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "file", file.name, fileRequestBody!!
+            )
+            val response = pixelfedApi.uploadMedia(accessToken, multipart).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toMediaAttachment()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message!!))
+        }
+    }
+
 
 // Auth
 
@@ -728,9 +768,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override suspend fun obtainToken(
-        clientId: String,
-        clientSecret: String,
-        code: String
+        clientId: String, clientSecret: String, code: String
     ): AccessToken? {
         return try {
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()

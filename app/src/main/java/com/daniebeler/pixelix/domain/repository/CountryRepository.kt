@@ -1,9 +1,12 @@
 package com.daniebeler.pixelix.domain.repository
 
+import android.content.Context
+import android.net.Uri
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
+import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Relationship
@@ -11,6 +14,7 @@ import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.domain.model.Search
 import com.daniebeler.pixelix.domain.model.Tag
 import kotlinx.coroutines.flow.Flow
+import java.net.URI
 
 interface CountryRepository {
 
@@ -82,6 +86,8 @@ interface CountryRepository {
     fun getPostById(postId: String): Flow<Resource<Post?>>
 
     fun search(searchText: String): Flow<Resource<Search>>
+
+    fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>>
 
     suspend fun createApplication(): Application?
 

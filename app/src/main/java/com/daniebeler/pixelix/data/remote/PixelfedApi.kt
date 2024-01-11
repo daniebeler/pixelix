@@ -4,17 +4,21 @@ import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pixelix.data.remote.dto.ApplicationDto
+import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.SearchDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -233,6 +237,12 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String,
         @Query("q") searchText: String
     ): Call<SearchDto>
+    @Multipart
+    @POST("/api/v1/media")
+    fun uploadMedia(
+        @Header("Authorization") accessToken: String,
+        @Part filePart: MultipartBody.Part
+    ): Call<MediaAttachmentDto>
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>

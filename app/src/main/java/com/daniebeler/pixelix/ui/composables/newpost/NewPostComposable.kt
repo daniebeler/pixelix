@@ -50,12 +50,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,7 +87,7 @@ fun NewPostComposable(
     }
 
     var expanded by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -102,89 +105,53 @@ fun NewPostComposable(
                     }
                 },
                 actions = {
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = { viewModel.post(context) }) {
                         Text(text = "Post")
                     }
                 }
             )
         }
     ) { paddingValues ->
-        Column(
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+        Box {
+            Column(
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                viewModel.uris.forEach {
-                    AsyncImage(
-                        model = it,
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    viewModel.uris.forEach {
+                        AsyncImage(
+                            model = it,
+                            contentDescription = null,
+                            modifier = Modifier.height(200.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                singlePhotoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                            .height(200.dp)
+                            .width(100.dp),
+                        imageVector = Icons.Filled.Add,
                         contentDescription = null,
-                        modifier = Modifier.height(200.dp),
-                        contentScale = ContentScale.Fit
                     )
                 }
-                Icon(
-                    modifier = Modifier
-                        .clickable {
-                            singlePhotoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        }
-                        .height(200.dp)
-                        .width(100.dp),
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = null,
-                )
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            OutlinedTextField(
-                value = viewModel.caption,
-                onValueChange = { viewModel.caption = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("caption") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedBorderColor = Color.Transparent,
-                ),
-                shape = RoundedCornerShape(12.dp),
-            )
-            OutlinedTextField(
-                value = viewModel.altText,
-                onValueChange = { viewModel.altText = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Alt Text") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedBorderColor = Color.Transparent,
-                ),
-                shape = RoundedCornerShape(12.dp),
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Sensitive/NSFW Media")
-                Switch(
-                    checked = viewModel.sensitive,
-                    onCheckedChange = { viewModel.sensitive = it })
-            }
-            if (viewModel.sensitive) {
+                Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
-                    value = viewModel.sensitiveText,
-                    onValueChange = { viewModel.sensitiveText = it },
+                    value = viewModel.caption,
+                    onValueChange = { viewModel.caption = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("content warning or spoiler text") },
+                    label = { Text("caption") },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -193,63 +160,106 @@ fun NewPostComposable(
                     ),
                     shape = RoundedCornerShape(12.dp),
                 )
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Audience")
-                Box {
-                    OutlinedButton(onClick = { expanded = !expanded }) {
-                        Text(text = viewModel.audience)
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("public") },
-                            onClick = { viewModel.audience = "public" },
-                            trailingIcon = {
-                                if (viewModel.audience == "public") {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
+                OutlinedTextField(
+                    value = viewModel.altText,
+                    onValueChange = { viewModel.altText = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Alt Text") },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedBorderColor = Color.Transparent,
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Sensitive/NSFW Media")
+                    Switch(
+                        checked = viewModel.sensitive,
+                        onCheckedChange = { viewModel.sensitive = it })
+                }
+                if (viewModel.sensitive) {
+                    OutlinedTextField(
+                        value = viewModel.sensitiveText,
+                        onValueChange = { viewModel.sensitiveText = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("content warning or spoiler text") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedBorderColor = Color.Transparent,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Audience")
+                    Box {
+                        OutlinedButton(onClick = { expanded = !expanded }) {
+                            Text(text = viewModel.audience)
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("public") },
+                                onClick = { viewModel.audience = "public" },
+                                trailingIcon = {
+                                    if (viewModel.audience == "public") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("unlisted") },
-                            onClick = { viewModel.audience = "unlisted" },
-                            trailingIcon = {
-                                if (viewModel.audience == "unlisted") {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
+                            )
+                            DropdownMenuItem(
+                                text = { Text("unlisted") },
+                                onClick = { viewModel.audience = "unlisted" },
+                                trailingIcon = {
+                                    if (viewModel.audience == "unlisted") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("followers only") },
-                            onClick = { viewModel.audience = "followers only" },
-                            trailingIcon = {
-                                if (viewModel.audience == "followers only") {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
+                            )
+                            DropdownMenuItem(
+                                text = { Text("followers only") },
+                                onClick = { viewModel.audience = "followers only" },
+                                trailingIcon = {
+                                    if (viewModel.audience == "followers only") {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Check,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
+            if (viewModel.mediaUploadState.mediaAttachment != null) {
+                Text(text = viewModel.mediaUploadState.mediaAttachment!!.id)
+            }
+            LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)
+            ErrorComposable(message = viewModel.mediaUploadState.error)
         }
     }
 }
