@@ -27,7 +27,8 @@ class NotificationsViewModel @Inject constructor(
         repository.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
-                    NotificationsState(notifications = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < 20
+                    NotificationsState(notifications = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -50,9 +51,11 @@ class NotificationsViewModel @Inject constructor(
             repository.getNotifications(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < 20
                         NotificationsState(
                             notifications = notificationsState.notifications + (result.data
-                                ?: emptyList())
+                                ?: emptyList()),
+                            endReached = endReached
                         )
                     }
 

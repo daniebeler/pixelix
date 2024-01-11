@@ -20,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,11 +29,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,8 +48,6 @@ import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -107,10 +99,18 @@ fun NotificationsComposable(
                                     )
                                 }
                             }
+                            
+                            if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
+                                item { 
+                                    Text(text = "This is the end")
+                                }
+                            }
                         })
 
                     InfiniteListHandler(lazyListState = lazyListState) {
-                        viewModel.getNotificationsPaginated()
+                        if (!viewModel.notificationsState.endReached) {
+                            viewModel.getNotificationsPaginated()
+                        }
                     }
                 }
             } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {

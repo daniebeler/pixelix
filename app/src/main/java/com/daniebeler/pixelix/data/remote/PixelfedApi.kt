@@ -85,12 +85,12 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<AccountDto>
 
-    @GET("api/v1/notifications")
+    @GET("api/v1/notifications?limit=20")
     fun getNotifications(
         @Header("Authorization") token: String
     ): Call<List<NotificationDto>>
 
-    @GET("api/v1/notifications")
+    @GET("api/v1/notifications?limit=20")
     fun getNotifications(
         @Header("Authorization") token: String,
         @Query("max_id") maxNotificationId: String
