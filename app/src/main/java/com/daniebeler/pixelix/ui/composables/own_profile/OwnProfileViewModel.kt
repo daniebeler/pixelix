@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OwnProfileViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
@@ -35,7 +35,7 @@ class OwnProfileViewModel @Inject constructor(
         CoroutineScope(Dispatchers.Default).launch {
             accountId = repository.getAccountId().first()
 
-            getPosts(accountId)
+            getPostsFirstLoad(accountId)
 
             getAccount(accountId)
         }
@@ -59,11 +59,12 @@ class OwnProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getPosts(userId: String) {
+    private fun getPostsFirstLoad(userId: String) {
         repository.getPostsByAccountId(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    PostsState(posts = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < 12
+                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -75,5 +76,29 @@ class OwnProfileViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getPostsPaginated() {
+        if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
+            repository.getPostsByAccountId(accountId, postsState.posts.last().id).onEach { result ->
+                postsState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < 12
+                        PostsState(
+                            posts = postsState.posts + (result.data ?: emptyList()),
+                            endReached = endReached
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        PostsState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        PostsState(isLoading = true, posts = postsState.posts)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 }

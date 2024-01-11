@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -20,14 +24,17 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +44,10 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfiniteGridHandler
+import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 
@@ -49,6 +59,8 @@ fun OwnProfileComposable(
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
             onRefresh = { viewModel.loadData() })
+
+    val lazyGridState = rememberLazyGridState()
 
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -84,6 +96,7 @@ fun OwnProfileComposable(
                     LazyVerticalGrid(columns = GridCells.Fixed(3),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
+                        state = lazyGridState,
                         modifier = Modifier
                             .padding(paddingValues)
                             .pullRefresh(pullRefreshState),
@@ -108,7 +121,31 @@ fun OwnProfileComposable(
                                     Text(text = stringResource(R.string.load_more))
                                 }
                             }*/
+
+                            if (viewModel.postsState.posts.isNotEmpty() && viewModel.postsState.isLoading) {
+                                item {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(80.dp)
+                                            .wrapContentSize(Alignment.Center),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    )
+                                }
+                            }
+
+                            if (viewModel.postsState.endReached && viewModel.postsState.posts.size > 10) {
+                                item {
+                                    EndOfListComposable()
+                                }
+                            }
                         })
+
+                    InfiniteGridHandler(lazyGridState = lazyGridState, buffer = 6) {
+                        viewModel.getPostsPaginated()
+                    }
+
                     if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
                         Box(
                             modifier = Modifier

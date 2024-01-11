@@ -202,10 +202,24 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<List<AccountDto>>
 
+    @GET("api/v1/accounts/{id}/followers?limit=40")
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<AccountDto>>
+
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
         @Path("id") userId: String,
         @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/following?limit=40")
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
     ): Call<List<AccountDto>>
 
     @GET("api/v1/mutes")

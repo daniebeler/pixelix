@@ -39,7 +39,7 @@ class NotificationsViewModel @Inject constructor(
                     NotificationsState(
                         isLoading = true,
                         isRefreshing = refreshing,
-                        notifications = emptyList()
+                        notifications = notificationsState.notifications
                     )
                 }
             }
@@ -47,7 +47,7 @@ class NotificationsViewModel @Inject constructor(
     }
 
     fun getNotificationsPaginated() {
-        if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading) {
+        if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading && !notificationsState.endReached) {
             repository.getNotifications(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {

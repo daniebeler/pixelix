@@ -22,6 +22,8 @@ class FollowersViewModel @Inject constructor(
     var followersState by mutableStateOf(FollowersState())
     var followingState by mutableStateOf(FollowingState())
 
+    var accountId: String = ""
+
     fun getAccount(userId: String) {
         repository.getAccount(userId).onEach { result ->
             accountState = when (result) {
@@ -40,11 +42,16 @@ class FollowersViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getFollowers(accountId: String) {
+    fun setAccountIdValue(id: String) {
+        accountId = id
+    }
+
+    fun getFollowersFirstLoad(refreshing: Boolean = false) {
         repository.getAccountsFollowers(accountId).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
-                    FollowersState(followers = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < 40
+                    FollowersState(followers = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -52,10 +59,34 @@ class FollowersViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    FollowersState(isLoading = true)
+                    FollowersState(isLoading = true, isRefreshing = refreshing, followers = followersState.followers)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getFollowersPaginated() {
+        if (followersState.followers.isNotEmpty() && !followersState.isLoading && !followersState.endReached) {
+            repository.getAccountsFollowers(accountId, followersState.followers.last().id).onEach { result ->
+                followersState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < 40
+                        FollowersState(
+                            followers = followersState.followers + (result.data ?: emptyList()),
+                            endReached = endReached
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        FollowersState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        FollowersState(isLoading = true, isRefreshing = false, followers = followersState.followers)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun getFollowing(accountId: String) {

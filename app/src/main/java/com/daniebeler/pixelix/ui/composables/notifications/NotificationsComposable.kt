@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
@@ -99,18 +100,16 @@ fun NotificationsComposable(
                                     )
                                 }
                             }
-                            
+
                             if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
-                                item { 
-                                    Text(text = "This is the end")
+                                item {
+                                    EndOfListComposable()
                                 }
                             }
                         })
 
                     InfiniteListHandler(lazyListState = lazyListState) {
-                        if (!viewModel.notificationsState.endReached) {
-                            viewModel.getNotificationsPaginated()
-                        }
+                        viewModel.getNotificationsPaginated()
                     }
                 }
             } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {

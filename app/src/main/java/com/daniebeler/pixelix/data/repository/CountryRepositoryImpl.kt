@@ -540,10 +540,15 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getAccountsFollowers(accountId: String): Flow<Resource<List<Account>>> = flow {
+    override fun getAccountsFollowers(accountId: String, maxId: String): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getAccountsFollowers(accountId, accessToken).awaitResponse()
+            val response = if (maxId.isNotEmpty()) {
+                pixelfedApi.getAccountsFollowers(accountId, accessToken, maxId).awaitResponse()
+            } else {
+                pixelfedApi.getAccountsFollowers(accountId, accessToken).awaitResponse()
+            }
+
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toAccount() } ?: emptyList()
                 emit(Resource.Success(res))
@@ -555,10 +560,14 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getAccountsFollowing(accountId: String): Flow<Resource<List<Account>>> = flow {
+    override fun getAccountsFollowing(accountId: String, maxId: String): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
+            val response = if (maxId.isNotEmpty()) {
+                pixelfedApi.getAccountsFollowing(accountId, accessToken, maxId).awaitResponse()
+            } else {
+                pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
+            }
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toAccount() } ?: emptyList()
                 emit(Resource.Success(res))

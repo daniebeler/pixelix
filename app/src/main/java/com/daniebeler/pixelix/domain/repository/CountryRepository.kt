@@ -69,8 +69,8 @@ interface CountryRepository {
     fun blockAccount(accountId: String): Flow<Resource<Relationship>>
     fun unblockAccount(accountId: String): Flow<Resource<Relationship>>
 
-    fun getAccountsFollowers(accountId: String): Flow<Resource<List<Account>>>
-    fun getAccountsFollowing(accountId: String): Flow<Resource<List<Account>>>
+    fun getAccountsFollowers(accountId: String, maxId: String = ""): Flow<Resource<List<Account>>>
+    fun getAccountsFollowing(accountId: String, maxId: String = ""): Flow<Resource<List<Account>>>
 
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>

@@ -41,17 +41,14 @@ fun FollowersMainComposable(
 ) {
 
     LaunchedEffect(Unit) {
+        viewModel.setAccountIdValue(accountId)
         viewModel.getAccount(accountId)
-        viewModel.getFollowers(accountId)
+        viewModel.getFollowersFirstLoad()
         viewModel.getFollowing(accountId)
     }
 
 
-    val pageId = if (page == "followers") {
-        0
-    } else {
-        1
-    }
+    val pageId = if (page == "followers") 0 else 1
     val pagerState = rememberPagerState(
         initialPage = pageId,
         pageCount = { 2 }
