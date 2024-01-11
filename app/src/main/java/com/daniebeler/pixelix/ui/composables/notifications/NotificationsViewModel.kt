@@ -15,14 +15,15 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
+
     init {
-        getNotifications(false)
+        getNotificationsFirstLoad(false)
     }
 
-    fun getNotifications(refreshing: Boolean) {
+    private fun getNotificationsFirstLoad(refreshing: Boolean) {
         repository.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
@@ -34,9 +35,45 @@ class NotificationsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    NotificationsState(isLoading = true, isRefreshing = refreshing, notifications = notificationsState.notifications)
+                    NotificationsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        notifications = emptyList()
+                    )
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getNotificationsPaginated() {
+        if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading) {
+            repository.getNotifications(notificationsState.notifications.last().id).onEach { result ->
+                notificationsState = when (result) {
+                    is Resource.Success -> {
+                        NotificationsState(
+                            notifications = notificationsState.notifications + (result.data
+                                ?: emptyList())
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        NotificationsState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        NotificationsState(
+                            isLoading = true,
+                            isRefreshing = false,
+                            notifications = notificationsState.notifications
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+
+    }
+
+    fun refresh() {
+        getNotificationsFirstLoad(true)
     }
 }

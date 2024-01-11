@@ -86,7 +86,15 @@ interface PixelfedApi {
     ): Call<AccountDto>
 
     @GET("api/v1/notifications")
-    fun getNotifications(@Header("Authorization") token: String): Call<List<NotificationDto>>
+    fun getNotifications(
+        @Header("Authorization") token: String
+    ): Call<List<NotificationDto>>
+
+    @GET("api/v1/notifications")
+    fun getNotifications(
+        @Header("Authorization") token: String,
+        @Query("max_id") maxNotificationId: String
+    ): Call<List<NotificationDto>>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
     fun getPostsByAccountId(
@@ -177,10 +185,16 @@ interface PixelfedApi {
     ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/bookmark")
-    fun bookmarkPost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+    fun bookmarkPost(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/unbookmark")
-    fun unbookmarkPost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
+    fun unbookmarkPost(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
     fun getAccountsFollowers(

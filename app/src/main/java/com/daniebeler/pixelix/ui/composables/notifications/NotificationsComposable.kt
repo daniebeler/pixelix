@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +23,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,6 +52,7 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,8 +65,10 @@ fun NotificationsComposable(
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = viewModel.notificationsState.isRefreshing,
-        onRefresh = { viewModel.getNotifications(true) }
+        onRefresh = { viewModel.refresh() }
     )
+
+    val lazyListState = rememberLazyListState()
 
     Scaffold(
         topBar = {
@@ -81,13 +87,31 @@ fun NotificationsComposable(
             if (viewModel.notificationsState.notifications.isNotEmpty()) {
                 Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
                     LazyColumn(
+                        state = lazyListState,
                         content = {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id
                             }) {
                                 CustomNotificaiton(notification = it, navController = navController)
                             }
+
+                            if (viewModel.notificationsState.notifications.isNotEmpty() && viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
+                                item {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(80.dp)
+                                            .wrapContentSize(Alignment.Center),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    )
+                                }
+                            }
                         })
+
+                    InfiniteListHandler(lazyListState = lazyListState) {
+                        viewModel.getNotificationsPaginated()
+                    }
                 }
             } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {
                 Box(
@@ -109,7 +133,7 @@ fun NotificationsComposable(
                 pullRefreshState
             )
 
-            if (!viewModel.notificationsState.isRefreshing) {
+            if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
                 LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             }
             ErrorComposable(message = viewModel.notificationsState.error, pullRefreshState)

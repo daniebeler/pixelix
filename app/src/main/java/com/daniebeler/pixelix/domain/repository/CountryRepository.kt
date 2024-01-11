@@ -75,7 +75,7 @@ interface CountryRepository {
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
 
-    fun getNotifications(): Flow<Resource<List<Notification>>>
+    fun getNotifications(maxNotificationId: String = ""): Flow<Resource<List<Notification>>>
 
     fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
 

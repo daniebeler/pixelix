@@ -601,10 +601,15 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
 
-    override fun getNotifications(): Flow<Resource<List<Notification>>> = flow {
+    override fun getNotifications(maxNotificationId: String): Flow<Resource<List<Notification>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getNotifications(accessToken).awaitResponse()
+            val response = if (maxNotificationId.isNotEmpty()) {
+                pixelfedApi.getNotifications(accessToken, maxNotificationId).awaitResponse()
+            } else {
+                pixelfedApi.getNotifications(accessToken).awaitResponse()
+            }
+
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toNotification() } ?: emptyList()
                 emit(Resource.Success(res))

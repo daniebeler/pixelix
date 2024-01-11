@@ -58,7 +58,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     fun getItemsPaginated() {
-        if (homeTimelineState.homeTimeline.isNotEmpty()) {
+        if (homeTimelineState.homeTimeline.isNotEmpty() && !homeTimelineState.isLoading) {
             repository.getHomeTimeline(homeTimelineState.homeTimeline.last().id).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
