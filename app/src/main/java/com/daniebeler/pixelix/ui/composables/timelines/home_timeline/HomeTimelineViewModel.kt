@@ -25,9 +25,9 @@ class HomeTimelineViewModel @Inject constructor(
 
     private fun getItemsFirstLoad(refreshing: Boolean) {
         repository.getHomeTimeline().onEach { result ->
-            when (result) {
+            homeTimelineState = when (result) {
                 is Resource.Success -> {
-                    homeTimelineState = HomeTimelineState(
+                    HomeTimelineState(
                         homeTimeline = result.data ?: emptyList(),
                         error = "",
                         isLoading = false,
@@ -36,7 +36,7 @@ class HomeTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    homeTimelineState = HomeTimelineState(
+                    HomeTimelineState(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = result.message ?: "An unexpected error occurred",
                         isLoading = false,
@@ -45,7 +45,7 @@ class HomeTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    homeTimelineState = HomeTimelineState(
+                    HomeTimelineState(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = "",
                         isLoading = true,
@@ -60,9 +60,9 @@ class HomeTimelineViewModel @Inject constructor(
     fun getItemsPaginated() {
         if (homeTimelineState.homeTimeline.isNotEmpty() && !homeTimelineState.isLoading) {
             repository.getHomeTimeline(homeTimelineState.homeTimeline.last().id).onEach { result ->
-                when (result) {
+                homeTimelineState = when (result) {
                     is Resource.Success -> {
-                        homeTimelineState = HomeTimelineState(
+                        HomeTimelineState(
                             homeTimeline = homeTimelineState.homeTimeline + (result.data
                                 ?: emptyList()),
                             error = "",
@@ -72,7 +72,7 @@ class HomeTimelineViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        homeTimelineState = HomeTimelineState(
+                        HomeTimelineState(
                             homeTimeline = homeTimelineState.homeTimeline,
                             error = result.message ?: "An unexpected error occurred",
                             isLoading = false,
@@ -81,7 +81,7 @@ class HomeTimelineViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        homeTimelineState = HomeTimelineState(
+                        HomeTimelineState(
                             homeTimeline = homeTimelineState.homeTimeline,
                             error = "",
                             isLoading = true,

@@ -221,10 +221,14 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>> = flow {
+    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
+            val response = if (maxId.isNotEmpty()) {
+                pixelfedApi.getHashtagTimeline(hashtag, accessToken, maxId).awaitResponse()
+            } else {
+                pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
+            }
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toPost() } ?: emptyList()
                 emit(Resource.Success(res))
@@ -239,7 +243,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            var response = if (maxPostId.isNotEmpty()) {
+            val response = if (maxPostId.isNotEmpty()) {
                 pixelfedApi.getLocalTimeline(maxPostId, accessToken).awaitResponse()
             } else {
                 pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
@@ -258,7 +262,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     override fun getGlobalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            var response = if (maxPostId.isNotEmpty()) {
+            val response = if (maxPostId.isNotEmpty()) {
                 pixelfedApi.getGlobalTimeline(maxPostId, accessToken).awaitResponse()
             } else {
                 pixelfedApi.getGlobalTimeline(accessToken).awaitResponse()
@@ -277,7 +281,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            var response = if (maxPostId.isNotEmpty()) {
+            val response = if (maxPostId.isNotEmpty()) {
                 pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
             } else {
                 pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
@@ -294,10 +298,14 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getLikedPosts(): Flow<Resource<List<Post>>> = flow {
+    override fun getLikedPosts(maxId: String): Flow<Resource<List<Post>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getLikedPosts(accessToken).awaitResponse()
+            val response = if (maxId.isNotEmpty()) {
+                pixelfedApi.getLikedPosts(accessToken, maxId).awaitResponse()
+            } else {
+                pixelfedApi.getLikedPosts(accessToken).awaitResponse()
+            }
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toPost() } ?: emptyList()
                 emit(Resource.Success(res))

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,6 +34,7 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfiniteGridHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -43,8 +45,10 @@ fun LikedPostsComposable(
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = viewModel.likedPostsState.isLoading,
-        onRefresh = { viewModel.getLikedPosts() }
+        onRefresh = { viewModel.refresh() }
     )
+
+    val lazyGridState = rememberLazyGridState()
 
     Scaffold(
         topBar = {
@@ -86,6 +90,7 @@ fun LikedPostsComposable(
                 }
             } else {
                 LazyVerticalGrid(
+                    state = lazyGridState,
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -96,6 +101,10 @@ fun LikedPostsComposable(
                             CustomPost(post = photo, navController = navController)
                         }
                     })
+
+                InfiniteGridHandler(lazyGridState = lazyGridState, buffer = 2) {
+                    viewModel.getItemsPaginated()
+                }
             }
             CustomPullRefreshIndicator(
                 viewModel.likedPostsState.isLoading,

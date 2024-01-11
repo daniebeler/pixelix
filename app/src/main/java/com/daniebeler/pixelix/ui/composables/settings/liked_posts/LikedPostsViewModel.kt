@@ -20,25 +20,81 @@ class LikedPostsViewModel @Inject constructor(
     var likedPostsState by mutableStateOf(LikedPostsState())
 
     init {
-        getLikedPosts()
+        getItemsFirstLoad()
     }
 
-    fun getLikedPosts() {
+    private fun getItemsFirstLoad(refreshing: Boolean = false) {
         repository.getLikedPosts().onEach { result ->
             likedPostsState = when (result) {
                 is Resource.Success -> {
-                    LikedPostsState(likedPosts = result.data ?: emptyList())
+                    LikedPostsState(
+                        likedPosts = result.data ?: emptyList(),
+                        error = "",
+                        isLoading = false,
+                        isRefreshing = false
+                    )
                 }
 
                 is Resource.Error -> {
-                    LikedPostsState(error = result.message ?: "An unexpected error occurred")
+                    LikedPostsState(
+                        likedPosts = likedPostsState.likedPosts,
+                        error = result.message ?: "An unexpected error occurred",
+                        isLoading = false,
+                        isRefreshing = false
+                    )
                 }
 
                 is Resource.Loading -> {
-                    LikedPostsState(isLoading = true)
+                    LikedPostsState(
+                        likedPosts = likedPostsState.likedPosts,
+                        error = "",
+                        isLoading = true,
+                        isRefreshing = refreshing
+                    )
                 }
             }
         }.launchIn(viewModelScope)
+
+    }
+
+    fun getItemsPaginated() {
+        if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading) {
+            repository.getLikedPosts(likedPostsState.likedPosts.last().id).onEach { result ->
+                likedPostsState = when (result) {
+                    is Resource.Success -> {
+                        LikedPostsState(
+                            likedPosts = likedPostsState.likedPosts + (result.data
+                                ?: emptyList()),
+                            error = "",
+                            isLoading = false,
+                            isRefreshing = false
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        LikedPostsState(
+                            likedPosts = likedPostsState.likedPosts,
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false,
+                            isRefreshing = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        LikedPostsState(
+                            likedPosts = likedPostsState.likedPosts,
+                            error = "",
+                            isLoading = true,
+                            isRefreshing = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun refresh() {
+        getItemsFirstLoad(true)
     }
 
 }

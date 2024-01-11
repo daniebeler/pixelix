@@ -44,7 +44,7 @@ fun FollowersMainComposable(
         viewModel.setAccountIdValue(accountId)
         viewModel.getAccount(accountId)
         viewModel.getFollowersFirstLoad()
-        viewModel.getFollowing(accountId)
+        viewModel.getFollowingFirstLoad()
     }
 
 

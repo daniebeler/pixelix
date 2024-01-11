@@ -2,9 +2,13 @@ package com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -22,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -29,7 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
@@ -42,16 +49,18 @@ fun HashtagTimelineComposable(
 ) {
 
     LaunchedEffect(hashtag) {
-        viewModel.getHashtagTimeline(hashtag, false)
+        viewModel.getItemsFirstLoad(hashtag)
         viewModel.getHashtagInfo(hashtag)
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.postsState.refreshing,
+        refreshing = viewModel.postsState.isRefreshing,
         onRefresh = { viewModel.refresh() }
     )
+
+    val lazyListState = rememberLazyListState()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -109,6 +118,7 @@ fun HashtagTimelineComposable(
         }
     ) { paddingValues ->
         LazyColumn(
+            state = lazyListState,
             verticalArrangement = Arrangement.spacedBy(32.dp),
             modifier = Modifier
                 .padding(paddingValues)
@@ -119,15 +129,37 @@ fun HashtagTimelineComposable(
             }) { item ->
                 PostComposable(post = item, navController)
             }
+
+            if (viewModel.postsState.hashtagTimeline.isNotEmpty() && viewModel.postsState.isLoading && !viewModel.postsState.isRefreshing) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
+            }
+
+            if (viewModel.postsState.endReached && viewModel.postsState.hashtagTimeline.size > 2) {
+                item {
+                    EndOfListComposable()
+                }
+            }
         }
         CustomPullRefreshIndicator(
-            viewModel.postsState.refreshing,
+            viewModel.postsState.isRefreshing,
             pullRefreshState,
         )
 
-        if (!viewModel.postsState.refreshing) {
-            LoadingComposable(isLoading = viewModel.postsState.isLoading)
+        InfiniteListHandler(lazyListState = lazyListState) {
+            viewModel.getItemsPaginated(hashtag)
         }
+
+        LoadingComposable(isLoading = viewModel.postsState.isLoading && viewModel.postsState.hashtagTimeline.isEmpty())
+
         ErrorComposable(message = viewModel.postsState.error, pullRefreshState)
     }
 }

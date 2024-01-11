@@ -89,11 +89,12 @@ class FollowersViewModel @Inject constructor(
         }
     }
 
-    fun getFollowing(accountId: String) {
+    fun getFollowingFirstLoad(refreshing: Boolean = false) {
         repository.getAccountsFollowing(accountId).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
-                    FollowingState(following = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < 40
+                    FollowingState(following = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -101,9 +102,33 @@ class FollowersViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    FollowingState(isLoading = true)
+                    FollowingState(isLoading = true, isRefreshing = refreshing, following = followingState.following)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getFollowingPaginated() {
+        if (followingState.following.isNotEmpty() && !followingState.isLoading && !followingState.endReached) {
+            repository.getAccountsFollowing(accountId, followingState.following.last().id).onEach { result ->
+                followingState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < 40
+                        FollowingState(
+                            following = followingState.following + (result.data ?: emptyList()),
+                            endReached = endReached
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        FollowingState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        FollowingState(isLoading = true, isRefreshing = false, following = followingState.following)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 }

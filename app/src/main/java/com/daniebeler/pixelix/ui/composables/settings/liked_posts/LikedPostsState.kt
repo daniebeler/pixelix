@@ -4,6 +4,8 @@ import com.daniebeler.pixelix.domain.model.Post
 
 data class LikedPostsState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val endReached: Boolean = false,
     val likedPosts: List<Post> = emptyList(),
     val error: String = ""
 )

@@ -37,11 +37,11 @@ interface CountryRepository {
 
     fun getHashtag(hashtag: String): Flow<Resource<Tag>>
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
-    fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
+    fun getHashtagTimeline(hashtag: String, maxId: String = ""): Flow<Resource<List<Post>>>
     fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
-    fun getLikedPosts(): Flow<Resource<List<Post>>>
+    fun getLikedPosts(maxId: String = ""): Flow<Resource<List<Post>>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 

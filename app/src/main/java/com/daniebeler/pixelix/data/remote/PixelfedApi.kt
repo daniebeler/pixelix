@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.data.remote
 
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
@@ -32,10 +33,17 @@ interface PixelfedApi {
     @GET("/api/v1.1/discover/accounts/popular?range=daily")
     fun getTrendingAccounts(@Header("Authorization") token: String): Call<List<AccountDto>>
 
-    @GET("api/v1/timelines/tag/{tag}?_pe=1")
+    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
         @Path("tag") tag: String,
         @Header("Authorization") token: String
+    ): Call<List<PostDto>>
+
+    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
+    fun getHashtagTimeline(
+        @Path("tag") tag: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
     @GET("api/v1/tags/{tag}?_pe=1")
@@ -59,17 +67,20 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home?_pe=1")
+    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home?_pe=1")
+    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") accessToken: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/favourites?limit=12")
+    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+
+    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
+    fun getLikedPosts(@Header("Authorization") accessToken: String, @Query("max_id") maxId: String): Call<List<PostDto>>
 
     @GET("api/v1/bookmarks?limit=12")
     fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
@@ -89,12 +100,12 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<AccountDto>
 
-    @GET("api/v1/notifications?limit=20")
+    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
     fun getNotifications(
         @Header("Authorization") token: String
     ): Call<List<NotificationDto>>
 
-    @GET("api/v1/notifications?limit=20")
+    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
     fun getNotifications(
         @Header("Authorization") token: String,
         @Query("max_id") maxNotificationId: String
