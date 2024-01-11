@@ -20,23 +20,15 @@ class HomeTimelineViewModel @Inject constructor(
     var homeTimelineState by mutableStateOf(HomeTimelineState())
 
     init {
-        loadMorePosts(false)
+        getItemsFirstLoad(false)
     }
 
-    fun loadMorePosts(refreshing: Boolean) {
-
-        val maxId = if (homeTimelineState.homeTimeline.isEmpty()) {
-            ""
-        } else {
-            homeTimelineState.homeTimeline.last().id
-        }
-
-        repository.getHomeTimeline(maxId).onEach { result ->
+    private fun getItemsFirstLoad(refreshing: Boolean) {
+        repository.getHomeTimeline().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    homeTimelineState = homeTimelineState.copy(
-                        homeTimeline = homeTimelineState.homeTimeline + (result.data
-                            ?: emptyList()),
+                    homeTimelineState = HomeTimelineState(
+                        homeTimeline = result.data ?: emptyList(),
                         error = "",
                         isLoading = false,
                         refreshing = false
@@ -44,7 +36,7 @@ class HomeTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    homeTimelineState = homeTimelineState.copy(
+                    homeTimelineState = HomeTimelineState(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = result.message ?: "An unexpected error occurred",
                         isLoading = false,
@@ -53,7 +45,7 @@ class HomeTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    homeTimelineState = homeTimelineState.copy(
+                    homeTimelineState = HomeTimelineState(
                         homeTimeline = homeTimelineState.homeTimeline,
                         error = "",
                         isLoading = true,
@@ -65,8 +57,43 @@ class HomeTimelineViewModel @Inject constructor(
 
     }
 
+    fun getItemsPaginated() {
+        if (homeTimelineState.homeTimeline.isNotEmpty()) {
+            repository.getHomeTimeline(homeTimelineState.homeTimeline.last().id).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        homeTimelineState = HomeTimelineState(
+                            homeTimeline = homeTimelineState.homeTimeline + (result.data
+                                ?: emptyList()),
+                            error = "",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        homeTimelineState = HomeTimelineState(
+                            homeTimeline = homeTimelineState.homeTimeline,
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        homeTimelineState = HomeTimelineState(
+                            homeTimeline = homeTimelineState.homeTimeline,
+                            error = "",
+                            isLoading = true,
+                            refreshing = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun refresh() {
-        homeTimelineState = HomeTimelineState()
-        loadMorePosts(true)
+        getItemsFirstLoad(true)
     }
 }

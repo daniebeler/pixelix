@@ -60,7 +60,7 @@ fun NotificationsComposable(
     viewModel: NotificationsViewModel = hiltViewModel()
 ) {
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.notificationsState.refreshing,
+        refreshing = viewModel.notificationsState.isRefreshing,
         onRefresh = { viewModel.getNotifications(true) }
     )
 
@@ -105,11 +105,11 @@ fun NotificationsComposable(
                 }
             }
             CustomPullRefreshIndicator(
-                viewModel.notificationsState.refreshing,
+                viewModel.notificationsState.isRefreshing,
                 pullRefreshState
             )
 
-            if (!viewModel.notificationsState.refreshing) {
+            if (!viewModel.notificationsState.isRefreshing) {
                 LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             }
             ErrorComposable(message = viewModel.notificationsState.error, pullRefreshState)

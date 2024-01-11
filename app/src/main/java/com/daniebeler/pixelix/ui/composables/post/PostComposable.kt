@@ -70,6 +70,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -329,11 +330,45 @@ fun PostComposable(
                         items(viewModel.repliesState.replies, key = {
                             it.id
                         }) { reply ->
-                            HashtagsMentionsTextView(
-                                text = reply.content,
-                                mentions = reply.mentions,
-                                navController = navController
-                            )
+                            Row {
+                                AsyncImage(
+                                    model = reply.account.avatar,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .height(32.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            navController.navigate("profile_screen/" + reply.account.id) {
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        }
+                                )
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column {
+                                    Text(
+                                        text = reply.account.acct,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.clickable {
+                                            navController.navigate("profile_screen/" + reply.account.id) {
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        })
+
+                                    HashtagsMentionsTextView(
+                                        text = reply.content,
+                                        mentions = reply.mentions,
+                                        navController = navController
+                                    )
+                                }
+
+
+                            }
+
                         }
                     }
                 }
@@ -536,7 +571,7 @@ fun PostImage(
                 mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
             )
         )
-        
+
         if (mediaAttachment.type == "image") {
             AsyncImage(
                 model = mediaAttachment.url,
@@ -562,7 +597,7 @@ fun PostImage(
             VideoPlayer(uri = Uri.parse(mediaAttachment.url))
         }
 
-        
+
 
         Icon(
             imageVector = Icons.Filled.Favorite,

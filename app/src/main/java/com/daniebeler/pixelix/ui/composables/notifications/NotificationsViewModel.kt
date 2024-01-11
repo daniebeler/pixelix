@@ -34,7 +34,7 @@ class NotificationsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    NotificationsState(isLoading = true, refreshing = refreshing)
+                    NotificationsState(isLoading = true, isRefreshing = refreshing, notifications = notificationsState.notifications)
                 }
             }
         }.launchIn(viewModelScope)

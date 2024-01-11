@@ -182,13 +182,13 @@ interface PixelfedApi {
     @POST("api/v1/statuses/{id}/unbookmark")
     fun unbookmarkPost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
-    @GET("api/v1/accounts/{id}/followers")
+    @GET("api/v1/accounts/{id}/followers?limit=40")
     fun getAccountsFollowers(
         @Path("id") userId: String,
         @Header("Authorization") token: String
     ): Call<List<AccountDto>>
 
-    @GET("api/v1/accounts/{id}/following")
+    @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
         @Path("id") userId: String,
         @Header("Authorization") token: String

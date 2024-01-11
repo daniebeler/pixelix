@@ -4,7 +4,7 @@ import com.daniebeler.pixelix.domain.model.Notification
 
 data class NotificationsState(
     val isLoading: Boolean = false,
-    val refreshing: Boolean = false,
+    val isRefreshing: Boolean = false,
     val notifications: List<Notification> = emptyList(),
     val error: String = ""
 )
