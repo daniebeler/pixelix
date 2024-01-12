@@ -11,4 +11,5 @@ object Constants {
     const val HOME_TIMELINE_POSTS_LIMIT = 4
     const val NOTIFICATIONS_LIMIT = 30
     const val LIKED_POSTS_LIMIT = 12
+    const val PROFILE_POSTS_LIMIT = 18
 }

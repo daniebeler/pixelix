@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -49,18 +50,16 @@ import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteGridHandler
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.profile.AccountState
+import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-            onRefresh = { viewModel.loadData() })
 
-    val lazyGridState = rememberLazyGridState()
 
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -90,31 +89,64 @@ fun OwnProfileComposable(
     }
 
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column {
-                if (viewModel.accountState.account != null) {
-                    LazyVerticalGrid(columns = GridCells.Fixed(3),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        state = lazyGridState,
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .pullRefresh(pullRefreshState),
-                        content = {
-                            if (viewModel.accountState.account != null) {
-                                item(span = { GridItemSpan(3) }) {
-                                    ProfileTopSection(
-                                        account = viewModel.accountState.account!!, navController
-                                    )
-                                }
-                            }
-                            if (viewModel.postsState.posts.isNotEmpty()) {
-                                items(viewModel.postsState.posts, key = {
-                                    it.id
-                                }) { photo ->
-                                    CustomPost(post = photo, navController = navController)
-                                }
-                            }/*item {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+
+            CustomProfilePage(
+                accountState = viewModel.accountState,
+                postsState = viewModel.postsState,
+                navController = navController,
+                refresh = {
+                    viewModel.loadData()
+                },
+                getPostsPaginated = {
+                    viewModel.getPostsPaginated()
+                }
+            )
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CustomProfilePage(
+    accountState: AccountState,
+    postsState: PostsState,
+    navController: NavController,
+    refresh: () -> Unit,
+    getPostsPaginated: () -> Unit
+) {
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = accountState.isLoading || postsState.isLoading,
+            onRefresh = { refresh() })
+
+    val lazyGridState = rememberLazyGridState()
+
+    Column {
+        if (accountState.account != null) {
+            LazyVerticalGrid(columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                state = lazyGridState,
+                content = {
+                    if (accountState.account != null) {
+                        item(span = { GridItemSpan(3) }) {
+                            ProfileTopSection(
+                                account = accountState.account!!, navController
+                            )
+                        }
+                    }
+                    if (postsState.posts.isNotEmpty()) {
+                        items(postsState.posts, key = {
+                            it.id
+                        }) { photo ->
+                            CustomPost(post = photo, navController = navController)
+                        }
+                    }/*item {
                                 Button(onClick = {
                                     //viewModel.loadMorePosts()
                                 }) {
@@ -122,56 +154,54 @@ fun OwnProfileComposable(
                                 }
                             }*/
 
-                            if (viewModel.postsState.posts.isNotEmpty() && viewModel.postsState.isLoading) {
-                                item {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(80.dp)
-                                            .wrapContentSize(Alignment.Center),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    )
-                                }
-                            }
-
-                            if (viewModel.postsState.endReached && viewModel.postsState.posts.size > 10) {
-                                item {
-                                    EndOfListComposable()
-                                }
-                            }
-                        })
-
-                    InfiniteGridHandler(lazyGridState = lazyGridState, buffer = 6) {
-                        viewModel.getPostsPaginated()
-                    }
-
-                    if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(36.dp, 20.dp)
-                                .verticalScroll(
-                                    rememberScrollState()
-                                )
-                                .pullRefresh(pullRefreshState)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.empty_state_no_posts),
-                                contentDescription = null,
-                                Modifier.fillMaxWidth()
+                    if (postsState.posts.isNotEmpty() && postsState.isLoading) {
+                        item {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                                    .wrapContentSize(Alignment.Center),
+                                color = MaterialTheme.colorScheme.secondary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                         }
                     }
-                }
 
-                //LoadingComposable(isLoading = viewModel.accountState.isLoading)
-                ErrorComposable(message = viewModel.accountState.error, pullRefreshState)
+                    if (postsState.endReached && postsState.posts.size > 10) {
+                        item {
+                            EndOfListComposable()
+                        }
+                    }
+                })
+
+            InfiniteGridHandler(lazyGridState = lazyGridState, buffer = 6) {
+                getPostsPaginated()
             }
-            CustomPullRefreshIndicator(
-                viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-                pullRefreshState,
-            )
+
+            if (postsState.posts.isEmpty() && !postsState.isLoading && postsState.error.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(36.dp, 20.dp)
+                        .verticalScroll(
+                            rememberScrollState()
+                        )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.empty_state_no_posts),
+                        contentDescription = null,
+                        Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
+
+        //LoadingComposable(isLoading = viewModel.accountState.isLoading)
+        ErrorComposable(message = accountState.error, pullRefreshState)
     }
+
+    CustomPullRefreshIndicator(
+        accountState.isLoading || postsState.isLoading,
+        pullRefreshState,
+    )
 }

@@ -111,13 +111,13 @@ interface PixelfedApi {
         @Query("max_id") maxNotificationId: String
     ): Call<List<NotificationDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Header("Authorization") token: String,

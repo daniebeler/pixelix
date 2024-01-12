@@ -3,8 +3,10 @@ package com.daniebeler.pixelix.ui.composables.own_profile
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
@@ -63,7 +65,7 @@ class OwnProfileViewModel @Inject constructor(
         repository.getPostsByAccountId(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < 12
+                    val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
                     PostsState(posts = result.data ?: emptyList(), endReached = endReached)
                 }
 
@@ -83,7 +85,7 @@ class OwnProfileViewModel @Inject constructor(
             repository.getPostsByAccountId(accountId, postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < 12
+                        val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
                         PostsState(
                             posts = postsState.posts + (result.data ?: emptyList()),
                             endReached = endReached
