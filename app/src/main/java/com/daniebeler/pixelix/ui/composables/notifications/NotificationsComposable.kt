@@ -49,6 +49,7 @@ import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -174,10 +175,7 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         Column {
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    navController.navigate("profile_screen/" + notification.account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate("profile_screen/" + notification.account.id, navController)
                 }
             ) {
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold)

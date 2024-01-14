@@ -93,6 +93,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.utils.BlurHashDecoder
+import com.daniebeler.pixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -133,10 +134,7 @@ fun PostComposable(
             modifier = Modifier
                 .padding(start = 8.dp)
                 .clickable(onClick = {
-                    navController.navigate("profile_screen/" + post.account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate("profile_screen/" + post.account.id, navController)
                 })
         ) {
             AsyncImage(
@@ -338,10 +336,7 @@ fun PostComposable(
                                         .height(32.dp)
                                         .clip(CircleShape)
                                         .clickable {
-                                            navController.navigate("profile_screen/" + reply.account.id) {
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            Navigate().navigate("profile_screen/" + reply.account.id, navController)
                                         }
                                 )
 
@@ -353,10 +348,7 @@ fun PostComposable(
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.clickable {
-                                            navController.navigate("profile_screen/" + reply.account.id) {
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            Navigate().navigate("profile_screen/" + reply.account.id, navController)
                                         })
 
                                     HashtagsMentionsTextView(
@@ -531,10 +523,7 @@ fun HashtagsMentionsTextView(
 
                 }
                 if (route.isNotBlank() && route.isNotEmpty()) {
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate(route, navController)
                 }
             }
         })

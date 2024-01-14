@@ -59,6 +59,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,10 +74,7 @@ fun NewPostComposable(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
             viewModel.uris += uris
-            navController.navigate("new_post_screen") {
-                launchSingleTop = true
-                restoreState = true
-            }
+            Navigate().navigate("new_post_screen", navController)
         }
     )
 

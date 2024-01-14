@@ -33,6 +33,7 @@ import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import com.daniebeler.pixelix.ui.composables.profile.other_profile.ProfileTopSection
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,10 +47,7 @@ fun OwnProfileComposable(
             Text(text = viewModel.accountState.account?.username ?: "")
         }, actions = {
             IconButton(onClick = {
-                navController.navigate("settings_screen") {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                Navigate().navigate("settings_screen", navController)
             }) {
                 Icon(
                     imageVector = Icons.Outlined.Settings, contentDescription = ""
@@ -59,10 +57,7 @@ fun OwnProfileComposable(
 
     }, floatingActionButton = {
         FloatingActionButton(onClick = {
-            navController.navigate("new_post_screen") {
-                launchSingleTop = true
-                restoreState = true
-            }
+            Navigate().navigate("new_post_screen", navController)
         }) {
             Icon(Icons.Default.Add, contentDescription = "Add")
         }

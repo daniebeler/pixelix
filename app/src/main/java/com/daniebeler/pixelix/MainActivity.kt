@@ -292,7 +292,7 @@ fun BottomBar(
                 },
                 selected = currentRoute == screen.route,
                 onClick = {
-                    Navigate().navigate(screen.route, navController)
+                    Navigate().navigateWithPopUp(screen.route, navController)
                 }
             )
         }

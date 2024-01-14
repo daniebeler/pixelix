@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
+import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
 fun CustomAccount(account: Account, relationship: Relationship?, navController: NavController) {
@@ -29,10 +30,7 @@ fun CustomAccount(account: Account, relationship: Relationship?, navController: 
         .padding(horizontal = 12.dp, vertical = 8.dp)
         .fillMaxWidth()
         .clickable {
-            navController.navigate("profile_screen/" + account.id) {
-                launchSingleTop = true
-                restoreState = true
-            }
+            Navigate().navigate("profile_screen/" + account.id, navController)
         },
         verticalAlignment = Alignment.CenterVertically
     ) {

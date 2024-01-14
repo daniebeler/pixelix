@@ -66,6 +66,7 @@ import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -309,10 +310,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        navController.navigate("followers_screen/" + "followers/" + account.id) {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        Navigate().navigate("followers_screen/" + "followers/" + account.id, navController)
                     }) {
                     Text(
                         text = account!!.followersCount.toString(),
@@ -325,10 +323,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        navController.navigate("followers_screen/" + "following/" + account.id) {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        Navigate().navigate("followers_screen/" + "following/" + account.id, navController)
                     }) {
                     Text(
                         text = account!!.followingCount.toString(),

@@ -6,6 +6,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 class Navigate {
     fun navigate(route: String, navController: NavController) {
         navController.navigate(route) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    fun navigateWithPopUp(route: String, navController: NavController) {
+        navController.navigate(route) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }

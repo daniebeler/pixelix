@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.utils.BlurHashDecoder
+import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
 fun CustomPost(post: Post, navController: NavController) {
@@ -31,10 +32,7 @@ fun CustomPost(post: Post, navController: NavController) {
             modifier = Modifier
                 .aspectRatio(1f)
                 .clickable(onClick = {
-                    navController.navigate("single_post_screen/" + post.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate("single_post_screen/" + post.id, navController)
                 }),
         ) {
             val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -76,10 +74,7 @@ fun CustomPost(post: Post, navController: NavController) {
                 modifier = Modifier
                     .aspectRatio(1f)
                     .clickable(onClick = {
-                        navController.navigate("single_post_screen/" + post.id) {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        Navigate().navigate("single_post_screen/" + post.id, navController)
                     })
             )
         }
