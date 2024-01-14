@@ -37,11 +37,11 @@ import com.daniebeler.pixelix.ui.composables.HomeComposable
 import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pixelix.ui.composables.profile.own_profile.OwnProfileComposable
-import com.daniebeler.pixelix.ui.composables.profile.other_profile.ProfileComposable
 import com.daniebeler.pixelix.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixelix.ui.composables.newpost.NewPostComposable
+import com.daniebeler.pixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pixelix.ui.composables.search.SearchComposable
 import com.daniebeler.pixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
@@ -204,7 +204,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
             uId?.let { id ->
-                ProfileComposable(navController, userId = id)
+                OtherProfileComposable(navController, userId = id)
             }
         }
 

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class OtherProfileViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
