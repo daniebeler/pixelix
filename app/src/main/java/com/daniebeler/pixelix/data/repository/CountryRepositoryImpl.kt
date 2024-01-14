@@ -12,6 +12,7 @@ import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
+import com.daniebeler.pixelix.domain.model.Instance
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
@@ -22,6 +23,7 @@ import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.model.toAccessToken
 import com.daniebeler.pixelix.domain.model.toAccount
 import com.daniebeler.pixelix.domain.model.toApplication
+import com.daniebeler.pixelix.domain.model.toInstance
 import com.daniebeler.pixelix.domain.model.toMediaAttachment
 import com.daniebeler.pixelix.domain.model.toNotification
 import com.daniebeler.pixelix.domain.model.toPost
@@ -216,24 +218,25 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getHashtagTimeline(hashtag, accessToken, maxId).awaitResponse()
-            } else {
-                pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
+    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val response = if (maxId.isNotEmpty()) {
+                    pixelfedApi.getHashtagTimeline(hashtag, accessToken, maxId).awaitResponse()
+                } else {
+                    pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
+                }
+                if (response.isSuccessful) {
+                    val res = response.body()?.map { it.toPost() } ?: emptyList()
+                    emit(Resource.Success(res))
+                } else {
+                    emit(Resource.Error("Unknown Error"))
+                }
+            } catch (exception: Exception) {
+                emit(Resource.Error(exception.message ?: "Unknown Error"))
             }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
-    }
 
     override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
         try {
@@ -728,6 +731,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             }
         } catch (exception: Exception) {
             emit(Resource.Error("Unknown Error"))
+        }
+    }
+
+    override fun getInstance(): Flow<Resource<Instance>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.getInstance().awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()!!.toInstance()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 

@@ -5,6 +5,7 @@ import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pixelix.data.remote.dto.ApplicationDto
+import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
@@ -26,6 +27,9 @@ import retrofit2.http.Query
 interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
+
+    @GET("api/v2/instance")
+    fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1.1/discover/posts/hashtags?range=daily&_pe=1")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>

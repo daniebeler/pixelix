@@ -6,6 +6,7 @@ import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
+import com.daniebeler.pixelix.domain.model.Instance
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
@@ -52,6 +53,8 @@ interface CountryRepository {
     fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 
     fun getAccount(accountId: String): Flow<Resource<Account?>>
+
+    fun getInstance(): Flow<Resource<Instance>>
 
     fun followAccount(accountId: String): Flow<Resource<Relationship>>
 
