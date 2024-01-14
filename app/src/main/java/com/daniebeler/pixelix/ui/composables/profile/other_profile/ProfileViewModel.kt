@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables.profile
+package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.profile.AccountState
+import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersState
+import com.daniebeler.pixelix.ui.composables.profile.PostsState
+import com.daniebeler.pixelix.ui.composables.profile.RelationshipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

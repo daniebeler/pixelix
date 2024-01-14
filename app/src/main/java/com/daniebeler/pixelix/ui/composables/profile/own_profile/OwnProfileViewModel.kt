@@ -1,9 +1,8 @@
-package com.daniebeler.pixelix.ui.composables.own_profile
+package com.daniebeler.pixelix.ui.composables.profile.own_profile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants

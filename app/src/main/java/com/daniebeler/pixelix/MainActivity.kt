@@ -27,8 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.view.WindowCompat
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,8 +36,8 @@ import com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline.HashtagT
 import com.daniebeler.pixelix.ui.composables.HomeComposable
 import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.notifications.NotificationsComposable
-import com.daniebeler.pixelix.ui.composables.own_profile.OwnProfileComposable
-import com.daniebeler.pixelix.ui.composables.profile.ProfileComposable
+import com.daniebeler.pixelix.ui.composables.profile.own_profile.OwnProfileComposable
+import com.daniebeler.pixelix.ui.composables.profile.other_profile.ProfileComposable
 import com.daniebeler.pixelix.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixelix.ui.composables.followers.FollowersMainComposable

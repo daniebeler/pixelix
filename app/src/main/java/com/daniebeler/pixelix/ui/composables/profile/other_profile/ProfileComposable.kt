@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables.profile
+package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
@@ -69,6 +69,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
