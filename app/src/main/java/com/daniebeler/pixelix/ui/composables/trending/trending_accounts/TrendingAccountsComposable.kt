@@ -12,7 +12,6 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

@@ -3,7 +3,6 @@ package com.daniebeler.pixelix.data.repository
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -36,19 +35,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.net.URI
 
 private val Context.dataStore by preferencesDataStore("settings")
 
@@ -56,7 +51,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
 
     private val settingsDataStore = context.dataStore
 
-    private var BASE_URL = ""
+    private var baseUrl = ""
     private var accessToken: String = ""
 
     private lateinit var pixelfedApi: PixelfedApi
@@ -68,9 +63,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 println("Bearer $accessTokenFromStorage")
                 accessToken = "Bearer $accessTokenFromStorage"
             }
-            val baseUrl = getBaseUrlFromStorage().first()
-            if (baseUrl.isNotEmpty()) {
-                BASE_URL = baseUrl
+            val baseUrlFromStorage = getBaseUrlFromStorage().first()
+            if (baseUrlFromStorage.isNotEmpty()) {
+                baseUrl = baseUrlFromStorage
                 buildPixelFedApi()
             }
         }
@@ -83,7 +78,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         val mOkHttpClient = OkHttpClient.Builder().addInterceptor(mHttpLoggingInterceptor).build()
 
         val retrofit: Retrofit =
-            Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
+            Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
                 .client(mOkHttpClient).build()
 
         pixelfedApi = retrofit.create(PixelfedApi::class.java)
@@ -99,11 +94,11 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override suspend fun storeBaseUrl(baseUrl: String) {
+    override suspend fun storeBaseUrl(url: String) {
         settingsDataStore.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = baseUrl
+            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = url
         }
-        BASE_URL = baseUrl
+        baseUrl = url
         buildPixelFedApi()
     }
 
@@ -149,8 +144,8 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
         }
 
-    override fun setBaseUrl(baseUrl: String) {
-        BASE_URL = baseUrl
+    override fun setBaseUrl(url: String) {
+        baseUrl = url
     }
 
     override fun setAccessToken(token: String) {
@@ -347,10 +342,10 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getReplies(userid: String, postid: String): Flow<Resource<List<Reply>>> = flow {
+    override fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getReplies(userid, postid).awaitResponse()
+            val response = pixelfedApi.getReplies(userid, postId).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()?.data?.map { it.toReply() } ?: emptyList()
                 emit(Resource.Success(res))
@@ -482,7 +477,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun unbookmarkPost(postId: String): Flow<Resource<Post>> = flow {
+    override fun unBookmarkPost(postId: String): Flow<Resource<Post>> = flow {
         try {
             emit(Resource.Loading())
             val response = pixelfedApi.unbookmarkPost(postId, accessToken).awaitResponse()
@@ -691,7 +686,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             }
         }
 
-    override fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>> = flow {
+    override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> = flow {
         try {
             emit(Resource.Loading())
             val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
@@ -792,7 +787,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
 
     override suspend fun verifyToken(token: String): Account? {
         return try {
-            val response = pixelfedApi.verifyToken("Bearer " + token).awaitResponse()
+            val response = pixelfedApi.verifyToken("Bearer $token").awaitResponse()
             if (response.isSuccessful) {
                 response.body()?.toAccount()
             } else {

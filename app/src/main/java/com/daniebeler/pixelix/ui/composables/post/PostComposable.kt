@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -53,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -111,7 +111,7 @@ fun PostComposable(
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(0) }
+    var showBottomSheet by remember { mutableIntStateOf(0) }
 
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
@@ -270,7 +270,7 @@ fun PostComposable(
 
                 if (viewModel.bookmarkState.bookmarked) {
                     IconButton(onClick = {
-                        viewModel.unbookmarkPost(post.id)
+                        viewModel.unBookmarkPost(post.id)
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Bookmark, contentDescription = ""

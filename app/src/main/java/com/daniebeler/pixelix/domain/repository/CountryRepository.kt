@@ -21,7 +21,7 @@ interface CountryRepository {
     fun doesAccessTokenExist(): Boolean
 
     suspend fun storeClientId(clientId: String)
-    suspend fun storeBaseUrl(baseUrl: String)
+    suspend fun storeBaseUrl(url: String)
     fun getClientIdFromStorage(): Flow<String>
     fun getBaseUrlFromStorage(): Flow<String>
     suspend fun storeClientSecret(clientSecret: String)
@@ -30,7 +30,7 @@ interface CountryRepository {
     suspend fun storeAccountId(accountId: String)
     suspend fun getAccountId(): Flow<String>
     fun getAccessTokenFromStorage(): Flow<String>
-    fun setBaseUrl(baseUrl: String)
+    fun setBaseUrl(url: String)
     fun setAccessToken(token: String)
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
@@ -47,9 +47,9 @@ interface CountryRepository {
 
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
 
-    fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>>
+    fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
 
-    fun getReplies(userid: String, postid: String): Flow<Resource<List<Reply>>>
+    fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 
     fun getAccount(accountId: String): Flow<Resource<Account?>>
 
@@ -66,7 +66,7 @@ interface CountryRepository {
 
     fun bookmarkPost(postId: String): Flow<Resource<Post>>
 
-    fun unbookmarkPost(postId: String): Flow<Resource<Post>>
+    fun unBookmarkPost(postId: String): Flow<Resource<Post>>
     fun muteAccount(accountId: String): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
 

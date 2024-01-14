@@ -114,11 +114,9 @@ fun CustomProfilePage(
                 navController = navController,
                 getItemsPaginated = { getPostsPaginated() },
                 before = {
-                    if (accountState.account != null) {
-                        ProfileTopSection(
-                            account = accountState.account!!, navController
-                        )
-                    }
+                    ProfileTopSection(
+                        account = accountState.account, navController
+                    )
                 })
 
             if (postsState.posts.isEmpty() && !postsState.isLoading && postsState.error.isEmpty()) {

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.ui.composables.post.PostComposable
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun InfinitePostsList(items: List<Post>, isLoading: Boolean, isRefreshing: Boolean, navController: NavController, getItemsPaginated: () -> Unit) {
 

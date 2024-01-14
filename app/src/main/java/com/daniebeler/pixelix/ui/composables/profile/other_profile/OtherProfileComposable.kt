@@ -208,8 +208,6 @@ fun OtherProfileComposable(
             Column(
                 modifier = Modifier.padding(bottom = 32.dp)
             ) {
-
-
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
                         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
@@ -217,7 +215,7 @@ fun OtherProfileComposable(
                                 R.string.unmute_this_profile
                             ),
                             onClick = {
-                                viewModel.unmuteAccount(userId)
+                                viewModel.unMuteAccount(userId)
                             })
                     } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
@@ -303,7 +301,10 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        Navigate().navigate("followers_screen/" + "followers/" + account.id, navController)
+                        Navigate().navigate(
+                            "followers_screen/" + "followers/" + account.id,
+                            navController
+                        )
                     }) {
                     Text(
                         text = account.followersCount.toString(),
@@ -316,7 +317,10 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        Navigate().navigate("followers_screen/" + "following/" + account.id, navController)
+                        Navigate().navigate(
+                            "followers_screen/" + "following/" + account.id,
+                            navController
+                        )
                     }) {
                     Text(
                         text = account.followingCount.toString(),

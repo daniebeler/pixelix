@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.MainViewModel
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
@@ -32,7 +31,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeComposable(viewModel: MainViewModel, navController: NavController) {
+fun HomeComposable(navController: NavController) {
 
     val pagerState = rememberPagerState { 3 }
 

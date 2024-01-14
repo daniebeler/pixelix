@@ -7,13 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.domain.model.Reply
-import com.daniebeler.pixelix.ui.composables.notifications.NotificationsState
 import com.daniebeler.pixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -119,9 +116,9 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun unbookmarkPost(postId: String) {
+    fun unBookmarkPost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.unbookmarkPost(postId).onEach {result ->
+            repository.unBookmarkPost(postId).onEach {result ->
                 bookmarkState = when (result) {
                     is Resource.Success -> {
                         BookmarkState(bookmarked = result.data?.bookmarked ?: false)

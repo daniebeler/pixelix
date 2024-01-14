@@ -21,10 +21,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
@@ -32,22 +29,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pixelix.ui.composables.HomeComposable
-import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
-import com.daniebeler.pixelix.ui.composables.notifications.NotificationsComposable
-import com.daniebeler.pixelix.ui.composables.profile.own_profile.OwnProfileComposable
-import com.daniebeler.pixelix.ui.composables.settings.SettingsComposable
-import com.daniebeler.pixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixelix.ui.composables.newpost.NewPostComposable
+import com.daniebeler.pixelix.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pixelix.ui.composables.profile.other_profile.OtherProfileComposable
+import com.daniebeler.pixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pixelix.ui.composables.search.SearchComposable
+import com.daniebeler.pixelix.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixelix.ui.composables.settings.about_instance.AboutInstanceComposable
 import com.daniebeler.pixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
 import com.daniebeler.pixelix.ui.composables.settings.liked_posts.LikedPostsComposable
+import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
+import com.daniebeler.pixelix.ui.composables.single_post.SinglePostComposable
+import com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixelix.ui.theme.PixelixTheme
 import com.daniebeler.pixelix.utils.Navigate
@@ -192,7 +189,7 @@ sealed class Destinations(
 fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController, startDestination = Destinations.HomeScreen.route) {
         composable(Destinations.HomeScreen.route) {
-            HomeComposable(viewModel = viewModel, navController)
+            HomeComposable(navController)
         }
         composable(Destinations.TrendingScreen.route) {
             TrendingComposable(navController)

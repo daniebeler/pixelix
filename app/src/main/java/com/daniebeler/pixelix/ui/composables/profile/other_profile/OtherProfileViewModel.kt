@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
@@ -35,11 +35,11 @@ class OtherProfileViewModel @Inject constructor(
 
         getRelationship(userId)
 
-        getMututalFollowers(userId)
+        getMutualFollowers(userId)
     }
 
     private fun getRelationship(userId: String) {
-        repository.getRelationships(List(1) {userId}).onEach { result ->
+        repository.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data!![0])
@@ -56,9 +56,9 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getMututalFollowers(userId: String) {
-        repository.getMutalFollowers(userId).onEach { result ->
-             mutualFollowersState = when (result) {
+    private fun getMutualFollowers(userId: String) {
+        repository.getMutualFollowers(userId).onEach { result ->
+            mutualFollowersState = when (result) {
                 is Resource.Success -> {
                     MutualFollowersState(mutualFollowers = result.data ?: emptyList())
                 }
@@ -189,7 +189,7 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unmuteAccount(userId: String) {
+    fun unMuteAccount(userId: String) {
         repository.unMuteAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {

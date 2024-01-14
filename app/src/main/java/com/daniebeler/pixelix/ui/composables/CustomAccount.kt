@@ -50,11 +50,11 @@ fun CustomAccount(account: Account, relationship: Relationship?, navController: 
 
         if (relationship != null) {
             if (relationship.following) {
-                Button(onClick = { /*TODO*/ },) {
+                Button(onClick = { /*TODO*/ }) {
                     Text(text = "unfollow")
                 }
             } else {
-                Button(onClick = { /*TODO*/ },) {
+                Button(onClick = { /*TODO*/ }) {
                     Text(text = "follow")
                 }
             }
