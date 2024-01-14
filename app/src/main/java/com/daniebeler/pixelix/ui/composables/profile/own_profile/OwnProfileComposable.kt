@@ -32,7 +32,7 @@ import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
-import com.daniebeler.pixelix.ui.composables.profile.other_profile.ProfileTopSection
+import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,8 +40,6 @@ import com.daniebeler.pixelix.utils.Navigate
 fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
-
-
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text = viewModel.accountState.account?.username ?: "")
