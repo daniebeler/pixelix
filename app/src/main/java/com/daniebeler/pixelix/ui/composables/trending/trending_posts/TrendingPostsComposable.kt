@@ -41,6 +41,10 @@ fun TrendingPostsComposable(
             isLoading = viewModel.trendingState.isLoading,
             isRefreshing = false,
             endReached = true,
+            error = viewModel.trendingState.error,
+            emptyMessage = {
+                Text(text = "no posts")
+            },
             navController = navController,
             getItemsPaginated = { },
             before = { })

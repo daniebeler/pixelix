@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -124,7 +126,15 @@ fun OtherProfileComposable(
                     items = viewModel.postsState.posts,
                     isLoading = viewModel.postsState.isLoading,
                     isRefreshing = false,
+                    error = viewModel.postsState.error,
                     endReached = viewModel.postsState.endReached,
+                    emptyMessage = {
+                        Image(
+                            painter = painterResource(id = R.drawable.empty_state_no_posts),
+                            contentDescription = null,
+                            Modifier.fillMaxWidth()
+                        )
+                    },
                     navController = navController,
                     getItemsPaginated = { viewModel.getPostsPaginated(userId) },
                     before = {

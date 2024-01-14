@@ -111,6 +111,10 @@ fun CustomProfilePage(
                 items = postsState.posts,
                 isLoading = postsState.isLoading,
                 isRefreshing = false,
+                error = postsState.error,
+                emptyMessage = {
+                    Text(text = "no posts")
+                },
                 endReached = postsState.endReached,
                 navController = navController,
                 getItemsPaginated = { getPostsPaginated() },
