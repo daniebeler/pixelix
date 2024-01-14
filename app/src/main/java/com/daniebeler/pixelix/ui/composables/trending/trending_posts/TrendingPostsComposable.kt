@@ -21,6 +21,8 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -41,20 +43,13 @@ fun TrendingPostsComposable(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyVerticalGrid(
-            modifier = Modifier.pullRefresh(pullRefreshState),
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            content = {
-                items(viewModel.trendingState.trendingPosts, key = {
-                    it.id
-                }) { photo ->
-                    CustomPost(post = photo, navController = navController)
-                }
-
-            }
-        )
+        InfinitePostsGrid(
+            items = viewModel.trendingState.trendingPosts,
+            isLoading = viewModel.trendingState.isLoading,
+            isRefreshing = false,
+            navController = navController,
+            getItemsPaginated = { },
+            before = { })
 
         CustomPullRefreshIndicator(
             viewModel.trendingState.isLoading,

@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
@@ -49,6 +50,7 @@ import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteGridHandler
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
@@ -124,59 +126,22 @@ fun CustomProfilePage(
         rememberPullRefreshState(refreshing = accountState.isLoading || postsState.isLoading,
             onRefresh = { refresh() })
 
-    val lazyGridState = rememberLazyGridState()
-
     Column {
         if (accountState.account != null) {
-            LazyVerticalGrid(columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                state = lazyGridState,
-                content = {
+
+            InfinitePostsGrid(
+                items = postsState.posts,
+                isLoading = postsState.isLoading,
+                isRefreshing = false,
+                navController = navController,
+                getItemsPaginated = { getPostsPaginated() },
+                before = {
                     if (accountState.account != null) {
-                        item(span = { GridItemSpan(3) }) {
-                            ProfileTopSection(
-                                account = accountState.account!!, navController
-                            )
-                        }
-                    }
-                    if (postsState.posts.isNotEmpty()) {
-                        items(postsState.posts, key = {
-                            it.id
-                        }) { photo ->
-                            CustomPost(post = photo, navController = navController)
-                        }
-                    }/*item {
-                                Button(onClick = {
-                                    //viewModel.loadMorePosts()
-                                }) {
-                                    Text(text = stringResource(R.string.load_more))
-                                }
-                            }*/
-
-                    if (postsState.posts.isNotEmpty() && postsState.isLoading) {
-                        item {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp)
-                                    .wrapContentSize(Alignment.Center),
-                                color = MaterialTheme.colorScheme.secondary,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                            )
-                        }
-                    }
-
-                    if (postsState.endReached && postsState.posts.size > 10) {
-                        item {
-                            EndOfListComposable()
-                        }
+                        ProfileTopSection(
+                            account = accountState.account!!, navController
+                        )
                     }
                 })
-
-            InfiniteGridHandler(lazyGridState = lazyGridState, buffer = 6) {
-                getPostsPaginated()
-            }
 
             if (postsState.posts.isEmpty() && !postsState.isLoading && postsState.error.isEmpty()) {
                 Box(
