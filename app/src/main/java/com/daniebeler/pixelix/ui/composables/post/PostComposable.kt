@@ -251,7 +251,9 @@ fun PostComposable(
                         viewModel.unlikePost(post.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Favorite, contentDescription = ""
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 } else {

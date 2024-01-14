@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Tag
@@ -99,6 +100,13 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
                 text = stringResource(R.string.blocked_accounts),
                 onClick = {
                     Navigate().navigate("blocked_accounts_screen", navController)
+                })
+
+            CustomSettingsElement(
+                icon = Icons.Outlined.Dns,
+                text = "About this instance",
+                onClick = {
+                    Navigate().navigate("about_instance_screen", navController)
                 })
 
             CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(

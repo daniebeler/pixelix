@@ -43,6 +43,7 @@ import com.daniebeler.pixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixelix.ui.composables.newpost.NewPostComposable
 import com.daniebeler.pixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pixelix.ui.composables.search.SearchComposable
+import com.daniebeler.pixelix.ui.composables.settings.about_instance.AboutInstanceComposable
 import com.daniebeler.pixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
@@ -69,14 +70,9 @@ class MainActivity : ComponentActivity() {
                 PixelixTheme {
                     val navController: NavHostController = rememberNavController()
 
-                    var buttonsVisible = remember { mutableStateOf(true) }
-
                     Scaffold(
                         bottomBar = {
-                            BottomBar(
-                                navController = navController,
-                                state = buttonsVisible
-                            )
+                            BottomBar(navController = navController)
                         }) { paddingValues ->
                         Box(
                             modifier = Modifier.padding(paddingValues)
@@ -158,6 +154,11 @@ sealed class Destinations(
 
     object FollowedHashtags : Destinations(
         route = "followed_hashtags_screen",
+        icon = Icons.Outlined.Settings
+    )
+
+    object AboutInstance : Destinations(
+        route = "about_instance_screen",
         icon = Icons.Outlined.Settings
     )
 
@@ -243,6 +244,10 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             FollowedHashtagsComposable(navController)
         }
 
+        composable(Destinations.AboutInstance.route) {
+            AboutInstanceComposable(navController)
+        }
+
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(navController)
         }
@@ -269,9 +274,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 }
 
 @Composable
-fun BottomBar(
-    navController: NavHostController, state: MutableState<Boolean>, modifier: Modifier = Modifier
-) {
+fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         Destinations.HomeScreen,
         Destinations.Search,
