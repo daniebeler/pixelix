@@ -40,6 +40,7 @@ fun TrendingPostsComposable(
             items = viewModel.trendingState.trendingPosts,
             isLoading = viewModel.trendingState.isLoading,
             isRefreshing = false,
+            endReached = true,
             navController = navController,
             getItemsPaginated = { },
             before = { })

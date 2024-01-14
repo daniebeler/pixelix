@@ -111,6 +111,7 @@ fun CustomProfilePage(
                 items = postsState.posts,
                 isLoading = postsState.isLoading,
                 isRefreshing = false,
+                endReached = postsState.endReached,
                 navController = navController,
                 getItemsPaginated = { getPostsPaginated() },
                 before = {

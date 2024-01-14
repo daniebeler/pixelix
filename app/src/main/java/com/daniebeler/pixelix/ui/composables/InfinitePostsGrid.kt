@@ -29,6 +29,7 @@ fun InfinitePostsGrid(
     items: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
+    endReached: Boolean,
     navController: NavController,
     getItemsPaginated: () -> Unit,
     before: @Composable () -> Unit) {
@@ -52,8 +53,8 @@ fun InfinitePostsGrid(
             CustomPost(post = photo, navController = navController)
         }
 
-        if (items.isNotEmpty() && isLoading && isRefreshing) {
-            item {
+        if (items.isNotEmpty() && isLoading) {
+            item (span = { GridItemSpan(3)}) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -62,6 +63,12 @@ fun InfinitePostsGrid(
                     color = MaterialTheme.colorScheme.secondary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
+            }
+        }
+
+        if (endReached && items.size > 10) {
+            item (span = { GridItemSpan(3)}) {
+                EndOfListComposable()
             }
         }
     }

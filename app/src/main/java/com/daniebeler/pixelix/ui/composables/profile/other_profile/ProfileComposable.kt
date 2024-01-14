@@ -69,6 +69,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -123,98 +124,66 @@ fun ProfileComposable(
 
         }
     ) { paddingValues ->
-        Box {
+        Box(Modifier.padding(paddingValues)) {
             if (viewModel.accountState.account != null) {
-                Column(Modifier.padding(paddingValues)) {
-                    LazyVerticalGrid(
-                        modifier = Modifier.pullRefresh(pullRefreshState),
-                        columns = GridCells.Fixed(3),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        content = {
 
-                            item(
-                                span = { GridItemSpan(3) }
-                            ) {
-                                ProfileTopSection(viewModel.accountState.account!!, navController)
-                            }
+                InfinitePostsGrid(
+                    items = viewModel.postsState.posts,
+                    isLoading = viewModel.postsState.isLoading,
+                    isRefreshing = false,
+                    endReached = viewModel.postsState.endReached,
+                    navController = navController,
+                    getItemsPaginated = { viewModel.getPostsPaginated(userId) },
+                    before = {
+
+                        Column {
+                            ProfileTopSection(viewModel.accountState.account!!, navController)
 
 
-                            item(
-                                span = { GridItemSpan(3) }
-                            ) {
-                                Column(Modifier.padding(12.dp)) {
+                            Column(Modifier.padding(12.dp)) {
 
-                                    MutualFollowersComposable(viewModel.mutualFollowersState)
+                                MutualFollowersComposable(viewModel.mutualFollowersState)
 
-                                    Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(12.dp))
 
-                                    if (viewModel.relationshipState.isLoading) {
-                                        Button(onClick = {
-                                            viewModel.unfollowAccount(userId)
-                                        }, modifier = Modifier.width(120.dp)) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.size(20.dp),
-                                                color = MaterialTheme.colorScheme.secondary,
-                                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                            )
-                                        }
-                                    }
-
-                                    if (viewModel.relationshipState.accountRelationship != null) {
-                                        if (viewModel.relationshipState.accountRelationship!!.following) {
-                                            Button(
-                                                onClick = {
-                                                    viewModel.unfollowAccount(userId)
-                                                },
-                                                modifier = Modifier.width(120.dp)
-                                            ) {
-                                                Text(text = stringResource(R.string.unfollow))
-                                            }
-                                        } else {
-                                            Button(onClick = {
-                                                viewModel.followAccount(userId)
-                                            }, modifier = Modifier.width(120.dp)) {
-                                                Text(text = stringResource(R.string.follow))
-                                            }
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                }
-                            }
-
-                            items(viewModel.postsState.posts, key = {
-                                it.id
-                            }) { photo ->
-                                CustomPost(post = photo, navController = navController)
-                            }
-
-                            if (!viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
-                                item(span = { GridItemSpan(3) }) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier.aspectRatio(2f)
-                                    ) {
-                                        Text(text = "No posts")
-                                    }
-                                }
-                            }
-
-                            if (!viewModel.postsState.isLoading && viewModel.postsState.posts.isNotEmpty()) {
-                                item {
+                                if (viewModel.relationshipState.isLoading) {
                                     Button(onClick = {
-                                        //viewModel.loadMorePosts(userId)
-                                    }) {
-                                        Text(text = stringResource(R.string.load_more))
+                                        viewModel.unfollowAccount(userId)
+                                    }, modifier = Modifier.width(120.dp)) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        )
                                     }
                                 }
+
+                                if (viewModel.relationshipState.accountRelationship != null) {
+                                    if (viewModel.relationshipState.accountRelationship!!.following) {
+                                        Button(
+                                            onClick = {
+                                                viewModel.unfollowAccount(userId)
+                                            },
+                                            modifier = Modifier.width(120.dp)
+                                        ) {
+                                            Text(text = stringResource(R.string.unfollow))
+                                        }
+                                    } else {
+                                        Button(onClick = {
+                                            viewModel.followAccount(userId)
+                                        }, modifier = Modifier.width(120.dp)) {
+                                            Text(text = stringResource(R.string.follow))
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(24.dp))
                             }
                         }
-                    )
 
-                }
+                    })
+
+
             }
             CustomPullRefreshIndicator(
                 viewModel.accountState.isLoading,
@@ -374,7 +343,11 @@ fun ProfileTopSection(account: Account, navController: NavController) {
         Text(text = "@" + account!!.acct, fontSize = 12.sp)
 
         account!!.note?.let {
-            HashtagsMentionsTextView(text = account!!.note, mentions = null, navController = navController)
+            HashtagsMentionsTextView(
+                text = account!!.note,
+                mentions = null,
+                navController = navController
+            )
         }
 
         account!!.website?.let {

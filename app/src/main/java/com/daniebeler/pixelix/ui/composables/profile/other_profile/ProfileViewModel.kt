@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
@@ -30,7 +31,7 @@ class ProfileViewModel @Inject constructor(
     fun loadData(userId: String) {
         getAccount(userId)
 
-        getPosts(userId)
+        getPostsFirstLoad(userId)
 
         getRelationship(userId)
 
@@ -91,11 +92,12 @@ class ProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getPosts(userId: String) {
+    private fun getPostsFirstLoad(userId: String) {
         repository.getPostsByAccountId(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    PostsState(posts = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -107,6 +109,30 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getPostsPaginated(userId: String) {
+        if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
+            repository.getPostsByAccountId(userId, postsState.posts.last().id).onEach { result ->
+                postsState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                        PostsState(
+                            posts = postsState.posts + (result.data ?: emptyList()),
+                            endReached = endReached
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        PostsState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        PostsState(isLoading = true, posts = postsState.posts)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun followAccount(userId: String) {
