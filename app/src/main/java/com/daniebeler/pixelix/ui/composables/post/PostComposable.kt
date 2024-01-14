@@ -336,7 +336,10 @@ fun PostComposable(
                                         .height(32.dp)
                                         .clip(CircleShape)
                                         .clickable {
-                                            Navigate().navigate("profile_screen/" + reply.account.id, navController)
+                                            Navigate().navigate(
+                                                "profile_screen/" + reply.account.id,
+                                                navController
+                                            )
                                         }
                                 )
 
@@ -348,7 +351,10 @@ fun PostComposable(
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.clickable {
-                                            Navigate().navigate("profile_screen/" + reply.account.id, navController)
+                                            Navigate().navigate(
+                                                "profile_screen/" + reply.account.id,
+                                                navController
+                                            )
                                         })
 
                                     HashtagsMentionsTextView(
@@ -373,7 +379,7 @@ fun PostComposable(
                             R.string.open_in_browser
                         ),
                         onClick = {
-                            openUrl(context, post.url)
+                            Navigate().openUrlInApp(context, post.url)
                         })
 
                     CustomBottomSheetElement(icon = Icons.Outlined.Share,
@@ -386,12 +392,6 @@ fun PostComposable(
 
         }
     }
-
-}
-
-private fun openUrl(context: Context, url: String) {
-    val intent = CustomTabsIntent.Builder().build()
-    intent.launchUrl(context, Uri.parse(url))
 }
 
 private fun shareProfile(context: Context, url: String) {

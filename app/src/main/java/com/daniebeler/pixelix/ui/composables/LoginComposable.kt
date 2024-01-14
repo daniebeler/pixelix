@@ -1,11 +1,7 @@
 package com.daniebeler.pixelix.ui.composables
 
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,28 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,16 +35,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
 
@@ -78,24 +66,6 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
                 .padding(paddingValues)
                 .padding(12.dp)
         ) {
-            /*Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Button(onClick = {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.login("pixelfed.social", context)
-                    }
-                }) {
-                    Text(text = "Pixelfed.social")
-                }
-                Button(onClick = {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.login("pixelfed.de", context)
-                    }
-                }) {
-                    Text(text = "Pixelfed.de")
-                }
-            }*/
             Spacer(modifier = Modifier.weight(1f))
             Row(verticalAlignment = Alignment.Bottom) {
                 OutlinedTextField(
@@ -150,14 +120,13 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
                 Text(
                     text = "I don't have an account",
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.align(Alignment.Center).clickable {
-                        val intent = CustomTabsIntent.Builder().build()
-                        val url = "https://pixelfed.org/servers"
-                        intent.launchUrl(context, Uri.parse(url))
-                    })
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .clickable {
+                            val url = "https://pixelfed.org/servers"
+                            Navigate().openUrlInApp(context, url)
+                        })
             }
-
-
 
             if (viewModel.loading) {
                 CircularProgressIndicator(

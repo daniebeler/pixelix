@@ -1,5 +1,8 @@
 package com.daniebeler.pixelix.utils
 
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
@@ -20,5 +23,10 @@ class Navigate {
             launchSingleTop = true
             restoreState = true
         }
+    }
+
+    fun openUrlInApp(context: Context, url: String) {
+        val intent = CustomTabsIntent.Builder().build()
+        intent.launchUrl(context, Uri.parse(url))
     }
 }

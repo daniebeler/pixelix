@@ -35,7 +35,7 @@ data class AccountDto(
     @SerializedName("note")
     val note: String,
     @SerializedName("note_text")
-    val noteText: String,
+    val noteText: String?,
     @SerializedName("pronouns")
     val pronouns: List<Any>,
     @SerializedName("statuses_count")

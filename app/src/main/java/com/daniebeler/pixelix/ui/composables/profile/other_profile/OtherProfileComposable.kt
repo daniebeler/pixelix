@@ -1,11 +1,7 @@
 package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
-import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
-import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,6 +61,8 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
+import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pixelix.utils.Navigate
 
@@ -251,7 +249,7 @@ fun OtherProfileComposable(
                 CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
-                    openUrl(context, viewModel.accountState.account!!.url)
+                    Navigate().openUrlInApp(context, viewModel.accountState.account!!.url)
                 })
 
                 CustomBottomSheetElement(
@@ -263,11 +261,6 @@ fun OtherProfileComposable(
             }
         }
     }
-}
-
-private fun openUrl(context: Context, url: String) {
-    val intent = CustomTabsIntent.Builder().build()
-    intent.launchUrl(context, Uri.parse(url))
 }
 
 private fun shareProfile(context: Context, url: String) {
@@ -287,7 +280,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
     Column(Modifier.padding(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
-                model = account!!.avatar,
+                model = account.avatar,
                 contentDescription = "",
                 modifier = Modifier
                     .height(76.dp)
@@ -300,7 +293,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = account!!.postsCount.toString(),
+                        text = account.postsCount.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -313,7 +306,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                         Navigate().navigate("followers_screen/" + "followers/" + account.id, navController)
                     }) {
                     Text(
-                        text = account!!.followersCount.toString(),
+                        text = account.followersCount.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -326,7 +319,7 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                         Navigate().navigate("followers_screen/" + "following/" + account.id, navController)
                     }) {
                     Text(
-                        text = account!!.followingCount.toString(),
+                        text = account.followingCount.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -337,18 +330,16 @@ fun ProfileTopSection(account: Account, navController: NavController) {
 
         }
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = account!!.displayname, fontWeight = FontWeight.Bold)
-        Text(text = "@" + account!!.acct, fontSize = 12.sp)
+        Text(text = account.displayname, fontWeight = FontWeight.Bold)
+        Text(text = "@" + account.acct, fontSize = 12.sp)
 
-        account!!.note?.let {
-            HashtagsMentionsTextView(
-                text = account!!.note,
-                mentions = null,
-                navController = navController
-            )
-        }
+        HashtagsMentionsTextView(
+            text = account.note,
+            mentions = null,
+            navController = navController
+        )
 
-        account!!.website?.let {
+        account.website?.let {
             Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ExitToApp,
@@ -357,9 +348,9 @@ fun ProfileTopSection(account: Account, navController: NavController) {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = account!!.website.toString(),
+                    text = account.website.toString(),
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account!!.website.toString()) })
+                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website.toString()) })
                 )
             }
 
