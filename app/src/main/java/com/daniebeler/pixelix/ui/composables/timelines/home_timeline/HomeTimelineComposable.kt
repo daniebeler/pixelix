@@ -14,6 +14,8 @@ fun HomeTimelineComposable(
         items = viewModel.homeTimelineState.homeTimeline,
         isLoading = viewModel.homeTimelineState.isLoading,
         isRefreshing = viewModel.homeTimelineState.refreshing,
+        error = viewModel.homeTimelineState.error,
+        endReached = false,
         navController = navController,
         getItemsPaginated = {
             viewModel.getItemsPaginated()

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,6 +27,8 @@ fun InfinitePostsList(
     items: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
+    error: String,
+    endReached: Boolean,
     navController: NavController,
     getItemsPaginated: () -> Unit,
     onRefresh: () -> Unit
@@ -61,6 +64,12 @@ fun InfinitePostsList(
                 )
             }
         }
+
+        if (endReached && items.size > 3) {
+            item {
+                EndOfListComposable()
+            }
+        }
     }
 
     InfiniteListHandler(lazyListState = lazyListState) {
@@ -75,5 +84,5 @@ fun InfinitePostsList(
     if (!isRefreshing && items.isEmpty()) {
         LoadingComposable(isLoading = isLoading)
     }
-    //ErrorComposable(message = viewModel.homeTimelineState.error, pullRefreshState)
+    ErrorComposable(message = error, pullRefreshState)
 }

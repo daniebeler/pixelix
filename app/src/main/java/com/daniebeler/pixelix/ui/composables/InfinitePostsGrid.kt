@@ -11,6 +11,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -20,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.domain.model.Post
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun InfinitePostsGrid(
     items: List<Post>,
@@ -30,15 +34,21 @@ fun InfinitePostsGrid(
     emptyMessage: @Composable () -> Unit,
     navController: NavController,
     getItemsPaginated: () -> Unit,
-    before: @Composable () -> Unit
+    before: @Composable () -> Unit,
+    onRefresh: () -> Unit
 ) {
 
     val lazyGridState = rememberLazyGridState()
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = { onRefresh() }
+    )
+
     LazyVerticalGrid(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        //modifier = Modifier.pullRefresh(pullRefreshState),
+        modifier = Modifier.pullRefresh(pullRefreshState),
         state = lazyGridState,
         columns = GridCells.Fixed(3)
     ) {
@@ -53,19 +63,6 @@ fun InfinitePostsGrid(
         }
 
         if (items.isNotEmpty() && isLoading) {
-            item(span = { GridItemSpan(3) }) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .wrapContentSize(Alignment.Center),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
-        }
-
-        if (items.isEmpty() && isLoading) {
             item(span = { GridItemSpan(3) }) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -100,4 +97,14 @@ fun InfinitePostsGrid(
     InfiniteGridHandler(lazyGridState = lazyGridState) {
         getItemsPaginated()
     }
+
+    CustomPullRefreshIndicator(
+        isRefreshing,
+        pullRefreshState,
+    )
+
+    if (!isRefreshing && items.isEmpty()) {
+        LoadingComposable(isLoading = isLoading)
+    }
+    ErrorComposable(message = error, pullRefreshState)
 }

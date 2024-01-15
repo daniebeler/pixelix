@@ -93,10 +93,6 @@ fun CustomProfilePage(
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = accountState.isLoading || postsState.isLoading,
-            onRefresh = { refresh() })
-
     Column {
         if (accountState.account != null) {
 
@@ -115,7 +111,9 @@ fun CustomProfilePage(
                     ProfileTopSection(
                         account = accountState.account, navController
                     )
-                })
+                },
+                onRefresh = { refresh() }
+            )
 
             if (postsState.posts.isEmpty() && !postsState.isLoading && postsState.error.isEmpty()) {
                 Box(
@@ -134,13 +132,5 @@ fun CustomProfilePage(
                 }
             }
         }
-
-        //LoadingComposable(isLoading = viewModel.accountState.isLoading)
-        ErrorComposable(message = accountState.error, pullRefreshState)
     }
-
-    CustomPullRefreshIndicator(
-        accountState.isLoading || postsState.isLoading,
-        pullRefreshState,
-    )
 }

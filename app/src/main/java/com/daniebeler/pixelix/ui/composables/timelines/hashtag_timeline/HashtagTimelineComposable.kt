@@ -99,6 +99,8 @@ fun HashtagTimelineComposable(
                 items = viewModel.postsState.hashtagTimeline,
                 isLoading = viewModel.postsState.isLoading,
                 isRefreshing = viewModel.postsState.isRefreshing,
+                error = viewModel.postsState.error,
+                endReached = viewModel.postsState.endReached,
                 navController = navController,
                 getItemsPaginated = {
                     viewModel.getItemsPaginated(hashtag)

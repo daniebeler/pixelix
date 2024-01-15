@@ -94,6 +94,7 @@ import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate
+import com.daniebeler.pixelix.utils.Share
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -142,6 +143,7 @@ fun PostComposable(
                 contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)
+                    .width(32.dp)
                     .clip(CircleShape)
             )
             Column(modifier = Modifier.padding(start = 8.dp)) {
@@ -365,10 +367,7 @@ fun PostComposable(
                                         navController = navController
                                     )
                                 }
-
-
                             }
-
                         }
                     }
                 }
@@ -387,23 +386,13 @@ fun PostComposable(
                     CustomBottomSheetElement(icon = Icons.Outlined.Share,
                         text = stringResource(R.string.share_this_post),
                         onClick = {
-                            shareProfile(context, post.url)
+                            Share().shareText(context, post.url)
                         })
                 }
             }
 
         }
     }
-}
-
-private fun shareProfile(context: Context, url: String) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
 }
 
 @Composable

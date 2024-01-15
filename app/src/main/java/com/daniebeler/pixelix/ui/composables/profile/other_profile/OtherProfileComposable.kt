@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Block
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,15 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pixelix.utils.Navigate
+import com.daniebeler.pixelix.utils.Share
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtherProfileComposable(
     navController: NavController,
@@ -66,10 +63,6 @@ fun OtherProfileComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading,
-            onRefresh = { viewModel.loadData(userId) })
 
     LaunchedEffect(Unit) {
         viewModel.loadData(userId)
@@ -170,20 +163,12 @@ fun OtherProfileComposable(
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
                         }
-
+                    },
+                    onRefresh = {
+                        viewModel.loadData(userId)
                     })
-
-
             }
-            CustomPullRefreshIndicator(
-                viewModel.accountState.isLoading,
-                pullRefreshState,
-            )
-            //LoadingComposable(isLoading = viewModel.accountState.isLoading)
-            ErrorComposable(message = viewModel.accountState.error, pullRefreshState)
         }
-
-
     }
 
     if (showBottomSheet) {
@@ -242,20 +227,12 @@ fun OtherProfileComposable(
                     icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
-                        shareProfile(context, viewModel.accountState.account!!.url)
+                        Share().shareText(context, viewModel.accountState.account!!.url)
                     })
             }
         }
     }
 }
 
-private fun shareProfile(context: Context, url: String) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
-}
+
 
