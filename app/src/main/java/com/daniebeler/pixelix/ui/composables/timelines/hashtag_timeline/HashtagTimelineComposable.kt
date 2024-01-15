@@ -3,10 +3,8 @@ package com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,12 +22,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsList
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HashtagTimelineComposable(
     navController: NavController,
@@ -43,11 +38,6 @@ fun HashtagTimelineComposable(
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.postsState.isRefreshing,
-        onRefresh = { viewModel.refresh() }
-    )
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -104,7 +94,6 @@ fun HashtagTimelineComposable(
 
         }
     ) { paddingValues ->
-
         Box(modifier = Modifier.padding(paddingValues)) {
             InfinitePostsList(
                 items = viewModel.postsState.hashtagTimeline,
@@ -113,17 +102,11 @@ fun HashtagTimelineComposable(
                 navController = navController,
                 getItemsPaginated = {
                     viewModel.getItemsPaginated(hashtag)
+                },
+                onRefresh = {
+                    viewModel.refresh()
                 }
             )
         }
-
-        CustomPullRefreshIndicator(
-            viewModel.postsState.isRefreshing,
-            pullRefreshState,
-        )
-
-        LoadingComposable(isLoading = viewModel.postsState.isLoading && viewModel.postsState.hashtagTimeline.isEmpty())
-
-        ErrorComposable(message = viewModel.postsState.error, pullRefreshState)
     }
 }
