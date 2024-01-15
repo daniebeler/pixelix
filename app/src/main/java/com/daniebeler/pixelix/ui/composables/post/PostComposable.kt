@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
@@ -267,6 +268,15 @@ fun PostComposable(
                         )
                     }
                 }
+
+                IconButton(onClick = {
+                    viewModel.loadReplies(post.account.id, post.id)
+                    showBottomSheet = 1
+                }) {
+                    Icon(
+                        imageVector = Icons.Outlined.ChatBubbleOutline, contentDescription = ""
+                    )
+                }
                 Spacer(modifier = Modifier.weight(1f))
 
 
@@ -289,7 +299,11 @@ fun PostComposable(
                 }
             }
 
-            Text(text = viewModel.likeState.likesCount.toString() + " likes")
+            Text(
+                text = viewModel.likeState.likesCount.toString() + " likes",
+                modifier = Modifier.clickable {
+                    showBottomSheet = 3
+                })
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
@@ -317,81 +331,108 @@ fun PostComposable(
             }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(12.dp)
-                ) {
-                    HashtagsMentionsTextView(
-                        text = post.content, mentions = post.mentions, navController = navController
-                    )
-                    HorizontalDivider(Modifier.padding(12.dp))
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(32.dp)
-                    ) {
-                        items(viewModel.repliesState.replies, key = {
-                            it.id
-                        }) { reply ->
-                            Row {
-                                AsyncImage(
-                                    model = reply.account.avatar,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .height(32.dp)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            Navigate().navigate(
-                                                "profile_screen/" + reply.account.id,
-                                                navController
-                                            )
-                                        }
+                CommentsBottomSheet(post, navController, viewModel)
+            } else if (showBottomSheet == 2) {
+                ShareBottomSheet(context, post.url)
+            } else if (showBottomSheet == 3) {
+                LikesBottomSheet()
+            }
+        }
+    }
+}
+
+@Composable
+private fun LikesBottomSheet() {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {
+        Text(text = "Liked by")
+        HorizontalDivider(Modifier.padding(12.dp))
+    }
+}
+
+@Composable
+private fun CommentsBottomSheet(
+    post: Post,
+    navController: NavController,
+    viewModel: PostViewModel
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {
+        HashtagsMentionsTextView(
+            text = post.content, mentions = post.mentions, navController = navController
+        )
+        HorizontalDivider(Modifier.padding(12.dp))
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            items(viewModel.repliesState.replies, key = {
+                it.id
+            }) { reply ->
+                Row {
+                    AsyncImage(
+                        model = reply.account.avatar,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .height(32.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                Navigate().navigate(
+                                    "profile_screen/" + reply.account.id,
+                                    navController
                                 )
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Column {
-                                    Text(
-                                        text = reply.account.acct,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.clickable {
-                                            Navigate().navigate(
-                                                "profile_screen/" + reply.account.id,
-                                                navController
-                                            )
-                                        })
-
-                                    HashtagsMentionsTextView(
-                                        text = reply.content,
-                                        mentions = reply.mentions,
-                                        navController = navController
-                                    )
-                                }
                             }
-                        }
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(
+                            text = reply.account.acct,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.clickable {
+                                Navigate().navigate(
+                                    "profile_screen/" + reply.account.id,
+                                    navController
+                                )
+                            })
+
+                        HashtagsMentionsTextView(
+                            text = reply.content,
+                            mentions = reply.mentions,
+                            navController = navController
+                        )
                     }
                 }
-            } else {
-                Column(
-                    modifier = Modifier.padding(bottom = 32.dp)
-                ) {
-                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
-                        text = stringResource(
-                            R.string.open_in_browser
-                        ),
-                        onClick = {
-                            Navigate().openUrlInApp(context, post.url)
-                        })
-
-                    CustomBottomSheetElement(icon = Icons.Outlined.Share,
-                        text = stringResource(R.string.share_this_post),
-                        onClick = {
-                            Share().shareText(context, post.url)
-                        })
-                }
             }
-
         }
+    }
+}
+
+@Composable
+private fun ShareBottomSheet(context: Context, url: String) {
+    Column(
+        modifier = Modifier.padding(bottom = 32.dp)
+    ) {
+        CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
+            text = stringResource(
+                R.string.open_in_browser
+            ),
+            onClick = {
+                Navigate().openUrlInApp(context, url)
+            })
+
+        CustomBottomSheetElement(icon = Icons.Outlined.Share,
+            text = stringResource(R.string.share_this_post),
+            onClick = {
+                Share().shareText(context, url)
+            })
     }
 }
 
