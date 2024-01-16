@@ -11,6 +11,9 @@ import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
+import com.daniebeler.pixelix.data.remote.dto.PostDto
+import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
+import com.daniebeler.pixelix.data.remote.dto.TagDto
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
@@ -27,11 +30,8 @@ import com.daniebeler.pixelix.domain.model.toAccount
 import com.daniebeler.pixelix.domain.model.toApplication
 import com.daniebeler.pixelix.domain.model.toMediaAttachment
 import com.daniebeler.pixelix.domain.model.toNotification
-import com.daniebeler.pixelix.domain.model.toPost
-import com.daniebeler.pixelix.domain.model.toRelationship
 import com.daniebeler.pixelix.domain.model.toReply
 import com.daniebeler.pixelix.domain.model.toSearch
-import com.daniebeler.pixelix.domain.model.toTag
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -114,7 +114,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
     }
 
-
     override suspend fun storeClientSecret(clientSecret: String) {
         settingsDataStore.edit { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] = clientSecret
@@ -155,195 +154,92 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         this.accessToken = token
     }
 
-    override fun getTrendingPosts(range: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getTrendingPosts(range).awaitResponse()
-            if (response.isSuccessful) {
-                val result = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(result))
-            } else {
-                emit(Resource.Error("an error occurred"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "an error occurred"))
+    override fun getTrendingPosts(range: String): Flow<Resource<List<Post>>> {
+        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getTrendingPosts(range))
+    }
+
+    override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> {
+        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getTrendingHashtags(accessToken))
+    }
+
+    override fun getHashtag(hashtag: String): Flow<Resource<Tag>> {
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.getHashtag(hashtag, accessToken))
+    }
+
+    override fun getTrendingAccounts(): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getTrendingAccounts(
+                accessToken
+            )
+        )
+    }
+
+    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> {
+        return if (maxId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getHashtagTimeline(
+                    hashtag, accessToken, maxId
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getHashtagTimeline(
+                    hashtag, accessToken
+                )
+            )
         }
     }
 
-
-    override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getTrendingHashtags(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toTag() } ?: emptyList()
-                res.forEach {
-                    it.name = it.name.drop(1)
-                }
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
+    override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getLocalTimeline(
+                    maxPostId, accessToken
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLocalTimeline(accessToken))
         }
     }
 
-    override fun getHashtag(hashtag: String): Flow<Resource<Tag>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getHashtag(hashtag, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toTag()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
+    override fun getGlobalTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getGlobalTimeline(
+                    maxPostId, accessToken
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getGlobalTimeline(accessToken))
         }
     }
 
-    override fun getTrendingAccounts(): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getTrendingAccounts(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
+    override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getHomeTimeline(
+                    maxPostId, accessToken
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getHomeTimeline(accessToken))
         }
     }
 
-    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> =
-        flow {
-            try {
-                emit(Resource.Loading())
-                val response = if (maxId.isNotEmpty()) {
-                    pixelfedApi.getHashtagTimeline(hashtag, accessToken, maxId).awaitResponse()
-                } else {
-                    pixelfedApi.getHashtagTimeline(hashtag, accessToken).awaitResponse()
-                }
-                if (response.isSuccessful) {
-                    val res = response.body()?.map { it.toPost() } ?: emptyList()
-                    emit(Resource.Success(res))
-                } else {
-                    emit(Resource.Error("Unknown Error"))
-                }
-            } catch (exception: Exception) {
-                emit(Resource.Error(exception.message ?: "Unknown Error"))
-            }
-        }
-
-    override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxPostId.isNotEmpty()) {
-                pixelfedApi.getLocalTimeline(maxPostId, accessToken).awaitResponse()
-            } else {
-                pixelfedApi.getLocalTimeline(accessToken).awaitResponse()
-            }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
+    override fun getLikedPosts(maxId: String): Flow<Resource<List<Post>>> {
+        return if (maxId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLikedPosts(accessToken, maxId))
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLikedPosts(accessToken))
         }
     }
 
-    override fun getGlobalTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxPostId.isNotEmpty()) {
-                pixelfedApi.getGlobalTimeline(maxPostId, accessToken).awaitResponse()
-            } else {
-                pixelfedApi.getGlobalTimeline(accessToken).awaitResponse()
-            }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getBookmarkedPosts(): Flow<Resource<List<Post>>> {
+        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getBookmarkedPosts(accessToken))
     }
 
-    override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxPostId.isNotEmpty()) {
-                pixelfedApi.getHomeTimeline(maxPostId, accessToken).awaitResponse()
-            } else {
-                pixelfedApi.getHomeTimeline(accessToken).awaitResponse()
-            }
-
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
-    }
-
-    override fun getLikedPosts(maxId: String): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getLikedPosts(accessToken, maxId).awaitResponse()
-            } else {
-                pixelfedApi.getLikedPosts(accessToken).awaitResponse()
-            }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
-    }
-
-    override fun getBookmarkedPosts(): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getBookmarkedPosts(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
-    }
-
-    override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getFollowedHashtags(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toTag() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> {
+        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getFollowedHashtags(accessToken))
     }
 
     override fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>> = flow {
@@ -362,208 +258,104 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override fun getAccount(accountId: String): Flow<Resource<Account>> {
-        return NetworkCall<Account, AccountDto>().makeCall(pixelfedApi.getAccount(accountId, accessToken))
+        return NetworkCall<Account, AccountDto>().makeCall(
+            pixelfedApi.getAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun followAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.followAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun followAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.followAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unfollowAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.unfollowAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun followHashtag(tagId: String): Flow<Resource<Tag>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.followHashtag(tagId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toTag()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun followHashtag(tagId: String): Flow<Resource<Tag>> {
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.followHashtag(tagId, accessToken))
     }
 
-    override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unfollowHashtag(tagId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toTag()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> {
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.unfollowHashtag(tagId, accessToken))
     }
 
-    override fun likePost(postId: String): Flow<Resource<Post>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.likePost(postId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toPost()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun likePost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.likePost(postId, accessToken))
     }
 
-    override fun unlikePost(postId: String): Flow<Resource<Post>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unlikePost(postId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toPost()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun unlikePost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unlikePost(postId, accessToken))
     }
 
-    override fun bookmarkPost(postId: String): Flow<Resource<Post>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.bookmarkPost(postId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toPost()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun bookmarkPost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.bookmarkPost(postId, accessToken))
     }
 
-    override fun unBookmarkPost(postId: String): Flow<Resource<Post>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unbookmarkPost(postId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toPost()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun unBookmarkPost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(
+            pixelfedApi.unbookmarkPost(
+                postId, accessToken
+            )
+        )
     }
 
-    override fun muteAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.muteAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun muteAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.muteAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unmuteAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.unmuteAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun blockAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.blockAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun blockAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.blockAccount(
+                accountId, accessToken
+            )
+        )
     }
 
-    override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.unblockAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toRelationship()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCall(
+            pixelfedApi.unblockAccount(
+                accountId, accessToken
+            )
+        )
     }
 
     override fun getAccountsFollowers(
         accountId: String, maxId: String
-    ): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getAccountsFollowers(accountId, accessToken, maxId).awaitResponse()
-            } else {
-                pixelfedApi.getAccountsFollowers(accountId, accessToken).awaitResponse()
-            }
-
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
+    ): Flow<Resource<List<Account>>> {
+        return if (maxId.isNotEmpty()) {
+            NetworkCall<Account, AccountDto>().makeCallList(
+                pixelfedApi.getAccountsFollowers(
+                    accountId, accessToken, maxId
+                )
+            )
+        } else {
+            NetworkCall<Account, AccountDto>().makeCallList(
+                pixelfedApi.getAccountsFollowers(
+                    accountId, accessToken
+                )
+            )
         }
     }
 
@@ -588,34 +380,20 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getMutedAccounts(): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getMutedAccounts(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getMutedAccounts(): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getMutedAccounts(
+                accessToken
+            )
+        )
     }
 
-    override fun getBlockedAccounts(): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getBlockedAccounts(accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getBlockedAccounts(): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getBlockedAccounts(
+                accessToken
+            )
+        )
     }
 
 
@@ -643,70 +421,40 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
 
     override fun getPostsByAccountId(
         accountId: String, maxPostId: String
-    ): Flow<Resource<List<Post>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxPostId.isEmpty()) {
-                pixelfedApi.getPostsByAccountId(accountId, accessToken).awaitResponse()
-            } else {
-                pixelfedApi.getPostsByAccountId(accountId, accessToken, maxPostId).awaitResponse()
-            }
-
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toPost() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
+    ): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getPostsByAccountId(
+                    accountId, accessToken
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getPostsByAccountId(
+                    accountId, accessToken, maxPostId
+                )
+            )
         }
     }
 
-    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> =
-        flow {
-            try {
-                emit(Resource.Loading())
-                val response = pixelfedApi.getRelationships(userIds, accessToken).awaitResponse()
-                if (response.isSuccessful) {
-                    val result = response.body()?.map { it.toRelationship() } ?: emptyList()
-                    emit(Resource.Success(result))
-                } else {
-                    emit(Resource.Error("unknown error"))
-                }
-            } catch (exception: Exception) {
-                emit(Resource.Error(exception.message ?: "unknown error"))
-            }
-        }
-
-    override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getMutalFollowers(userId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> {
+        return NetworkCall<Relationship, RelationshipDto>().makeCallList(
+            pixelfedApi.getRelationships(
+                userIds, accessToken
+            )
+        )
     }
 
-    override fun getPostById(postId: String): Flow<Resource<Post?>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getPostById(postId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.toPost()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
+    override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getMutalFollowers(
+                userId, accessToken
+            )
+        )
+    }
+
+    override fun getPostById(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.getPostById(postId, accessToken))
     }
 
     override fun search(searchText: String): Flow<Resource<Search>> = flow {

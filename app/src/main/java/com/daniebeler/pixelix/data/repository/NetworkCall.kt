@@ -22,4 +22,19 @@ class NetworkCall<M, D : DtoInterface<M>> {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
+
+    fun makeCallList(call: Call<List<D>>): Flow<Resource<List<M>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = call.awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()?.map { it.toModel() } ?: emptyList()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
+    }
 }

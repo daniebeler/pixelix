@@ -86,7 +86,7 @@ interface CountryRepository {
 
     fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
 
-    fun getPostById(postId: String): Flow<Resource<Post?>>
+    fun getPostById(postId: String): Flow<Resource<Post>>
 
     fun search(searchText: String): Flow<Resource<Search>>
 

@@ -1,6 +1,10 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Post
+import com.daniebeler.pixelix.domain.model.toAccount
+import com.daniebeler.pixelix.domain.model.toMediaAttachment
+import com.daniebeler.pixelix.domain.model.toTag
 import com.google.gson.annotations.SerializedName
 
 data class PostDto(
@@ -84,4 +88,23 @@ data class PostDto(
     val visibility: String,
     @SerializedName("bookmarked")
     val bookmarked: Boolean
-)
+) : DtoInterface<Post> {
+    override fun toModel(): Post {
+        return Post(
+            id = id,
+            mediaAttachments = mediaAttachments.map { it.toMediaAttachment() },
+            account = account.toAccount(),
+            tags = tags.map { it.toTag() },
+            favouritesCount = favouritesCount,
+            content = contentText ?: "",
+            replyCount = replyCount,
+            createdAt = createdAt,
+            url = url,
+            sensitive = sensitive,
+            spoilerText = spoilerText ?: "",
+            favourited = favourited,
+            bookmarked = bookmarked,
+            mentions = mentions.map { it.toAccount() }
+        )
+    }
+}
