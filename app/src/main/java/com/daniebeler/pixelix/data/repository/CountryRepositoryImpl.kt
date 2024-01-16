@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
+import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
@@ -360,19 +361,8 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getAccount(accountId: String): Flow<Resource<Account?>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getAccount(accountId, accessToken).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.toAccount()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getAccount(accountId: String): Flow<Resource<Account>> {
+        return NetworkCall<Account, AccountDto>().makeCall(pixelfedApi.getAccount(accountId, accessToken))
     }
 
     override fun followAccount(accountId: String): Flow<Resource<Relationship>> = flow {
@@ -735,7 +725,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override fun getInstance(): Flow<Resource<Instance>> {
-        println("enter getInstance")
         return NetworkCall<Instance, InstanceDto>().makeCall(pixelfedApi.getInstance())
     }
 

@@ -52,7 +52,7 @@ interface CountryRepository {
 
     fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 
-    fun getAccount(accountId: String): Flow<Resource<Account?>>
+    fun getAccount(accountId: String): Flow<Resource<Account>>
 
     fun getInstance(): Flow<Resource<Instance>>
 

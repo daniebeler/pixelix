@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Call
 import retrofit2.awaitResponse
 
-open class NetworkCall<M, D : DtoInterface<M>> {
+class NetworkCall<M, D : DtoInterface<M>> {
     fun makeCall(call: Call<D>): Flow<Resource<M>> = flow {
         try {
             emit(Resource.Loading())
