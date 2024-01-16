@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
+import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
@@ -23,7 +24,6 @@ import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.model.toAccessToken
 import com.daniebeler.pixelix.domain.model.toAccount
 import com.daniebeler.pixelix.domain.model.toApplication
-import com.daniebeler.pixelix.domain.model.toInstance
 import com.daniebeler.pixelix.domain.model.toMediaAttachment
 import com.daniebeler.pixelix.domain.model.toNotification
 import com.daniebeler.pixelix.domain.model.toPost
@@ -734,19 +734,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getInstance(): Flow<Resource<Instance>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getInstance().awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toInstance()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
+    override fun getInstance(): Flow<Resource<Instance>> {
+        println("enter getInstance")
+        return NetworkCall<Instance, InstanceDto>().makeCall(pixelfedApi.getInstance())
     }
 
     @SuppressLint("Recycle")

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.ui.composables.ErrorComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +74,8 @@ fun AboutInstanceComposable(
                 }
             }
         }
+        
+        ErrorComposable(message = viewModel.instanceState.error)
 
     }
 }

@@ -26,6 +26,7 @@ class AboutInstanceViewModel @Inject constructor(
 
     private fun getInstance() {
         repository.getInstance().onEach { result ->
+            println(result)
             instanceState = when (result) {
                 is Resource.Success -> {
                     InstanceState(instance = result.data)
