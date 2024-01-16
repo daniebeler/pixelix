@@ -25,17 +25,23 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PixelfedApi {
+
+
+    // Discover
+
+
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
-
-    @GET("api/v2/instance")
-    fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1.1/discover/posts/hashtags?range=daily&_pe=1")
     fun getTrendingHashtags(@Header("Authorization") token: String): Call<List<TagDto>>
 
     @GET("/api/v1.1/discover/accounts/popular?range=daily")
     fun getTrendingAccounts(@Header("Authorization") token: String): Call<List<AccountDto>>
+
+
+    // Timelines
+
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
@@ -49,9 +55,6 @@ interface PixelfedApi {
         @Header("Authorization") token: String,
         @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
-
-    @GET("api/v1/tags/{tag}?_pe=1")
-    fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
 
     @GET("api/v1/timelines/public?local&_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
@@ -80,29 +83,22 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String
     ): Call<List<PostDto>>
 
+
+    // Favourites
+
+
     @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
     @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
-    fun getLikedPosts(@Header("Authorization") accessToken: String, @Query("max_id") maxId: String): Call<List<PostDto>>
+    fun getLikedPosts(
+        @Header("Authorization") accessToken: String,
+        @Query("max_id") maxId: String
+    ): Call<List<PostDto>>
 
-    @GET("api/v1/bookmarks?limit=12")
-    fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/followed_tags?_pe=1")
-    fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
+    // Notifications
 
-    @GET("api/v2/comments/{userid}/status/{postid}")
-    fun getReplies(
-        @Path("userid") userid: String,
-        @Path("postid") postid: String
-    ): Call<ApiReplyElementDto>
-
-    @GET("api/pixelfed/v1/accounts/{accountid}")
-    fun getAccount(
-        @Path("accountid") accountId: String,
-        @Header("Authorization") token: String
-    ): Call<AccountDto>
 
     @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
     fun getNotifications(
@@ -114,6 +110,16 @@ interface PixelfedApi {
         @Header("Authorization") token: String,
         @Query("max_id") maxNotificationId: String
     ): Call<List<NotificationDto>>
+
+
+    // Accounts
+
+
+    @GET("api/pixelfed/v1/accounts/{accountid}")
+    fun getAccount(
+        @Path("accountid") accountId: String,
+        @Header("Authorization") token: String
+    ): Call<AccountDto>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
@@ -127,12 +133,6 @@ interface PixelfedApi {
         @Header("Authorization") token: String,
         @Query("max_id") maxId: String
     ): Call<List<PostDto>>
-
-    @GET("api/v1/statuses/{postid}?_pe=1")
-    fun getPostById(
-        @Path("postid") postId: String,
-        @Header("Authorization") token: String
-    ): Call<PostDto>
 
     @GET("api/v1/accounts/relationships")
     fun getRelationships(
@@ -158,18 +158,6 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<RelationshipDto>
 
-    @POST("api/v1/tags/{id}/follow")
-    fun followHashtag(
-        @Path("id") tagId: String,
-        @Header("Authorization") token: String
-    ): Call<TagDto>
-
-    @POST("api/v1/tags/{id}/unfollow")
-    fun unfollowHashtag(
-        @Path("id") tagId: String,
-        @Header("Authorization") token: String
-    ): Call<TagDto>
-
     @POST("api/v1/accounts/{id}/mute")
     fun muteAccount(
         @Path("id") userId: String,
@@ -194,6 +182,45 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<RelationshipDto>
 
+    @GET("api/v1/accounts/{id}/followers?limit=40")
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/following?limit=40")
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/following?limit=40")
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/followers?limit=40")
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/verify_credentials")
+    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
+
+
+    // Statuses
+
+
+    @GET("api/v1/statuses/{postid}?_pe=1")
+    fun getPostById(
+        @Path("postid") postId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
+
     @POST("api/v1/statuses/{id}/favourite")
     fun likePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
@@ -215,31 +242,43 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<PostDto>
 
-    @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
-        @Path("id") userId: String,
+
+    // Tags
+
+
+    @POST("api/v1/tags/{id}/follow")
+    fun followHashtag(
+        @Path("id") tagId: String,
         @Header("Authorization") token: String
-    ): Call<List<AccountDto>>
+    ): Call<TagDto>
 
-    @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
-        @Path("id") userId: String,
-        @Header("Authorization") token: String,
-        @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
-
-    @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
-        @Path("id") userId: String,
+    @POST("api/v1/tags/{id}/unfollow")
+    fun unfollowHashtag(
+        @Path("id") tagId: String,
         @Header("Authorization") token: String
-    ): Call<List<AccountDto>>
+    ): Call<TagDto>
 
-    @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
-        @Path("id") userId: String,
-        @Header("Authorization") token: String,
-        @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
+    @GET("api/v1/followed_tags?_pe=1")
+    fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
+
+    @GET("api/v1/tags/{tag}?_pe=1")
+    fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
+
+
+    // Other
+
+
+    @GET("api/v1/bookmarks?limit=12")
+    fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+
+    @GET("api/v2/comments/{userid}/status/{postid}")
+    fun getReplies(
+        @Path("userid") userid: String,
+        @Path("postid") postid: String
+    ): Call<ApiReplyElementDto>
+
+    @GET("api/v2/instance")
+    fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
@@ -252,6 +291,7 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String,
         @Query("q") searchText: String
     ): Call<SearchDto>
+
     @Multipart
     @POST("/api/v1/media")
     fun uploadMedia(
@@ -271,7 +311,4 @@ interface PixelfedApi {
         @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
-
-    @GET("api/v1/accounts/verify_credentials")
-    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
 }
