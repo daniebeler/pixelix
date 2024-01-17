@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -302,6 +304,7 @@ fun PostComposable(
             Text(
                 text = viewModel.likeState.likesCount.toString() + " likes",
                 modifier = Modifier.clickable {
+                    viewModel.loadLikedBy(post.id)
                     showBottomSheet = 3
                 })
 
@@ -335,14 +338,17 @@ fun PostComposable(
             } else if (showBottomSheet == 2) {
                 ShareBottomSheet(context, post.url)
             } else if (showBottomSheet == 3) {
-                LikesBottomSheet()
+                LikesBottomSheet(viewModel, navController)
             }
         }
     }
 }
 
 @Composable
-private fun LikesBottomSheet() {
+private fun LikesBottomSheet(
+    viewModel: PostViewModel,
+    navController: NavController
+) {
     Column(
         Modifier
             .fillMaxSize()
@@ -350,6 +356,65 @@ private fun LikesBottomSheet() {
     ) {
         Text(text = "Liked by")
         HorizontalDivider(Modifier.padding(12.dp))
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            items(viewModel.likedByState.likedBy, key = {
+                it.id
+            }) { account ->
+                Row {
+                    AsyncImage(
+                        model = account.avatar,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .height(32.dp)
+                            .width(32.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                Navigate().navigate(
+                                    "profile_screen/" + account.id,
+                                    navController
+                                )
+                            }
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(text = account.acct)
+                        Text(text = account.username)
+                    }
+
+                }
+            }
+
+            if (viewModel.likedByState.isLoading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
+            }
+
+            if (!viewModel.likedByState.isLoading && viewModel.likedByState.likedBy.isEmpty()) {
+                item {
+                    Row(
+                        Modifier
+                            .padding(vertical = 32.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "No likes yet")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -411,6 +476,32 @@ private fun CommentsBottomSheet(
                     }
                 }
             }
+            if (viewModel.repliesState.isLoading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
+            }
+
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.replies.isEmpty()) {
+                item {
+                    Row(
+                        Modifier
+                            .padding(vertical = 32.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "No comments yet")
+                    }
+                }
+            }
+
         }
     }
 }

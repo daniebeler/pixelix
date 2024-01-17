@@ -437,6 +437,15 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getAccountsWhoLikedPost(
+                accessToken,
+                postId
+            )
+        )
+    }
+
     override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCallList(
             pixelfedApi.getRelationships(

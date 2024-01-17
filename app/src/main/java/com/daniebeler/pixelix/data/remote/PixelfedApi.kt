@@ -96,6 +96,12 @@ interface PixelfedApi {
         @Query("max_id") maxId: String
     ): Call<List<PostDto>>
 
+    @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
+    fun getAccountsWhoLikedPost(
+        @Header("Authorization") accessToken: String,
+        @Path("postId") postId: String
+    ): Call<List<AccountDto>>
+
 
     // Notifications
 

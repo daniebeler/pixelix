@@ -22,6 +22,7 @@ class PostViewModel @Inject constructor(
 ): ViewModel() {
 
     var repliesState by mutableStateOf(RepliesState())
+    var likedByState by mutableStateOf(LikedByState())
 
     var likeState by mutableStateOf(LikeState())
     var bookmarkState by mutableStateOf(BookmarkState())
@@ -51,6 +52,24 @@ class PostViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     RepliesState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun loadLikedBy(postId: String) {
+        repository.getLikedBy(postId).onEach { result ->
+            likedByState = when (result) {
+                is Resource.Success -> {
+                    LikedByState(likedBy = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    LikedByState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    LikedByState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

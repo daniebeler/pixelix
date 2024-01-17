@@ -12,4 +12,5 @@ object Constants {
     const val NOTIFICATIONS_LIMIT = 30
     const val LIKED_POSTS_LIMIT = 12
     const val PROFILE_POSTS_LIMIT = 18
+    const val LIKED_BY_LIMIT = 40
 }
