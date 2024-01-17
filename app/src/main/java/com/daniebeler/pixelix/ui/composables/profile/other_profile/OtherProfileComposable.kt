@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -69,41 +70,33 @@ fun OtherProfileComposable(
     }
 
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = viewModel.accountState.account?.username ?: "")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        showBottomSheet = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.MoreVert,
-                            contentDescription = ""
-                        )
-                    }
-                }
-            )
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text(text = viewModel.accountState.account?.username ?: "")
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = ""
+                )
+            }
+        }, actions = {
+            IconButton(onClick = {
+                showBottomSheet = true
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                )
+            }
+        })
 
-        }
-    ) { paddingValues ->
+    }) { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
             if (viewModel.accountState.account != null) {
 
-                InfinitePostsGrid(
-                    items = viewModel.postsState.posts,
+                InfinitePostsGrid(items = viewModel.postsState.posts,
                     isLoading = viewModel.postsState.isLoading,
                     isRefreshing = false,
                     error = viewModel.postsState.error,
@@ -129,36 +122,13 @@ fun OtherProfileComposable(
 
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                if (viewModel.relationshipState.isLoading) {
-                                    Button(onClick = {
-                                        viewModel.unfollowAccount(userId)
-                                    }, modifier = Modifier.width(120.dp)) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(20.dp),
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                        )
-                                    }
-                                }
-
-                                if (viewModel.relationshipState.accountRelationship != null) {
-                                    if (viewModel.relationshipState.accountRelationship!!.following) {
-                                        Button(
-                                            onClick = {
-                                                viewModel.unfollowAccount(userId)
-                                            },
-                                            modifier = Modifier.width(120.dp)
-                                        ) {
-                                            Text(text = stringResource(R.string.unfollow))
-                                        }
-                                    } else {
-                                        Button(onClick = {
-                                            viewModel.followAccount(userId)
-                                        }, modifier = Modifier.width(120.dp)) {
-                                            Text(text = stringResource(R.string.follow))
-                                        }
-                                    }
-                                }
+                                FollowButton(
+                                    firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                                    isLoading = viewModel.relationshipState.isLoading,
+                                    isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                        ?: false,
+                                    onFollowClick = { viewModel.followAccount(userId) },
+                                    onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
@@ -175,8 +145,7 @@ fun OtherProfileComposable(
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             Column(
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -223,8 +192,7 @@ fun OtherProfileComposable(
                     Navigate().openUrlInApp(context, viewModel.accountState.account!!.url)
                 })
 
-                CustomBottomSheetElement(
-                    icon = Icons.Outlined.Share,
+                CustomBottomSheetElement(icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
                         Share().shareText(context, viewModel.accountState.account!!.url)
@@ -235,4 +203,63 @@ fun OtherProfileComposable(
 }
 
 
-
+@Composable
+fun FollowButton(
+    firstLoaded: Boolean,
+    isLoading: Boolean,
+    isFollowing: Boolean,
+    onFollowClick: () -> Unit,
+    onUnFollowClick: () -> Unit
+) {
+    Box(modifier = Modifier.height(40.dp)) {
+        if (firstLoaded) {
+            if (isLoading) {
+                if (isFollowing) {
+                    Button(
+                        onClick = {},
+                        modifier = Modifier.width(120.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
+                } else {
+                    Button(onClick = {}, modifier = Modifier.width(120.dp)) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
+                }
+            } else {
+                if (isFollowing) {
+                    Button(
+                        onClick = {
+                            onUnFollowClick()
+                        },
+                        modifier = Modifier.width(120.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.unfollow))
+                    }
+                } else {
+                    Button(onClick = {
+                        onFollowClick()
+                    }, modifier = Modifier.width(120.dp)) {
+                        Text(text = stringResource(R.string.follow))
+                    }
+                }
+            }
+        }
+    }
+}

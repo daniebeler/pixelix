@@ -25,7 +25,8 @@ class HashtagTimelineViewModel @Inject constructor(
         repository.getHashtagTimeline(hashtag).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
+                    val endReached =
+                        (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
                     HashtagTimelineState(
                         hashtagTimeline = result.data ?: emptyList(),
                         error = "",
@@ -63,7 +64,8 @@ class HashtagTimelineViewModel @Inject constructor(
                 .onEach { result ->
                     postsState = when (result) {
                         is Resource.Success -> {
-                            val endReached = (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
+                            val endReached =
+                                (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
                             HashtagTimelineState(
                                 hashtagTimeline = postsState.hashtagTimeline + (result.data
                                     ?: emptyList()),
@@ -133,7 +135,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    HashtagState(isLoading = true)
+                    HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
                 }
             }
         }.launchIn(viewModelScope)
@@ -151,7 +153,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    HashtagState(isLoading = true)
+                    HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
                 }
             }
         }.launchIn(viewModelScope)
