@@ -21,7 +21,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
-import com.daniebeler.pixelix.ui.composables.profile.other_profile.FollowButton
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable

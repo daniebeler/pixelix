@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,10 +46,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.ui.composables.FollowButton
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
+import com.daniebeler.pixelix.ui.composables.profile.own_profile.CustomProfilePage
 import com.daniebeler.pixelix.utils.Navigate
 import com.daniebeler.pixelix.utils.Share
 
@@ -93,51 +96,43 @@ fun OtherProfileComposable(
         })
 
     }) { paddingValues ->
-        Box(Modifier.padding(paddingValues)) {
-            if (viewModel.accountState.account != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
 
-                InfinitePostsGrid(items = viewModel.postsState.posts,
-                    isLoading = viewModel.postsState.isLoading,
-                    isRefreshing = false,
-                    error = viewModel.postsState.error,
-                    endReached = viewModel.postsState.endReached,
-                    emptyMessage = {
-                        Image(
-                            painter = painterResource(id = R.drawable.empty_state_no_posts),
-                            contentDescription = null,
-                            Modifier.fillMaxWidth()
-                        )
-                    },
-                    navController = navController,
-                    getItemsPaginated = { viewModel.getPostsPaginated(userId) },
-                    before = {
+            CustomProfilePage(
+                accountState = viewModel.accountState,
+                postsState = viewModel.postsState,
+                navController = navController,
+                refresh = {
+                    viewModel.loadData(userId)
+                },
+                getPostsPaginated = {
+                    viewModel.getPostsPaginated(userId)
+                },
+                otherAccountTopSectionAdditions = {
+                    Column(Modifier.padding(12.dp)) {
 
-                        Column {
-                            ProfileTopSection(viewModel.accountState.account!!, navController)
+                        MutualFollowersComposable(viewModel.mutualFollowersState)
 
-
-                            Column(Modifier.padding(12.dp)) {
-
-                                MutualFollowersComposable(viewModel.mutualFollowersState)
-
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                FollowButton(
-                                    firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                                    isLoading = viewModel.relationshipState.isLoading,
-                                    isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                        ?: false,
-                                    onFollowClick = { viewModel.followAccount(userId) },
-                                    onUnFollowClick = { viewModel.unfollowAccount(userId) })
-
-                                Spacer(modifier = Modifier.height(24.dp))
-                            }
+                        if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(12.dp))
                         }
-                    },
-                    onRefresh = {
-                        viewModel.loadData(userId)
-                    })
-            }
+
+                        FollowButton(
+                            firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                            isLoading = viewModel.relationshipState.isLoading,
+                            isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                ?: false,
+                            onFollowClick = { viewModel.followAccount(userId) },
+                            onUnFollowClick = { viewModel.unfollowAccount(userId) })
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                }
+            )
         }
     }
 
@@ -197,68 +192,6 @@ fun OtherProfileComposable(
                     onClick = {
                         Share().shareText(context, viewModel.accountState.account!!.url)
                     })
-            }
-        }
-    }
-}
-
-
-@Composable
-fun FollowButton(
-    firstLoaded: Boolean,
-    isLoading: Boolean,
-    isFollowing: Boolean,
-    onFollowClick: () -> Unit,
-    onUnFollowClick: () -> Unit
-) {
-    Box(modifier = Modifier.height(40.dp)) {
-        if (firstLoaded) {
-            if (isLoading) {
-                if (isFollowing) {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier.width(120.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
-                    }
-                } else {
-                    Button(onClick = {}, modifier = Modifier.width(120.dp)) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
-                    }
-                }
-            } else {
-                if (isFollowing) {
-                    Button(
-                        onClick = {
-                            onUnFollowClick()
-                        },
-                        modifier = Modifier.width(120.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    ) {
-                        Text(text = stringResource(R.string.unfollow))
-                    }
-                } else {
-                    Button(onClick = {
-                        onFollowClick()
-                    }, modifier = Modifier.width(120.dp)) {
-                        Text(text = stringResource(R.string.follow))
-                    }
-                }
             }
         }
     }

@@ -50,7 +50,10 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -68,7 +71,10 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    MutualFollowersState(isLoading = true)
+                    MutualFollowersState(
+                        isLoading = true,
+                        mutualFollowers = mutualFollowersState.mutualFollowers
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -86,7 +92,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true)
+                    AccountState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)
@@ -105,7 +111,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true)
+                    PostsState(isLoading = true, posts = postsState.posts)
                 }
             }
         }.launchIn(viewModelScope)
@@ -147,7 +153,10 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true, accountRelationship = relationshipState.accountRelationship)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -165,7 +174,10 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true, accountRelationship = relationshipState.accountRelationship)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)

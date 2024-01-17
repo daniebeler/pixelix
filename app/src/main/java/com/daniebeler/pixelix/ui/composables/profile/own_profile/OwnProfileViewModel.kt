@@ -54,7 +54,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true)
+                    AccountState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)
@@ -73,7 +73,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true)
+                    PostsState(isLoading = true, posts = postsState.posts)
                 }
             }
         }.launchIn(viewModelScope)

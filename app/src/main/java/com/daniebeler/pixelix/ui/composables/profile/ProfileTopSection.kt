@@ -36,95 +36,99 @@ import com.daniebeler.pixelix.ui.composables.post.HashtagsMentionsTextView
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
-fun ProfileTopSection(account: Account, navController: NavController) {
+fun ProfileTopSection(account: Account?, navController: NavController) {
     val uriHandler = LocalUriHandler.current
 
     val clipboardManager = LocalClipboardManager.current
 
-    Column(Modifier.padding(12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                model = account.avatar,
-                contentDescription = "",
-                modifier = Modifier
-                    .height(76.dp)
-                    .clip(CircleShape)
-            )
+    if (account != null) {
+        Column(Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    model = account.avatar,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(76.dp)
+                        .clip(CircleShape)
+                )
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = account.postsCount.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                    Text(text = stringResource(R.string.posts), fontSize = 12.sp)
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable {
-                        Navigate().navigate(
-                            "followers_screen/" + "followers/" + account.id,
-                            navController
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = account.postsCount.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
-                    }) {
-                    Text(
-                        text = account.followersCount.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                    Text(text = stringResource(R.string.followers), fontSize = 12.sp)
-                }
+                        Text(text = stringResource(R.string.posts), fontSize = 12.sp)
+                    }
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable {
-                        Navigate().navigate(
-                            "followers_screen/" + "following/" + account.id,
-                            navController
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable {
+                            Navigate().navigate(
+                                "followers_screen/" + "followers/" + account.id,
+                                navController
+                            )
+                        }) {
+                        Text(
+                            text = account.followersCount.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
-                    }) {
-                    Text(
-                        text = account.followingCount.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                    Text(text = stringResource(R.string.following), fontSize = 12.sp)
+                        Text(text = stringResource(R.string.followers), fontSize = 12.sp)
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable {
+                            Navigate().navigate(
+                                "followers_screen/" + "following/" + account.id,
+                                navController
+                            )
+                        }) {
+                        Text(
+                            text = account.followingCount.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Text(text = stringResource(R.string.following), fontSize = 12.sp)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = account.displayname, fontWeight = FontWeight.Bold)
-        Text(text = "@" + account.acct, fontSize = 12.sp, modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(onLongPress = {
-                clipboardManager.setText(AnnotatedString("@" + account.acct))
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = account.displayname, fontWeight = FontWeight.Bold)
+            Text(text = "@" + account.acct, fontSize = 12.sp, modifier = Modifier.pointerInput(Unit) {
+                detectTapGestures(onLongPress = {
+                    clipboardManager.setText(AnnotatedString("@" + account.acct))
+                })
             })
-        })
 
-        HashtagsMentionsTextView(
-            text = account.note,
-            mentions = null,
-            navController = navController
-        )
+            HashtagsMentionsTextView(
+                text = account.note,
+                mentions = null,
+                navController = navController
+            )
 
-        account.website?.let {
-            Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "",
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = account.website.toString(),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website.toString()) })
-                )
+            account.website?.let {
+                Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "",
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = account.website.toString(),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website.toString()) })
+                    )
+                }
             }
         }
     }
+
+
 }

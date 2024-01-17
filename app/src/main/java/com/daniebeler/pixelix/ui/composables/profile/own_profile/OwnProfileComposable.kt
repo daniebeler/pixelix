@@ -6,13 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,12 +19,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
@@ -77,60 +70,49 @@ fun OwnProfileComposable(
                 },
                 getPostsPaginated = {
                     viewModel.getPostsPaginated()
-                }
+                },
+                otherAccountTopSectionAdditions = {}
             )
-
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CustomProfilePage(
     accountState: AccountState,
     postsState: PostsState,
     navController: NavController,
     refresh: () -> Unit,
-    getPostsPaginated: () -> Unit
+    getPostsPaginated: () -> Unit,
+    otherAccountTopSectionAdditions: @Composable () -> Unit
 ) {
-    Column {
-        if (accountState.account != null) {
-
-            InfinitePostsGrid(
-                items = postsState.posts,
-                isLoading = postsState.isLoading,
-                isRefreshing = false,
-                error = postsState.error,
-                emptyMessage = {
-                    Text(text = "no posts")
-                },
-                endReached = postsState.endReached,
-                navController = navController,
-                getItemsPaginated = { getPostsPaginated() },
-                before = {
+    Box {
+        InfinitePostsGrid(
+            items = postsState.posts,
+            isLoading = postsState.isLoading,
+            isRefreshing = accountState.isLoading && accountState.account != null,
+            error = postsState.error,
+            emptyMessage = {
+                Image(
+                    painter = painterResource(id = R.drawable.empty_state_no_posts),
+                    contentDescription = null,
+                    Modifier.fillMaxWidth()
+                )
+            },
+            endReached = postsState.endReached,
+            navController = navController,
+            getItemsPaginated = { getPostsPaginated() },
+            before = {
+                Column {
                     ProfileTopSection(
                         account = accountState.account, navController
                     )
-                },
-                onRefresh = { refresh() }
-            )
 
-            if (postsState.posts.isEmpty() && !postsState.isLoading && postsState.error.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(36.dp, 20.dp)
-                        .verticalScroll(
-                            rememberScrollState()
-                        )
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.empty_state_no_posts),
-                        contentDescription = null,
-                        Modifier.fillMaxWidth()
-                    )
+                    otherAccountTopSectionAdditions()
                 }
-            }
-        }
+
+            },
+            onRefresh = { refresh() }
+        )
     }
 }
