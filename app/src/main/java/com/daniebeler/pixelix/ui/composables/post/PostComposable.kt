@@ -251,67 +251,77 @@ fun PostComposable(
         }
 
         Column(Modifier.padding(8.dp)) {
-            Row {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                if (viewModel.likeState.liked) {
-                    IconButton(onClick = {
-                        viewModel.unlikePost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                Row {
+                    if (viewModel.likeState.liked) {
+                        IconButton(onClick = {
+                            viewModel.unlikePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Favorite,
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.likePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            )
+                        }
                     }
-                } else {
+
                     IconButton(onClick = {
-                        viewModel.likePost(post.id)
+                        viewModel.loadReplies(post.account.id, post.id)
+                        showBottomSheet = 1
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            imageVector = Icons.Outlined.ChatBubbleOutline, contentDescription = ""
                         )
                     }
                 }
 
-                IconButton(onClick = {
-                    viewModel.loadReplies(post.account.id, post.id)
-                    showBottomSheet = 1
-                }) {
-                    Icon(
-                        imageVector = Icons.Outlined.ChatBubbleOutline, contentDescription = ""
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
+                Text(text = viewModel.likeState.likesCount.toString() + " likes",
+                    modifier = Modifier.clickable {
+                        viewModel.loadLikedBy(post.id)
+                        showBottomSheet = 3
+                    })
 
+                Row {
+                    Spacer(modifier = Modifier.width(40.dp))
 
-                if (viewModel.bookmarkState.bookmarked) {
-                    IconButton(onClick = {
-                        viewModel.unBookmarkPost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Bookmark, contentDescription = ""
-                        )
-                    }
-                } else {
-                    IconButton(onClick = {
-                        viewModel.bookmarkPost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.BookmarkBorder, contentDescription = ""
-                        )
+                    if (viewModel.bookmarkState.bookmarked) {
+                        IconButton(onClick = {
+                            viewModel.unBookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Bookmark, contentDescription = ""
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.bookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkBorder, contentDescription = ""
+                            )
+                        }
                     }
                 }
             }
 
-            Text(text = viewModel.likeState.likesCount.toString() + " likes",
-                modifier = Modifier.clickable {
-                    viewModel.loadLikedBy(post.id)
-                    showBottomSheet = 3
-                })
+
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
-                    text = post.account.username + " " + post.content,
+                    text = post.content,
                     mentions = post.mentions,
                     navController = navController
                 )
