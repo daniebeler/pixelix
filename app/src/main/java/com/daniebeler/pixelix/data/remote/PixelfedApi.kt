@@ -309,11 +309,6 @@ interface PixelfedApi {
         @Part filePart: MultipartBody.Part
     ): Call<MediaAttachmentDto>
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "User-Agent: pixelfed"
-    )
     @POST("/api/v1/statuses")
     suspend fun createPost(
         @Header("Authorization") accessToken: String,
