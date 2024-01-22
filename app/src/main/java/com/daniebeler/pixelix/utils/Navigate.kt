@@ -25,6 +25,12 @@ class Navigate {
         }
     }
 
+    fun navigateWithoutStateRestore(route: String, navController: NavController) {
+        navController.navigate(route) {
+            launchSingleTop = true
+        }
+    }
+
     fun openUrlInApp(context: Context, url: String) {
         val intent = CustomTabsIntent.Builder().build()
         intent.launchUrl(context, Uri.parse(url))

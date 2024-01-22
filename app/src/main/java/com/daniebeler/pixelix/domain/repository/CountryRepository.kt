@@ -3,6 +3,7 @@ package com.daniebeler.pixelix.domain.repository
 import android.content.Context
 import android.net.Uri
 import com.daniebeler.pixelix.common.Resource
+import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
@@ -93,7 +94,7 @@ interface CountryRepository {
     fun search(searchText: String): Flow<Resource<Search>>
 
     fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>>
-    fun createPost(mediaIds: List<String>, description: String, visibility: String, sensitive: Boolean, spoilerText: String?): Flow<Resource<Post>>
+    fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
 
     suspend fun createApplication(): Application?
 

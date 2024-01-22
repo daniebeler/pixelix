@@ -510,12 +510,9 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun createPost(mediaIds: List<String>, description: String, visibility: String, sensitive: Boolean, spoilerText: String?): Flow<Resource<Post>> = flow {
+    override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {
         try {
             emit(Resource.Loading())
-            var createPostDto: CreatePostDto = CreatePostDto()
-            createPostDto.status = description
-            createPostDto.media_ids = mediaIds
             val response = pixelfedApi.createPost(accessToken, createPostDto)
             if (response != null) {
                 val res = response.body()!!.toPost()

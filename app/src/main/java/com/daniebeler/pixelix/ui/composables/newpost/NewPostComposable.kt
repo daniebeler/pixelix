@@ -94,7 +94,7 @@ fun NewPostComposable(
                     }
                 },
                 actions = {
-                    Button(onClick = { viewModel.post(context) }) {
+                    Button(onClick = { viewModel.post(context, navController) }) {
                         Text(text = "Post")
                     }
                 }

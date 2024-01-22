@@ -7,10 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.daniebeler.pixelix.common.Resource
+import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.ui.composables.post.LikeState
 import com.daniebeler.pixelix.ui.composables.post.RepliesState
+import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -33,7 +36,7 @@ class NewPostViewModel @Inject constructor(
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
 
-    fun post(context: Context) {
+    fun post(context: Context, navController: NavController) {
         createPostState = CreatePostState(isLoading = true)
         uris.map { uri ->
             repository.uploadMedia(uri, context).onEach { result ->
@@ -44,7 +47,7 @@ class NewPostViewModel @Inject constructor(
                         )
                         println(result.data)
                         if (uris.size == newMediaUploadState.mediaAttachments.size) {
-                            createNewPost(newMediaUploadState)
+                            createNewPost(newMediaUploadState, navController)
                         }
                         newMediaUploadState
                     }
@@ -61,10 +64,10 @@ class NewPostViewModel @Inject constructor(
         }
     }
 
-
-    private fun createNewPost(newMediaUploadState: MediaUploadState) {
+    private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
-        repository.createPost(mediaIds, caption, audience, sensitive, sensitiveText).onEach { result ->
+        val createPostDto = CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText)
+        repository.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
                     CreatePostState(post = result.data)
