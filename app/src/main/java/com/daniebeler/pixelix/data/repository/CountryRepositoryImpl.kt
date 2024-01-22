@@ -10,6 +10,7 @@ import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
+import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
@@ -30,6 +31,7 @@ import com.daniebeler.pixelix.domain.model.toAccount
 import com.daniebeler.pixelix.domain.model.toApplication
 import com.daniebeler.pixelix.domain.model.toMediaAttachment
 import com.daniebeler.pixelix.domain.model.toNotification
+import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.domain.model.toReply
 import com.daniebeler.pixelix.domain.model.toSearch
 import com.daniebeler.pixelix.domain.repository.CountryRepository
@@ -505,6 +507,27 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             }
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message!!))
+        }
+    }
+
+    override fun createPost(mediaIds: List<String>, description: String, visibility: String, sensitive: Boolean, spoilerText: String?): Flow<Resource<Post>> = flow {
+        try {
+            emit(Resource.Loading())
+            var createPostDto: CreatePostDto = CreatePostDto()
+            createPostDto.status = description
+            createPostDto.media_ids = mediaIds
+            val response = pixelfedApi.createPost(accessToken, createPostDto)
+            if (response != null) {
+                val res = response.body()!!.toPost()
+                emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            if (exception.message != null) {
+                emit(Resource.Error(exception.message!!))
+            }
+            emit(Resource.Error("Unknown Error"))
         }
     }
 
