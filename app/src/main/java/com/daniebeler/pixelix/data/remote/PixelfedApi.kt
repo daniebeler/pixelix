@@ -17,6 +17,7 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -314,6 +315,12 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String,
         @Body createPostDto: CreatePostDto
     ) : Response<PostDto>
+
+    @DELETE("/api/v1/statuses/{id}")
+    fun deletePost(
+        @Header("Authorization") accessToken: String,
+        @Path("id") postid: String
+    ) : Call<PostDto>
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>

@@ -95,7 +95,7 @@ interface CountryRepository {
 
     fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>>
     fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
-
+    fun deletePost(postId: String): Flow<Resource<Post>>
     suspend fun createApplication(): Application?
 
     suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken?

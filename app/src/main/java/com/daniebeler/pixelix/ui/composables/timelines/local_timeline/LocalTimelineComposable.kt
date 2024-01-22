@@ -22,6 +22,7 @@ fun LocalTimelineComposable(
         },
         onRefresh = {
             viewModel.refresh()
-        }
+        },
+        itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
     )
 }

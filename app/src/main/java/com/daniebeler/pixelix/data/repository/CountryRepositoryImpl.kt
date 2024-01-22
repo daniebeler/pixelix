@@ -45,6 +45,8 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
@@ -528,6 +530,13 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
+    override fun deletePost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(
+            pixelfedApi.deletePost(
+                accessToken, postId
+            )
+        )
+    }
 
 // Auth
 

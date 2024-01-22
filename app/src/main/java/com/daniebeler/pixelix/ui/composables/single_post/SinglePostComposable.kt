@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +56,7 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
             Column ( modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
-                    PostComposable(viewModel.postState.post!!, navController)
+                    PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = { Navigate().navigate("own_profile_screen", navController) })
                 }
             }
 

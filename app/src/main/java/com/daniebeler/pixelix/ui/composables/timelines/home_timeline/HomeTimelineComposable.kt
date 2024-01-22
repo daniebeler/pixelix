@@ -22,6 +22,7 @@ fun HomeTimelineComposable(
         },
         onRefresh = {
             viewModel.refresh()
-        }
+        },
+        itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
     )
 }

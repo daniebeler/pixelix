@@ -20,6 +20,7 @@ fun GlobalTimelineComposable(
         getItemsPaginated = { viewModel.loadMorePosts(false) },
         onRefresh = {
             viewModel.refresh()
-        }
+        },
+        itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
     )
 }

@@ -68,4 +68,8 @@ class GlobalTimelineViewModel @Inject constructor(
         globalTimelineState = GlobalTimelineState()
         loadMorePosts(true)
     }
+
+    fun postGetsDeleted(postId: String) {
+        globalTimelineState = globalTimelineState.copy(globalTimeline = globalTimelineState.globalTimeline.filter { post -> post.id != postId })
+    }
 }

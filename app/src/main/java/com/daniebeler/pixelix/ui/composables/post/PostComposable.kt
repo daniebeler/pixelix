@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
@@ -80,6 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -99,6 +101,7 @@ import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.ui.composables.FollowButton
 import com.daniebeler.pixelix.ui.composables.HashtagsMentionsTextView
+import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate
 import com.daniebeler.pixelix.utils.Share
@@ -113,6 +116,7 @@ import kotlinx.coroutines.launch
 fun PostComposable(
     post: Post,
     navController: NavController,
+    postGetsDeleted: (postId: String) -> Unit,
     viewModel: PostViewModel = hiltViewModel(key = post.id)
 ) {
 
@@ -129,6 +133,12 @@ fun PostComposable(
     LaunchedEffect(Unit) {
         viewModel.likeState = LikeState(liked = post.favourited, likesCount = post.favouritesCount)
         viewModel.bookmarkState = BookmarkState(bookmarked = post.bookmarked)
+    }
+
+    LaunchedEffect(viewModel.deleteState.deleted) {
+        if (viewModel.deleteState.deleted) {
+           postGetsDeleted(post.id)
+        }
     }
 
     val pagerState = rememberPagerState(pageCount = {
@@ -347,12 +357,17 @@ fun PostComposable(
             if (showBottomSheet == 1) {
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
-                ShareBottomSheet(context, post.url)
+                if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
+                    ShareBottomSheet(context, post.url, true, viewModel, post)
+                } else {
+                    ShareBottomSheet(context, post.url, false, viewModel, post)
+                }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
             }
         }
     }
+    LoadingComposable(isLoading = viewModel.deleteState.isLoading)
 }
 
 @Composable
@@ -520,7 +535,13 @@ private fun LikedByAccountElement(account: Account, navController: NavController
 }
 
 @Composable
-private fun ShareBottomSheet(context: Context, url: String) {
+private fun ShareBottomSheet(
+    context: Context,
+    url: String,
+    minePost: Boolean,
+    viewModel: PostViewModel,
+    post: Post
+) {
     Column(
         modifier = Modifier.padding(bottom = 32.dp)
     ) {
@@ -535,6 +556,14 @@ private fun ShareBottomSheet(context: Context, url: String) {
             onClick = {
                 Share().shareText(context, url)
             })
+
+        if (minePost) {
+            CustomBottomSheetElement(icon = Icons.Outlined.Delete,
+                text = "Delete this Post",
+                onClick = {
+                    viewModel.deletePost(post.id)
+                })
+        }
     }
 }
 

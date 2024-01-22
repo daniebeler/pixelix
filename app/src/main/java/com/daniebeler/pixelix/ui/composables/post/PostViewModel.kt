@@ -6,11 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
+import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -26,10 +28,37 @@ class PostViewModel @Inject constructor(
 
     var likeState by mutableStateOf(LikeState())
     var bookmarkState by mutableStateOf(BookmarkState())
+    var deleteState by mutableStateOf(DeleteState())
 
     var timeAgoString: String by mutableStateOf("")
 
     var showPost: Boolean by mutableStateOf(false)
+
+    var myAccountId: String? = null
+
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            myAccountId = repository.getAccountId().first()
+        }
+    }
+
+    fun deletePost(postId: String) {
+        repository.deletePost(postId).onEach { result ->
+            deleteState = when (result) {
+                is Resource.Success -> {
+                    DeleteState(deleted = true)
+                }
+
+                is Resource.Error -> {
+                    DeleteState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    DeleteState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun toggleShowPost() {
         showPost = !showPost

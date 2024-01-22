@@ -105,6 +105,10 @@ class HashtagTimelineViewModel @Inject constructor(
         }
     }
 
+    fun postGetsDeleted(postId: String) {
+        postsState = postsState.copy(hashtagTimeline = postsState.hashtagTimeline.filter { post -> post.id != postId })
+    }
+
     fun getHashtagInfo(hashtag: String) {
         repository.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {

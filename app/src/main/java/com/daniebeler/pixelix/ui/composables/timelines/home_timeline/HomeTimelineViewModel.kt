@@ -96,4 +96,9 @@ class HomeTimelineViewModel @Inject constructor(
     fun refresh() {
         getItemsFirstLoad(true)
     }
+
+    fun postGetsDeleted(postId: String) {
+        println("delete post $postId filter")
+        homeTimelineState = homeTimelineState.copy(homeTimeline = homeTimelineState.homeTimeline.filter { post -> post.id != postId })
+    }
 }

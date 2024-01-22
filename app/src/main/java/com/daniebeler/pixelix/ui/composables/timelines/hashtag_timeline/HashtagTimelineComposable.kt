@@ -92,7 +92,8 @@ fun HashtagTimelineComposable(
                 },
                 onRefresh = {
                     viewModel.refresh()
-                }
+                },
+                itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
             )
         }
     }

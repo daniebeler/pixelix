@@ -31,7 +31,8 @@ fun InfinitePostsList(
     endReached: Boolean,
     navController: NavController,
     getItemsPaginated: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    itemGetsDeleted: (postId: String) -> Unit
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -41,6 +42,11 @@ fun InfinitePostsList(
         onRefresh = { onRefresh() }
     )
 
+    fun delete(postId: String) {
+        println("saaas " + postId)
+        itemGetsDeleted(postId)
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(32.dp),
         modifier = Modifier.pullRefresh(pullRefreshState),
@@ -49,7 +55,7 @@ fun InfinitePostsList(
         items(items, key = {
             it.id
         }) { item ->
-            PostComposable(post = item, navController)
+            PostComposable(post = item, postGetsDeleted = ::delete, navController = navController)
         }
 
         if (items.isNotEmpty() && isLoading && isRefreshing) {
