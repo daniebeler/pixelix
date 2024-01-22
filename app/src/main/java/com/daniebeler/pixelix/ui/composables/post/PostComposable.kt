@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -35,11 +35,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -53,6 +55,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +74,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +96,12 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
+import com.daniebeler.pixelix.domain.model.Reply
+import com.daniebeler.pixelix.ui.composables.FollowButton
+import com.daniebeler.pixelix.ui.composables.HashtagsMentionsTextView
 import com.daniebeler.pixelix.utils.BlurHashDecoder
+import com.daniebeler.pixelix.utils.Navigate
+import com.daniebeler.pixelix.utils.Share
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -110,7 +119,7 @@ fun PostComposable(
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(0) }
+    var showBottomSheet by remember { mutableIntStateOf(0) }
 
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
@@ -133,10 +142,7 @@ fun PostComposable(
             modifier = Modifier
                 .padding(start = 8.dp)
                 .clickable(onClick = {
-                    navController.navigate("profile_screen/" + post.account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate("profile_screen/" + post.account.id, navController)
                 })
         ) {
             AsyncImage(
@@ -144,6 +150,7 @@ fun PostComposable(
                 contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)
+                    .width(32.dp)
                     .clip(CircleShape)
             )
             Column(modifier = Modifier.padding(start = 8.dp)) {
@@ -172,8 +179,7 @@ fun PostComposable(
 
             Box {
                 val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
-                    LocalContext.current.resources,
-                    post.mediaAttachments[0].blurHash
+                    LocalContext.current.resources, post.mediaAttachments[0].blurHash
                 )
 
                 Image(
@@ -186,10 +192,9 @@ fun PostComposable(
                 )
 
                 Column(
-                    Modifier
-                        .aspectRatio(
-                            post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
-                        ),
+                    Modifier.aspectRatio(
+                        post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                    ),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -246,52 +251,77 @@ fun PostComposable(
         }
 
         Column(Modifier.padding(8.dp)) {
-            Row {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                if (viewModel.likeState.liked) {
-                    IconButton(onClick = {
-                        viewModel.unlikePost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite, contentDescription = ""
-                        )
+                Row {
+                    if (viewModel.likeState.liked) {
+                        IconButton(onClick = {
+                            viewModel.unlikePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Favorite,
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.likePost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            )
+                        }
                     }
-                } else {
+
                     IconButton(onClick = {
-                        viewModel.likePost(post.id)
+                        viewModel.loadReplies(post.account.id, post.id)
+                        showBottomSheet = 1
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            imageVector = Icons.Outlined.ChatBubbleOutline, contentDescription = ""
                         )
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
 
+                Text(text = viewModel.likeState.likesCount.toString() + " likes",
+                    modifier = Modifier.clickable {
+                        viewModel.loadLikedBy(post.id)
+                        showBottomSheet = 3
+                    })
 
-                if (viewModel.bookmarkState.bookmarked) {
-                    IconButton(onClick = {
-                        viewModel.unbookmarkPost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Bookmark, contentDescription = ""
-                        )
-                    }
-                } else {
-                    IconButton(onClick = {
-                        viewModel.bookmarkPost(post.id)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.BookmarkBorder, contentDescription = ""
-                        )
+                Row {
+                    Spacer(modifier = Modifier.width(40.dp))
+
+                    if (viewModel.bookmarkState.bookmarked) {
+                        IconButton(onClick = {
+                            viewModel.unBookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Bookmark, contentDescription = ""
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.bookmarkPost(post.id)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkBorder, contentDescription = ""
+                            )
+                        }
                     }
                 }
             }
 
-            Text(text = viewModel.likeState.likesCount.toString() + " likes")
+
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
-                    text = post.account.username + " " + post.content,
+                    text = post.content,
                     mentions = post.mentions,
                     navController = navController
                 )
@@ -315,101 +345,197 @@ fun PostComposable(
             }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(12.dp)
-                ) {
-                    HashtagsMentionsTextView(
-                        text = post.content, mentions = post.mentions, navController = navController
+                CommentsBottomSheet(post, navController, viewModel)
+            } else if (showBottomSheet == 2) {
+                ShareBottomSheet(context, post.url)
+            } else if (showBottomSheet == 3) {
+                LikesBottomSheet(viewModel, navController)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LikesBottomSheet(
+    viewModel: PostViewModel, navController: NavController
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {
+        Text(text = "Liked by", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(Modifier.padding(12.dp))
+
+        LazyColumn {
+            items(viewModel.likedByState.likedBy, key = {
+                it.id
+            }) { account ->
+                LikedByAccountElement(account, navController)
+            }
+
+            if (viewModel.likedByState.isLoading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
-                    HorizontalDivider(Modifier.padding(12.dp))
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(32.dp)
+                }
+            }
+
+            if (!viewModel.likedByState.isLoading && viewModel.likedByState.likedBy.isEmpty()) {
+                item {
+                    Row(
+                        Modifier
+                            .padding(vertical = 32.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        items(viewModel.repliesState.replies, key = {
-                            it.id
-                        }) { reply ->
-                            Row {
-                                AsyncImage(
-                                    model = reply.account.avatar,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .height(32.dp)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            navController.navigate("profile_screen/" + reply.account.id) {
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
-                                )
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Column {
-                                    Text(
-                                        text = reply.account.acct,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.clickable {
-                                            navController.navigate("profile_screen/" + reply.account.id) {
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        })
-
-                                    HashtagsMentionsTextView(
-                                        text = reply.content,
-                                        mentions = reply.mentions,
-                                        navController = navController
-                                    )
-                                }
-
-
-                            }
-
-                        }
+                        Text(text = "No likes yet")
                     }
                 }
-            } else {
-                Column(
-                    modifier = Modifier.padding(bottom = 32.dp)
-                ) {
-                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
-                        text = stringResource(
-                            R.string.open_in_browser
-                        ),
-                        onClick = {
-                            openUrl(context, post.url)
-                        })
+            }
+        }
+    }
+}
 
-                    CustomBottomSheetElement(icon = Icons.Outlined.Share,
-                        text = stringResource(R.string.share_this_post),
-                        onClick = {
-                            shareProfile(context, post.url)
-                        })
+@Composable
+private fun CommentsBottomSheet(
+    post: Post, navController: NavController, viewModel: PostViewModel
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {
+        val ownDescription = Reply("0", post.content, post.mentions, post.account)
+
+        ReplyElement(reply = ownDescription, navController = navController)
+        HorizontalDivider(Modifier.padding(12.dp))
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            items(viewModel.repliesState.replies, key = {
+                it.id
+            }) { reply ->
+                ReplyElement(reply = reply, navController = navController)
+            }
+            if (viewModel.repliesState.isLoading) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
+            }
+
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.replies.isEmpty()) {
+                item {
+                    Row(
+                        Modifier
+                            .padding(vertical = 32.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "No comments yet")
+                    }
                 }
             }
 
         }
     }
-
 }
 
-private fun openUrl(context: Context, url: String) {
-    val intent = CustomTabsIntent.Builder().build()
-    intent.launchUrl(context, Uri.parse(url))
-}
+@Composable
+private fun ReplyElement(reply: Reply, navController: NavController) {
+    Row {
+        AsyncImage(model = reply.account.avatar,
+            contentDescription = "",
+            modifier = Modifier
+                .height(32.dp)
+                .clip(CircleShape)
+                .clickable {
+                    Navigate().navigate(
+                        "profile_screen/" + reply.account.id, navController
+                    )
+                })
 
-private fun shareProfile(context: Context, url: String) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column {
+            Text(text = reply.account.acct,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    Navigate().navigate(
+                        "profile_screen/" + reply.account.id, navController
+                    )
+                })
+
+            HashtagsMentionsTextView(
+                text = reply.content,
+                mentions = reply.mentions,
+                navController = navController
+            )
+        }
     }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
+}
+
+@Composable
+private fun LikedByAccountElement(account: Account, navController: NavController) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .clickable {
+                Navigate().navigate("profile_screen/" + account.id, navController)
+            }, verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = account.avatar,
+            contentDescription = "",
+            modifier = Modifier
+                .height(46.dp)
+                .width(46.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+            Text(text = "@${account.username}")
+            Text(
+                text = "${account.followersCount} followers",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShareBottomSheet(context: Context, url: String) {
+    Column(
+        modifier = Modifier.padding(bottom = 32.dp)
+    ) {
+        CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+            R.string.open_in_browser
+        ), onClick = {
+            Navigate().openUrlInApp(context, url)
+        })
+
+        CustomBottomSheetElement(icon = Icons.Outlined.Share,
+            text = stringResource(R.string.share_this_post),
+            onClick = {
+                Share().shareText(context, url)
+            })
+    }
 }
 
 @Composable
@@ -431,113 +557,6 @@ fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Uni
 
         Text(text = text)
     }
-}
-
-
-@Composable
-fun HashtagsMentionsTextView(
-    text: String,
-    modifier: Modifier = Modifier,
-    mentions: List<Account>?,
-    navController: NavController
-) {
-
-    val colorScheme = MaterialTheme.colorScheme
-    val textStyle = SpanStyle(color = colorScheme.onBackground)
-    val primaryStyle = SpanStyle(color = colorScheme.primary)
-
-    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+)")
-
-    val annotatedStringList = remember {
-
-        var lastIndex = 0
-        val annotatedStringList = mutableStateListOf<AnnotatedString.Range<String>>()
-
-        // Add a text range for hashtags
-        for (match in hashtags.findAll(text)) {
-
-            val start = match.range.first
-            val end = match.range.last + 1
-            val string = text.substring(start, end)
-
-            if (start > lastIndex) {
-                annotatedStringList.add(
-                    AnnotatedString.Range(
-                        text.substring(lastIndex, start), lastIndex, start, "text"
-                    )
-                )
-            }
-            if (string.startsWith("#")) {
-                annotatedStringList.add(
-                    AnnotatedString.Range(string, start, end, "link")
-                )
-            } else {
-                annotatedStringList.add(
-                    AnnotatedString.Range(string, start, end, "account")
-                )
-            }
-
-            lastIndex = end
-        }
-
-        // Add remaining text
-        if (lastIndex < text.length) {
-            annotatedStringList.add(
-                AnnotatedString.Range(
-                    text.substring(lastIndex, text.length), lastIndex, text.length, "text"
-                )
-            )
-        }
-        annotatedStringList
-    }
-
-    // Build an annotated string
-    val annotatedString = buildAnnotatedString {
-        annotatedStringList.forEach {
-            if (it.tag == "link" || it.tag == "account") {
-                pushStringAnnotation(tag = it.tag, annotation = it.item)
-                withStyle(style = primaryStyle) { append(it.item) }
-                pop()
-            } else {
-                withStyle(style = textStyle) { append(it.item) }
-            }
-        }
-    }
-
-
-
-    ClickableText(text = annotatedString,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = modifier,
-        onClick = { position ->
-            val annotatedStringRange =
-                annotatedStringList.first { it.start <= position && position < it.end }
-            if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") {
-                val newItem = annotatedStringRange.item.drop(1)
-                val route = if (annotatedStringRange.tag == "link") {
-                    "hashtag_timeline_screen/$newItem"
-                } else {
-                    if (mentions == null) {
-                        ""
-                    } else {
-                        val account =
-                            mentions.find { account: Account -> account.username == newItem }
-                        if (account != null) {
-                            "profile_screen/${account.id}"
-                        } else {
-                            ""
-                        }
-                    }
-
-                }
-                if (route.isNotBlank() && route.isNotEmpty()) {
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            }
-        })
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -618,20 +637,17 @@ fun VideoPlayer(uri: Uri) {
     val context = LocalContext.current
 
     val exoPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build()
-            .apply {
-                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-                    context,
-                    defaultDataSourceFactory
-                )
-                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(uri))
+        ExoPlayer.Builder(context).build().apply {
+            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                context, defaultDataSourceFactory
+            )
+            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
 
-                setMediaSource(source)
-                prepare()
-            }
+            setMediaSource(source)
+            prepare()
+        }
     }
 
     exoPlayer.playWhenReady = true

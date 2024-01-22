@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Account
 import com.google.gson.annotations.SerializedName
 
 data class AccountDto(
@@ -35,7 +36,7 @@ data class AccountDto(
     @SerializedName("note")
     val note: String,
     @SerializedName("note_text")
-    val noteText: String,
+    val noteText: String?,
     @SerializedName("pronouns")
     val pronouns: List<Any>,
     @SerializedName("statuses_count")
@@ -46,4 +47,20 @@ data class AccountDto(
     val username: String,
     @SerializedName("website")
     val website: String
-)
+) : DtoInterface<Account> {
+    override fun toModel(): Account {
+        return Account(
+            id = id,
+            username = username,
+            acct = acct,
+            displayname = displayName,
+            avatar = avatar,
+            followersCount = followersCount,
+            followingCount = followingCount,
+            postsCount = statusesCount,
+            website = website,
+            note = noteText ?: "",
+            url = url
+        )
+    }
+}

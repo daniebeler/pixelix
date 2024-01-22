@@ -33,23 +33,23 @@ class MainViewModel @Inject constructor(
     }
 
 
-    suspend fun storeClientId(clientId: String) {
+    private suspend fun storeClientId(clientId: String) {
         repository.storeClientId(clientId)
     }
 
-    fun getClientIdFromStorage(): Flow<String> {
+    private fun getClientIdFromStorage(): Flow<String> {
         return repository.getClientIdFromStorage()
     }
 
-    suspend fun storeClientSecret(clientSecret: String) {
+    private suspend fun storeClientSecret(clientSecret: String) {
         repository.storeClientSecret(clientSecret)
     }
 
-    fun getClientSecretFromStorage(): Flow<String> {
+    private fun getClientSecretFromStorage(): Flow<String> {
         return repository.getClientSecretFromStorage()
     }
 
-    suspend fun storeAccessToken(accessToken: String) {
+    private suspend fun storeAccessToken(accessToken: String) {
         repository.storeAccessToken(accessToken)
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.domain.model.Tag
+import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
 fun CustomHashtag(hashtag: Tag, navController: NavController) {
@@ -31,10 +32,7 @@ fun CustomHashtag(hashtag: Tag, navController: NavController) {
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate("hashtag_timeline_screen/${hashtag.name}") {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                Navigate().navigate("hashtag_timeline_screen/${hashtag.name}", navController)
             }) {
         Box(
             modifier = Modifier

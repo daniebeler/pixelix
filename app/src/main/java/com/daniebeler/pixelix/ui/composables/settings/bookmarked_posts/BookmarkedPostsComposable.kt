@@ -33,7 +33,6 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable

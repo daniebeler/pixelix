@@ -1,17 +1,10 @@
 package com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,16 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
-import com.daniebeler.pixelix.ui.composables.post.PostComposable
+import com.daniebeler.pixelix.ui.composables.FollowButton
+import com.daniebeler.pixelix.ui.composables.InfinitePostsList
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HashtagTimelineComposable(
     navController: NavController,
@@ -42,16 +32,11 @@ fun HashtagTimelineComposable(
 ) {
 
     LaunchedEffect(hashtag) {
-        viewModel.getHashtagTimeline(hashtag, false)
+        viewModel.getItemsFirstLoad(hashtag)
         viewModel.getHashtagInfo(hashtag)
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.postsState.refreshing,
-        onRefresh = { viewModel.refresh() }
-    )
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -83,51 +68,32 @@ fun HashtagTimelineComposable(
                     }
                 },
                 actions = {
-                    if (viewModel.hashtagState.isLoading) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
-                    } else if (viewModel.hashtagState.hashtag != null) {
-                        if (viewModel.hashtagState.hashtag!!.following) {
-                            Button(onClick = {
-                                viewModel.unfollowHashtag(viewModel.hashtagState.hashtag!!.name)
-                            }) {
-                                Text(text = "unfollow")
-                            }
-                        } else {
-                            Button(onClick = {
-                                viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name)
-                            }) {
-                                Text(text = "follow")
-                            }
-                        }
-                    }
+                    FollowButton(
+                        firstLoaded = viewModel.hashtagState.hashtag != null,
+                        isLoading = viewModel.hashtagState.isLoading,
+                        isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
+                        onFollowClick = { viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name) },
+                        onUnFollowClick = { viewModel.unfollowHashtag(viewModel.hashtagState.hashtag!!.name) })
                 }
             )
 
         }
     ) { paddingValues ->
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-            modifier = Modifier
-                .padding(paddingValues)
-                .pullRefresh(pullRefreshState)
-        ) {
-            items(viewModel.postsState.hashtagTimeline, key = {
-                it.id
-            }) { item ->
-                PostComposable(post = item, navController)
-            }
+        Box(modifier = Modifier.padding(paddingValues)) {
+            InfinitePostsList(
+                items = viewModel.postsState.hashtagTimeline,
+                isLoading = viewModel.postsState.isLoading,
+                isRefreshing = viewModel.postsState.isRefreshing,
+                error = viewModel.postsState.error,
+                endReached = viewModel.postsState.endReached,
+                navController = navController,
+                getItemsPaginated = {
+                    viewModel.getItemsPaginated(hashtag)
+                },
+                onRefresh = {
+                    viewModel.refresh()
+                }
+            )
         }
-        CustomPullRefreshIndicator(
-            viewModel.postsState.refreshing,
-            pullRefreshState,
-        )
-
-        if (!viewModel.postsState.refreshing) {
-            LoadingComposable(isLoading = viewModel.postsState.isLoading)
-        }
-        ErrorComposable(message = viewModel.postsState.error, pullRefreshState)
     }
 }

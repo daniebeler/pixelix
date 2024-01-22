@@ -49,6 +49,7 @@ import com.daniebeler.pixelix.ui.composables.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -148,14 +149,18 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
 
     var showImage = false
     var text = ""
-    if (notification.type == "follow") {
-        text = " " + stringResource(R.string.followed_you)
-    } else if (notification.type == "favourite") {
-        text = " " + stringResource(R.string.liked_your_post)
-        showImage = true
-    } else if (notification.type == "reblog") {
-        text = " " + stringResource(R.string.reblogged_your_post)
-        showImage = true
+    when (notification.type) {
+        "follow" -> {
+            text = " " + stringResource(R.string.followed_you)
+        }
+        "favourite" -> {
+            text = " " + stringResource(R.string.liked_your_post)
+            showImage = true
+        }
+        "reblog" -> {
+            text = " " + stringResource(R.string.reblogged_your_post)
+            showImage = true
+        }
     }
 
     Row(
@@ -174,10 +179,7 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         Column {
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    navController.navigate("profile_screen/" + notification.account.id) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    Navigate().navigate("profile_screen/" + notification.account.id, navController)
                 }
             ) {
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold)

@@ -1,26 +1,23 @@
 package com.daniebeler.pixelix.data.remote
 
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pixelix.data.remote.dto.ApplicationDto
-import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
+import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.SearchDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
-import com.daniebeler.pixelix.domain.model.Post
 import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -28,6 +25,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PixelfedApi {
+
+
+    // Discover
+
+
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
@@ -37,14 +39,22 @@ interface PixelfedApi {
     @GET("/api/v1.1/discover/accounts/popular?range=daily")
     fun getTrendingAccounts(@Header("Authorization") token: String): Call<List<AccountDto>>
 
-    @GET("api/v1/timelines/tag/{tag}?_pe=1")
+
+    // Timelines
+
+
+    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
         @Path("tag") tag: String,
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/tags/{tag}?_pe=1")
-    fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
+    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
+    fun getHashtagTimeline(
+        @Path("tag") tag: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxPostId: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public?local&_pe=1")
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
@@ -64,29 +74,52 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home?_pe=1")
+    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/home?_pe=1")
+    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") accessToken: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/favourites?limit=12")
+
+    // Favourites
+
+
+    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/bookmarks?limit=12")
-    fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
+    fun getLikedPosts(
+        @Header("Authorization") accessToken: String,
+        @Query("max_id") maxId: String
+    ): Call<List<PostDto>>
 
-    @GET("api/v1/followed_tags?_pe=1")
-    fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
+    @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
+    fun getAccountsWhoLikedPost(
+        @Header("Authorization") accessToken: String,
+        @Path("postId") postId: String
+    ): Call<List<AccountDto>>
 
-    @GET("api/v2/comments/{userid}/status/{postid}")
-    fun getReplies(
-        @Path("userid") userid: String,
-        @Path("postid") postid: String
-    ): Call<ApiReplyElementDto>
+
+    // Notifications
+
+
+    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
+    fun getNotifications(
+        @Header("Authorization") token: String
+    ): Call<List<NotificationDto>>
+
+    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
+    fun getNotifications(
+        @Header("Authorization") token: String,
+        @Query("max_id") maxNotificationId: String
+    ): Call<List<NotificationDto>>
+
+
+    // Accounts
+
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(
@@ -94,35 +127,18 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<AccountDto>
 
-    @GET("api/v1/notifications?limit=20")
-    fun getNotifications(
-        @Header("Authorization") token: String
-    ): Call<List<NotificationDto>>
-
-    @GET("api/v1/notifications?limit=20")
-    fun getNotifications(
-        @Header("Authorization") token: String,
-        @Query("max_id") maxNotificationId: String
-    ): Call<List<NotificationDto>>
-
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=12")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Header("Authorization") token: String,
         @Query("max_id") maxId: String
     ): Call<List<PostDto>>
-
-    @GET("api/v1/statuses/{postid}?_pe=1")
-    fun getPostById(
-        @Path("postid") postId: String,
-        @Header("Authorization") token: String
-    ): Call<PostDto>
 
     @GET("api/v1/accounts/relationships")
     fun getRelationships(
@@ -148,18 +164,6 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<RelationshipDto>
 
-    @POST("api/v1/tags/{id}/follow")
-    fun followHashtag(
-        @Path("id") tagId: String,
-        @Header("Authorization") token: String
-    ): Call<TagDto>
-
-    @POST("api/v1/tags/{id}/unfollow")
-    fun unfollowHashtag(
-        @Path("id") tagId: String,
-        @Header("Authorization") token: String
-    ): Call<TagDto>
-
     @POST("api/v1/accounts/{id}/mute")
     fun muteAccount(
         @Path("id") userId: String,
@@ -184,6 +188,45 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<RelationshipDto>
 
+    @GET("api/v1/accounts/{id}/followers?limit=40")
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/following?limit=40")
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/following?limit=40")
+    fun getAccountsFollowing(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String,
+        @Query("max_id") maxId: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/{id}/followers?limit=40")
+    fun getAccountsFollowers(
+        @Path("id") userId: String,
+        @Header("Authorization") token: String
+    ): Call<List<AccountDto>>
+
+    @GET("api/v1/accounts/verify_credentials")
+    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
+
+
+    // Statuses
+
+
+    @GET("api/v1/statuses/{postid}?_pe=1")
+    fun getPostById(
+        @Path("postid") postId: String,
+        @Header("Authorization") token: String
+    ): Call<PostDto>
+
     @POST("api/v1/statuses/{id}/favourite")
     fun likePost(@Path("id") userId: String, @Header("Authorization") token: String): Call<PostDto>
 
@@ -205,31 +248,43 @@ interface PixelfedApi {
         @Header("Authorization") token: String
     ): Call<PostDto>
 
-    @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
-        @Path("id") userId: String,
+
+    // Tags
+
+
+    @POST("api/v1/tags/{id}/follow")
+    fun followHashtag(
+        @Path("id") tagId: String,
         @Header("Authorization") token: String
-    ): Call<List<AccountDto>>
+    ): Call<TagDto>
 
-    @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
-        @Path("id") userId: String,
-        @Header("Authorization") token: String,
-        @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
-
-    @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
-        @Path("id") userId: String,
+    @POST("api/v1/tags/{id}/unfollow")
+    fun unfollowHashtag(
+        @Path("id") tagId: String,
         @Header("Authorization") token: String
-    ): Call<List<AccountDto>>
+    ): Call<TagDto>
 
-    @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
-        @Path("id") userId: String,
-        @Header("Authorization") token: String,
-        @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
+    @GET("api/v1/followed_tags?_pe=1")
+    fun getFollowedHashtags(@Header("Authorization") accessToken: String): Call<List<TagDto>>
+
+    @GET("api/v1/tags/{tag}?_pe=1")
+    fun getHashtag(@Path("tag") tag: String, @Header("Authorization") token: String): Call<TagDto>
+
+
+    // Other
+
+
+    @GET("api/v1/bookmarks?limit=12")
+    fun getBookmarkedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+
+    @GET("api/v2/comments/{userid}/status/{postid}")
+    fun getReplies(
+        @Path("userid") userid: String,
+        @Path("postid") postid: String
+    ): Call<ApiReplyElementDto>
+
+    @GET("api/v2/instance")
+    fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1/mutes")
     fun getMutedAccounts(@Header("Authorization") accessToken: String): Call<List<AccountDto>>
@@ -250,20 +305,8 @@ interface PixelfedApi {
         @Part filePart: MultipartBody.Part
     ): Call<MediaAttachmentDto>
 
-    @Headers(
-        "Content-Type: application/json",
-        "Accept: application/json",
-        "User-Agent: pixelfed"
-    )
-    @POST("/api/v1/statuses")
-    suspend fun createPost(
-        @Header("Authorization") accessToken: String,
-        @Body createPostDto: CreatePostDto
-    ) : Response<PostDto>
-
-    @FormUrlEncoded
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
-    fun createApplication(@Field("scopes") scope: String? = "read%20write%20follow"): Call<ApplicationDto>
+    fun createApplication(): Call<ApplicationDto>
 
     @FormUrlEncoded
     @POST("oauth/token")
@@ -272,10 +315,6 @@ interface PixelfedApi {
         @Field("client_secret") clientSecret: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
-        @Field("grant_type") grantType: String? = "authorization_code",
-        @Field("scope") scope: String? = "read+write+push"
+        @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
-
-    @GET("api/v1/accounts/verify_credentials")
-    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
 }

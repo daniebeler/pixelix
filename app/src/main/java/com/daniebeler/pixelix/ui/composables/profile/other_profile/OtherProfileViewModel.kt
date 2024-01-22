@@ -1,21 +1,26 @@
-package com.daniebeler.pixelix.ui.composables.profile
+package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.profile.AccountState
+import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersState
+import com.daniebeler.pixelix.ui.composables.profile.PostsState
+import com.daniebeler.pixelix.ui.composables.profile.RelationshipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class OtherProfileViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
@@ -26,15 +31,15 @@ class ProfileViewModel @Inject constructor(
     fun loadData(userId: String) {
         getAccount(userId)
 
-        getPosts(userId)
+        getPostsFirstLoad(userId)
 
         getRelationship(userId)
 
-        getMututalFollowers(userId)
+        getMutualFollowers(userId)
     }
 
     private fun getRelationship(userId: String) {
-        repository.getRelationships(List(1) {userId}).onEach { result ->
+        repository.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data!![0])
@@ -45,15 +50,18 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getMututalFollowers(userId: String) {
-        repository.getMutalFollowers(userId).onEach { result ->
-             mutualFollowersState = when (result) {
+    private fun getMutualFollowers(userId: String) {
+        repository.getMutualFollowers(userId).onEach { result ->
+            mutualFollowersState = when (result) {
                 is Resource.Success -> {
                     MutualFollowersState(mutualFollowers = result.data ?: emptyList())
                 }
@@ -63,7 +71,10 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    MutualFollowersState(isLoading = true)
+                    MutualFollowersState(
+                        isLoading = true,
+                        mutualFollowers = mutualFollowersState.mutualFollowers
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -81,17 +92,18 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true)
+                    AccountState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    fun getPosts(userId: String) {
+    private fun getPostsFirstLoad(userId: String) {
         repository.getPostsByAccountId(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    PostsState(posts = result.data ?: emptyList())
+                    val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -99,10 +111,34 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true)
+                    PostsState(isLoading = true, posts = postsState.posts)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getPostsPaginated(userId: String) {
+        if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
+            repository.getPostsByAccountId(userId, postsState.posts.last().id).onEach { result ->
+                postsState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                        PostsState(
+                            posts = postsState.posts + (result.data ?: emptyList()),
+                            endReached = endReached
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        PostsState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        PostsState(isLoading = true, posts = postsState.posts)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun followAccount(userId: String) {
@@ -117,7 +153,10 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -135,7 +174,10 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    RelationshipState(isLoading = true)
+                    RelationshipState(
+                        isLoading = true,
+                        accountRelationship = relationshipState.accountRelationship
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -159,7 +201,7 @@ class ProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unmuteAccount(userId: String) {
+    fun unMuteAccount(userId: String) {
         repository.unMuteAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {

@@ -43,7 +43,7 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -98,7 +98,7 @@ fun BlockedAccountsComposable(
                 }
             } else {
                 viewModel.blockedAccounts.blockedAccounts.let { blockedAccounts ->
-                    LazyColumn() {
+                    LazyColumn {
                         items(blockedAccounts, key = {
                             it.id
                         }) {
@@ -171,10 +171,7 @@ private fun CustomBlockedAccountRow(
 
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
-                navController.navigate("profile_screen/" + account.id) {
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                Navigate().navigate("profile_screen/" + account.id, navController)
             }
         ) {
             AsyncImage(

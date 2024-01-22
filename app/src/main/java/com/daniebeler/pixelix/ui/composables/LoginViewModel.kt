@@ -1,14 +1,13 @@
 package com.daniebeler.pixelix.ui.composables
 
 import android.content.Context
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -53,9 +52,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun openUrl(context: Context, clientId: String, baseUrl: String) {
-        val intent = CustomTabsIntent.Builder().build()
         val url =
             "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixelix-android-auth://callback&client_id=" + clientId
-        intent.launchUrl(context, Uri.parse(url))
+        Navigate().openUrlInApp(context, url)
     }
 }

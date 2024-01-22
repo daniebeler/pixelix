@@ -1,6 +1,8 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Reply
+import com.daniebeler.pixelix.domain.model.toAccount
 import com.google.gson.annotations.SerializedName
 
 data class ReplyDto(
@@ -82,4 +84,13 @@ data class ReplyDto(
     val v: Int,
     @SerializedName("visibility")
     val visibility: String
-)
+) : DtoInterface<Reply> {
+    override fun toModel(): Reply {
+        return Reply(
+            id = id,
+            content = contentText,
+            mentions = mentions.map { accountDto -> accountDto.toAccount() },
+            account = account.toAccount()
+        )
+    }
+}

@@ -1,6 +1,10 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Notification
+import com.daniebeler.pixelix.domain.model.toAccount
+import com.daniebeler.pixelix.domain.model.toPost
+import com.daniebeler.pixelix.utils.TimeAgo
 import com.google.gson.annotations.SerializedName
 
 data class NotificationDto(
@@ -16,4 +20,15 @@ data class NotificationDto(
     val type: String,
     @SerializedName("status")
     val post: PostDto?
-)
+) : DtoInterface<Notification> {
+    override fun toModel(): Notification {
+        return Notification(
+            account = account.toAccount(),
+            id = id,
+            type = type,
+            post = post?.toPost(),
+            createdAt = createdAt,
+            timeAgo = TimeAgo().covertTimeToText(createdAt)
+        )
+    }
+}

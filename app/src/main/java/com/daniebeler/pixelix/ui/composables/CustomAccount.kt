@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,18 +21,17 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
+import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
 fun CustomAccount(account: Account, relationship: Relationship?, navController: NavController) {
-    Row (modifier = Modifier
-        .padding(horizontal = 12.dp, vertical = 8.dp)
-        .fillMaxWidth()
-        .clickable {
-            navController.navigate("profile_screen/" + account.id) {
-                launchSingleTop = true
-                restoreState = true
-            }
-        },
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .clickable {
+                Navigate().navigate("profile_screen/" + account.id, navController)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -46,21 +44,20 @@ fun CustomAccount(account: Account, relationship: Relationship?, navController: 
         Spacer(modifier = Modifier.width(10.dp))
         Column {
             Text(text = "@${account.username}")
-            Text(text = "${account.followersCount} followers", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = "${account.followersCount} followers",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        if (relationship != null) {
-            if (relationship.following) {
-                Button(onClick = { /*TODO*/ },) {
-                    Text(text = "unfollow")
-                }
-            } else {
-                Button(onClick = { /*TODO*/ },) {
-                    Text(text = "follow")
-                }
-            }
-
-        }
+        FollowButton(
+            firstLoaded = relationship != null,
+            isLoading = false,
+            isFollowing = relationship?.following ?: false,
+            onFollowClick = { },
+            onUnFollowClick = { }
+        )
     }
 }

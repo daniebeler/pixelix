@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
@@ -36,7 +37,7 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Single Post")
+                    Text(text = ("Post by " + (viewModel.postState.post?.account?.acct ?: "")), overflow = TextOverflow.Ellipsis, maxLines = 1)
                 },
                 navigationIcon = {
                     IconButton(onClick = {

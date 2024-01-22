@@ -6,6 +6,7 @@ import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
+import com.daniebeler.pixelix.domain.model.Instance
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
@@ -21,7 +22,7 @@ interface CountryRepository {
     fun doesAccessTokenExist(): Boolean
 
     suspend fun storeClientId(clientId: String)
-    suspend fun storeBaseUrl(baseUrl: String)
+    suspend fun storeBaseUrl(url: String)
     fun getClientIdFromStorage(): Flow<String>
     fun getBaseUrlFromStorage(): Flow<String>
     suspend fun storeClientSecret(clientSecret: String)
@@ -30,28 +31,30 @@ interface CountryRepository {
     suspend fun storeAccountId(accountId: String)
     suspend fun getAccountId(): Flow<String>
     fun getAccessTokenFromStorage(): Flow<String>
-    fun setBaseUrl(baseUrl: String)
+    fun setBaseUrl(url: String)
     fun setAccessToken(token: String)
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
 
     fun getHashtag(hashtag: String): Flow<Resource<Tag>>
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
-    fun getHashtagTimeline(hashtag: String): Flow<Resource<List<Post>>>
+    fun getHashtagTimeline(hashtag: String, maxId: String = ""): Flow<Resource<List<Post>>>
     fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
-    fun getLikedPosts(): Flow<Resource<List<Post>>>
+    fun getLikedPosts(maxId: String = ""): Flow<Resource<List<Post>>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
 
-    fun getMutalFollowers(userId: String): Flow<Resource<List<Account>>>
+    fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
 
-    fun getReplies(userid: String, postid: String): Flow<Resource<List<Reply>>>
+    fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 
-    fun getAccount(accountId: String): Flow<Resource<Account?>>
+    fun getAccount(accountId: String): Flow<Resource<Account>>
+
+    fun getInstance(): Flow<Resource<Instance>>
 
     fun followAccount(accountId: String): Flow<Resource<Relationship>>
 
@@ -66,7 +69,7 @@ interface CountryRepository {
 
     fun bookmarkPost(postId: String): Flow<Resource<Post>>
 
-    fun unbookmarkPost(postId: String): Flow<Resource<Post>>
+    fun unBookmarkPost(postId: String): Flow<Resource<Post>>
     fun muteAccount(accountId: String): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
 
@@ -83,7 +86,9 @@ interface CountryRepository {
 
     fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
 
-    fun getPostById(postId: String): Flow<Resource<Post?>>
+    fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
+
+    fun getPostById(postId: String): Flow<Resource<Post>>
 
     fun search(searchText: String): Flow<Resource<Search>>
 

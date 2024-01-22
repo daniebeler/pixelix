@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Tag
@@ -33,6 +34,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.LoginActivity
 import com.daniebeler.pixelix.MainViewModel
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,7 +45,7 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 
     val context = LocalContext.current
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -62,55 +64,61 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
             )
 
         }
-    ) {paddingValues ->
-            Column (Modifier.padding(paddingValues)) {
+    ) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
 
-                CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder, text = stringResource(R.string.liked_posts), onClick = {
-                    navController.navigate("liked_posts_screen") {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.FavoriteBorder,
+                text = stringResource(R.string.liked_posts),
+                onClick = {
+                    Navigate().navigate("liked_posts_screen", navController)
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Bookmarks, text = stringResource(R.string.bookmarked_posts), onClick = {
-                    navController.navigate("bookmarked_posts_screen") {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.Bookmarks,
+                text = stringResource(R.string.bookmarked_posts),
+                onClick = {
+                    Navigate().navigate("bookmarked_posts_screen", navController)
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Tag, text = stringResource(R.string.followed_hashtags), onClick = {
-                    navController.navigate("followed_hashtags_screen") {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.Tag,
+                text = stringResource(R.string.followed_hashtags),
+                onClick = {
+                    Navigate().navigate("followed_hashtags_screen", navController)
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.DoNotDisturbOn, text = stringResource(R.string.muted_accounts), onClick = {
-                    navController.navigate("muted_accounts_screen") {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.DoNotDisturbOn,
+                text = stringResource(R.string.muted_accounts),
+                onClick = {
+                    Navigate().navigate("muted_accounts_screen", navController)
                 })
 
-                CustomSettingsElement(icon = Icons.Outlined.Block, text = stringResource(R.string.blocked_accounts), onClick = {
-                    navController.navigate("blocked_accounts_screen") {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.Block,
+                text = stringResource(R.string.blocked_accounts),
+                onClick = {
+                    Navigate().navigate("blocked_accounts_screen", navController)
                 })
 
-                CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
-                    R.string.logout
-                ), onClick = {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.logout()
-                        val intent = Intent(context, LoginActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        context.startActivity(intent)
-                    }
+            CustomSettingsElement(
+                icon = Icons.Outlined.Dns,
+                text = "About this instance",
+                onClick = {
+                    Navigate().navigate("about_instance_screen", navController)
                 })
 
+            CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
+                R.string.logout
+            ), onClick = {
+                CoroutineScope(Dispatchers.Default).launch {
+                    viewModel.logout()
+                    val intent = Intent(context, LoginActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    context.startActivity(intent)
+                }
+            })
         }
 
     }
@@ -119,7 +127,7 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 @Composable
 private fun CustomSettingsElement(icon: ImageVector, text: String, onClick: () -> Unit) {
 
-    Row (verticalAlignment = Alignment.CenterVertically,
+    Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {

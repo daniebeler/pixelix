@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ class NotificationsViewModel @Inject constructor(
         repository.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < 20
+                    val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT
                     NotificationsState(notifications = result.data ?: emptyList(), endReached = endReached)
                 }
 
@@ -51,7 +52,7 @@ class NotificationsViewModel @Inject constructor(
             repository.getNotifications(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < 20
+                        val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT
                         NotificationsState(
                             notifications = notificationsState.notifications + (result.data
                                 ?: emptyList()),

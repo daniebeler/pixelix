@@ -4,6 +4,8 @@ import com.daniebeler.pixelix.domain.model.Account
 
 data class FollowingState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val endReached: Boolean = false,
     val following: List<Account> = emptyList(),
     val error: String = ""
 )
