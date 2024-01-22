@@ -1,9 +1,10 @@
 package com.daniebeler.pixelix.ui.composables.newpost
 
 import com.daniebeler.pixelix.domain.model.MediaAttachment
+import com.daniebeler.pixelix.domain.model.Post
 
-data class MediaUploadState(
+data class CreatePostState(
     val isLoading: Boolean = false,
-    val mediaAttachments: List<MediaAttachment> = emptyList(),
+    val post: Post? = null,
     val error: String = ""
 )

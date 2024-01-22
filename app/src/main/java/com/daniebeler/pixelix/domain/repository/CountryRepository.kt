@@ -88,6 +88,7 @@ interface CountryRepository {
     fun search(searchText: String): Flow<Resource<Search>>
 
     fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>>
+    fun createPost(mediaIds: List<String>, description: String, visibility: String, sensitive: Boolean, spoilerText: String?): Flow<Resource<Post>>
 
     suspend fun createApplication(): Application?
 

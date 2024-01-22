@@ -4,18 +4,23 @@ import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pixelix.data.remote.dto.ApplicationDto
+import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.SearchDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
+import com.daniebeler.pixelix.domain.model.Post
 import okhttp3.MultipartBody
 import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -237,6 +242,7 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String,
         @Query("q") searchText: String
     ): Call<SearchDto>
+
     @Multipart
     @POST("/api/v1/media")
     fun uploadMedia(
@@ -244,8 +250,20 @@ interface PixelfedApi {
         @Part filePart: MultipartBody.Part
     ): Call<MediaAttachmentDto>
 
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "User-Agent: pixelfed"
+    )
+    @POST("/api/v1/statuses")
+    suspend fun createPost(
+        @Header("Authorization") accessToken: String,
+        @Body createPostDto: CreatePostDto
+    ) : Response<PostDto>
+
+    @FormUrlEncoded
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
-    fun createApplication(): Call<ApplicationDto>
+    fun createApplication(@Field("scopes") scope: String? = "read%20write%20follow"): Call<ApplicationDto>
 
     @FormUrlEncoded
     @POST("oauth/token")
@@ -254,7 +272,8 @@ interface PixelfedApi {
         @Field("client_secret") clientSecret: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
-        @Field("grant_type") grantType: String? = "authorization_code"
+        @Field("grant_type") grantType: String? = "authorization_code",
+        @Field("scope") scope: String? = "read+write+push"
     ): Call<AccessTokenDto>
 
     @GET("api/v1/accounts/verify_credentials")

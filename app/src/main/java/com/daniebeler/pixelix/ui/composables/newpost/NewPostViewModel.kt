@@ -10,9 +10,14 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.ui.composables.post.LikeState
+import com.daniebeler.pixelix.ui.composables.post.RepliesState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,28 +31,53 @@ class NewPostViewModel @Inject constructor(
     var sensitiveText: String by mutableStateOf("")
     var audience: String by mutableStateOf("public")
     var mediaUploadState by mutableStateOf(MediaUploadState())
+    var createPostState by mutableStateOf(CreatePostState())
+
     fun post(context: Context) {
-        uris.forEach{
-            repository.uploadMedia(it, context).onEach {result ->
+        createPostState = CreatePostState(isLoading = true)
+        uris.map { uri ->
+            repository.uploadMedia(uri, context).onEach { result ->
                 mediaUploadState = when (result) {
                     is Resource.Success -> {
+                        val newMediaUploadState = mediaUploadState.copy(
+                            mediaAttachments = mediaUploadState.mediaAttachments + result.data!!
+                        )
                         println(result.data)
-                        MediaUploadState(mediaAttachment = result.data)
+                        if (uris.size == newMediaUploadState.mediaAttachments.size) {
+                            createNewPost(newMediaUploadState)
+                        }
+                        newMediaUploadState
                     }
 
                     is Resource.Error -> {
-                        MediaUploadState(error = result.message ?: "An unexpected error occurred")
+                        mediaUploadState.copy(error = "An unexpected error occured")
                     }
 
                     is Resource.Loading -> {
-                        MediaUploadState(isLoading = true)
+                        mediaUploadState.copy(isLoading = true)
                     }
                 }
             }.launchIn(viewModelScope)
         }
     }
 
-    private fun createNewPost() {
 
+    private fun createNewPost(newMediaUploadState: MediaUploadState) {
+        val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
+        repository.createPost(mediaIds, caption, audience, sensitive, sensitiveText).onEach { result ->
+            createPostState = when (result) {
+                is Resource.Success -> {
+                    CreatePostState(post = result.data)
+                }
+
+                is Resource.Error -> {
+                    CreatePostState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    CreatePostState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 }

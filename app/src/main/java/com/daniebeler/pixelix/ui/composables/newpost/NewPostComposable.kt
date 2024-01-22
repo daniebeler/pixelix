@@ -255,11 +255,9 @@ fun NewPostComposable(
                     }
                 }
             }
-            if (viewModel.mediaUploadState.mediaAttachment != null) {
-                Text(text = viewModel.mediaUploadState.mediaAttachment!!.id)
-            }
-            LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)
+            LoadingComposable(isLoading = viewModel.createPostState.isLoading)
             ErrorComposable(message = viewModel.mediaUploadState.error)
+            ErrorComposable(message = viewModel.createPostState.error)
         }
     }
 }
