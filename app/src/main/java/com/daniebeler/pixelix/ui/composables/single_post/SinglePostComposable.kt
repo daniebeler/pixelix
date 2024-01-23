@@ -27,18 +27,26 @@ import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SinglePostComposable(navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()) {
+fun SinglePostComposable(
+    navController: NavController,
+    postId: String,
+    viewModel: SinglePostViewModel = hiltViewModel()
+) {
     val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
         viewModel.getPost(postId)
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = ("Post by " + (viewModel.postState.post?.account?.acct ?: "")), overflow = TextOverflow.Ellipsis, maxLines = 1)
+                    Text(
+                        text = ("Post by " + (viewModel.postState.post?.account?.acct ?: "")),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -52,11 +60,15 @@ fun SinglePostComposable(navController: NavController, postId: String, viewModel
                 }
             )
         }
-    ) {paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-            Column ( modifier = Modifier.verticalScroll(scrollState)) {
+    ) { paddingValues ->
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()) {
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
-                    PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = { Navigate().navigate("own_profile_screen", navController) })
+                    PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
+                        Navigate().navigateAndDeleteBackStack("own_profile_screen", navController)
+                    })
                 }
             }
 

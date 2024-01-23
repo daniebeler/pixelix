@@ -43,7 +43,6 @@ fun InfinitePostsList(
     )
 
     fun delete(postId: String) {
-        println("saaas " + postId)
         itemGetsDeleted(postId)
     }
 

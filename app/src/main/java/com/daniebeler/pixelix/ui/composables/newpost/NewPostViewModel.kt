@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.domain.repository.CountryRepository
@@ -39,7 +40,7 @@ class NewPostViewModel @Inject constructor(
     fun post(context: Context, navController: NavController) {
         createPostState = CreatePostState(isLoading = true)
         uris.map { uri ->
-            repository.uploadMedia(uri, context).onEach { result ->
+            repository.uploadMedia(uri, altText, context).onEach { result ->
                 mediaUploadState = when (result) {
                     is Resource.Success -> {
                         val newMediaUploadState = mediaUploadState.copy(
@@ -70,6 +71,9 @@ class NewPostViewModel @Inject constructor(
         repository.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
+                    if (result.data != null) {
+                        Navigate().navigateAndDeleteBackStack("own_profile_screen", navController)
+                    }
                     CreatePostState(post = result.data)
                 }
 

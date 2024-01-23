@@ -14,6 +14,7 @@ import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.SearchDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -307,7 +308,8 @@ interface PixelfedApi {
     @POST("/api/v1/media")
     fun uploadMedia(
         @Header("Authorization") accessToken: String,
-        @Part filePart: MultipartBody.Part
+        @Part filePart: MultipartBody.Part,
+        @Part("description") description: RequestBody
     ): Call<MediaAttachmentDto>
 
     @POST("/api/v1/statuses")

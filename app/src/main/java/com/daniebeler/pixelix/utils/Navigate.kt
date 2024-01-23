@@ -25,8 +25,12 @@ class Navigate {
         }
     }
 
-    fun navigateWithoutStateRestore(route: String, navController: NavController) {
+    fun navigateAndDeleteBackStack(route: String, navController: NavController) {
         navController.navigate(route) {
+            popUpTo(0) {
+                inclusive = true
+            }
+
             launchSingleTop = true
         }
     }

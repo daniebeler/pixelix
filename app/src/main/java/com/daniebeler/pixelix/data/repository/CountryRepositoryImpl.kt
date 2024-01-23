@@ -35,14 +35,17 @@ import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.domain.model.toReply
 import com.daniebeler.pixelix.domain.model.toSearch
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.google.common.net.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -490,7 +493,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     @SuppressLint("Recycle")
-    override fun uploadMedia(uri: Uri, context: Context): Flow<Resource<MediaAttachment>> = flow {
+    override fun uploadMedia(uri: Uri, description: String, context: Context): Flow<Resource<MediaAttachment>> = flow {
         try {
             emit(Resource.Loading())
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -500,7 +503,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             val multipart: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "file", file.name, fileRequestBody!!
             )
-            val response = pixelfedApi.uploadMedia(accessToken, multipart).awaitResponse()
+            val response = pixelfedApi.uploadMedia(accessToken, multipart, description.toRequestBody("text/plain".toMediaType())).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toMediaAttachment()
                 emit(Resource.Success(res))
