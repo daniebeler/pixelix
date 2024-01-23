@@ -25,8 +25,9 @@ fun TrendingHashtagsComposable(
 
     LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState), content = {
         items(viewModel.trendingHashtagsState.trendingHashtags, key = {
-            it.name
+            it.hashtag ?: ""
         }) {
+            it.name = it.hashtag ?: ""
             CustomHashtag(hashtag = it, navController = navController)
         }
     })

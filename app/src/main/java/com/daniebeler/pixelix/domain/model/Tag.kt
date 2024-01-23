@@ -7,7 +7,8 @@ data class Tag(
     val url: String,
     val following: Boolean,
     val count: Int?,
-    val total: Int
+    val total: Int,
+    val hashtag: String?
 )
 
 fun TagDto.toTag(): Tag {
@@ -16,6 +17,7 @@ fun TagDto.toTag(): Tag {
         url = url,
         following = following,
         count = count,
-        total = total
+        total = total,
+        hashtag = hashtag
     )
 }

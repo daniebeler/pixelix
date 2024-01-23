@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName
 data class TagDto(
     @SerializedName("name")
     val name: String,
+    @SerializedName("hashtag")
+    val hashtag: String?,
     @SerializedName("url")
     val url: String,
     @SerializedName("following")
@@ -22,7 +24,8 @@ data class TagDto(
             url = url,
             following = following,
             count = count,
-            total = total
+            total = total,
+            hashtag = hashtag
         )
     }
 }
