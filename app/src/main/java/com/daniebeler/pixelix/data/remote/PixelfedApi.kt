@@ -288,7 +288,7 @@ interface PixelfedApi {
         @Path("postid") postid: String
     ): Call<ApiReplyElementDto>
 
-    @GET("api/v2/instance")
+    @GET("api/v1/instance")
     fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1/mutes")
