@@ -18,7 +18,7 @@ fun LocalTimelineComposable(
         endReached = false,
         navController = navController,
         getItemsPaginated = {
-            viewModel.loadMorePosts(false)
+            viewModel.getItemsPaginated()
         },
         onRefresh = {
             viewModel.refresh()

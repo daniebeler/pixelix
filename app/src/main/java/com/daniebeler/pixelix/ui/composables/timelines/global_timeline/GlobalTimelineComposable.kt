@@ -17,7 +17,7 @@ fun GlobalTimelineComposable(
         error = viewModel.globalTimelineState.error,
         endReached = false,
         navController = navController,
-        getItemsPaginated = { viewModel.loadMorePosts(false) },
+        getItemsPaginated = { viewModel.getItemsPaginated() },
         onRefresh = {
             viewModel.refresh()
         },

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.timelines.home_timeline.HomeTimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,23 +21,15 @@ class LocalTimelineViewModel @Inject constructor(
     var localTimelineState by mutableStateOf(LocalTimelineState())
 
     init {
-        loadMorePosts(false)
+        getItemsFirstLoad(false)
     }
 
-    fun loadMorePosts(refreshing: Boolean) {
-
-        val maxId = if (localTimelineState.localTimeline.isEmpty()) {
-            ""
-        } else {
-            localTimelineState.localTimeline.last().id
-        }
-
-        repository.getLocalTimeline(maxId).onEach { result ->
-            when (result) {
+    private fun getItemsFirstLoad(refreshing: Boolean) {
+        repository.getLocalTimeline().onEach { result ->
+            localTimelineState = when (result) {
                 is Resource.Success -> {
-                    localTimelineState = localTimelineState.copy(
-                        localTimeline = localTimelineState.localTimeline + (result.data
-                            ?: emptyList()),
+                    LocalTimelineState(
+                        localTimeline = result.data ?: emptyList(),
                         error = "",
                         isLoading = false,
                         refreshing = false
@@ -44,7 +37,7 @@ class LocalTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    localTimelineState = localTimelineState.copy(
+                    LocalTimelineState(
                         localTimeline = localTimelineState.localTimeline,
                         error = result.message ?: "An unexpected error occurred",
                         isLoading = false,
@@ -53,7 +46,7 @@ class LocalTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    localTimelineState = localTimelineState.copy(
+                    LocalTimelineState(
                         localTimeline = localTimelineState.localTimeline,
                         error = "",
                         isLoading = true,
@@ -62,11 +55,47 @@ class LocalTimelineViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+
+    }
+
+    fun getItemsPaginated() {
+        if (localTimelineState.localTimeline.isNotEmpty() && !localTimelineState.isLoading) {
+            repository.getLocalTimeline(localTimelineState.localTimeline.last().id).onEach { result ->
+                localTimelineState = when (result) {
+                    is Resource.Success -> {
+                        LocalTimelineState(
+                            localTimeline = localTimelineState.localTimeline + (result.data
+                                ?: emptyList()),
+                            error = "",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        LocalTimelineState(
+                            localTimeline = localTimelineState.localTimeline,
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        LocalTimelineState(
+                            localTimeline = localTimelineState.localTimeline,
+                            error = "",
+                            isLoading = true,
+                            refreshing = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun refresh() {
-        localTimelineState = LocalTimelineState()
-        loadMorePosts(true)
+        getItemsFirstLoad(true)
     }
 
     fun postGetsDeleted(postId: String) {

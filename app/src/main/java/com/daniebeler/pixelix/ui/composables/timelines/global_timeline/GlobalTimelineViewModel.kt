@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.ui.composables.timelines.local_timeline.LocalTimelineState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,23 +21,15 @@ class GlobalTimelineViewModel @Inject constructor(
     var globalTimelineState by mutableStateOf(GlobalTimelineState())
 
     init {
-        loadMorePosts(false)
+        getItemsFirstLoad(false)
     }
 
-    fun loadMorePosts(refreshing: Boolean) {
-
-        val maxId = if (globalTimelineState.globalTimeline.isEmpty()) {
-            ""
-        } else {
-            globalTimelineState.globalTimeline.last().id
-        }
-
-        repository.getGlobalTimeline(maxId).onEach { result ->
-            when (result) {
+    private fun getItemsFirstLoad(refreshing: Boolean) {
+        repository.getGlobalTimeline().onEach { result ->
+            globalTimelineState = when (result) {
                 is Resource.Success -> {
-                    globalTimelineState = globalTimelineState.copy(
-                        globalTimeline = globalTimelineState.globalTimeline + (result.data
-                            ?: emptyList()),
+                    GlobalTimelineState(
+                        globalTimeline = result.data ?: emptyList(),
                         error = "",
                         isLoading = false,
                         refreshing = false
@@ -44,7 +37,7 @@ class GlobalTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    globalTimelineState = globalTimelineState.copy(
+                    GlobalTimelineState(
                         globalTimeline = globalTimelineState.globalTimeline,
                         error = result.message ?: "An unexpected error occurred",
                         isLoading = false,
@@ -53,7 +46,7 @@ class GlobalTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    globalTimelineState = globalTimelineState.copy(
+                    GlobalTimelineState(
                         globalTimeline = globalTimelineState.globalTimeline,
                         error = "",
                         isLoading = true,
@@ -62,11 +55,47 @@ class GlobalTimelineViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+
+    }
+
+    fun getItemsPaginated() {
+        if (globalTimelineState.globalTimeline.isNotEmpty() && !globalTimelineState.isLoading) {
+            repository.getGlobalTimeline(globalTimelineState.globalTimeline.last().id).onEach { result ->
+                globalTimelineState = when (result) {
+                    is Resource.Success -> {
+                        GlobalTimelineState(
+                            globalTimeline = globalTimelineState.globalTimeline + (result.data
+                                ?: emptyList()),
+                            error = "",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        GlobalTimelineState(
+                            globalTimeline = globalTimelineState.globalTimeline,
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false,
+                            refreshing = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        GlobalTimelineState(
+                            globalTimeline = globalTimelineState.globalTimeline,
+                            error = "",
+                            isLoading = true,
+                            refreshing = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun refresh() {
-        globalTimelineState = GlobalTimelineState()
-        loadMorePosts(true)
+        getItemsFirstLoad(true)
     }
 
     fun postGetsDeleted(postId: String) {
