@@ -1,8 +1,12 @@
 package com.daniebeler.pixelix.data.repository
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -35,25 +39,24 @@ import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.domain.model.toReply
 import com.daniebeler.pixelix.domain.model.toSearch
 import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.google.common.net.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.concurrent.TimeUnit
+
 
 private val Context.dataStore by preferencesDataStore("settings")
 
@@ -76,22 +79,26 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             val baseUrlFromStorage = getBaseUrlFromStorage().first()
             if (baseUrlFromStorage.isNotEmpty()) {
                 baseUrl = baseUrlFromStorage
-                buildPixelFedApi()
+                pixelfedApi = buildPixelFedApi(false)
             }
         }
     }
 
-    private fun buildPixelFedApi() {
+    private fun buildPixelFedApi(imageUpload: Boolean): PixelfedApi {
         val mHttpLoggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        val mOkHttpClient = OkHttpClient.Builder().addInterceptor(mHttpLoggingInterceptor).build()
+        val mOkHttpClient = if (imageUpload) {
+            OkHttpClient.Builder().writeTimeout(25, TimeUnit.SECONDS)
+                .addInterceptor(mHttpLoggingInterceptor).build()
+        } else {
+            OkHttpClient.Builder().addInterceptor(mHttpLoggingInterceptor).build()
+        }
 
         val retrofit: Retrofit =
             Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
                 .client(mOkHttpClient).build()
 
-        pixelfedApi = retrofit.create(PixelfedApi::class.java)
+        return retrofit.create(PixelfedApi::class.java)
     }
 
     override fun doesAccessTokenExist(): Boolean {
@@ -109,7 +116,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = url
         }
         baseUrl = url
-        buildPixelFedApi()
+        pixelfedApi = buildPixelFedApi(false)
     }
 
     override fun getClientIdFromStorage(): Flow<String> =
@@ -493,17 +500,37 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     @SuppressLint("Recycle")
-    override fun uploadMedia(uri: Uri, description: String, context: Context): Flow<Resource<MediaAttachment>> = flow {
+    override fun uploadMedia(
+        uri: Uri,
+        description: String,
+        context: Context
+    ): Flow<Resource<MediaAttachment>> = flow {
         try {
             emit(Resource.Loading())
+            val pixelfedApi = buildPixelFedApi(true)
             val inputStream = context.contentResolver.openInputStream(uri)
+            val fileType = getMimeType(uri, context.contentResolver) ?: "image/*"
             val fileRequestBody =
-                inputStream?.readBytes()?.toRequestBody("image/*".toMediaTypeOrNull())
+                inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
+
             val file = File(uri.path!!)
-            val multipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "file", file.name, fileRequestBody!!
-            )
-            val response = pixelfedApi.uploadMedia(accessToken, multipart, description.toRequestBody("text/plain".toMediaType())).awaitResponse()
+
+            val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            builder.addFormDataPart("description", description)
+                .addFormDataPart("file", file.name, fileRequestBody!!)
+
+            if (fileType == "video/mp4") {
+                val thumbnailBitmap = getThumbnail(uri, context)
+                if (thumbnailBitmap != null) {
+                    bitmapToBytes(thumbnailBitmap)?.let { builder.addFormDataPart("thumbnail", "thumbnail", it.toRequestBody()) }
+                }
+            }
+
+            val requestBody: RequestBody = builder.build()
+            val response = pixelfedApi.uploadMedia(
+                accessToken,
+                requestBody
+            ).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toMediaAttachment()
                 emit(Resource.Success(res))
@@ -512,6 +539,27 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             }
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message!!))
+        }
+    }
+
+    fun bitmapToBytes(photo: Bitmap): ByteArray? {
+        val stream = ByteArrayOutputStream()
+        photo.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
+    }
+
+
+    private fun getThumbnail(uri: Uri, context: Context): Bitmap? {
+        val mMMR = MediaMetadataRetriever()
+        mMMR.setDataSource(context, uri)
+        return mMMR.frameAtTime
+    }
+    private fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
+        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            contentResolver.getType(uri)
+        } else {
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase())
         }
     }
 

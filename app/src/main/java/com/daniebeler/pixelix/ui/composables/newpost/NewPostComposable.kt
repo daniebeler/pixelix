@@ -71,7 +71,7 @@ fun NewPostComposable(
 
     LaunchedEffect(Unit) {
         singlePhotoPickerLauncher.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
         )
     }
 

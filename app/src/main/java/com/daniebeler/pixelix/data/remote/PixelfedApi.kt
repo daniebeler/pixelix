@@ -304,12 +304,10 @@ interface PixelfedApi {
         @Query("q") searchText: String
     ): Call<SearchDto>
 
-    @Multipart
     @POST("/api/v1/media")
     fun uploadMedia(
         @Header("Authorization") accessToken: String,
-        @Part filePart: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Body body: RequestBody
     ): Call<MediaAttachmentDto>
 
     @POST("/api/v1/statuses")
