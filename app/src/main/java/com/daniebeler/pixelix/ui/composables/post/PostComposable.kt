@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -94,6 +95,9 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
@@ -620,7 +624,7 @@ fun PostImage(
             )
         )
 
-        if (mediaAttachment.type == "image") {
+        if (mediaAttachment.type == "image" && mediaAttachment.url.takeLast(4) != ".gif") {
             AsyncImage(
                 model = mediaAttachment.url,
                 contentDescription = "",
@@ -641,6 +645,8 @@ fun PostImage(
                     },
                 contentScale = ContentScale.FillWidth
             )
+        } else if (mediaAttachment.url.takeLast(4) == ".gif") {
+            GifPlayer(mediaAttachment)
         } else {
             VideoPlayer(uri = Uri.parse(mediaAttachment.url))
         }
@@ -658,6 +664,14 @@ fun PostImage(
         )
 
     }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun GifPlayer(mediaAttachment: MediaAttachment) {
+    GlideImage(model = mediaAttachment.url, contentDescription = null, modifier = Modifier.fillMaxWidth().aspectRatio(
+        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+    ))
 }
 
 @Composable

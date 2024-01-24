@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -17,10 +18,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CustomPost(post: Post, navController: NavController) {
     if (post.sensitive) {
@@ -56,24 +60,36 @@ fun CustomPost(post: Post, navController: NavController) {
                 LocalContext.current.resources,
                 post.mediaAttachments[0].blurHash,
             )
+            if (post.mediaAttachments[0].url.takeLast(4) == ".gif") {
+                GlideImage(
+                    model = post.mediaAttachments[0].url,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(
+                            1f
+                        )
+                )
+            } else {
+                Image(
+                    blurHashAsDrawable.bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.aspectRatio(1f)
+                )
 
-            Image(
-                blurHashAsDrawable.bitmap.asImageBitmap(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(1f)
-            )
-
-            AsyncImage(
-                model = post.mediaAttachments[0].previewUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .clickable(onClick = {
-                        Navigate().navigate("single_post_screen/" + post.id, navController)
-                    })
-            )
+                AsyncImage(
+                    model = post.mediaAttachments[0].previewUrl,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clickable(onClick = {
+                            Navigate().navigate("single_post_screen/" + post.id, navController)
+                        })
+                )
+            }
         }
     }
 }

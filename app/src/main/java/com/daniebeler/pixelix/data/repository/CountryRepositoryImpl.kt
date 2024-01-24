@@ -10,6 +10,8 @@ import android.webkit.MimeTypeMap
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
@@ -519,7 +521,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             builder.addFormDataPart("description", description)
                 .addFormDataPart("file", file.name, fileRequestBody!!)
 
-            if (fileType == "video/mp4") {
+            if (fileType.take(5) != "image" || fileType == "image/gif") {
                 val thumbnailBitmap = getThumbnail(uri, context)
                 if (thumbnailBitmap != null) {
                     bitmapToBytes(thumbnailBitmap)?.let { builder.addFormDataPart("thumbnail", "thumbnail", it.toRequestBody()) }
@@ -548,11 +550,18 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return stream.toByteArray()
     }
 
-
     private fun getThumbnail(uri: Uri, context: Context): Bitmap? {
-        val mMMR = MediaMetadataRetriever()
-        mMMR.setDataSource(context, uri)
-        return mMMR.frameAtTime
+        return try {
+            Glide.with(context)
+                .asBitmap()
+                .load(uri)
+                .apply(RequestOptions().frame(0))
+                .submit()
+                .get()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
     private fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
         return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
