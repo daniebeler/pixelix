@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,8 +13,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,16 +41,15 @@ fun HomeComposable(navController: NavController) {
     val scope = rememberCoroutineScope()
 
 
-    Scaffold (
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(id = R.string.app_name))
-                }
-            )
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
+            title = {
+            Text(stringResource(id = R.string.app_name))
+        })
 
-        }
-    ) { paddingValues ->
+    }) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -55,8 +57,7 @@ fun HomeComposable(navController: NavController) {
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(
-                    text = { Text("Home") },
+                Tab(text = { Text("Home") },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -66,8 +67,7 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
 
-                Tab(
-                    text = { Text("Local") },
+                Tab(text = { Text("Local") },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -77,8 +77,7 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
 
-                Tab(
-                    text = { Text("Global") },
+                Tab(text = { Text("Global") },
                     selected = pagerState.currentPage == 2,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -96,20 +95,17 @@ fun HomeComposable(navController: NavController) {
                     .background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->
                 when (tabIndex) {
-                    0 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            HomeTimelineComposable(navController)
-                        }
+                    0 -> Box(modifier = Modifier.fillMaxSize()) {
+                        HomeTimelineComposable(navController)
+                    }
 
-                    1 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            LocalTimelineComposable(navController)
-                        }
+                    1 -> Box(modifier = Modifier.fillMaxSize()) {
+                        LocalTimelineComposable(navController)
+                    }
 
-                    2 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            GlobalTimelineComposable(navController)
-                        }
+                    2 -> Box(modifier = Modifier.fillMaxSize()) {
+                        GlobalTimelineComposable(navController)
+                    }
                 }
             }
         }

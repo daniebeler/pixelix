@@ -2,6 +2,7 @@ package com.daniebeler.pixelix.ui.composables.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +34,7 @@ import com.daniebeler.pixelix.ui.composables.CustomHashtag
 fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    Scaffold { paddingValues ->
+    Scaffold(contentWindowInsets = WindowInsets(0.dp)) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Box(Modifier.padding(12.dp, 0.dp)) {
                 OutlinedTextField(
