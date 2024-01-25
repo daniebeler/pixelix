@@ -28,26 +28,32 @@ import javax.inject.Inject
 class NewPostViewModel @Inject constructor(
     private val repository: CountryRepository
 ) : ViewModel() {
-    var uris: List<Uri> = emptyList()
+    data class ImageItem(val imageUri: Uri, var text: String = "")
+    var images by mutableStateOf(emptyList<ImageItem>())
     var caption: String by mutableStateOf("")
-    var altText: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var audience: String by mutableStateOf("public")
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
 
+    fun updateAltText(index: Int, newAltText: String) {
+        images = images.toMutableList().also {
+            it[index] = it[index].copy(text = newAltText)
+        }
+    }
+
     fun post(context: Context, navController: NavController) {
         createPostState = CreatePostState(isLoading = true)
-        uris.map { uri ->
-            repository.uploadMedia(uri, altText, context).onEach { result ->
+        images.map { image ->
+            repository.uploadMedia(image.imageUri, image.text, context).onEach { result ->
                 mediaUploadState = when (result) {
                     is Resource.Success -> {
                         val newMediaUploadState = mediaUploadState.copy(
                             mediaAttachments = mediaUploadState.mediaAttachments + result.data!!
                         )
                         println(result.data)
-                        if (uris.size == newMediaUploadState.mediaAttachments.size) {
+                        if (images.size == newMediaUploadState.mediaAttachments.size) {
                             createNewPost(newMediaUploadState, navController)
                         }
                         newMediaUploadState

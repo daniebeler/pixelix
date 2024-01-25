@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.newpost
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,8 +65,10 @@ fun NewPostComposable(
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-            viewModel.uris += uris
             Navigate().navigate("new_post_screen", navController)
+            uris.forEach {
+                viewModel.images += NewPostViewModel.ImageItem(it, "")
+            }
         }
     )
 
@@ -110,18 +113,30 @@ fun NewPostComposable(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    viewModel.uris.forEach {
+                viewModel.images.forEachIndexed { index, image ->
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
-                            model = it,
+                            model = image.imageUri,
                             contentDescription = null,
-                            modifier = Modifier.height(200.dp),
-                            contentScale = ContentScale.Fit
+                            modifier = Modifier.width(100.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        OutlinedTextField(
+                            value = image.text,
+                            onValueChange = { viewModel.updateAltText(index, it) },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text("Alt Text") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedBorderColor = Color.Transparent,
+                            ),
+                            shape = RoundedCornerShape(12.dp),
                         )
                     }
+                }
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Icon(
                         modifier = Modifier
                             .clickable {
@@ -129,8 +144,8 @@ fun NewPostComposable(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                 )
                             }
-                            .height(200.dp)
-                            .width(100.dp),
+                            .height(50.dp)
+                            .width(50.dp),
                         imageVector = Icons.Filled.Add,
                         contentDescription = null,
                     )
@@ -141,19 +156,6 @@ fun NewPostComposable(
                     onValueChange = { viewModel.caption = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("caption") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedBorderColor = Color.Transparent,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                )
-                OutlinedTextField(
-                    value = viewModel.altText,
-                    onValueChange = { viewModel.altText = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Alt Text") },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
