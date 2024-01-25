@@ -41,6 +41,7 @@ import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.domain.model.toReply
 import com.daniebeler.pixelix.domain.model.toSearch
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.utils.MimeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -511,7 +512,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             emit(Resource.Loading())
             val pixelfedApi = buildPixelFedApi(true)
             val inputStream = context.contentResolver.openInputStream(uri)
-            val fileType = getMimeType(uri, context.contentResolver) ?: "image/*"
+            val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
             val fileRequestBody =
                 inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
 
@@ -561,14 +562,6 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             null
-        }
-    }
-    private fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
-        return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            contentResolver.getType(uri)
-        } else {
-            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase())
         }
     }
 

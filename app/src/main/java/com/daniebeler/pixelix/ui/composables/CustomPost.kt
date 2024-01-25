@@ -55,10 +55,19 @@ fun CustomPost(post: Post, navController: NavController) {
             )
         }
     } else {
-        Box {
+        Box(Modifier.clickable(onClick = {
+            Navigate().navigate("single_post_screen/" + post.id, navController)
+        })) {
             val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
                 LocalContext.current.resources,
                 post.mediaAttachments[0].blurHash,
+            )
+
+            Image(
+                blurHashAsDrawable.bitmap.asImageBitmap(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.aspectRatio(1f)
             )
             if (post.mediaAttachments[0].url.takeLast(4) == ".gif") {
                 GlideImage(
@@ -72,22 +81,12 @@ fun CustomPost(post: Post, navController: NavController) {
                         )
                 )
             } else {
-                Image(
-                    blurHashAsDrawable.bitmap.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.aspectRatio(1f)
-                )
-
                 AsyncImage(
                     model = post.mediaAttachments[0].previewUrl,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .clickable(onClick = {
-                            Navigate().navigate("single_post_screen/" + post.id, navController)
-                        })
                 )
             }
         }

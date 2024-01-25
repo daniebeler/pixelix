@@ -1,6 +1,8 @@
 package com.daniebeler.pixelix.ui.composables.newpost
 
 import android.net.Uri
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +41,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,14 +53,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.utils.MimeType
 import com.daniebeler.pixelix.utils.Navigate
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(
     navController: NavController,
@@ -115,11 +132,18 @@ fun NewPostComposable(
             ) {
                 viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        AsyncImage(
-                            model = image.imageUri,
-                            contentDescription = null,
-                            modifier = Modifier.width(100.dp)
-                        )
+                        val type = MimeType().getMimeType(image.imageUri, context.contentResolver)
+                        if (type != null && type.take(5) == "video") {
+                            VideoPlayerSmall(uri = image.imageUri)
+                        } else if (type != null && type.takeLast(3) == "gif") {
+                            GlideImage(model = image.imageUri, contentDescription = null, modifier = Modifier.width(100.dp))
+                        } else {
+                            AsyncImage(
+                                model = image.imageUri,
+                                contentDescription = null,
+                                modifier = Modifier.width(100.dp)
+                            )
+                        }
                         Spacer(Modifier.width(10.dp))
                         OutlinedTextField(
                             value = image.text,
@@ -250,5 +274,44 @@ fun NewPostComposable(
             ErrorComposable(message = viewModel.mediaUploadState.error)
             ErrorComposable(message = viewModel.createPostState.error)
         }
+    }
+}
+
+@Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+fun VideoPlayerSmall(uri: Uri) {
+    val context = LocalContext.current
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                context, defaultDataSourceFactory
+            )
+            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
+
+            setMediaSource(source)
+            prepare()
+        }
+    }
+
+    exoPlayer.playWhenReady = true
+    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+
+    DisposableEffect(
+        AndroidView(modifier = Modifier.width(100.dp), factory = {
+            PlayerView(context).apply {
+                hideController()
+                useController = false
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+
+                player = exoPlayer
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+        })
+    ) {
+        onDispose { exoPlayer.release() }
     }
 }

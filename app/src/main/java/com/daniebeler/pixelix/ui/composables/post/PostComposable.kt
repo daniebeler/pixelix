@@ -624,31 +624,42 @@ fun PostImage(
             )
         )
 
-        if (mediaAttachment.type == "image" && mediaAttachment.url.takeLast(4) != ".gif") {
-            AsyncImage(
-                model = mediaAttachment.url,
-                contentDescription = "",
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(
-                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                    )
-                    .pointerInput(Unit) {
-                        detectTapGestures(onDoubleTap = {
-                            if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
-                                CoroutineScope(Dispatchers.Default).launch {
-                                    viewModel.likePost(postId)
-                                    showHeart = true
+        Box(modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures(onDoubleTap = {
+                if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId)
+                        showHeart = true
+                    }
+                }
+            })
+        }) {
+            if (mediaAttachment.type == "image" && mediaAttachment.url.takeLast(4) != ".gif") {
+                AsyncImage(
+                    model = mediaAttachment.url,
+                    contentDescription = "",
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(
+                            mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                        )
+                        .pointerInput(Unit) {
+                            detectTapGestures(onDoubleTap = {
+                                if (!viewModel.likeState.isLoading && viewModel.likeState.error == "") {
+                                    CoroutineScope(Dispatchers.Default).launch {
+                                        viewModel.likePost(postId)
+                                        showHeart = true
+                                    }
                                 }
-                            }
-                        })
-                    },
-                contentScale = ContentScale.FillWidth
-            )
-        } else if (mediaAttachment.url.takeLast(4) == ".gif") {
-            GifPlayer(mediaAttachment)
-        } else {
-            VideoPlayer(uri = Uri.parse(mediaAttachment.url))
+                            })
+                        },
+                    contentScale = ContentScale.FillWidth
+                )
+            } else if (mediaAttachment.url.takeLast(4) == ".gif") {
+                GifPlayer(mediaAttachment)
+            } else {
+                VideoPlayer(uri = Uri.parse(mediaAttachment.url))
+            }
         }
 
 
@@ -669,9 +680,11 @@ fun PostImage(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun GifPlayer(mediaAttachment: MediaAttachment) {
-    GlideImage(model = mediaAttachment.url, contentDescription = null, modifier = Modifier.fillMaxWidth().aspectRatio(
-        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-    ))
+    GlideImage(model = mediaAttachment.url, contentDescription = null, modifier = Modifier
+        .fillMaxWidth()
+        .aspectRatio(
+            mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+        ))
 }
 
 @Composable
