@@ -134,10 +134,9 @@ fun PostComposable(
         }
     }
 
-    val pagerState = rememberPagerState(pageCount = {
-        post.mediaAttachments.count()
-    })
+    val mediaAttachmentsCount = post.mediaAttachments.count()
 
+    val pagerState = rememberPagerState(pageCount = {mediaAttachmentsCount})
 
     Column {
         Row(
@@ -244,7 +243,6 @@ fun PostComposable(
                                 .size(8.dp)
                         )
                     }
-
                 }
             } else {
                 PostImage(
