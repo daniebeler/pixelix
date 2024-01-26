@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
@@ -359,6 +361,7 @@ fun PostComposable(
 
     if (showBottomSheet > 0) {
         ModalBottomSheet(
+            windowInsets = WindowInsets.navigationBars,
             onDismissRequest = {
                 showBottomSheet = 0
             }, sheetState = sheetState
@@ -427,32 +430,39 @@ private fun LikesBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun CommentsBottomSheet(
     post: Post, sheetState: SheetState, navController: NavController, viewModel: PostViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+
     Box(
-        Modifier
-            .fillMaxHeight()
-            .padding(12.dp)
+        modifier = Modifier
+            .fillMaxSize()
     ) {
+        // LazyColumn with replies
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            modifier = Modifier
+                .imePadding()
+                .fillMaxHeight()
+                .padding(end = 12.dp)
+                .align(Alignment.TopStart)
         ) {
+            stickyHeader { Text(text = "Hallo") }
             item {
                 val ownDescription = Reply("0", post.content, post.mentions, post.account)
-
                 ReplyElement(reply = ownDescription, navController = navController)
                 HorizontalDivider(Modifier.padding(12.dp))
             }
+
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
                 ReplyElement(reply = reply, navController = navController)
             }
+
             if (viewModel.repliesState.isLoading) {
                 item {
                     CircularProgressIndicator(
@@ -469,7 +479,7 @@ private fun CommentsBottomSheet(
             if (!viewModel.repliesState.isLoading && viewModel.repliesState.replies.isEmpty()) {
                 item {
                     Row(
-                        Modifier
+                        modifier = Modifier
                             .padding(vertical = 32.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
@@ -478,17 +488,27 @@ private fun CommentsBottomSheet(
                     }
                 }
             }
+            item {
+                Spacer(
+                    Modifier
+                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                )
+            }
         }
-       // Spacer(modifier = Modifier.weight(1f))
-        Column () {
+
+        // Column with OutlinedTextField and background
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(0.dp)
+                .fillMaxWidth()
+                .align(Alignment.BottomStart)
+        ) {
             Spacer(modifier = Modifier.weight(1f))
-            OutlinedTextField(
-                value = viewModel.newComment,
-                onValueChange = { viewModel.newComment = it },
-                label = { Text("Reply") },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(0.dp)
                     .offset {
                         IntOffset(
                             x = 0,
@@ -497,32 +517,57 @@ private fun CommentsBottomSheet(
                                 .toInt()
                         )
                     },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.background
-                ),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(
-                    onSend = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        //viewModel.addNewComment(viewModel.textInput)
-                    }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                ) {
+                    OutlinedTextField(
+                        value = viewModel.newComment,
+                        onValueChange = { viewModel.newComment = it },
+                        label = { Text("Reply") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.background
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                                //viewModel.addNewComment(viewModel.textInput)
+                            }
+                        )
+                    )
+                }
+                Spacer(
+                    Modifier
+                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 )
+            }
+            Spacer(
+                Modifier
+                    .windowInsetsBottomHeight(WindowInsets.ime)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
             )
-            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.ime))
-            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+            Spacer(
+                Modifier
+                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            )
         }
-
-
-
-
     }
 }
+
 
 @Composable
 private fun ReplyElement(reply: Reply, navController: NavController) {
