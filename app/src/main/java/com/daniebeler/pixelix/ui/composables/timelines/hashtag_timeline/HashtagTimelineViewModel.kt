@@ -65,7 +65,7 @@ class HashtagTimelineViewModel @Inject constructor(
                     postsState = when (result) {
                         is Resource.Success -> {
                             val endReached =
-                                (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
+                                (result.data?.size ?: 0) == 0
                             HashtagTimelineState(
                                 hashtagTimeline = postsState.hashtagTimeline + (result.data
                                     ?: emptyList()),

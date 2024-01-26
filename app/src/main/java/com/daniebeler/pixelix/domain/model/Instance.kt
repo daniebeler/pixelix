@@ -5,5 +5,8 @@ data class Instance(
     val rules: List<Rule>,
     val shortDescription: String,
     val description: String,
-    val thumbnailUrl: String
+    val thumbnailUrl: String,
+    val admin: Account,
+    val stats: InstanceStats,
+    val version: String
 )
