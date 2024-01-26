@@ -15,13 +15,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,9 +36,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
@@ -47,6 +58,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -67,9 +81,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -130,13 +148,13 @@ fun PostComposable(
 
     LaunchedEffect(viewModel.deleteState.deleted) {
         if (viewModel.deleteState.deleted) {
-           postGetsDeleted(post.id)
+            postGetsDeleted(post.id)
         }
     }
 
     val mediaAttachmentsCount = post.mediaAttachments.count()
 
-    val pagerState = rememberPagerState(pageCount = {mediaAttachmentsCount})
+    val pagerState = rememberPagerState(pageCount = { mediaAttachmentsCount })
 
     Column {
         Row(
@@ -346,7 +364,7 @@ fun PostComposable(
             }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
-                CommentsBottomSheet(post, navController, viewModel)
+                CommentsBottomSheet(post, sheetState, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
                     ShareBottomSheet(context, post.url, true, viewModel, post)
@@ -409,22 +427,27 @@ private fun LikesBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CommentsBottomSheet(
-    post: Post, navController: NavController, viewModel: PostViewModel
+    post: Post, sheetState: SheetState, navController: NavController, viewModel: PostViewModel
 ) {
-    Column(
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    Box(
         Modifier
-            .fillMaxSize()
+            .fillMaxHeight()
             .padding(12.dp)
     ) {
-        val ownDescription = Reply("0", post.content, post.mentions, post.account)
-
-        ReplyElement(reply = ownDescription, navController = navController)
-        HorizontalDivider(Modifier.padding(12.dp))
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
+            item {
+                val ownDescription = Reply("0", post.content, post.mentions, post.account)
+
+                ReplyElement(reply = ownDescription, navController = navController)
+                HorizontalDivider(Modifier.padding(12.dp))
+            }
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
@@ -455,8 +478,49 @@ private fun CommentsBottomSheet(
                     }
                 }
             }
-
         }
+       // Spacer(modifier = Modifier.weight(1f))
+        Column () {
+            Spacer(modifier = Modifier.weight(1f))
+            OutlinedTextField(
+                value = viewModel.newComment,
+                onValueChange = { viewModel.newComment = it },
+                label = { Text("Reply") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = -sheetState
+                                .requireOffset()
+                                .toInt()
+                        )
+                    },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.background
+                ),
+                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        //viewModel.addNewComment(viewModel.textInput)
+                    }
+                )
+            )
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.ime))
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+        }
+
+
+
+
     }
 }
 
@@ -667,11 +731,13 @@ fun PostImage(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun GifPlayer(mediaAttachment: MediaAttachment) {
-    GlideImage(model = mediaAttachment.url, contentDescription = null, modifier = Modifier
-        .fillMaxWidth()
-        .aspectRatio(
-            mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-        ))
+    GlideImage(
+        model = mediaAttachment.url, contentDescription = null, modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(
+                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+            )
+    )
 }
 
 @Composable

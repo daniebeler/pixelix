@@ -36,6 +36,8 @@ class PostViewModel @Inject constructor(
 
     var myAccountId: String? = null
 
+    var newComment: String by mutableStateOf("")
+
     init {
         CoroutineScope(Dispatchers.Default).launch {
             myAccountId = repository.getAccountId().first()
