@@ -1,11 +1,9 @@
 package com.daniebeler.pixelix.ui.composables.post
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -31,7 +29,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -58,7 +55,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,17 +68,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -95,7 +86,6 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.R
@@ -103,8 +93,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Reply
-import com.daniebeler.pixelix.ui.composables.FollowButton
-import com.daniebeler.pixelix.ui.composables.HashtagsMentionsTextView
+import com.daniebeler.pixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate

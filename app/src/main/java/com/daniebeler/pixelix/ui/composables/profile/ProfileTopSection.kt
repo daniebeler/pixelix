@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
-import com.daniebeler.pixelix.ui.composables.HashtagsMentionsTextView
+import com.daniebeler.pixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable

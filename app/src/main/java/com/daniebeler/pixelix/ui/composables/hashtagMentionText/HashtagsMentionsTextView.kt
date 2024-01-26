@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables
+package com.daniebeler.pixelix.ui.composables.hashtagMentionText
 
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
@@ -10,16 +10,23 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.utils.Navigate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun HashtagsMentionsTextView(
     text: String,
     modifier: Modifier = Modifier,
     mentions: List<Account>?,
-    navController: NavController
+    navController: NavController,
+    viewModel: HashtagMentionsTextViewModel = hiltViewModel(key = text)
 ) {
 
     val colorScheme = MaterialTheme.colorScheme
@@ -84,34 +91,42 @@ fun HashtagsMentionsTextView(
         }
     }
 
-
-
     ClickableText(text = annotatedString,
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
         onClick = { position ->
-            val annotatedStringRange =
-                annotatedStringList.first { it.start <= position && position < it.end }
-            if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") {
-                val newItem = annotatedStringRange.item.drop(1)
-                val route = if (annotatedStringRange.tag == "link") {
-                    "hashtag_timeline_screen/$newItem"
-                } else {
-                    if (mentions == null) {
-                        ""
+            CoroutineScope(Dispatchers.Default).launch {
+                val annotatedStringRange =
+                    annotatedStringList.first { it.start <= position && position < it.end }
+                if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") {
+                    val newItem = annotatedStringRange.item.drop(1)
+                    val route = if (annotatedStringRange.tag == "link") {
+                        "hashtag_timeline_screen/$newItem"
                     } else {
-                        val account =
-                            mentions.find { account: Account -> account.username == newItem }
-                        if (account != null) {
-                            "profile_screen/${account.id}"
-                        } else {
+                        if (mentions == null) {
                             ""
+                        } else {
+                            val account =
+                                mentions.find { account: Account -> account.username == newItem }
+                            if (account != null) {
+                                //get my account id and check if it is mine account
+                                val myAccountId = viewModel.getMyAccountId()
+                                if (account.id == myAccountId) {
+                                    "own_profile_screen"
+                                } else {
+                                    "profile_screen/${account.id}"
+                                }
+                            } else {
+                                ""
+                            }
+                        }
+
+                    }
+                    withContext(Dispatchers.Main) {
+                        if (route.isNotBlank() && route.isNotEmpty()) {
+                            Navigate().navigate(route, navController)
                         }
                     }
-
-                }
-                if (route.isNotBlank() && route.isNotEmpty()) {
-                    Navigate().navigate(route, navController)
                 }
             }
         })

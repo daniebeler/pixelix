@@ -42,7 +42,7 @@ class OtherProfileViewModel @Inject constructor(
         repository.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
-                    RelationshipState(accountRelationship = result.data!![0])
+                    RelationshipState(accountRelationship = if (!result.data.isNullOrEmpty()){result.data[0]} else {null})
                 }
 
                 is Resource.Error -> {

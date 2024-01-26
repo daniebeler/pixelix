@@ -123,7 +123,6 @@ fun OtherProfileComposable(
                         if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(12.dp))
                         }
-
                         FollowButton(
                             firstLoaded = viewModel.relationshipState.accountRelationship != null,
                             isLoading = viewModel.relationshipState.isLoading,
