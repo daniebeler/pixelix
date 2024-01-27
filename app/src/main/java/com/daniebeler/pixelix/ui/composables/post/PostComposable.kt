@@ -52,7 +52,9 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -379,6 +381,41 @@ fun PostComposable(
             }
         }
     }
+    if (viewModel.deleteDialog != null) {
+        AlertDialog(
+            icon = {
+                   Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+            },
+            title = {
+                Text(text = "Delete Post?")
+            },
+            text = {
+                   Text(text = "This action cannot be undone")
+            },
+            onDismissRequest = {
+                viewModel.deleteDialog = null
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deletePost(viewModel.deleteDialog!!)
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteDialog = null
+                    }
+                ) {
+                    Text("Dismiss")
+                }
+            }
+        )
+
+    }
     LoadingComposable(isLoading = viewModel.deleteState.isLoading)
 }
 
@@ -661,7 +698,7 @@ private fun ShareBottomSheet(
             CustomBottomSheetElement(icon = Icons.Outlined.Delete,
                 text = "Delete this Post",
                 onClick = {
-                    viewModel.deletePost(post.id)
+                    viewModel.deleteDialog = post.id
                 })
         }
     }

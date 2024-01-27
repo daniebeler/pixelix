@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +28,7 @@ class PostViewModel @Inject constructor(
     var likeState by mutableStateOf(LikeState())
     var bookmarkState by mutableStateOf(BookmarkState())
     var deleteState by mutableStateOf(DeleteState())
-
+    var deleteDialog: String? by mutableStateOf(null)
     var timeAgoString: String by mutableStateOf("")
 
     var showPost: Boolean by mutableStateOf(false)
@@ -45,6 +44,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun deletePost(postId: String) {
+        deleteDialog = null
         repository.deletePost(postId).onEach { result ->
             deleteState = when (result) {
                 is Resource.Success -> {
