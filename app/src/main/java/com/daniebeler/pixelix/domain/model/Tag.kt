@@ -6,7 +6,7 @@ data class Tag(
     var name: String,
     val url: String,
     val following: Boolean,
-    val count: Int?,
+    var count: Int?,
     val total: Int,
     val hashtag: String?
 )

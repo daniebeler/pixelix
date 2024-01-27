@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
+import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -25,9 +26,35 @@ class FollowedHashtagsViewModel @Inject constructor(
 
     fun getFollowedHashtags() {
         repository.getFollowedHashtags().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    if (result.data != null) {
+                        result.data.forEach{
+                            getFollowedHashtagSingle(it)
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    followedHashtagsState = FollowedHashtagsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    followedHashtagsState = FollowedHashtagsState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getFollowedHashtagSingle(tag: Tag) {
+        repository.getHashtag(tag.name).onEach { result ->
             followedHashtagsState = when (result) {
                 is Resource.Success -> {
-                    FollowedHashtagsState(followedHashtags = result.data ?: emptyList())
+                    if (result.data != null) {
+                        FollowedHashtagsState(followedHashtags = followedHashtagsState.followedHashtags + result.data)
+                    } else {
+                        FollowedHashtagsState(followedHashtags = followedHashtagsState.followedHashtags)
+                    }
                 }
 
                 is Resource.Error -> {
