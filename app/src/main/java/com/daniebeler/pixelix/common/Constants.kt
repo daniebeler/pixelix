@@ -9,6 +9,8 @@ object Constants {
 
     const val HASHTAG_TIMELINE_POSTS_LIMIT = 8
     const val HOME_TIMELINE_POSTS_LIMIT = 8
+    const val LOCAL_TIMELINE_POSTS_LIMIT = 8
+    const val GLOBAL_TIMELINE_POSTS_LIMIT = 8
     const val NOTIFICATIONS_LIMIT = 30
     const val LIKED_POSTS_LIMIT = 12
     const val PROFILE_POSTS_LIMIT = 18

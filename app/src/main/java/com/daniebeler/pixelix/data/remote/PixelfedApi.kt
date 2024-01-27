@@ -62,19 +62,19 @@ interface PixelfedApi {
         @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?local&_pe=1")
+    @GET("api/v1/timelines/public?local&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
     fun getLocalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?local&_pe=1")
+    @GET("api/v1/timelines/public?local&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
     fun getLocalTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") token: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?remote&_pe=1")
+    @GET("api/v1/timelines/public?remote&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(@Header("Authorization") token: String): Call<List<PostDto>>
 
-    @GET("/api/v1/timelines/public?remote&_pe=1")
+    @GET("/api/v1/timelines/public?remote&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(
         @Query("max_id") maxPostId: String,
         @Header("Authorization") token: String
