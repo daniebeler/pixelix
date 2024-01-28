@@ -6,6 +6,7 @@ import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pixelix.data.remote.dto.ApplicationDto
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
+import com.daniebeler.pixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.NotificationDto
@@ -315,6 +316,12 @@ interface PixelfedApi {
         @Header("Authorization") accessToken: String,
         @Body createPostDto: CreatePostDto
     ) : Response<PostDto>
+
+    @POST("/api/v1/statuses")
+    fun createReply(
+        @Header("Authorization") accessToken: String,
+        @Body createReplyDto: CreateReplyDto
+    ) : Call<PostDto>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deletePost(

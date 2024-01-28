@@ -17,6 +17,7 @@ import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
+import com.daniebeler.pixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
@@ -525,7 +526,13 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             if (fileType.take(5) != "image" || fileType == "image/gif") {
                 val thumbnailBitmap = getThumbnail(uri, context)
                 if (thumbnailBitmap != null) {
-                    bitmapToBytes(thumbnailBitmap)?.let { builder.addFormDataPart("thumbnail", "thumbnail", it.toRequestBody()) }
+                    bitmapToBytes(thumbnailBitmap)?.let {
+                        builder.addFormDataPart(
+                            "thumbnail",
+                            "thumbnail",
+                            it.toRequestBody()
+                        )
+                    }
                 }
             }
 
@@ -589,6 +596,11 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 accessToken, postId
             )
         )
+    }
+
+    override fun createReply(postId: String, content: String): Flow<Resource<Post>> {
+        val dto = CreateReplyDto(status = content, in_reply_to_id = postId)
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.createReply(accessToken, dto))
     }
 
 // Auth

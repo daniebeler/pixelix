@@ -49,6 +49,7 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
@@ -80,6 +81,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -91,6 +93,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -184,6 +187,22 @@ fun PostComposable(
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+                if (post.place != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.LocationOn,
+                            contentDescription = "",
+                            modifier = Modifier.height(20.dp)
+                        )
+                        Row {
+                            Text(text = post.place.name ?: "", fontSize = 12.sp)
+                            if (post.place.country != null) {
+                                Text(text = ", " + (post.place.country ?: ""), fontSize = 12.sp)
+                            }
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -340,8 +359,6 @@ fun PostComposable(
                 }
             }
 
-
-
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
                     text = post.content,
@@ -384,13 +401,13 @@ fun PostComposable(
     if (viewModel.deleteDialog != null) {
         AlertDialog(
             icon = {
-                   Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
             },
             title = {
                 Text(text = stringResource(R.string.delete_post))
             },
             text = {
-                   Text(text = stringResource(R.string.this_action_cannot_be_undone))
+                Text(text = stringResource(R.string.this_action_cannot_be_undone))
             },
             onDismissRequest = {
                 viewModel.deleteDialog = null
@@ -428,7 +445,11 @@ private fun LikesBottomSheet(
             .fillMaxSize()
             .padding(12.dp)
     ) {
-        Text(text = stringResource(R.string.liked_by), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(
+            text = stringResource(R.string.liked_by),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
         HorizontalDivider(Modifier.padding(12.dp))
 
         LazyColumn {
@@ -478,19 +499,40 @@ private fun CommentsBottomSheet(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = 12.dp)
     ) {
         // LazyColumn with replies
         LazyColumn(
             modifier = Modifier
                 .imePadding()
                 .fillMaxHeight()
-                .padding(end = 12.dp)
                 .align(Alignment.TopStart)
         ) {
-            stickyHeader { Text(text = "Hallo") }
             item {
-                val ownDescription = Reply("0", post.content, post.mentions, post.account)
+                val ownDescription =
+                    Reply("0", post.content, post.mentions, post.account, post.createdAt)
                 ReplyElement(reply = ownDescription, navController = navController)
+
+                OutlinedTextField(
+                    value = viewModel.newComment,
+                    onValueChange = { viewModel.newComment = it },
+                    label = { Text("Reply") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(
+                        onSend = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            viewModel.createReply(post.id)
+                        }
+                    )
+                )
+
+
                 HorizontalDivider(Modifier.padding(12.dp))
             }
 
@@ -526,6 +568,7 @@ private fun CommentsBottomSheet(
                 }
             }
             item {
+                Spacer(modifier = Modifier.height(18.dp))
                 Spacer(
                     Modifier
                         .windowInsetsBottomHeight(WindowInsets.navigationBars)
@@ -534,85 +577,18 @@ private fun CommentsBottomSheet(
             }
         }
 
-        // Column with OutlinedTextField and background
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(0.dp)
-                .fillMaxWidth()
-                .align(Alignment.BottomStart)
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .padding(0.dp)
-                    .offset {
-                        IntOffset(
-                            x = 0,
-                            y = -sheetState
-                                .requireOffset()
-                                .toInt()
-                        )
-                    },
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(0.dp)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                ) {
-                    OutlinedTextField(
-                        value = viewModel.newComment,
-                        onValueChange = { viewModel.newComment = it },
-                        label = { Text("Reply") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.background
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        keyboardActions = KeyboardActions(
-                            onSend = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                                //viewModel.addNewComment(viewModel.textInput)
-                            }
-                        )
-                    )
-                }
-                Spacer(
-                    Modifier
-                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                )
-            }
-            Spacer(
-                Modifier
-                    .windowInsetsBottomHeight(WindowInsets.ime)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            )
-            Spacer(
-                Modifier
-                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            )
-        }
     }
 }
 
 
 @Composable
 private fun ReplyElement(reply: Reply, navController: NavController) {
-    Row {
+    Row(modifier = Modifier.padding(vertical = 8.dp)) {
         AsyncImage(model = reply.account.avatar,
             contentDescription = "",
             modifier = Modifier
-                .height(32.dp)
+                .height(42.dp)
+                .width(42.dp)
                 .clip(CircleShape)
                 .clickable {
                     Navigate().navigate(
@@ -623,14 +599,24 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
         Spacer(modifier = Modifier.width(12.dp))
 
         Column {
-            Text(text = reply.account.acct,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable {
-                    Navigate().navigate(
-                        "profile_screen/" + reply.account.id, navController
-                    )
-                })
+            Row {
+                Text(text = reply.account.acct,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable {
+                        Navigate().navigate(
+                            "profile_screen/" + reply.account.id, navController
+                        )
+                    })
+
+                Text(
+                    text = " • " + reply.createdAt,
+                    fontSize = 12.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
+
 
             HashtagsMentionsTextView(
                 text = reply.content,

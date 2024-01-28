@@ -90,7 +90,8 @@ data class ReplyDto(
             id = id,
             content = contentText,
             mentions = mentions.map { accountDto -> accountDto.toAccount() },
-            account = account.toAccount()
+            account = account.toAccount(),
+            createdAt = createdAt
         )
     }
 }

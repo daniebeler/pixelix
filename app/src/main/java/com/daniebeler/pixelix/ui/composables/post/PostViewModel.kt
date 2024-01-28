@@ -20,9 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var repliesState by mutableStateOf(RepliesState())
+
+    var ownReplyState by mutableStateOf(OwnReplyState())
+
     var likedByState by mutableStateOf(LikedByState())
 
     var likeState by mutableStateOf(LikeState())
@@ -88,6 +91,26 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun createReply(postId: String) {
+        if (newComment.isNotEmpty()) {
+            repository.createReply(postId, newComment).onEach { result ->
+                ownReplyState = when (result) {
+                    is Resource.Success -> {
+                        OwnReplyState(reply = result.data)
+                    }
+
+                    is Resource.Error -> {
+                        OwnReplyState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        OwnReplyState(isLoading = true)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun loadLikedBy(postId: String) {
         repository.getLikedBy(postId).onEach { result ->
             likedByState = when (result) {
@@ -108,10 +131,13 @@ class PostViewModel @Inject constructor(
 
     fun likePost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.likePost(postId).onEach {result ->
+            repository.likePost(postId).onEach { result ->
                 likeState = when (result) {
                     is Resource.Success -> {
-                        LikeState(liked = result.data?.favourited ?: false, likesCount = result.data?.favouritesCount ?: likeState.likesCount)
+                        LikeState(
+                            liked = result.data?.favourited ?: false,
+                            likesCount = result.data?.favouritesCount ?: likeState.likesCount
+                        )
                     }
 
                     is Resource.Error -> {
@@ -119,7 +145,15 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        LikeState(isLoading = true, liked = true, likesCount = if (likeState.liked) {likeState.likesCount} else {likeState.likesCount + 1})
+                        LikeState(
+                            isLoading = true,
+                            liked = true,
+                            likesCount = if (likeState.liked) {
+                                likeState.likesCount
+                            } else {
+                                likeState.likesCount + 1
+                            }
+                        )
                     }
                 }
             }.launchIn(viewModelScope)
@@ -128,10 +162,13 @@ class PostViewModel @Inject constructor(
 
     fun unlikePost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.unlikePost(postId).onEach {result ->
+            repository.unlikePost(postId).onEach { result ->
                 likeState = when (result) {
                     is Resource.Success -> {
-                        LikeState(liked = result.data?.favourited ?: false, likesCount = result.data?.favouritesCount ?: likeState.likesCount)
+                        LikeState(
+                            liked = result.data?.favourited ?: false,
+                            likesCount = result.data?.favouritesCount ?: likeState.likesCount
+                        )
                     }
 
                     is Resource.Error -> {
@@ -139,7 +176,15 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        LikeState(isLoading = true, liked = false, likesCount = if (!likeState.liked) {likeState.likesCount} else {likeState.likesCount - 1})
+                        LikeState(
+                            isLoading = true,
+                            liked = false,
+                            likesCount = if (!likeState.liked) {
+                                likeState.likesCount
+                            } else {
+                                likeState.likesCount - 1
+                            }
+                        )
                     }
                 }
             }.launchIn(viewModelScope)
@@ -148,7 +193,7 @@ class PostViewModel @Inject constructor(
 
     fun bookmarkPost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.bookmarkPost(postId).onEach {result ->
+            repository.bookmarkPost(postId).onEach { result ->
                 bookmarkState = when (result) {
                     is Resource.Success -> {
                         BookmarkState(bookmarked = result.data?.bookmarked ?: false)
@@ -168,7 +213,7 @@ class PostViewModel @Inject constructor(
 
     fun unBookmarkPost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.unBookmarkPost(postId).onEach {result ->
+            repository.unBookmarkPost(postId).onEach { result ->
                 bookmarkState = when (result) {
                     is Resource.Success -> {
                         BookmarkState(bookmarked = result.data?.bookmarked ?: false)

@@ -6,7 +6,8 @@ data class Reply(
     val id: String,
     val content: String,
     val mentions: List<Account>,
-    val account: Account
+    val account: Account,
+    val createdAt: String
 )
 
 fun ReplyDto.toReply(): Reply {
@@ -14,6 +15,7 @@ fun ReplyDto.toReply(): Reply {
         id = id,
         content = contentText,
         mentions = mentions.map { accountDto -> accountDto.toAccount() },
-        account = account.toAccount()
+        account = account.toAccount(),
+        createdAt = createdAt
     )
 }

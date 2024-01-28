@@ -53,7 +53,7 @@ data class PostDto(
     @SerializedName("pf_type")
     val pfType: String,
     @SerializedName("place")
-    val place: Any,
+    val place: PlaceDto?,
     @SerializedName("poll")
     val poll: Any,
     @SerializedName("reblog")
@@ -104,7 +104,8 @@ data class PostDto(
             spoilerText = spoilerText ?: "",
             favourited = favourited,
             bookmarked = bookmarked,
-            mentions = mentions.map { it.toAccount() }
+            mentions = mentions.map { it.toAccount() },
+            place = place?.toModel()
         )
     }
 }
