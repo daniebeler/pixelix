@@ -98,9 +98,7 @@ fun NotificationsComposable(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(80.dp)
-                                            .wrapContentSize(Alignment.Center),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            .wrapContentSize(Alignment.Center)
                                     )
                                 }
                             }

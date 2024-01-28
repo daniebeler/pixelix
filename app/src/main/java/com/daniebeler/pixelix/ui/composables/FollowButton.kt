@@ -36,17 +36,14 @@ fun FollowButton(
                         )
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 } else {
                     Button(onClick = {}, modifier = Modifier.width(120.dp)) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }

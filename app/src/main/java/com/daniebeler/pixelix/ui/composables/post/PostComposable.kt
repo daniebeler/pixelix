@@ -13,6 +13,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -42,6 +43,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
@@ -123,6 +126,7 @@ import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate
 import com.daniebeler.pixelix.utils.Share
+import com.daniebeler.pixelix.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -361,9 +365,7 @@ fun PostComposable(
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
-                    text = post.content,
-                    mentions = post.mentions,
-                    navController = navController
+                    text = post.content, mentions = post.mentions, navController = navController
                 )
             }
 
@@ -380,8 +382,7 @@ fun PostComposable(
 
     if (showBottomSheet > 0) {
         ModalBottomSheet(
-            windowInsets = WindowInsets.navigationBars,
-            onDismissRequest = {
+            windowInsets = WindowInsets.navigationBars, onDismissRequest = {
                 showBottomSheet = 0
             }, sheetState = sheetState
         ) {
@@ -399,38 +400,27 @@ fun PostComposable(
         }
     }
     if (viewModel.deleteDialog != null) {
-        AlertDialog(
-            icon = {
-                Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-            },
-            title = {
-                Text(text = stringResource(R.string.delete_post))
-            },
-            text = {
-                Text(text = stringResource(R.string.this_action_cannot_be_undone))
-            },
-            onDismissRequest = {
-                viewModel.deleteDialog = null
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deletePost(viewModel.deleteDialog!!)
-                    }
-                ) {
-                    Text(stringResource(R.string.delete))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.deleteDialog = null
-                    }
-                ) {
-                    Text(stringResource(id = R.string.cancel))
-                }
+        AlertDialog(icon = {
+            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+        }, title = {
+            Text(text = stringResource(R.string.delete_post))
+        }, text = {
+            Text(text = stringResource(R.string.this_action_cannot_be_undone))
+        }, onDismissRequest = {
+            viewModel.deleteDialog = null
+        }, confirmButton = {
+            TextButton(onClick = {
+                viewModel.deletePost(viewModel.deleteDialog!!)
+            }) {
+                Text(stringResource(R.string.delete))
             }
-        )
+        }, dismissButton = {
+            TextButton(onClick = {
+                viewModel.deleteDialog = null
+            }) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        })
 
     }
     LoadingComposable(isLoading = viewModel.deleteState.isLoading)
@@ -465,9 +455,7 @@ private fun LikesBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(80.dp)
-                            .wrapContentSize(Alignment.Center),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            .wrapContentSize(Alignment.Center)
                     )
                 }
             }
@@ -509,29 +497,64 @@ private fun CommentsBottomSheet(
                 .align(Alignment.TopStart)
         ) {
             item {
-                val ownDescription =
-                    Reply("0", post.content, post.mentions, post.account, post.createdAt)
-                ReplyElement(reply = ownDescription, navController = navController)
+                if (post.content.isNotEmpty()) {
+                    val ownDescription =
+                        Reply("0", post.content, post.mentions, post.account, post.createdAt)
+                    ReplyElement(reply = ownDescription, navController = navController)
+                }
 
-                OutlinedTextField(
-                    value = viewModel.newComment,
-                    onValueChange = { viewModel.newComment = it },
-                    label = { Text("Reply") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    OutlinedTextField(value = viewModel.newComment,
+                        onValueChange = { viewModel.newComment = it },
+                        label = { Text("Reply") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(0.dp, 0.dp),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(onSend = {
                             keyboardController?.hide()
                             focusManager.clearFocus()
                             viewModel.createReply(post.id)
-                        }
+                        })
                     )
-                )
 
+                    Spacer(Modifier.width(12.dp))
+
+                    Button(
+                        onClick = {
+                            if (!viewModel.ownReplyState.isLoading) {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                                viewModel.createReply(post.id)
+                            }
+                        },
+                        Modifier
+                            .height(56.dp)
+                            .width(56.dp)
+                            .padding(0.dp, 0.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(12.dp),
+                        enabled = viewModel.newComment.isNotBlank()
+                    ) {
+                        if (viewModel.ownReplyState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "submit",
+                                Modifier
+                                    .fillMaxSize()
+                                    .fillMaxWidth()
+                            )
+                        }
+
+                    }
+                }
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }
@@ -548,9 +571,7 @@ private fun CommentsBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(80.dp)
-                            .wrapContentSize(Alignment.Center),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            .wrapContentSize(Alignment.Center)
                     )
                 }
             }
@@ -583,6 +604,16 @@ private fun CommentsBottomSheet(
 
 @Composable
 private fun ReplyElement(reply: Reply, navController: NavController) {
+
+    var timeAgo: String by remember { mutableStateOf("") }
+    println("fiirst")
+
+    LaunchedEffect(reply.createdAt) {
+        println("fropf")
+        println(reply.createdAt)
+        timeAgo = TimeAgo().covertTimeToText(reply.createdAt)
+    }
+
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
         AsyncImage(model = reply.account.avatar,
             contentDescription = "",
@@ -610,7 +641,7 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
                     })
 
                 Text(
-                    text = " • " + reply.createdAt,
+                    text = " • $timeAgo",
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
@@ -619,9 +650,7 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
 
 
             HashtagsMentionsTextView(
-                text = reply.content,
-                mentions = reply.mentions,
-                navController = navController
+                text = reply.content, mentions = reply.mentions, navController = navController
             )
         }
     }
@@ -659,11 +688,7 @@ private fun LikedByAccountElement(account: Account, navController: NavController
 
 @Composable
 private fun ShareBottomSheet(
-    context: Context,
-    url: String,
-    minePost: Boolean,
-    viewModel: PostViewModel,
-    post: Post
+    context: Context, url: String, minePost: Boolean, viewModel: PostViewModel, post: Post
 ) {
     Column(
         modifier = Modifier.padding(bottom = 32.dp)
@@ -800,7 +825,9 @@ fun PostImage(
 @Composable
 fun GifPlayer(mediaAttachment: MediaAttachment) {
     GlideImage(
-        model = mediaAttachment.url, contentDescription = null, modifier = Modifier
+        model = mediaAttachment.url,
+        contentDescription = null,
+        modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(
                 mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f

@@ -15,9 +15,7 @@ fun LoadingComposable(isLoading: Boolean) {
         CircularProgressIndicator(
             modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(Alignment.Center),
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                .wrapContentSize(Alignment.Center)
         )
     }
 }

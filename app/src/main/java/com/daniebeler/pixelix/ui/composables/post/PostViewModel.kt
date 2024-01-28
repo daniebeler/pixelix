@@ -94,17 +94,18 @@ class PostViewModel @Inject constructor(
     fun createReply(postId: String) {
         if (newComment.isNotEmpty()) {
             repository.createReply(postId, newComment).onEach { result ->
-                ownReplyState = when (result) {
+                when (result) {
                     is Resource.Success -> {
-                        OwnReplyState(reply = result.data)
+                        ownReplyState = OwnReplyState(reply = result.data)
+                        newComment = ""
                     }
 
                     is Resource.Error -> {
-                        OwnReplyState(error = result.message ?: "An unexpected error occurred")
+                        ownReplyState = OwnReplyState(error = result.message ?: "An unexpected error occurred")
                     }
 
                     is Resource.Loading -> {
-                        OwnReplyState(isLoading = true)
+                        ownReplyState = OwnReplyState(isLoading = true)
                     }
                 }
             }.launchIn(viewModelScope)

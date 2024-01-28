@@ -92,12 +92,6 @@ fun NewPostComposable(
         }
     )
 
-    LaunchedEffect(Unit) {
-        singlePhotoPickerLauncher.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
-        )
-    }
-
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Scaffold(
@@ -141,7 +135,11 @@ fun NewPostComposable(
                         if (type != null && type.take(5) == "video") {
                             VideoPlayerSmall(uri = image.imageUri)
                         } else if (type != null && type.takeLast(3) == "gif") {
-                            GlideImage(model = image.imageUri, contentDescription = null, modifier = Modifier.width(100.dp))
+                            GlideImage(
+                                model = image.imageUri,
+                                contentDescription = null,
+                                modifier = Modifier.width(100.dp)
+                            )
                         } else {
                             AsyncImage(
                                 model = image.imageUri,
@@ -313,7 +311,10 @@ fun VideoPlayerSmall(uri: Uri) {
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
 
                 player = exoPlayer
-                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
             }
         })
     ) {
