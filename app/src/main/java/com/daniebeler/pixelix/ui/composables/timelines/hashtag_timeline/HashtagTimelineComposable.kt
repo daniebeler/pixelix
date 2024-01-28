@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,7 +49,10 @@ fun HashtagTimelineComposable(
                 scrollBehavior = scrollBehavior,
                 title = {
                     Column {
-                        Text("#$hashtag", lineHeight = 10.sp)
+                        Text(
+                            "#$hashtag", lineHeight = 10.sp, overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
                         if (viewModel.hashtagState.hashtag != null) {
                             Text(
                                 text = viewModel.hashtagState.hashtag!!.count.toString() + " posts",
@@ -96,7 +100,7 @@ fun HashtagTimelineComposable(
                 onRefresh = {
                     viewModel.refresh()
                 },
-                itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
+                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
             )
         }
     }
