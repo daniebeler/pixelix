@@ -116,7 +116,7 @@ fun MutedAccountsComposable(
                 viewModel.mutedAccountsState.isLoading,
                 pullRefreshState,
             )
-           // LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
+            // LoadingComposable(isLoading = viewModel.mutedAccountsState.isLoading)
 
             ErrorComposable(message = viewModel.mutedAccountsState.error, pullRefreshState)
         }
@@ -150,7 +150,7 @@ fun MutedAccountsComposable(
                         viewModel.unmuteAlert = ""
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )

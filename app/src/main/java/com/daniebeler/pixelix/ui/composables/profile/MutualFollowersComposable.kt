@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.daniebeler.pixelix.R
 
 @Composable
 fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
@@ -29,13 +31,13 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
         val listSize = mutualFollowersState.mutualFollowers.size
 
         val annotatedString = buildAnnotatedString {
-            append("Followed by ")
+            append(stringResource(R.string.followed_by) + " ")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(mutualFollowersState.mutualFollowers.first().username)
             }
 
             if (listSize == 2) {
-                append(" and ")
+                append(" " + stringResource(R.string.and) + " ")
             }
             if (listSize > 2) {
                 append(", ")
@@ -55,23 +57,23 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(mutualFollowersState.mutualFollowers[2].username)
                 }
-                append(" and ")
+                append(" " + stringResource(id = R.string.and) + " ")
                 append((listSize - 3).toString())
                 if (listSize == 4) {
-                    append(" other")
-                }
-                else {
-                    append(" others")
+                    append(" " + stringResource(R.string.other))
+                } else {
+                    append(" " + stringResource(R.string.others))
                 }
             }
 
 
         }
 
-        Row (verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Box {
                 AsyncImage(
-                    model = mutualFollowersState.mutualFollowers.first().avatar, contentDescription = "",
+                    model = mutualFollowersState.mutualFollowers.first().avatar,
+                    contentDescription = "",
                     modifier = Modifier
                         .height(36.dp)
                         .width(36.dp)
@@ -87,7 +89,8 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
                     Row {
                         Spacer(modifier = Modifier.width(18.dp))
                         AsyncImage(
-                            model = mutualFollowersState.mutualFollowers[1].avatar, contentDescription = "",
+                            model = mutualFollowersState.mutualFollowers[1].avatar,
+                            contentDescription = "",
                             modifier = Modifier
                                 .height(36.dp)
                                 .width(36.dp)
@@ -104,7 +107,8 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
                     Row {
                         Spacer(modifier = Modifier.width(36.dp))
                         AsyncImage(
-                            model = mutualFollowersState.mutualFollowers[2].avatar, contentDescription = "",
+                            model = mutualFollowersState.mutualFollowers[2].avatar,
+                            contentDescription = "",
                             modifier = Modifier
                                 .height(36.dp)
                                 .width(36.dp)

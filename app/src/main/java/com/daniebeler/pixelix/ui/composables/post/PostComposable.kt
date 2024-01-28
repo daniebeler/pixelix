@@ -387,10 +387,10 @@ fun PostComposable(
                    Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
             },
             title = {
-                Text(text = "Delete Post?")
+                Text(text = stringResource(R.string.delete_post))
             },
             text = {
-                   Text(text = "This action cannot be undone")
+                   Text(text = stringResource(R.string.this_action_cannot_be_undone))
             },
             onDismissRequest = {
                 viewModel.deleteDialog = null
@@ -401,7 +401,7 @@ fun PostComposable(
                         viewModel.deletePost(viewModel.deleteDialog!!)
                     }
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
@@ -410,7 +410,7 @@ fun PostComposable(
                         viewModel.deleteDialog = null
                     }
                 ) {
-                    Text("Dismiss")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -428,7 +428,7 @@ private fun LikesBottomSheet(
             .fillMaxSize()
             .padding(12.dp)
     ) {
-        Text(text = "Liked by", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(text = stringResource(R.string.liked_by), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         HorizontalDivider(Modifier.padding(12.dp))
 
         LazyColumn {
@@ -696,7 +696,7 @@ private fun ShareBottomSheet(
 
         if (minePost) {
             CustomBottomSheetElement(icon = Icons.Outlined.Delete,
-                text = "Delete this Post",
+                text = stringResource(R.string.delete_this_post),
                 onClick = {
                     viewModel.deleteDialog = post.id
                 })

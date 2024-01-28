@@ -19,10 +19,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
@@ -46,7 +48,7 @@ fun SinglePostComposable(
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 title = {
                     Text(
-                        text = ("Post by " + (viewModel.postState.post?.account?.acct ?: "")),
+                        text = (stringResource(R.string.post_by) + " " + (viewModel.postState.post?.account?.acct ?: "")),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )

@@ -107,7 +107,7 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 
             CustomSettingsElement(
                 icon = Icons.Outlined.Dns,
-                text = "About this instance",
+                text = stringResource(R.string.about_this_instance),
                 onClick = {
                     Navigate().navigate("about_instance_screen", navController)
                 })

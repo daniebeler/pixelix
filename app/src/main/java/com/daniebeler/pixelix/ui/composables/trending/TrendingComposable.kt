@@ -71,7 +71,7 @@ fun TrendingComposable(navController: NavController) {
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("daily") },
+                                text = { Text(stringResource(R.string.daily)) },
                                 onClick = { range = "daily" },
                                 trailingIcon = {
                                     if (range == "daily") {
@@ -84,7 +84,7 @@ fun TrendingComposable(navController: NavController) {
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("monthly") },
+                                text = { Text(stringResource(R.string.monthly)) },
                                 onClick = { range = "monthly" },
                                 trailingIcon = {
                                     if (range == "monthly") {
@@ -97,7 +97,7 @@ fun TrendingComposable(navController: NavController) {
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("yearly") },
+                                text = { Text(stringResource(R.string.yearly)) },
                                 onClick = { range = "yearly" },
                                 trailingIcon = {
                                     if (range == "yearly") {

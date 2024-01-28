@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
 import com.daniebeler.pixelix.utils.Navigate
@@ -45,7 +47,7 @@ fun CustomAccount(account: Account, relationship: Relationship?, navController: 
         Column {
             Text(text = "@${account.username}")
             Text(
-                text = "${account.followersCount} followers",
+                text = "${account.followersCount} " + stringResource(id = R.string.followers),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )

@@ -28,9 +28,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -103,7 +105,13 @@ fun FollowersMainComposable(
                     })
 
                 Tab(
-                    text = { Text(viewModel.accountState.account?.followingCount.toString() + " Following") },
+                    text = {
+                        Text(
+                            viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
+                                id = R.string.followers
+                            )
+                        )
+                    },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,

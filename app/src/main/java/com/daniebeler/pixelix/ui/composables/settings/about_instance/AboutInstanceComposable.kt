@@ -30,12 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
@@ -96,7 +98,7 @@ fun AboutInstanceComposable(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "Stats",
+                        text = stringResource(R.string.stats),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier
@@ -113,7 +115,7 @@ fun AboutInstanceComposable(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
-                            Text(text = "Users", fontSize = 12.sp)
+                            Text(text = stringResource(R.string.users), fontSize = 12.sp)
                         }
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -122,14 +124,14 @@ fun AboutInstanceComposable(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
-                            Text(text = "Posts", fontSize = 12.sp)
+                            Text(text = stringResource(id = R.string.posts), fontSize = 12.sp)
                         }
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "Admin",
+                        text = stringResource(R.string.admin),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier
@@ -168,7 +170,7 @@ fun AboutInstanceComposable(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "Privacy Policy",
+                        text = stringResource(R.string.privacy_policy),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier
@@ -194,7 +196,7 @@ fun AboutInstanceComposable(
 
 
                     Text(
-                        text = "Terms of use",
+                        text = stringResource(R.string.terms_of_use),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier
@@ -219,7 +221,7 @@ fun AboutInstanceComposable(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "Rules",
+                        text = stringResource(R.string.rules),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier
@@ -244,7 +246,7 @@ fun AboutInstanceComposable(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "Instance version",
+                        text = stringResource(R.string.instance_version),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier

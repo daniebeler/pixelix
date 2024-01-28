@@ -93,7 +93,7 @@ fun BlockedAccountsComposable(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "no blocked accounts",
+                        text = stringResource(R.string.no_blocked_accounts),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -128,10 +128,10 @@ fun BlockedAccountsComposable(
     if (viewModel.unblockAlert.isNotEmpty()) {
         AlertDialog(
             title = {
-                Text(text = "Unblock Account")
+                Text(text = stringResource(R.string.unblock_account))
             },
             text = {
-                Text(text = "Confirm to unblock this account")
+                Text(text = stringResource(R.string.confirm_to_unblock_this_account))
             },
             onDismissRequest = {
                 viewModel.unblockAlert = ""
@@ -143,7 +143,7 @@ fun BlockedAccountsComposable(
                         viewModel.unblockAlert = ""
                     }
                 ) {
-                    Text("Unblock")
+                    Text(stringResource(R.string.unblock_caps))
                 }
             },
             dismissButton = {
@@ -152,7 +152,7 @@ fun BlockedAccountsComposable(
                         viewModel.unblockAlert = ""
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -191,7 +191,7 @@ private fun CustomBlockedAccountRow(
             Button(onClick = {
                 viewModel.unblockAlert = account.id
             }) {
-                Text(text = "unblock")
+                Text(text = stringResource(R.string.unblock))
             }
         }
 
