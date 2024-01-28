@@ -16,9 +16,15 @@ class LoginViewModel @Inject constructor(
     private val repository: CountryRepository
 ) : ViewModel() {
 
+    private val domainRegex: Regex = "^(https:\\/\\/www\\.|https:\\/\\/)?[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})(\\.[a-zA-Z0-9]{2,})?$".toRegex()
+
     private var _authApplication: Application? = null
     var customUrl: String by mutableStateOf("")
+    var isValidUrl: Boolean by mutableStateOf(false)
+
     var loading: Boolean by mutableStateOf(false)
+
+
     private suspend fun registerApplication(): String {
         _authApplication = repository.createApplication()
         if (_authApplication != null) {
@@ -38,9 +44,13 @@ class LoginViewModel @Inject constructor(
         return baseUrl
     }
 
+    fun domainChanged() {
+        isValidUrl = domainRegex.matches(customUrl)
+    }
+
     suspend fun login(baseUrl: String, context: Context) {
         loading = true
-        if (baseUrl != "") {
+        if (domainRegex.matches(baseUrl)) {
             val newBaseUrl = setBaseUrl(baseUrl)
             val clientId = registerApplication()
 

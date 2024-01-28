@@ -24,6 +24,8 @@ class LoginActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
+    private var isLoadingAfterRedirect: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,10 +34,10 @@ class LoginActivity : ComponentActivity() {
         setContent {
             PixelixTheme {
                 Scaffold { paddingValues ->
-                    Column (Modifier.padding(paddingValues)) {
+                    Column(Modifier.padding(paddingValues)) {
 
                     }
-                    LoginComposable()
+                    LoginComposable(isLoadingAfterRedirect)
                 }
             }
         }
@@ -48,10 +50,11 @@ class LoginActivity : ComponentActivity() {
         //Check if the activity was started after the authentication
         if (url == null || !url.toString().startsWith("pixelix-android-auth://callback")) return
 
-        val code = url.getQueryParameter("code") ?:""
+        val code = url.getQueryParameter("code") ?: ""
 
 
         if (code.isNotEmpty()) {
+            isLoadingAfterRedirect = true
             CoroutineScope(Dispatchers.Default).launch {
                 if (mainViewModel.obtainToken(code)) {
                     val intent = Intent(applicationContext, MainActivity::class.java)
@@ -60,6 +63,5 @@ class LoginActivity : ComponentActivity() {
                 }
             }
         }
-
     }
 }

@@ -55,4 +55,8 @@
     <string name="yearly">Jährlich</string>
     <string name="monthly">Monatlich</string>
     <string name="daily">Täglich</string>
+    <string name="i_don_t_have_an_account">Ich habe noch keinen Account</string>
+    <string name="server_url">Server URL</string>
+    <string name="are_you_sure_you_want_to_log_out">Bist du dir sicher?</string>
+    <string name="logout_questionmark">Ausloggen?</string>
 </resources>

@@ -55,4 +55,8 @@
     <string name="yearly">yearly</string>
     <string name="monthly">monthly</string>
     <string name="daily">daily</string>
+    <string name="i_don_t_have_an_account">I don\'t have an account</string>
+    <string name="server_url">Server url</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
+    <string name="logout_questionmark">Logout?</string>
 </resources>

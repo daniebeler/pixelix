@@ -14,17 +14,22 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,6 +50,8 @@ import kotlinx.coroutines.launch
 fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
 
     val context = LocalContext.current
+
+    val showLogoutDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -115,15 +122,46 @@ fun SettingsComposable(navController: NavController, viewModel: MainViewModel) {
             CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
                 R.string.logout
             ), onClick = {
-                CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.logout()
-                    val intent = Intent(context, LoginActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    context.startActivity(intent)
-                }
+                showLogoutDialog.value = true
             })
         }
 
+        if (showLogoutDialog.value) {
+            AlertDialog(
+                title = {
+                    Text(text = stringResource(R.string.logout_questionmark))
+                },
+                text = {
+                    Text(text = stringResource(R.string.are_you_sure_you_want_to_log_out))
+                },
+                onDismissRequest = {
+                    showLogoutDialog.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                viewModel.logout()
+                                val intent = Intent(context, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                context.startActivity(intent)
+                            }
+                        }
+                    ) {
+                        Text(stringResource(R.string.logout))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showLogoutDialog.value = false
+                        }
+                    ) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
+                }
+            )
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package com.daniebeler.pixelix.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginComposable(isLoading: Boolean, viewModel: LoginViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -70,74 +72,78 @@ fun LoginComposable(viewModel: LoginViewModel = hiltViewModel()) {
                 .padding(12.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            Row(verticalAlignment = Alignment.Bottom) {
-                OutlinedTextField(
-                    value = viewModel.customUrl,
-                    onValueChange = { viewModel.customUrl = it },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    label = { Text("Server url") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedBorderColor = Color.Transparent,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
+
+            if (isLoading) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    OutlinedTextField(
+                        value = viewModel.customUrl,
+                        onValueChange = {
+                            viewModel.customUrl = it
+                            viewModel.domainChanged()
+                        },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.server_url)) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedBorderColor = Color.Transparent,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    viewModel.login(viewModel.customUrl, context)
+                                }
+                            }
+                        )
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Button(
+                        onClick = {
                             CoroutineScope(Dispatchers.Default).launch {
                                 viewModel.login(viewModel.customUrl, context)
                             }
-                        }
-                    )
-                )
-                Spacer(Modifier.width(12.dp))
-                Button(
-                    onClick = {
-                        CoroutineScope(Dispatchers.Default).launch {
-                            viewModel.login(viewModel.customUrl, context)
-                        }
-                    },
-                    Modifier
-                        .height(56.dp)
-                        .width(56.dp)
-                        .padding(0.dp, 0.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "submit",
+                        },
                         Modifier
-                            .fillMaxSize()
-                            .fillMaxWidth()
-                    )
+                            .height(56.dp)
+                            .width(56.dp)
+                            .padding(0.dp, 0.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(12.dp),
+                        enabled = viewModel.isValidUrl
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "submit",
+                            Modifier
+                                .fillMaxSize()
+                                .fillMaxWidth()
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.i_don_t_have_an_account),
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clickable {
+                                val url = "https://pixelfed.org/servers"
+                                Navigate().openUrlInApp(context, url)
+                            })
                 }
             }
-            Spacer(modifier = Modifier.height(6.dp))
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "I don't have an account",
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .clickable {
-                            val url = "https://pixelfed.org/servers"
-                            Navigate().openUrlInApp(context, url)
-                        })
-            }
 
-            if (viewModel.loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.width(64.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
             Spacer(modifier = Modifier.height(64.dp))
             Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
         }
