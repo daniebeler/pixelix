@@ -66,6 +66,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -299,12 +300,6 @@ fun PostComposable(
                     }
                 }
 
-                Text(text = stringResource(R.string.likes, viewModel.likeState.likesCount),
-                    modifier = Modifier.clickable {
-                        viewModel.loadLikedBy(post.id)
-                        showBottomSheet = 3
-                    })
-
                 Row {
                     Spacer(modifier = Modifier.width(40.dp))
 
@@ -327,6 +322,33 @@ fun PostComposable(
                     }
                 }
             }
+
+            Row {
+                if (post.likedBy?.username?.isNotBlank() == true) {
+                    Text(text = stringResource(id = R.string.liked_by) + " ", fontSize = 14.sp)
+                    Text(
+                        text = post.likedBy.username,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable {
+                            Navigate().navigate("profile_screen/" + post.likedBy.id, navController)
+                        })
+                    if (post.likedBy.others) {
+                        Text(text = " " + stringResource(id = R.string.and) + " ", fontSize = 14.sp)
+                        Text(text = post.likedBy.totalCount.toString() + " " + stringResource(id = R.string.others),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.clickable {
+                                viewModel.loadLikedBy(post.id)
+                                showBottomSheet = 3
+                            })
+                    }
+                } else {
+                    Text(text = stringResource(id = R.string.no_likes_yet), fontSize = 14.sp)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
 
             if (post.content.isNotBlank()) {
                 HashtagsMentionsTextView(
@@ -467,7 +489,9 @@ fun PostImage(
 
         if (mediaAttachment.description?.isNotBlank() == true) {
             IconButton(
-                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(8.dp),
                 onClick = {
                     altText = mediaAttachment.description
                 },

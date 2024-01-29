@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.domain.model
 
-import com.daniebeler.pixelix.data.remote.dto.PostDto
 import javax.annotation.concurrent.Immutable
 
 @Immutable
@@ -19,5 +18,6 @@ data class Post(
     val favourited: Boolean,
     val bookmarked: Boolean,
     val mentions: List<Account>,
-    val place: Place?
+    val place: Place?,
+    val likedBy: LikedBy?
 )

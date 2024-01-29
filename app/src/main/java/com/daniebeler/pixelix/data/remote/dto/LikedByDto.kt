@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.LikedBy
 import com.google.gson.annotations.SerializedName
 
 data class LikedByDto(
@@ -16,4 +17,13 @@ data class LikedByDto(
     val url: String,
     @SerializedName("username")
     val username: String
-)
+) : DtoInterface<LikedBy> {
+    override fun toModel(): LikedBy {
+        return LikedBy(
+            id = id,
+            username = username,
+            others = others,
+            totalCount = totalCount
+        )
+    }
+}

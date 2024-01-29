@@ -36,7 +36,7 @@ data class PostDto(
     @SerializedName("language")
     val language: Any,
     @SerializedName("liked_by")
-    val likedBy: LikedByDto,
+    val likedBy: LikedByDto?,
     @SerializedName("local")
     val local: Boolean,
     @SerializedName("media_attachments")
@@ -102,7 +102,8 @@ data class PostDto(
             favourited = favourited,
             bookmarked = bookmarked,
             mentions = mentions.map { it.toModel() },
-            place = place?.toModel()
+            place = place?.toModel(),
+            likedBy = likedBy?.toModel()
         )
     }
 }

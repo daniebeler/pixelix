@@ -2,8 +2,8 @@
 <resources>
     <string name="notifications">Benachrichtigungen</string>
     <string name="settings">Einstellungen</string>
-    <string name="liked_posts">Gelikte Posts</string>
-    <string name="bookmarked_posts">Gespeicherte Posts</string>
+    <string name="liked_posts">Gelikte Beiträge</string>
+    <string name="bookmarked_posts">Gespeicherte Beiträge</string>
     <string name="followed_hashtags">Gefolgte Hashtags</string>
     <string name="blocked_accounts">Blockierte Accounts</string>
     <string name="muted_accounts">Stummgeschaltete Accounts</string>
@@ -41,8 +41,8 @@
     <string name="confirm_to_unblock_this_account">Bestätigen, um diesen Benutzer nicht mehr zu blockieren</string>
     <string name="no_blocked_accounts">Keine blockierten Benutzer</string>
     <string name="cancel">Abbrechen</string>
-    <string name="post_by">Post von</string>
-    <string name="liked_by">Geliked von</string>
+    <string name="post_by">Beitrag von</string>
+    <string name="liked_by">Gefällt</string>
     <string name="delete_this_post">Beitrag löschen</string>
     <string name="delete_post">Beitrag löschen?</string>
     <string name="this_action_cannot_be_undone">Diese Aktion kann nicht rückgängig gemacht werden</string>
@@ -63,7 +63,7 @@
     <string name="reply">Kommentieren…</string>
     <string name="no_comments_yet">Noch keine Kommentare</string>
     <string name="no_likes_yet">Noch keine Likes</string>
-    <string name="no_liked_posts">Noch keine gelikten Posts</string>
+    <string name="no_liked_posts">Noch keine gelikten Beiträge</string>
     <string name="local">Lokal</string>
     <string name="global">Global</string>
     <string name="home">Home</string>
