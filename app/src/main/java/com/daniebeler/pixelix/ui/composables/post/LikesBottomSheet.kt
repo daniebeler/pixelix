@@ -74,7 +74,7 @@ fun LikesBottomSheet(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "No likes yet")
+                        Text(text = stringResource(R.string.no_likes_yet))
                     }
                 }
             }
@@ -104,7 +104,7 @@ private fun LikedByAccountElement(account: Account, navController: NavController
         Column {
             Text(text = "@${account.username}")
             Text(
-                text = "${account.followersCount} followers",
+                text = "${account.followersCount} " + stringResource(id = R.string.followers),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )

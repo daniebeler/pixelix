@@ -48,7 +48,7 @@
     <string name="this_action_cannot_be_undone">Diese Aktion kann nicht rückgängig gemacht werden</string>
     <string name="delete">Löschen</string>
     <string name="this_is_the_end">Ende</string>
-    <string name="and">and</string>
+    <string name="and">und</string>
     <string name="followed_by">Gefolgt von</string>
     <string name="other">anderem</string>
     <string name="others">anderen</string>
@@ -59,4 +59,16 @@
     <string name="server_url">Server URL</string>
     <string name="are_you_sure_you_want_to_log_out">Bist du dir sicher?</string>
     <string name="logout_questionmark">Ausloggen?</string>
+    <string name="view_comments">Alle %1$s Kommentare ansehen</string>
+    <string name="reply">Kommentieren…</string>
+    <string name="no_comments_yet">Noch keine Kommentare</string>
+    <string name="no_likes_yet">Noch keine Likes</string>
+    <string name="no_liked_posts">Noch keine gelikten Posts</string>
+    <string name="local">Lokal</string>
+    <string name="global">Global</string>
+    <string name="home">Home</string>
+    <string name="likes">%1$s Likes</string>
+    <string name="search">Suchen</string>
+    <string name="unmute_caps">Unmute</string>
+    <string name="unmute">unmute</string>
 </resources>

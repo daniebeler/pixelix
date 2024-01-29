@@ -84,7 +84,7 @@ fun LikedPostsComposable(
                         .verticalScroll(rememberScrollState()), contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "no liked posts",
+                        text = stringResource(R.string.no_liked_posts),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )

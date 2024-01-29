@@ -141,7 +141,7 @@ fun MutedAccountsComposable(
                         viewModel.unmuteAlert = ""
                     }
                 ) {
-                    Text("Unmute")
+                    Text(stringResource(R.string.unmute_caps))
                 }
             },
             dismissButton = {
@@ -189,7 +189,7 @@ private fun CustomMutedAccountRow(
             Button(onClick = {
                 viewModel.unmuteAlert = account.id
             }) {
-                Text(text = "unmute")
+                Text(text = stringResource(R.string.unmute))
             }
         }
 

@@ -295,7 +295,7 @@ fun PostComposable(
                     }
                 }
 
-                Text(text = viewModel.likeState.likesCount.toString() + " likes",
+                Text(text = stringResource(R.string.likes, viewModel.likeState.likesCount),
                     modifier = Modifier.clickable {
                         viewModel.loadLikedBy(post.id)
                         showBottomSheet = 3
@@ -335,7 +335,7 @@ fun PostComposable(
                     viewModel.loadReplies(post.account.id, post.id)
                     showBottomSheet = 1
                 }) {
-                    Text(text = "View " + post.replyCount + " comments")
+                    Text(text = stringResource(R.string.view_comments, post.replyCount))
                 }
             }
         }

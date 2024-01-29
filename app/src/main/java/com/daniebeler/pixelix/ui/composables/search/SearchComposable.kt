@@ -23,10 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomHashtag
 
@@ -40,7 +42,7 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                 OutlinedTextField(
                     value = viewModel.textInput,
                     onValueChange = { viewModel.textInputChange(it) },
-                    label = { Text("Search") },
+                    label = { Text(stringResource(R.string.search)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,

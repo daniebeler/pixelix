@@ -47,7 +47,7 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
             }
 
             if (listSize == 3) {
-                append(" and ")
+                append(" " + stringResource(R.string.and) + " ")
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(mutualFollowersState.mutualFollowers[2].username)
                 }

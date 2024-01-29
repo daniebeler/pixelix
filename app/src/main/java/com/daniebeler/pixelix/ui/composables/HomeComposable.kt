@@ -57,7 +57,7 @@ fun HomeComposable(navController: NavController) {
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(text = { Text("Home") },
+                Tab(text = { Text(stringResource(R.string.home)) },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -67,7 +67,7 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
 
-                Tab(text = { Text("Local") },
+                Tab(text = { Text(stringResource(R.string.local)) },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -77,7 +77,7 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
 
-                Tab(text = { Text("Global") },
+                Tab(text = { Text(stringResource(R.string.global)) },
                     selected = pagerState.currentPage == 2,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,

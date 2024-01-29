@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
@@ -92,7 +94,7 @@ fun CommentsBottomSheet(
                 Row(verticalAlignment = Alignment.Bottom) {
                     OutlinedTextField(value = viewModel.newComment,
                         onValueChange = { viewModel.newComment = it },
-                        label = { Text("Reply") },
+                        label = { Text(stringResource(R.string.reply)) },
                         modifier = Modifier
                             .weight(1f)
                             .padding(0.dp, 0.dp),
@@ -170,7 +172,7 @@ fun CommentsBottomSheet(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "No comments yet")
+                        Text(text = stringResource(R.string.no_comments_yet))
                     }
                 }
             }
