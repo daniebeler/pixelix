@@ -1,8 +1,6 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 import com.daniebeler.pixelix.domain.model.Instance
-import com.daniebeler.pixelix.domain.model.toAccount
-import com.daniebeler.pixelix.domain.model.toRule
 import com.google.gson.annotations.SerializedName
 
 data class InstanceDto(
@@ -27,11 +25,11 @@ data class InstanceDto(
     override fun toModel(): Instance {
         return Instance(
             domain = domain,
-            rules = rules.map { it.toRule() },
+            rules = rules.map { it.toModel() },
             shortDescription = shortDescription,
             thumbnailUrl = thumbnailUrl,
             description = description,
-            admin = admin.toAccount(),
+            admin = admin.toModel(),
             stats = stats.toModel(),
             version = version
         )

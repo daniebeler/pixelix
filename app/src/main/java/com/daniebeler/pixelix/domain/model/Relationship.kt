@@ -9,13 +9,3 @@ data class Relationship(
     val muting: Boolean,
     val blocking: Boolean
 )
-
-fun RelationshipDto.toRelationship(): Relationship {
-    return Relationship(
-        id = id,
-        following = following,
-        followedBy = followedBy,
-        muting = muting,
-        blocking = blocking
-    )
-}

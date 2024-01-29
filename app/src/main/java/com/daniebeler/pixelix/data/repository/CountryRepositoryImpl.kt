@@ -33,14 +33,6 @@ import com.daniebeler.pixelix.domain.model.Relationship
 import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.domain.model.Search
 import com.daniebeler.pixelix.domain.model.Tag
-import com.daniebeler.pixelix.domain.model.toAccessToken
-import com.daniebeler.pixelix.domain.model.toAccount
-import com.daniebeler.pixelix.domain.model.toApplication
-import com.daniebeler.pixelix.domain.model.toMediaAttachment
-import com.daniebeler.pixelix.domain.model.toNotification
-import com.daniebeler.pixelix.domain.model.toPost
-import com.daniebeler.pixelix.domain.model.toReply
-import com.daniebeler.pixelix.domain.model.toSearch
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.utils.MimeType
 import kotlinx.coroutines.flow.Flow
@@ -265,7 +257,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             emit(Resource.Loading())
             val response = pixelfedApi.getReplies(userid, postId).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body()?.data?.map { it.toReply() } ?: emptyList()
+                val res = response.body()?.data?.map { it.toModel() } ?: emptyList()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Error"))
@@ -388,7 +380,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
             }
             if (response.isSuccessful) {
-                val res = response.body()?.map { it.toAccount() } ?: emptyList()
+                val res = response.body()?.map { it.toModel() } ?: emptyList()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))
@@ -426,7 +418,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 }
 
                 if (response.isSuccessful) {
-                    val res = response.body()?.map { it.toNotification() } ?: emptyList()
+                    val res = response.body()?.map { it.toModel() } ?: emptyList()
                     emit(Resource.Success(res))
                 } else {
                     emit(Resource.Error("Unknown Error"))
@@ -489,7 +481,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             emit(Resource.Loading())
             val response = pixelfedApi.getSearch(accessToken, searchText).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body()!!.toSearch()
+                val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))
@@ -542,7 +534,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
                 requestBody
             ).awaitResponse()
             if (response.isSuccessful) {
-                val res = response.body()!!.toMediaAttachment()
+                val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))
@@ -577,7 +569,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
             emit(Resource.Loading())
             val response = pixelfedApi.createPost(accessToken, createPostDto)
             if (response != null) {
-                val res = response.body()!!.toPost()
+                val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
             } else {
                 emit(Resource.Error("Unknown Error"))
@@ -609,7 +601,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return try {
             val response = pixelfedApi.createApplication().awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toApplication()
+                response.body()?.toModel()
             } else {
                 null
             }
@@ -624,7 +616,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return try {
             val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toAccessToken()
+                response.body()?.toModel()
             } else {
                 null
             }
@@ -637,7 +629,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return try {
             val response = pixelfedApi.verifyToken("Bearer $token").awaitResponse()
             if (response.isSuccessful) {
-                response.body()?.toAccount()
+                response.body()?.toModel()
             } else {
                 null
             }

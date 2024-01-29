@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.google.gson.annotations.SerializedName
 
 data class MediaAttachmentDto(
@@ -36,4 +37,15 @@ data class MediaAttachmentDto(
     val type: String,
     @SerializedName("url")
     val url: String
-)
+) : DtoInterface<MediaAttachment> {
+    override fun toModel(): MediaAttachment {
+        return MediaAttachment(
+            id = id,
+            url = url,
+            previewUrl = previewUrl,
+            meta = meta?.toModel(),
+            blurHash = blurhash,
+            type = type
+        )
+    }
+}

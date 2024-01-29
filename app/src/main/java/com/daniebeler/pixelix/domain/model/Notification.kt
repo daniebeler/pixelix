@@ -11,14 +11,3 @@ data class Notification(
     var createdAt: String,
     var timeAgo: String
 )
-
-fun NotificationDto.toNotification(): Notification {
-    return Notification(
-        account = account.toAccount(),
-        id = id,
-        type = type,
-        post = post?.toPost(),
-        createdAt = createdAt,
-        timeAgo = TimeAgo().covertTimeToText(createdAt)
-    )
-}

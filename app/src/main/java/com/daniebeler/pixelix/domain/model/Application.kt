@@ -9,13 +9,3 @@ data class Application(
     val clientId: String,
     val clientSecret: String
 )
-
-fun ApplicationDto.toApplication(): Application {
-    return Application(
-        name = name,
-        id = id,
-        redirectUri = redirectUri,
-        clientId = clientId,
-        clientSecret = clientSecret
-    )
-}

@@ -1,7 +1,5 @@
 package com.daniebeler.pixelix.domain.model
 
-import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
-
 data class MediaAttachment(
     val id: String,
     val url: String,
@@ -10,14 +8,3 @@ data class MediaAttachment(
     val blurHash: String?,
     val type: String
 )
-
-fun MediaAttachmentDto.toMediaAttachment(): MediaAttachment {
-    return MediaAttachment(
-        id = id,
-        url = url,
-        previewUrl = previewUrl,
-        meta = meta?.toMeta(),
-        blurHash = blurhash,
-        type = type
-    )
-}

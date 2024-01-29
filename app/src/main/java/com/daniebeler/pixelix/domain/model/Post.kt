@@ -21,23 +21,3 @@ data class Post(
     val mentions: List<Account>,
     val place: Place?
 )
-
-fun PostDto.toPost(): Post {
-    return Post(
-        id = id,
-        mediaAttachments = mediaAttachments.map { it.toMediaAttachment() },
-        account = account.toAccount(),
-        tags = tags.map { it.toTag() },
-        favouritesCount = favouritesCount,
-        content = contentText ?: "",
-        replyCount = replyCount,
-        createdAt = createdAt,
-        url = url,
-        sensitive = sensitive,
-        spoilerText = spoilerText ?: "",
-        favourited = favourited,
-        bookmarked = bookmarked,
-        mentions = mentions.map { it.toAccount() },
-        place = place?.toModel()
-    )
-}

@@ -6,10 +6,3 @@ data class Rule(
     val id: String,
     val text: String
 )
-
-fun RuleDto.toRule(): Rule {
-    return Rule(
-        id = id,
-        text = text
-    )
-}

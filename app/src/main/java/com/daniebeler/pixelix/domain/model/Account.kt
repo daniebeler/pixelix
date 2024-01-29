@@ -15,19 +15,3 @@ data class Account(
     val note: String,
     val url: String
 )
-
-fun AccountDto.toAccount(): Account {
-    return Account(
-        id = id,
-        username = username,
-        acct = acct,
-        displayname = displayName,
-        avatar = avatar,
-        followersCount = followersCount,
-        followingCount = followingCount,
-        postsCount = statusesCount,
-        website = website,
-        note = noteText ?: "",
-        url = url
-    )
-}

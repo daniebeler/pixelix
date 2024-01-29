@@ -2,9 +2,6 @@ package com.daniebeler.pixelix.data.remote.dto
 
 
 import com.daniebeler.pixelix.domain.model.Post
-import com.daniebeler.pixelix.domain.model.toAccount
-import com.daniebeler.pixelix.domain.model.toMediaAttachment
-import com.daniebeler.pixelix.domain.model.toTag
 import com.google.gson.annotations.SerializedName
 
 data class PostDto(
@@ -92,9 +89,9 @@ data class PostDto(
     override fun toModel(): Post {
         return Post(
             id = id,
-            mediaAttachments = mediaAttachments.map { it.toMediaAttachment() },
-            account = account.toAccount(),
-            tags = tags.map { it.toTag() },
+            mediaAttachments = mediaAttachments.map { it.toModel() },
+            account = account.toModel(),
+            tags = tags.map { it.toModel() },
             favouritesCount = favouritesCount,
             content = contentText ?: "",
             replyCount = replyCount,
@@ -104,7 +101,7 @@ data class PostDto(
             spoilerText = spoilerText ?: "",
             favourited = favourited,
             bookmarked = bookmarked,
-            mentions = mentions.map { it.toAccount() },
+            mentions = mentions.map { it.toModel() },
             place = place?.toModel()
         )
     }

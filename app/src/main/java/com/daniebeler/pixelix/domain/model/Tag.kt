@@ -1,7 +1,5 @@
 package com.daniebeler.pixelix.domain.model
 
-import com.daniebeler.pixelix.data.remote.dto.TagDto
-
 data class Tag(
     var name: String,
     val url: String,
@@ -10,14 +8,3 @@ data class Tag(
     val total: Int,
     val hashtag: String?
 )
-
-fun TagDto.toTag(): Tag {
-    return Tag(
-        name = name,
-        url = url,
-        following = following,
-        count = count,
-        total = total,
-        hashtag = hashtag
-    )
-}

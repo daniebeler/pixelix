@@ -2,8 +2,6 @@ package com.daniebeler.pixelix.data.remote.dto
 
 
 import com.daniebeler.pixelix.domain.model.Notification
-import com.daniebeler.pixelix.domain.model.toAccount
-import com.daniebeler.pixelix.domain.model.toPost
 import com.daniebeler.pixelix.utils.TimeAgo
 import com.google.gson.annotations.SerializedName
 
@@ -23,10 +21,10 @@ data class NotificationDto(
 ) : DtoInterface<Notification> {
     override fun toModel(): Notification {
         return Notification(
-            account = account.toAccount(),
+            account = account.toModel(),
             id = id,
             type = type,
-            post = post?.toPost(),
+            post = post?.toModel(),
             createdAt = createdAt,
             timeAgo = TimeAgo().covertTimeToText(createdAt)
         )

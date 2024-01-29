@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Application
 import com.google.gson.annotations.SerializedName
 
 data class ApplicationDto(
@@ -16,4 +17,14 @@ data class ApplicationDto(
     val clientId: String,
     @SerializedName("client_secret")
     val clientSecret: String
-)
+): DtoInterface<Application> {
+    override fun toModel(): Application {
+        return Application(
+            name = name,
+            id = id,
+            redirectUri = redirectUri,
+            clientId = clientId,
+            clientSecret = clientSecret
+        )
+    }
+}

@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.data.remote.dto
 
 
+import com.daniebeler.pixelix.domain.model.Search
 import com.google.gson.annotations.SerializedName
 
 data class SearchDto(
@@ -10,4 +11,12 @@ data class SearchDto(
     val posts: List<PostDto>,
     @SerializedName("hashtags")
     val hashtags: List<TagDto>
-)
+): DtoInterface<Search> {
+    override fun toModel(): Search {
+        return Search(
+            accounts = accounts.map { accountDto -> accountDto.toModel() },
+            posts = posts.map { postDto -> postDto.toModel() },
+            tags = hashtags.map { hashtagsDto -> hashtagsDto.toModel() }
+        )
+    }
+}

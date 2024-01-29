@@ -2,7 +2,6 @@ package com.daniebeler.pixelix.data.remote.dto
 
 
 import com.daniebeler.pixelix.domain.model.Reply
-import com.daniebeler.pixelix.domain.model.toAccount
 import com.google.gson.annotations.SerializedName
 
 data class ReplyDto(
@@ -89,8 +88,8 @@ data class ReplyDto(
         return Reply(
             id = id,
             content = contentText,
-            mentions = mentions.map { accountDto -> accountDto.toAccount() },
-            account = account.toAccount(),
+            mentions = mentions.map { accountDto -> accountDto.toModel() },
+            account = account.toModel(),
             createdAt = createdAt
         )
     }
