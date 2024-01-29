@@ -45,7 +45,8 @@ data class MediaAttachmentDto(
             previewUrl = previewUrl,
             meta = meta?.toModel(),
             blurHash = blurhash,
-            type = type
+            type = type,
+            description = description
         )
     }
 }

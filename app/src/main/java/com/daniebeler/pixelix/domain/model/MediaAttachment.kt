@@ -6,5 +6,6 @@ data class MediaAttachment(
     val previewUrl: String,
     val meta: Meta?,
     val blurHash: String?,
-    val type: String
+    val type: String,
+    val description: String?
 )

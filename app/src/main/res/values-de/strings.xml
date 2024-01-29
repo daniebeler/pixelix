@@ -71,4 +71,5 @@
     <string name="search">Suchen</string>
     <string name="unmute_caps">Unmute</string>
     <string name="unmute">unmute</string>
+    <string name="media_description">Bildbeschreibung</string>
 </resources>

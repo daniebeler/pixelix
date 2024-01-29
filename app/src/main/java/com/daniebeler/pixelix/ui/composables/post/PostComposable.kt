@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.post
 
+import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
@@ -40,6 +42,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -81,6 +84,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.daniebeler.pixelix.LoginActivity
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
@@ -422,6 +426,8 @@ fun PostImage(
         }
     }
 
+    var altText by remember { mutableStateOf("") }
+
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -459,6 +465,18 @@ fun PostImage(
             }
         }
 
+        if (mediaAttachment.description?.isNotBlank() == true) {
+            IconButton(
+                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
+                onClick = {
+                    altText = mediaAttachment.description
+                },
+                colors = IconButtonDefaults.filledIconButtonColors()
+            ) {
+                Icon(Icons.Outlined.Description, contentDescription = "Show alt text")
+            }
+        }
+
         Icon(
             imageVector = Icons.Filled.Favorite,
             contentDescription = null,
@@ -468,6 +486,29 @@ fun PostImage(
                 .align(Alignment.Center)
                 .scale(scale.value)
         )
+
+        if (altText.isNotBlank()) {
+            AlertDialog(
+                title = {
+                    Text(text = stringResource(R.string.media_description))
+                },
+                text = {
+                    Text(text = altText)
+                },
+                onDismissRequest = {
+                    altText = ""
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            altText = ""
+                        }
+                    ) {
+                        Text(stringResource(id = android.R.string.ok))
+                    }
+                }
+            )
+        }
 
     }
 }
