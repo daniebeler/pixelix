@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,14 +21,21 @@ import androidx.compose.ui.unit.dp
 fun ErrorComposable(message: String) {
 
     if (message.isNotBlank()) {
-        Text(
-            text = message,
-            Modifier
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(
-                    Alignment.Center
-                )
-        )
+                .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+        ) {
+            Text(
+                text = message,
+                Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(
+                        Alignment.Center
+                    )
+            )
+        }
     }
 }
 
@@ -41,6 +50,7 @@ fun ErrorComposable(message: String, refreshState: PullRefreshState) {
                 .pullRefresh(refreshState)
                 .verticalScroll(rememberScrollState())
                 .padding(36.dp, 20.dp)
+                .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
         ) {
             Text(
                 text = message,

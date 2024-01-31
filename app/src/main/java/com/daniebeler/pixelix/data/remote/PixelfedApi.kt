@@ -305,7 +305,7 @@ interface PixelfedApi {
         @Query("q") searchText: String
     ): Call<SearchDto>
 
-    @POST("/api/v1/media")
+    @POST("/api/v2/media")
     fun uploadMedia(
         @Header("Authorization") accessToken: String,
         @Body body: RequestBody

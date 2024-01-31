@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -27,6 +28,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.model.Instance
 import com.daniebeler.pixelix.domain.model.MediaAttachment
+import com.daniebeler.pixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Relationship
@@ -34,6 +36,7 @@ import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.domain.model.Search
 import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.utils.GetFile
 import com.daniebeler.pixelix.utils.MimeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -51,7 +54,9 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.Path
 
 
 private val Context.dataStore by preferencesDataStore("settings")
@@ -499,17 +504,21 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     override fun uploadMedia(
         uri: Uri,
         description: String,
-        context: Context
+        context: Context,
+        mediaAttachmentConfiguration: MediaAttachmentConfiguration
     ): Flow<Resource<MediaAttachment>> = flow {
         try {
             emit(Resource.Loading())
+
             val pixelfedApi = buildPixelFedApi(true)
-            val inputStream = context.contentResolver.openInputStream(uri)
+
             val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
+
+            val inputStream = context.contentResolver.openInputStream(uri)
             val fileRequestBody =
                 inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
 
-            val file = File(uri.path!!)
+            val file = GetFile().getFile(uri, context) ?: return@flow
 
             val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
             builder.addFormDataPart("description", description)
@@ -544,7 +553,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    fun bitmapToBytes(photo: Bitmap): ByteArray? {
+    private fun bitmapToBytes(photo: Bitmap): ByteArray? {
         val stream = ByteArrayOutputStream()
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream)
         return stream.toByteArray()

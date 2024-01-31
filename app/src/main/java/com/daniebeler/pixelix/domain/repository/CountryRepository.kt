@@ -9,6 +9,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.model.Instance
 import com.daniebeler.pixelix.domain.model.MediaAttachment
+import com.daniebeler.pixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.model.Relationship
@@ -93,7 +94,7 @@ interface CountryRepository {
 
     fun search(searchText: String): Flow<Resource<Search>>
 
-    fun uploadMedia(uri: Uri, description: String, context: Context): Flow<Resource<MediaAttachment>>
+    fun uploadMedia(uri: Uri, description: String, context: Context, mediaAttachmentConfiguration: MediaAttachmentConfiguration): Flow<Resource<MediaAttachment>>
     fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
     fun deletePost(postId: String): Flow<Resource<Post>>
 

@@ -60,7 +60,7 @@ fun CustomPost(post: Post, navController: NavController) {
             Navigate().navigate("single_post_screen/" + post.id, navController)
         })) {
 
-            if (post.mediaAttachments[0].url.takeLast(4) == ".gif") {
+            if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
                 GlideImage(
                     model = post.mediaAttachments[0].url,
                     contentDescription = null,

@@ -19,7 +19,9 @@ data class InstanceDto(
     @SerializedName("stats")
     val stats: InstanceStatsDto,
     @SerializedName("version")
-    val version: String
+    val version: String,
+    @SerializedName("configuration")
+    val configuration: ConfigurationDto
 
 ) : DtoInterface<Instance> {
     override fun toModel(): Instance {
@@ -31,7 +33,8 @@ data class InstanceDto(
             description = description,
             admin = admin.toModel(),
             stats = stats.toModel(),
-            version = version
+            version = version,
+            configuration = configuration.toModel()
         )
     }
 }

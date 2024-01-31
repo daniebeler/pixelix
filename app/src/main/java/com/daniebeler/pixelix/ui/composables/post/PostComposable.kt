@@ -478,9 +478,9 @@ fun PostImage(
                 }
             })
         }) {
-            if (mediaAttachment.type == "image" && mediaAttachment.url.takeLast(4) != ".gif") {
+            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif") {
                 ImageWrapper(mediaAttachment)
-            } else if (mediaAttachment.url.takeLast(4) == ".gif") {
+            } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
                 VideoPlayer(uri = Uri.parse(mediaAttachment.url))

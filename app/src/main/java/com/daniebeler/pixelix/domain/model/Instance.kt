@@ -8,5 +8,6 @@ data class Instance(
     val thumbnailUrl: String,
     val admin: Account,
     val stats: InstanceStats,
-    val version: String
+    val version: String,
+    val configuration: Configuration
 )

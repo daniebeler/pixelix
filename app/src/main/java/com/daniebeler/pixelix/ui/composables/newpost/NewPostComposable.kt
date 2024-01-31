@@ -29,6 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -42,6 +44,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -55,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,6 +75,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.LoadingComposable
 import com.daniebeler.pixelix.utils.MimeType
@@ -82,18 +87,20 @@ fun NewPostComposable(
     navController: NavController,
     viewModel: NewPostViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
             Navigate().navigate("new_post_screen", navController)
             uris.forEach {
-                viewModel.images += NewPostViewModel.ImageItem(it, "")
+                viewModel.addImage(it, context)
+                //viewModel.images += NewPostViewModel.ImageItem(it, "")
             }
         }
     )
 
     var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -168,7 +175,7 @@ fun NewPostComposable(
                         modifier = Modifier
                             .clickable {
                                 singlePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
                                 )
                             }
                             .height(50.dp)
@@ -273,6 +280,24 @@ fun NewPostComposable(
                     }
                 }
             }
+
+            if (viewModel.addImageError.first.isNotBlank()) {
+                AlertDialog(title = {
+                    Text(text = viewModel.addImageError.first)
+                }, text = {
+                    Text(text = viewModel.addImageError.second)
+                },
+                    onDismissRequest = {
+                        viewModel.addImageError = Pair("", "")
+                    }, confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.addImageError = Pair("", "")
+                        }) {
+                            Text("Ok")
+                        }
+                    })
+            }
+
             LoadingComposable(isLoading = viewModel.createPostState.isLoading)
             ErrorComposable(message = viewModel.mediaUploadState.error)
             ErrorComposable(message = viewModel.createPostState.error)
