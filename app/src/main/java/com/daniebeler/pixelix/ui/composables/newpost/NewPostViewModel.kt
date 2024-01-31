@@ -28,6 +28,7 @@ class NewPostViewModel @Inject constructor(
     private val repository: CountryRepository
 ) : ViewModel() {
     data class ImageItem(val imageUri: Uri, var text: String = "")
+
     var images by mutableStateOf(emptyList<ImageItem>())
     var caption: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
@@ -48,7 +49,7 @@ class NewPostViewModel @Inject constructor(
         getInstance()
     }
 
-    private fun bytesIntoHumanReadable(bytes: Int): String? {
+    private fun bytesIntoHumanReadable(bytes: Long): String? {
         val kilobyte: Long = 1024
         val megabyte = kilobyte * 1024
         val gigabyte = megabyte * 1024
@@ -71,7 +72,10 @@ class NewPostViewModel @Inject constructor(
     fun addImage(uri: Uri, context: Context) {
         val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
         if (!instance.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(fileType)) {
-            addImageError = Pair("Media type is not supported", "The media type $fileType is not supportet by this server")
+            addImageError = Pair(
+                "Media type is not supported",
+                "The media type $fileType is not supportet by this server"
+            )
             return
         }
         val file = GetFile().getFile(uri, context) ?: return
@@ -79,12 +83,26 @@ class NewPostViewModel @Inject constructor(
         val size = file.length()
         if (fileType.take(5) == "image") {
             if (size > instance.configuration.mediaAttachmentConfig.imageSizeLimit) {
-                addImageError = Pair("Image is to big", "This image is to big, the max size for this server is ${bytesIntoHumanReadable(instance.configuration.mediaAttachmentConfig.imageSizeLimit)}")
+                addImageError = Pair(
+                    "Image is to big",
+                    "This image is to big, the max size for this server is ${
+                        bytesIntoHumanReadable(
+                            instance.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
+                        )
+                    }, your video has ${bytesIntoHumanReadable(size)}"
+                )
                 return
             }
         } else if (fileType.take(5) == "video") {
             if (size > instance.configuration.mediaAttachmentConfig.videoSizeLimit) {
-                addImageError = Pair("Video is to big", "This Video is to big, the max size for this server is ${bytesIntoHumanReadable(instance.configuration.mediaAttachmentConfig.videoSizeLimit)}")
+                addImageError = Pair(
+                    "Video is to big",
+                    "This Video is to big, the max size for this server is ${
+                        bytesIntoHumanReadable(
+                            instance.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
+                        )
+                    }, your video has ${bytesIntoHumanReadable(size)}"
+                )
                 return
             }
         }
@@ -102,7 +120,9 @@ class NewPostViewModel @Inject constructor(
                     if (result.data != null) {
                         instance = result.data
                     } else {
-                        createPostState = CreatePostState(error = result.message ?: "An unexpected error occurred")
+                        createPostState = CreatePostState(
+                            error = result.message ?: "An unexpected error occurred"
+                        )
                     }
                 }
 
@@ -118,7 +138,12 @@ class NewPostViewModel @Inject constructor(
     private fun uploadImage(context: Context, navController: NavController, instance: Instance) {
         createPostState = CreatePostState(isLoading = true)
         images.map { image ->
-            repository.uploadMedia(image.imageUri, image.text, context, instance.configuration.mediaAttachmentConfig).onEach { result ->
+            repository.uploadMedia(
+                image.imageUri,
+                image.text,
+                context,
+                instance.configuration.mediaAttachmentConfig
+            ).onEach { result ->
                 mediaUploadState = when (result) {
                     is Resource.Success -> {
                         val newMediaUploadState = mediaUploadState.copy(
