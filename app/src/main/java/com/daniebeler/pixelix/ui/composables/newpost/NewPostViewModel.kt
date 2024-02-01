@@ -2,7 +2,6 @@ package com.daniebeler.pixelix.ui.composables.newpost
 
 import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,9 +16,10 @@ import com.daniebeler.pixelix.utils.GetFile
 import com.daniebeler.pixelix.utils.MimeType
 import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.io.File
 import javax.inject.Inject
 
 
@@ -27,7 +27,12 @@ import javax.inject.Inject
 class NewPostViewModel @Inject constructor(
     private val repository: CountryRepository
 ) : ViewModel() {
-    data class ImageItem(val imageUri: Uri, var text: String = "")
+    data class ImageItem(
+        val imageUri: Uri,
+        var id: String?,
+        var text: String = "",
+        var isLoading: Boolean
+    )
 
     var images by mutableStateOf(emptyList<ImageItem>())
     var caption: String by mutableStateOf("")
@@ -39,14 +44,36 @@ class NewPostViewModel @Inject constructor(
     lateinit var instance: Instance
     var addImageError by mutableStateOf(Pair("", ""))
 
-    fun updateAltText(index: Int, newAltText: String) {
+    init {
+        getInstance()
+    }
+
+    private fun getInstance() {
+        repository.getInstance().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    if (result.data != null) {
+                        instance = result.data
+                    } else {
+                        createPostState = CreatePostState(
+                            error = result.message ?: "An unexpected error occurred"
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                }
+
+                is Resource.Loading -> {
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun updateAltTextVariable(index: Int, newAltText: String) {
         images = images.toMutableList().also {
             it[index] = it[index].copy(text = newAltText)
         }
-    }
-
-    init {
-        getInstance()
     }
 
     private fun bytesIntoHumanReadable(bytes: Long): String? {
@@ -106,74 +133,108 @@ class NewPostViewModel @Inject constructor(
                 return
             }
         }
-        images += ImageItem(uri, "")
+        images += ImageItem(uri, null, "", true)
+        uploadImage(context, instance, uri, "")
     }
 
-    fun post(context: Context, navController: NavController) {
-        uploadImage(context, navController, instance)
-    }
-
-    private fun getInstance() {
-        repository.getInstance().onEach { result ->
-            when (result) {
+    private fun uploadImage(context: Context, instance: Instance, uri: Uri, text: String) {
+        repository.uploadMedia(
+            uri,
+            text,
+            context,
+            instance.configuration.mediaAttachmentConfig
+        ).onEach { result ->
+            mediaUploadState = when (result) {
                 is Resource.Success -> {
-                    if (result.data != null) {
-                        instance = result.data
-                    } else {
-                        createPostState = CreatePostState(
-                            error = result.message ?: "An unexpected error occurred"
-                        )
+                    if (result.data?.type?.take(5) == "video") {
+                        Thread.sleep(1500)
                     }
+                    images.find { it.imageUri == uri }?.isLoading = false
+                    images.find { it.imageUri == uri }?.id = result.data?.id
+                    mediaUploadState.copy(
+                        mediaAttachments = mediaUploadState.mediaAttachments + result.data!!,
+                        isLoading = false
+                    )
                 }
 
                 is Resource.Error -> {
+                    if (!result.message.isNullOrEmpty()) {
+                        MediaUploadState(error = result.message)
+                    } else {
+                        MediaUploadState(error = "An unexpected error occured")
+                    }
                 }
 
                 is Resource.Loading -> {
+                    if (mediaUploadState.error != "") {
+                        mediaUploadState
+                    } else {
+                        mediaUploadState.copy(isLoading = true)
+                    }
+                }
+            }
+        }
+            .flowOn(Dispatchers.IO).launchIn(viewModelScope)
+    }
+
+    fun post(navController: NavController) {
+        if (images.find { it.isLoading } != null) {
+            return
+        }
+        createPostState = CreatePostState(isLoading = true)
+        if (images.size == mediaUploadState.mediaAttachments.size) {
+            images.forEachIndexed { index, it ->
+                if (it.text != "") {
+                   updateAltText(index, it.text)
+                }
+            }
+            createNewPost(mediaUploadState, navController)
+        }
+    }
+
+    private fun updateAltText(index: Int, altText: String) {
+        val image = images[index]
+        if (image.id == null) {
+            return
+        }
+        repository.updateMedia(
+            image.id!!,
+            image.text
+        ).onEach { result ->
+            mediaUploadState = when (result) {
+                is Resource.Success -> {
+                    images.find { it.imageUri == image.imageUri }?.isLoading = false
+                    var index: Int = 0
+                    mediaUploadState.mediaAttachments.forEachIndexed { i, it ->
+                        if (it.id == image.id) {
+                            index = i
+                        }
+                    }
+                    mediaUploadState.copy(
+                        mediaAttachments = mediaUploadState.mediaAttachments.toMutableList().also {
+                            it[index] = result.data!!
+                        },
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
+                    if (!result.message.isNullOrEmpty()) {
+                        MediaUploadState(error = result.message)
+                    } else {
+                        MediaUploadState(error = "An unexpected error occured")
+                    }
+                }
+
+                is Resource.Loading -> {
+                    if (mediaUploadState.error != "") {
+                        mediaUploadState
+                    } else {
+                        mediaUploadState.copy(isLoading = true)
+                    }
                 }
             }
         }.launchIn(viewModelScope)
-    }
-
-    private fun uploadImage(context: Context, navController: NavController, instance: Instance) {
-        createPostState = CreatePostState(isLoading = true)
-        images.map { image ->
-            repository.uploadMedia(
-                image.imageUri,
-                image.text,
-                context,
-                instance.configuration.mediaAttachmentConfig
-            ).onEach { result ->
-                mediaUploadState = when (result) {
-                    is Resource.Success -> {
-                        val newMediaUploadState = mediaUploadState.copy(
-                            mediaAttachments = mediaUploadState.mediaAttachments + result.data!!
-                        )
-                        println(result.data)
-                        if (images.size == newMediaUploadState.mediaAttachments.size) {
-                            createNewPost(newMediaUploadState, navController)
-                        }
-                        newMediaUploadState
-                    }
-
-                    is Resource.Error -> {
-                        if (!result.message.isNullOrEmpty()) {
-                            MediaUploadState(error = result.message)
-                        } else {
-                            MediaUploadState(error = "An unexpected error occured")
-                        }
-                    }
-
-                    is Resource.Loading -> {
-                        if (mediaUploadState.error != "") {
-                            mediaUploadState
-                        } else {
-                            mediaUploadState.copy(isLoading = true)
-                        }
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
     }
 
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
@@ -185,7 +246,7 @@ class NewPostViewModel @Inject constructor(
                     if (result.data != null) {
                         Navigate().navigateAndDeleteBackStack("own_profile_screen", navController)
                     }
-                    CreatePostState(post = result.data)
+                    CreatePostState(post = result.data, isLoading = true)
                 }
 
                 is Resource.Error -> {

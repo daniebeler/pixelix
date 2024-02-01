@@ -95,6 +95,7 @@ interface CountryRepository {
     fun search(searchText: String): Flow<Resource<Search>>
 
     fun uploadMedia(uri: Uri, description: String, context: Context, mediaAttachmentConfiguration: MediaAttachmentConfiguration): Flow<Resource<MediaAttachment>>
+    fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>>
     fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
     fun deletePost(postId: String): Flow<Resource<Post>>
 

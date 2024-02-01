@@ -22,8 +22,11 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -32,6 +35,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,6 +63,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,6 +78,9 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.decode.VideoFrameDecoder
+import coil.request.ImageRequest
+import coil.request.videoFrameMillis
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.R
@@ -120,7 +128,7 @@ fun NewPostComposable(
                     }
                 },
                 actions = {
-                    Button(onClick = { viewModel.post(context, navController) }) {
+                    Button(onClick = { viewModel.post(navController) }) {
                         Text(text = "Post")
                     }
                 }
@@ -138,26 +146,50 @@ fun NewPostComposable(
             ) {
                 viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        val type = MimeType().getMimeType(image.imageUri, context.contentResolver)
-                        if (type != null && type.take(5) == "video") {
-                            VideoPlayerSmall(uri = image.imageUri)
-                        } else if (type != null && type.takeLast(3) == "gif") {
-                            GlideImage(
-                                model = image.imageUri,
-                                contentDescription = null,
-                                modifier = Modifier.width(100.dp)
-                            )
-                        } else {
-                            AsyncImage(
-                                model = image.imageUri,
-                                contentDescription = null,
-                                modifier = Modifier.width(100.dp)
-                            )
+                        Box(contentAlignment = Alignment.Center) {
+
+                            val type =
+                                MimeType().getMimeType(image.imageUri, context.contentResolver)
+                            if (type != null && type.take(5) == "video") {
+                                val model = ImageRequest.Builder(context)
+                                    .data(image.imageUri)
+                                    .decoderFactory { result, options, _ ->
+                                        VideoFrameDecoder(
+                                            result.source,
+                                            options
+                                        )
+                                    }
+                                    .build()
+
+                                AsyncImage(
+                                    model = model,
+                                    contentDescription = "video thumbnail",
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            } else if (type != null && type.takeLast(3) == "gif") {
+                                GlideImage(
+                                    model = image.imageUri,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            } else {
+                                AsyncImage(
+                                    model = image.imageUri,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            }
+                            if (image.isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .wrapContentSize(Alignment.Center)
+                                )
+                            }
                         }
                         Spacer(Modifier.width(10.dp))
                         OutlinedTextField(
                             value = image.text,
-                            onValueChange = { viewModel.updateAltText(index, it) },
+                            onValueChange = { viewModel.updateAltTextVariable(index, it) },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text("Alt Text") },
                             colors = OutlinedTextFieldDefaults.colors(
@@ -166,7 +198,7 @@ fun NewPostComposable(
                                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                                 unfocusedBorderColor = Color.Transparent,
                             ),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(12.dp)
                         )
                     }
                 }
@@ -299,6 +331,7 @@ fun NewPostComposable(
             }
 
             LoadingComposable(isLoading = viewModel.createPostState.isLoading)
+            //LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)
             ErrorComposable(message = viewModel.mediaUploadState.error)
             ErrorComposable(message = viewModel.createPostState.error)
         }

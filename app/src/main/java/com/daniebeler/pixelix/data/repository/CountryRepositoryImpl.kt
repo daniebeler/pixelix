@@ -20,6 +20,7 @@ import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pixelix.data.remote.dto.InstanceDto
+import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
@@ -38,11 +39,13 @@ import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.utils.GetFile
 import com.daniebeler.pixelix.utils.MimeType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -559,18 +562,28 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         return stream.toByteArray()
     }
 
-    private fun getThumbnail(uri: Uri, context: Context): Bitmap? {
+    private suspend fun getThumbnail(uri: Uri, context: Context): Bitmap? {
         return try {
-            Glide.with(context)
-                .asBitmap()
-                .load(uri)
-                .apply(RequestOptions().frame(0))
-                .submit()
-                .get()
+            withContext(Dispatchers.IO) {
+                Glide.with(context)
+                    .asBitmap()
+                    .load(uri)
+                    .apply(RequestOptions().frame(0))
+                    .submit()
+                    .get()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
+    }
+
+    override fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>> {
+        return NetworkCall<MediaAttachment, MediaAttachmentDto>().makeCall(
+            pixelfedApi.updateMedia(
+                accessToken, id, description
+            )
+        )
     }
 
     override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {

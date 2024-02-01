@@ -27,6 +27,7 @@ import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -309,6 +310,14 @@ interface PixelfedApi {
     fun uploadMedia(
         @Header("Authorization") accessToken: String,
         @Body body: RequestBody
+    ): Call<MediaAttachmentDto>
+
+    @FormUrlEncoded
+    @PUT("/api/v1/media/{id}")
+    fun updateMedia(
+        @Header("Authorization") accessToken: String,
+        @Path("id") mediaAttachmentid: String,
+        @Field("description") description: String,
     ): Call<MediaAttachmentDto>
 
     @POST("/api/v1/statuses")
