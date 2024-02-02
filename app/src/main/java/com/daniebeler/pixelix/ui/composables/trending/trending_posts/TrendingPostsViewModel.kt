@@ -32,7 +32,11 @@ class TrendingPostsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    TrendingPostsState(isLoading = true, isRefreshing = refreshing)
+                    TrendingPostsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        trendingPosts = trendingState.trendingPosts
+                    )
                 }
             }
         }.launchIn(viewModelScope)

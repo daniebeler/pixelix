@@ -69,7 +69,9 @@ fun FollowersMainComposable(
             TopAppBar(
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 title = {
-                    Text("@" + viewModel.accountState.account?.acct)
+                    if (viewModel.accountState.account != null) {
+                        Text("@" + viewModel.accountState.account?.acct)
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -93,7 +95,17 @@ fun FollowersMainComposable(
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    text = { Text(viewModel.accountState.account?.followersCount.toString() + " Followers") },
+                    text = {
+                        if (viewModel.accountState.account != null) {
+                            Text(
+                                viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
+                                    id = R.string.followers
+                                )
+                            )
+                        } else {
+                            Text(text = stringResource(id = R.string.followers))
+                        }
+                    },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -101,16 +113,19 @@ fun FollowersMainComposable(
                         scope.launch {
                             pagerState.animateScrollToPage(0)
                         }
-
                     })
 
                 Tab(
                     text = {
-                        Text(
-                            viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
-                                id = R.string.followers
+                        if (viewModel.accountState.account != null) {
+                            Text(
+                                viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
+                                    id = R.string.following
+                                )
                             )
-                        )
+                        } else {
+                            Text(text = stringResource(id = R.string.following))
+                        }
                     },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,

@@ -73,18 +73,19 @@ fun InfinitePostsGrid(
             }
 
             if (before != null) {
+                if (isLoading) {
+                    item(span = { GridItemSpan(3) }) {
+                        FixedHeightLoadingComposable()
+                    }
+                }
+
+
                 if (items.isEmpty()) {
                     if (!isLoading && error.isEmpty()) {
                         item(span = { GridItemSpan(3) }) {
                             FixedHeightEmptyStateComposable {
                                 emptyMessage()
                             }
-                        }
-                    }
-                } else {
-                    if (isLoading) {
-                        item(span = { GridItemSpan(3) }) {
-                            FixedHeightLoadingComposable()
                         }
                     }
                 }

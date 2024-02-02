@@ -16,14 +16,15 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingAccountsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel(){
+) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
     var accountRelationShipsState by mutableStateOf(AccountRelationshipsState())
+
     init {
         getTrendingAccountsState()
     }
 
-    fun getTrendingAccountsState() {
+    fun getTrendingAccountsState(refreshing: Boolean = false) {
         repository.getTrendingAccounts().onEach { result ->
             trendingAccountsState = when (result) {
                 is Resource.Success -> {
@@ -36,7 +37,11 @@ class TrendingAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    TrendingAccountsState(isLoading = true)
+                    TrendingAccountsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        trendingAccounts = trendingAccountsState.trendingAccounts
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -52,11 +57,16 @@ class TrendingAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    AccountRelationshipsState(error = result.message ?: "An unexpected error occurred")
+                    AccountRelationshipsState(
+                        error = result.message ?: "An unexpected error occurred"
+                    )
                 }
 
                 is Resource.Loading -> {
-                    AccountRelationshipsState(isLoading = true)
+                    AccountRelationshipsState(
+                        isLoading = true,
+                        accountRelationships = accountRelationShipsState.accountRelationships
+                    )
                 }
             }
         }.launchIn(viewModelScope)

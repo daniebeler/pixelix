@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MutedAccountsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
 
     var mutedAccountsState by mutableStateOf(MutedAccountsState())
@@ -27,7 +27,7 @@ class MutedAccountsViewModel @Inject constructor(
         getMutedAccounts()
     }
 
-    fun getMutedAccounts() {
+    fun getMutedAccounts(refreshing: Boolean = false) {
         repository.getMutedAccounts().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
@@ -39,7 +39,11 @@ class MutedAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    MutedAccountsState(isLoading = true)
+                    MutedAccountsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        mutedAccounts = mutedAccountsState.mutedAccounts
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -49,7 +53,8 @@ class MutedAccountsViewModel @Inject constructor(
         repository.unMuteAccount(accountId).onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
-                    val newMutedAccounts = mutedAccountsState.mutedAccounts.filter { account: Account -> account.id != accountId }
+                    val newMutedAccounts =
+                        mutedAccountsState.mutedAccounts.filter { account: Account -> account.id != accountId }
                     MutedAccountsState(mutedAccounts = newMutedAccounts)
                 }
 

@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingHashtagsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var trendingHashtagsState by mutableStateOf(TrendingHashtagsState())
 
@@ -23,7 +23,7 @@ class TrendingHashtagsViewModel @Inject constructor(
         getTrendingHashtags()
     }
 
-    fun getTrendingHashtags() {
+    fun getTrendingHashtags(refreshing: Boolean = false) {
         repository.getTrendingHashtags().onEach { result ->
             trendingHashtagsState = when (result) {
                 is Resource.Success -> {
@@ -35,7 +35,11 @@ class TrendingHashtagsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    TrendingHashtagsState(isLoading = true)
+                    TrendingHashtagsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        trendingHashtags = trendingHashtagsState.trendingHashtags
+                    )
                 }
             }
         }.launchIn(viewModelScope)

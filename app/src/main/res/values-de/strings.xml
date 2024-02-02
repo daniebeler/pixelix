@@ -74,5 +74,16 @@
     <string name="media_description">Bildbeschreibung</string>
     <string name="no_posts_yet">Noch keine Beiträge</string>
     <string name="mentioned_you_in_a_post">hat dich in einem Beitrag erwähnt</string>
-    <string name="no_bookmarked_posts">No bookmarked posts</string>
+    <string name="no_bookmarked_posts">Keine gespeicherten Beiträge</string>
+    <string name="nothing_to_show">Nothing to show</string>
+    <string name="new_post">Neuer Beitrag</string>
+    <string name="release">Veröffentlichen</string>
+    <string name="alt_text">Alt Text</string>
+    <string name="caption">Beschreibung</string>
+    <string name="sensitive_nsfw_media">Enthält sensible Inhalte</string>
+    <string name="content_warning_or_spoiler_text">Inhaltswarnung</string>
+    <string name="audience">Audienz</string>
+    <string name="unlisted">Nur erwähnte Profile</string>
+    <string name="followers_only">Nur Follower</string>
+    <string name="audience_public">Öffentlich</string>
 </resources>

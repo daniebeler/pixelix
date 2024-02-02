@@ -11,7 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomHashtag
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenLoadingComposable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -20,8 +22,8 @@ fun TrendingHashtagsComposable(
 ) {
 
     val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.trendingHashtagsState.isLoading,
-            onRefresh = { viewModel.getTrendingHashtags() })
+        rememberPullRefreshState(refreshing = viewModel.trendingHashtagsState.isRefreshing,
+            onRefresh = { viewModel.getTrendingHashtags(true) })
 
     LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState), content = {
         items(viewModel.trendingHashtagsState.trendingHashtags, key = {
@@ -32,10 +34,22 @@ fun TrendingHashtagsComposable(
         }
     })
 
+    if (viewModel.trendingHashtagsState.trendingHashtags.isEmpty()) {
+        if (viewModel.trendingHashtagsState.isLoading && !viewModel.trendingHashtagsState.isRefreshing) {
+            FullscreenLoadingComposable()
+        }
+
+        if (viewModel.trendingHashtagsState.error.isNotEmpty()) {
+            FullscreenErrorComposable(message = viewModel.trendingHashtagsState.error)
+        }
+
+        if (!viewModel.trendingHashtagsState.isLoading && viewModel.trendingHashtagsState.error.isEmpty()) {
+            FullscreenEmptyStateComposable()
+        }
+    }
+
     CustomPullRefreshIndicator(
-        viewModel.trendingHashtagsState.isLoading,
+        viewModel.trendingHashtagsState.isRefreshing,
         pullRefreshState,
     )
-
-    ErrorComposable(message = viewModel.trendingHashtagsState.error)
 }

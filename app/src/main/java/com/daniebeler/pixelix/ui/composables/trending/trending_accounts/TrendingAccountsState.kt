@@ -4,6 +4,7 @@ import com.daniebeler.pixelix.domain.model.Account
 
 data class TrendingAccountsState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val trendingAccounts: List<Account> = emptyList(),
     val error: String = ""
 )

@@ -4,6 +4,7 @@ import com.daniebeler.pixelix.domain.model.Account
 
 data class MutedAccountsState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val mutedAccounts: List<Account> = emptyList(),
     val error: String = ""
 )

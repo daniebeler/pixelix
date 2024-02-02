@@ -4,6 +4,7 @@ import com.daniebeler.pixelix.domain.model.Account
 
 data class BlockedAccountsState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val blockedAccounts: List<Account> = emptyList(),
     val error: String = ""
 )

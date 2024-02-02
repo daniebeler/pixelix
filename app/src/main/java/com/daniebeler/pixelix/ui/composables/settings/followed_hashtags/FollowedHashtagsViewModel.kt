@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowedHashtagsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var followedHashtagsState by mutableStateOf(FollowedHashtagsState())
 
@@ -24,23 +24,29 @@ class FollowedHashtagsViewModel @Inject constructor(
         getFollowedHashtags()
     }
 
-    fun getFollowedHashtags() {
+    fun getFollowedHashtags(refreshing: Boolean = false) {
         repository.getFollowedHashtags().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
-                        result.data.forEach{
+                        result.data.forEach {
                             getFollowedHashtagSingle(it)
                         }
                     }
                 }
 
                 is Resource.Error -> {
-                    followedHashtagsState = FollowedHashtagsState(error = result.message ?: "An unexpected error occurred")
+                    followedHashtagsState = FollowedHashtagsState(
+                        error = result.message ?: "An unexpected error occurred"
+                    )
                 }
 
                 is Resource.Loading -> {
-                    followedHashtagsState = FollowedHashtagsState(isLoading = true)
+                    followedHashtagsState = FollowedHashtagsState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        followedHashtags = followedHashtagsState.followedHashtags
+                    )
                 }
             }
         }.launchIn(viewModelScope)

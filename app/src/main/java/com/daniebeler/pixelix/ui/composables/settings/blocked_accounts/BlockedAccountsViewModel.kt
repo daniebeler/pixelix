@@ -18,7 +18,7 @@ class BlockedAccountsViewModel @Inject constructor(
     private val repository: CountryRepository
 ): ViewModel() {
 
-    var blockedAccounts by mutableStateOf(BlockedAccountsState())
+    var blockedAccountsState by mutableStateOf(BlockedAccountsState())
 
     var unblockAlert: String by mutableStateOf("")
 
@@ -26,9 +26,9 @@ class BlockedAccountsViewModel @Inject constructor(
         getBlockedAccounts()
     }
 
-    fun getBlockedAccounts() {
+    fun getBlockedAccounts(refreshing: Boolean = false) {
         repository.getBlockedAccounts().onEach { result ->
-            blockedAccounts = when (result) {
+            blockedAccountsState = when (result) {
                 is Resource.Success -> {
                     BlockedAccountsState(blockedAccounts = result.data ?: emptyList())
                 }
@@ -38,7 +38,7 @@ class BlockedAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    BlockedAccountsState(isLoading = true)
+                    BlockedAccountsState(isLoading = true, isRefreshing = refreshing, blockedAccounts = blockedAccountsState.blockedAccounts)
                 }
             }
         }.launchIn(viewModelScope)
@@ -46,9 +46,9 @@ class BlockedAccountsViewModel @Inject constructor(
 
     fun unblockAccount(accountId: String) {
         repository.unblockAccount(accountId).onEach { result ->
-            blockedAccounts = when (result) {
+            blockedAccountsState = when (result) {
                 is Resource.Success -> {
-                    val newBlockedAccounts = blockedAccounts.blockedAccounts.filter { account: Account -> account.id != accountId }
+                    val newBlockedAccounts = blockedAccountsState.blockedAccounts.filter { account: Account -> account.id != accountId }
                     BlockedAccountsState(blockedAccounts = newBlockedAccounts)
                 }
 

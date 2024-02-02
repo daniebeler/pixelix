@@ -11,7 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenLoadingComposable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -20,8 +22,8 @@ fun TrendingAccountsComposable(
 ) {
 
     val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.trendingAccountsState.isLoading,
-            onRefresh = { viewModel.getTrendingAccountsState() })
+        rememberPullRefreshState(refreshing = viewModel.trendingAccountsState.isRefreshing,
+            onRefresh = { viewModel.getTrendingAccountsState(true) })
 
     LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState), content = {
         items(viewModel.trendingAccountsState.trendingAccounts, key = {
@@ -37,10 +39,22 @@ fun TrendingAccountsComposable(
         }
     })
 
+    if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
+        if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
+            FullscreenLoadingComposable()
+        }
+
+        if (viewModel.trendingAccountsState.error.isNotEmpty()) {
+            FullscreenErrorComposable(message = viewModel.trendingAccountsState.error)
+        }
+
+        if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
+            FullscreenEmptyStateComposable()
+        }
+    }
+
     CustomPullRefreshIndicator(
-        viewModel.trendingAccountsState.isLoading,
+        viewModel.trendingAccountsState.isRefreshing,
         pullRefreshState,
     )
-
-    ErrorComposable(message = viewModel.trendingAccountsState.error)
 }

@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,6 +72,7 @@ import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.MimeType
@@ -102,7 +104,7 @@ fun NewPostComposable(
             TopAppBar(
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 title = {
-                    Text(text = "New post")
+                    Text(text = stringResource(R.string.new_post))
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -116,7 +118,7 @@ fun NewPostComposable(
                 },
                 actions = {
                     Button(onClick = { viewModel.post(navController) }) {
-                        Text(text = "Post")
+                        Text(text = stringResource(R.string.release))
                     }
                 }
             )
@@ -178,7 +180,7 @@ fun NewPostComposable(
                             value = image.text,
                             onValueChange = { viewModel.updateAltTextVariable(index, it) },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Alt Text") },
+                            label = { Text(stringResource(R.string.alt_text)) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -208,7 +210,7 @@ fun NewPostComposable(
                     value = viewModel.caption,
                     onValueChange = { viewModel.caption = it },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("caption") },
+                    label = { Text(stringResource(R.string.caption)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -222,7 +224,7 @@ fun NewPostComposable(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Sensitive/NSFW Media")
+                    Text(text = stringResource(R.string.sensitive_nsfw_media))
                     Switch(
                         checked = viewModel.sensitive,
                         onCheckedChange = { viewModel.sensitive = it })
@@ -232,7 +234,7 @@ fun NewPostComposable(
                         value = viewModel.sensitiveText,
                         onValueChange = { viewModel.sensitiveText = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("content warning or spoiler text") },
+                        label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -247,17 +249,34 @@ fun NewPostComposable(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Audience")
+                    Text(text = stringResource(R.string.audience))
                     Box {
                         OutlinedButton(onClick = { expanded = !expanded }) {
-                            Text(text = viewModel.audience)
+                            val buttonText: String = when (viewModel.audience) {
+                                "public" -> {
+                                    stringResource(id = R.string.audience_public)
+                                }
+
+                                "unlisted" -> {
+                                    stringResource(id = R.string.unlisted)
+                                }
+
+                                "followers only" -> {
+                                    stringResource(id = R.string.followers_only)
+                                }
+
+                                else -> {
+                                    ""
+                                }
+                            }
+                            Text(text = buttonText)
                         }
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("public") },
+                                text = { Text(stringResource(R.string.audience_public)) },
                                 onClick = { viewModel.audience = "public" },
                                 trailingIcon = {
                                     if (viewModel.audience == "public") {
@@ -270,7 +289,7 @@ fun NewPostComposable(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("unlisted") },
+                                text = { Text(stringResource(R.string.unlisted)) },
                                 onClick = { viewModel.audience = "unlisted" },
                                 trailingIcon = {
                                     if (viewModel.audience == "unlisted") {
@@ -283,7 +302,7 @@ fun NewPostComposable(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("followers only") },
+                                text = { Text(stringResource(R.string.followers_only)) },
                                 onClick = { viewModel.audience = "followers only" },
                                 trailingIcon = {
                                     if (viewModel.audience == "followers only") {
