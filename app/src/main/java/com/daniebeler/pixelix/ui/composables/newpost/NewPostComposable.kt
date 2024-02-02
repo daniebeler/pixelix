@@ -1,8 +1,5 @@
 package com.daniebeler.pixelix.ui.composables.newpost
 
-import android.net.Uri
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,7 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,17 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
@@ -78,11 +64,14 @@ import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.MimeType
 import com.daniebeler.pixelix.utils.Navigate
 
+private const val AUDIENCE_PUBLIC = "public"
+private const val AUDIENCE_UNLISTED = "unlisted"
+private const val AUDIENCE_FOLLOWERS_ONLY = "followers only"
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(
-    navController: NavController,
-    viewModel: NewPostViewModel = hiltViewModel()
+    navController: NavController, viewModel: NewPostViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -94,44 +83,33 @@ fun NewPostComposable(
                 viewModel.addImage(it, context)
                 //viewModel.images += NewPostViewModel.ImageItem(it, "")
             }
-        }
-    )
+        })
 
     var expanded by remember { mutableStateOf(false) }
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(text = stringResource(R.string.new_post))
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                },
-                actions = {
-                    Button(onClick = { viewModel.post(navController) }) {
-                        Text(text = stringResource(R.string.release))
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            Text(text = stringResource(R.string.new_post))
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                )
+            }
+        }, actions = {
+            Button(onClick = { viewModel.post(navController) }) {
+                Text(text = stringResource(R.string.release))
+            }
+        })
+    }) { paddingValues ->
         Box {
             Column(
                 Modifier
                     .padding(paddingValues)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -140,15 +118,12 @@ fun NewPostComposable(
                             val type =
                                 MimeType().getMimeType(image.imageUri, context.contentResolver)
                             if (type != null && type.take(5) == "video") {
-                                val model = ImageRequest.Builder(context)
-                                    .data(image.imageUri)
+                                val model = ImageRequest.Builder(context).data(image.imageUri)
                                     .decoderFactory { result, options, _ ->
                                         VideoFrameDecoder(
-                                            result.source,
-                                            options
+                                            result.source, options
                                         )
-                                    }
-                                    .build()
+                                    }.build()
 
                                 AsyncImage(
                                     model = model,
@@ -170,8 +145,7 @@ fun NewPostComposable(
                             }
                             if (image.isLoading) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .wrapContentSize(Alignment.Center)
+                                    modifier = Modifier.wrapContentSize(Alignment.Center)
                                 )
                             }
                         }
@@ -225,8 +199,7 @@ fun NewPostComposable(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = stringResource(R.string.sensitive_nsfw_media))
-                    Switch(
-                        checked = viewModel.sensitive,
+                    Switch(checked = viewModel.sensitive,
                         onCheckedChange = { viewModel.sensitive = it })
                 }
                 if (viewModel.sensitive) {
@@ -253,15 +226,15 @@ fun NewPostComposable(
                     Box {
                         OutlinedButton(onClick = { expanded = !expanded }) {
                             val buttonText: String = when (viewModel.audience) {
-                                "public" -> {
+                                AUDIENCE_PUBLIC -> {
                                     stringResource(id = R.string.audience_public)
                                 }
 
-                                "unlisted" -> {
+                                AUDIENCE_UNLISTED -> {
                                     stringResource(id = R.string.unlisted)
                                 }
 
-                                "followers only" -> {
+                                AUDIENCE_FOLLOWERS_ONLY -> {
                                     stringResource(id = R.string.followers_only)
                                 }
 
@@ -271,49 +244,40 @@ fun NewPostComposable(
                             }
                             Text(text = buttonText)
                         }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.audience_public)) },
-                                onClick = { viewModel.audience = "public" },
+                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            DropdownMenuItem(text = { Text(stringResource(R.string.audience_public)) },
+                                onClick = { viewModel.audience = AUDIENCE_PUBLIC },
                                 trailingIcon = {
-                                    if (viewModel.audience == "public") {
+                                    if (viewModel.audience == AUDIENCE_PUBLIC) {
                                         Icon(
                                             imageVector = Icons.Outlined.Check,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.unlisted)) },
-                                onClick = { viewModel.audience = "unlisted" },
+                                })
+                            DropdownMenuItem(text = { Text(stringResource(R.string.unlisted)) },
+                                onClick = { viewModel.audience = AUDIENCE_UNLISTED },
                                 trailingIcon = {
-                                    if (viewModel.audience == "unlisted") {
+                                    if (viewModel.audience == AUDIENCE_UNLISTED) {
                                         Icon(
                                             imageVector = Icons.Outlined.Check,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.followers_only)) },
-                                onClick = { viewModel.audience = "followers only" },
+                                })
+                            DropdownMenuItem(text = { Text(stringResource(R.string.followers_only)) },
+                                onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
                                 trailingIcon = {
-                                    if (viewModel.audience == "followers only") {
+                                    if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
                                         Icon(
                                             imageVector = Icons.Outlined.Check,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
-                                }
-                            )
+                                })
                         }
                     }
                 }
@@ -324,16 +288,15 @@ fun NewPostComposable(
                     Text(text = viewModel.addImageError.first)
                 }, text = {
                     Text(text = viewModel.addImageError.second)
-                },
-                    onDismissRequest = {
+                }, onDismissRequest = {
+                    viewModel.addImageError = Pair("", "")
+                }, confirmButton = {
+                    TextButton(onClick = {
                         viewModel.addImageError = Pair("", "")
-                    }, confirmButton = {
-                        TextButton(onClick = {
-                            viewModel.addImageError = Pair("", "")
-                        }) {
-                            Text("Ok")
-                        }
-                    })
+                    }) {
+                        Text("Ok")
+                    }
+                })
             }
 
             LoadingComposable(isLoading = viewModel.createPostState.isLoading)
@@ -341,47 +304,5 @@ fun NewPostComposable(
             ErrorComposable(message = viewModel.mediaUploadState.error)
             ErrorComposable(message = viewModel.createPostState.error)
         }
-    }
-}
-
-@Composable
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-fun VideoPlayerSmall(uri: Uri) {
-    val context = LocalContext.current
-
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-                context, defaultDataSourceFactory
-            )
-            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri))
-
-            setMediaSource(source)
-            prepare()
-        }
-    }
-
-    exoPlayer.playWhenReady = true
-    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-
-    DisposableEffect(
-        AndroidView(modifier = Modifier.width(100.dp), factory = {
-            PlayerView(context).apply {
-                hideController()
-                useController = false
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-
-                player = exoPlayer
-                layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-        })
-    ) {
-        onDispose { exoPlayer.release() }
     }
 }
