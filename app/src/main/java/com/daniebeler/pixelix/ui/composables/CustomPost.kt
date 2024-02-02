@@ -32,12 +32,15 @@ fun CustomPost(post: Post, navController: NavController) {
         post.mediaAttachments[0].blurHash,
     )
 
-    Image(
-        blurHashAsDrawable.bitmap.asImageBitmap(),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.aspectRatio(1f)
-    )
+    if (blurHashAsDrawable.bitmap != null) {
+        Image(
+            blurHashAsDrawable.bitmap.asImageBitmap(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.aspectRatio(1f)
+        )
+    }
+    
     if (post.sensitive) {
         Box(
             contentAlignment = Alignment.Center,

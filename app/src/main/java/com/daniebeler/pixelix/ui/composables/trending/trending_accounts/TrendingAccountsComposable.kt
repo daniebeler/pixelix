@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

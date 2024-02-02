@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.ui.composables.post
 
-import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
@@ -85,11 +84,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.daniebeler.pixelix.LoginActivity
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.Post
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pixelix.utils.BlurHashDecoder
 import com.daniebeler.pixelix.utils.Navigate
@@ -195,14 +193,17 @@ fun PostComposable(
                     LocalContext.current.resources, post.mediaAttachments[0].blurHash
                 )
 
-                Image(
-                    blurHashAsDrawable.bitmap.asImageBitmap(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.aspectRatio(
-                        post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                if (blurHashAsDrawable.bitmap != null) {
+                    Image(
+                        blurHashAsDrawable.bitmap.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.aspectRatio(
+                            post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                        )
                     )
-                )
+                }
+
 
                 Column(
                     Modifier.aspectRatio(
@@ -347,7 +348,7 @@ fun PostComposable(
                     Text(text = stringResource(id = R.string.no_likes_yet), fontSize = 14.sp)
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
 
             if (post.content.isNotBlank()) {
@@ -459,14 +460,17 @@ fun PostImage(
             mediaAttachment.blurHash,
         )
 
-        Image(
-            blurHashAsDrawable.bitmap.asImageBitmap(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.aspectRatio(
-                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+        if (blurHashAsDrawable.bitmap != null) {
+            Image(
+                blurHashAsDrawable.bitmap.asImageBitmap(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.aspectRatio(
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+                )
             )
-        )
+        }
+
 
         Box(modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(onDoubleTap = {

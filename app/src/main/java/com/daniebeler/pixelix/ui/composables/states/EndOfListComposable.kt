@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables
+package com.daniebeler.pixelix.ui.composables.states
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

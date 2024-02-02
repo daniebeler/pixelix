@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +17,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.EndOfListComposable
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.EndOfListComposable
+import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

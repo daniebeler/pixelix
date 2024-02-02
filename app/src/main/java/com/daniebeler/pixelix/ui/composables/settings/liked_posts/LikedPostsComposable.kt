@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.CustomPost
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteGridHandler
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

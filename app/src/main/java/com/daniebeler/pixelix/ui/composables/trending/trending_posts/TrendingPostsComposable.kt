@@ -33,11 +33,9 @@ fun TrendingPostsComposable(
                 Text(text = "no posts")
             },
             navController = navController,
-            getItemsPaginated = { },
-            before = { },
-            onRefresh = {
-                viewModel.getTrendingPosts(range)
-            }
-        )
+            getItemsPaginated = { }
+        ) {
+            viewModel.getTrendingPosts(range)
+        }
     }
 }

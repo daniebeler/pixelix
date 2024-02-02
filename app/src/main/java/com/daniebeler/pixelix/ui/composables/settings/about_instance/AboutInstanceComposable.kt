@@ -2,12 +2,10 @@ package com.daniebeler.pixelix.ui.composables.settings.about_instance
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,8 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -72,4 +72,5 @@
     <string name="unmute_caps">Unmute</string>
     <string name="unmute">unmute</string>
     <string name="media_description">Media Description</string>
+    <string name="no_posts_yet">No posts yet</string>
 </resources>

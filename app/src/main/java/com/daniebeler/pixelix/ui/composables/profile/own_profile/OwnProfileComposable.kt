@@ -20,7 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
@@ -98,11 +98,7 @@ fun CustomProfilePage(
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
             emptyMessage = {
-                Image(
-                    painter = painterResource(id = R.drawable.empty_state_no_posts),
-                    contentDescription = null,
-                    Modifier.fillMaxWidth()
-                )
+                Text(text = stringResource(R.string.no_posts_yet))
             },
             endReached = postsState.endReached,
             navController = navController,
@@ -116,8 +112,7 @@ fun CustomProfilePage(
                     otherAccountTopSectionAdditions()
                 }
 
-            },
-            onRefresh = { refresh() }
-        )
+            }
+        ) { refresh() }
     }
 }

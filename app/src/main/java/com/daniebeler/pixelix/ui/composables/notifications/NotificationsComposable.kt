@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.ui.composables.notifications
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,10 +48,10 @@ import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Notification
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pixelix.ui.composables.EndOfListComposable
-import com.daniebeler.pixelix.ui.composables.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.EndOfListComposable
+import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pixelix.ui.composables.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -81,54 +83,73 @@ fun NotificationsComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-                    LazyColumn(
-                        state = lazyListState,
-                        content = {
-                            items(viewModel.notificationsState.notifications, key = {
-                                it.id
-                            }) {
-                                CustomNotificaiton(notification = it, navController = navController)
-                            }
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pullRefresh(pullRefreshState),
+                content = {
+                    if (viewModel.notificationsState.notifications.isNotEmpty()) {
+                        items(viewModel.notificationsState.notifications, key = {
+                            it.id
+                        }) {
+                            CustomNotificaiton(notification = it, navController = navController)
+                        }
 
-                            if (viewModel.notificationsState.notifications.isNotEmpty() && viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
-                                item {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(80.dp)
-                                            .wrapContentSize(Alignment.Center)
-                                    )
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Green)
+                            ) {
+
+
+                                InfiniteListHandler(lazyListState = lazyListState) {
+                                    viewModel.getNotificationsPaginated()
                                 }
                             }
+                        }
 
-                            if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
-                                item {
-                                    EndOfListComposable()
-                                }
+                        if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
+                            item {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(80.dp)
+                                        .wrapContentSize(Alignment.Center)
+                                )
                             }
-                        })
+                        }
 
-                    InfiniteListHandler(lazyListState = lazyListState) {
-                        viewModel.getNotificationsPaginated()
+                        if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
+                            item {
+                                EndOfListComposable()
+                            }
+                        }
+
+                    } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {
+                        item {
+                            Box(
+                                contentAlignment = Alignment.Center, modifier = Modifier
+                                    .fillMaxSize()
+                                    .pullRefresh(pullRefreshState)
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(36.dp, 20.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.empty_state_no_notifications),
+                                    contentDescription = null,
+                                    Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+
                     }
-                }
-            } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {
-                Box(
-                    contentAlignment = Alignment.Center, modifier = Modifier
-                        .fillMaxSize()
-                        .pullRefresh(pullRefreshState)
-                        .verticalScroll(rememberScrollState())
-                        .padding(36.dp, 20.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.empty_state_no_notifications),
-                        contentDescription = null,
-                        Modifier.fillMaxWidth()
-                    )
-                }
-            }
+
+                })
+
+
+
             CustomPullRefreshIndicator(
                 viewModel.notificationsState.isRefreshing,
                 pullRefreshState
@@ -154,10 +175,12 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
         "follow" -> {
             text = " " + stringResource(R.string.followed_you)
         }
+
         "favourite" -> {
             text = " " + stringResource(R.string.liked_your_post)
             showImage = true
         }
+
         "reblog" -> {
             text = " " + stringResource(R.string.reblogged_your_post)
             showImage = true
