@@ -42,6 +42,7 @@ fun CustomBlockedAccountRow(
                 contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)
+                    .width(32.dp)
                     .clip(CircleShape)
             )
             Spacer(modifier = Modifier.width(10.dp))

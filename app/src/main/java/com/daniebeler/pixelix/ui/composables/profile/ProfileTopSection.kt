@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -49,6 +50,7 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                     contentDescription = "",
                     modifier = Modifier
                         .height(76.dp)
+                        .width(76.dp)
                         .clip(CircleShape)
                 )
 
@@ -100,11 +102,14 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = account.displayname, fontWeight = FontWeight.Bold)
-            Text(text = "@" + account.acct, fontSize = 12.sp, modifier = Modifier.pointerInput(Unit) {
-                detectTapGestures(onLongPress = {
-                    clipboardManager.setText(AnnotatedString("@" + account.acct))
+            Text(
+                text = "@" + account.acct,
+                fontSize = 12.sp,
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onLongPress = {
+                        clipboardManager.setText(AnnotatedString("@" + account.acct))
+                    })
                 })
-            })
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(

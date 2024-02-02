@@ -36,51 +36,38 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutInstanceComposable(
-    navController: NavController,
-    viewModel: AboutInstanceViewModel = hiltViewModel()
+    navController: NavController, viewModel: AboutInstanceViewModel = hiltViewModel()
 ) {
 
     val lazyListState = rememberLazyListState()
 
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    viewModel.instanceState.instance?.domain?.let { Text(text = it) }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            viewModel.instanceState.instance?.domain?.let { Text(text = it) }
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = ""
+                )
+            }
+        })
+    }) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues), state = lazyListState
+            modifier = Modifier.padding(paddingValues), state = lazyListState
         ) {
-
-            if (viewModel.instanceState.isLoading) {
-                item {
-                    LoadingComposable(isLoading = true)
-                }
-            } else {
+            if (!viewModel.instanceState.isLoading && viewModel.instanceState.error.isEmpty()) {
                 item {
                     AsyncImage(
                         model = viewModel.instanceState.instance?.thumbnailUrl,
@@ -89,8 +76,7 @@ fun AboutInstanceComposable(
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     Text(
-                        text = viewModel.instanceState.instance?.description
-                            ?: "",
+                        text = viewModel.instanceState.instance?.description ?: "",
                         Modifier.padding(12.dp, 0.dp)
                     )
                     Spacer(modifier = Modifier.height(18.dp))
@@ -99,8 +85,7 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.stats),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
                     Row(
@@ -132,8 +117,7 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.admin),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
                     if (viewModel.instanceState.instance != null) {
@@ -144,14 +128,13 @@ fun AboutInstanceComposable(
                                 .fillMaxWidth()
                                 .clickable {
                                     Navigate().navigate(
-                                        "profile_screen/" + account.id,
-                                        navController
+                                        "profile_screen/" + account.id, navController
                                     )
-                                },
-                            verticalAlignment = Alignment.CenterVertically
+                                }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             AsyncImage(
-                                model = account.avatar, contentDescription = "",
+                                model = account.avatar,
+                                contentDescription = "",
                                 modifier = Modifier
                                     .height(46.dp)
                                     .width(46.dp)
@@ -171,12 +154,10 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.privacy_policy),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
-                    Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
+                    Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(12.dp, 0.dp)
@@ -197,12 +178,10 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.terms_of_use),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
-                    Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
+                    Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(12.dp, 0.dp)
@@ -222,8 +201,7 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.rules),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
                 }
 
@@ -247,21 +225,24 @@ fun AboutInstanceComposable(
                         text = stringResource(R.string.instance_version),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
                     Text(
                         text = viewModel.instanceState.instance?.version ?: "",
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
                 }
             }
 
         }
 
-        ErrorComposable(message = viewModel.instanceState.error)
+        if (viewModel.instanceState.isLoading) {
+            FullscreenLoadingComposable()
+        }
 
+        if (viewModel.instanceState.error.isNotBlank()) {
+            FullscreenErrorComposable(message = viewModel.instanceState.error)
+        }
     }
 }
