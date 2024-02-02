@@ -106,11 +106,14 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                 })
             })
 
-            HashtagsMentionsTextView(
-                text = account.note,
-                mentions = null,
-                navController = navController
-            )
+            if (account.note.isNotBlank()) {
+                HashtagsMentionsTextView(
+                    text = account.note,
+                    mentions = null,
+                    navController = navController
+                )
+            }
+
 
             account.website?.let {
                 Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {

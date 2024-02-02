@@ -176,6 +176,10 @@ fun CustomNotificaiton(notification: Notification, navController: NavController)
             text = " " + stringResource(R.string.followed_you)
         }
 
+        "mention" -> {
+            text = " " + stringResource(R.string.mentioned_you_in_a_post)
+        }
+
         "favourite" -> {
             text = " " + stringResource(R.string.liked_your_post)
             showImage = true
