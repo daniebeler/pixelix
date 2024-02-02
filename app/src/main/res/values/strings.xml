@@ -74,4 +74,5 @@
     <string name="media_description">Media Description</string>
     <string name="no_posts_yet">No posts yet</string>
     <string name="mentioned_you_in_a_post">mentioned you in a post</string>
+    <string name="no_bookmarked_posts">No bookmarked posts</string>
 </resources>

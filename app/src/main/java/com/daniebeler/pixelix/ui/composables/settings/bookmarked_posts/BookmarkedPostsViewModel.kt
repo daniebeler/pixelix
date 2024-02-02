@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BookmarkedPostsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var bookmarkedPostsState by mutableStateOf(BookmarkedPostsState())
 
@@ -23,7 +23,7 @@ class BookmarkedPostsViewModel @Inject constructor(
         getBookmarkedPosts()
     }
 
-    fun getBookmarkedPosts() {
+    fun getBookmarkedPosts(refreshing: Boolean = false) {
         repository.getBookmarkedPosts().onEach { result ->
             bookmarkedPostsState = when (result) {
                 is Resource.Success -> {
@@ -35,7 +35,7 @@ class BookmarkedPostsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    BookmarkedPostsState(isLoading = true)
+                    BookmarkedPostsState(isLoading = true, isRefreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)

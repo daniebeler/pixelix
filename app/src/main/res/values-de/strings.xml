@@ -74,4 +74,5 @@
     <string name="media_description">Bildbeschreibung</string>
     <string name="no_posts_yet">Noch keine Beiträge</string>
     <string name="mentioned_you_in_a_post">hat dich in einem Beitrag erwähnt</string>
+    <string name="no_bookmarked_posts">No bookmarked posts</string>
 </resources>

@@ -26,16 +26,15 @@ fun TrendingPostsComposable(
         InfinitePostsGrid(
             items = viewModel.trendingState.trendingPosts,
             isLoading = viewModel.trendingState.isLoading,
-            isRefreshing = false,
+            isRefreshing = viewModel.trendingState.isRefreshing,
             endReached = true,
             error = viewModel.trendingState.error,
             emptyMessage = {
                 Text(text = "no posts")
             },
-            navController = navController,
-            getItemsPaginated = { }
+            navController = navController
         ) {
-            viewModel.getTrendingPosts(range)
+            viewModel.getTrendingPosts(range, true)
         }
     }
 }

@@ -30,12 +30,12 @@ fun InfinitePostsGrid(
     isLoading: Boolean,
     isRefreshing: Boolean,
     error: String,
-    endReached: Boolean,
+    endReached: Boolean = false,
     emptyMessage: @Composable () -> Unit,
     navController: NavController,
-    getItemsPaginated: () -> Unit,
+    getItemsPaginated: () -> Unit = { },
     before: @Composable (() -> Unit)? = null,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit = { }
 ) {
 
     val lazyGridState = rememberLazyGridState()
@@ -66,10 +66,16 @@ fun InfinitePostsGrid(
                 CustomPost(post = photo, navController = navController)
             }
 
+            if (endReached && items.size > 10) {
+                item(span = { GridItemSpan(3) }) {
+                    EndOfListComposable()
+                }
+            }
+
             if (before != null) {
                 if (items.isEmpty()) {
                     if (!isLoading && error.isEmpty()) {
-                        item (span = { GridItemSpan(3) }) {
+                        item(span = { GridItemSpan(3) }) {
                             FixedHeightEmptyStateComposable {
                                 emptyMessage()
                             }
@@ -81,16 +87,9 @@ fun InfinitePostsGrid(
                             FixedHeightLoadingComposable()
                         }
                     }
-
-                    if (endReached && items.size > 10) {
-                        item(span = { GridItemSpan(3) }) {
-                            EndOfListComposable()
-                        }
-                    }
                 }
             }
         }
-
 
         if (before == null && items.isEmpty()) {
             if (isLoading && !isRefreshing) {

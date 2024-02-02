@@ -20,7 +20,7 @@ class TrendingPostsViewModel @Inject constructor(
     var trendingState by mutableStateOf(TrendingPostsState())
         private set
 
-    fun getTrendingPosts(timeRange: String) {
+    fun getTrendingPosts(timeRange: String, refreshing: Boolean = false) {
         repository.getTrendingPosts(timeRange).onEach { result ->
             trendingState = when (result) {
                 is Resource.Success -> {
@@ -32,7 +32,7 @@ class TrendingPostsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    TrendingPostsState(isLoading = true)
+                    TrendingPostsState(isLoading = true, isRefreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
