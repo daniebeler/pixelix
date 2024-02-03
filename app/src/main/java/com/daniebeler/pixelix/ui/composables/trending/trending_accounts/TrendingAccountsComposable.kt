@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.ui.composables.CustomAccount
+import com.daniebeler.pixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pixelix.ui.composables.states.FullscreenErrorComposable

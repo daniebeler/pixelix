@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.ui.composables.CustomAccount
+import com.daniebeler.pixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.states.ErrorComposable

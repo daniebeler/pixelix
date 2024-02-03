@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.CustomAccount
+import com.daniebeler.pixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomHashtag
 
 @Composable

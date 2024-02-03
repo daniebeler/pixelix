@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.ui.composables
+package com.daniebeler.pixelix.ui.composables.custom_account
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,15 +18,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
+import com.daniebeler.pixelix.ui.composables.FollowButton
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
-fun CustomAccount(account: Account, relationship: Relationship?, navController: NavController) {
+fun CustomAccount(
+    account: Account,
+    relationship: Relationship?,
+    navController: NavController,
+    viewModel: CustomAccountViewModel = hiltViewModel(key = account.id)
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -56,10 +63,11 @@ fun CustomAccount(account: Account, relationship: Relationship?, navController: 
 
         FollowButton(
             firstLoaded = relationship != null,
-            isLoading = false,
-            isFollowing = relationship?.following ?: false,
-            onFollowClick = { },
-            onUnFollowClick = { }
+            isLoading = viewModel.relationshipState.isLoading,
+            isFollowing = if (viewModel.gotUpdatedRelationship) viewModel.relationshipState.accountRelationship?.following
+                ?: false else relationship?.following ?: false,
+            onFollowClick = { viewModel.followAccount(account.id) },
+            onUnFollowClick = { viewModel.unfollowAccount(account.id) }
         )
     }
 }
