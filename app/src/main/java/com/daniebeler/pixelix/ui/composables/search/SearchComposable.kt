@@ -3,6 +3,7 @@ package com.daniebeler.pixelix.ui.composables.search
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,13 +32,14 @@ import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pixelix.ui.composables.CustomHashtag
+import com.daniebeler.pixelix.ui.composables.states.FullscreenLoadingComposable
 
 @Composable
 fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Scaffold(contentWindowInsets = WindowInsets(0.dp)) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
             Box(Modifier.padding(12.dp, 0.dp)) {
                 OutlinedTextField(
                     value = viewModel.textInput,
@@ -79,6 +81,10 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                     }
                 }
             })
+
+            if (viewModel.searchState.isLoading) {
+                FullscreenLoadingComposable()
+            }
         }
     }
 }
