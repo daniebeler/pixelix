@@ -62,7 +62,7 @@ fun FollowingComposable(
     })
 
     InfiniteListHandler(lazyListState = lazyListState) {
-        viewModel.getFollowingPaginated()
+        //viewModel.getFollowingPaginated()
     }
 
     CustomPullRefreshIndicator(

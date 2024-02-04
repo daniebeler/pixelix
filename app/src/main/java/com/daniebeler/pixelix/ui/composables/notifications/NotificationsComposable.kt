@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.ui.composables.notifications
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -26,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +32,7 @@ import com.daniebeler.pixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -101,27 +98,12 @@ fun NotificationsComposable(
                                 EndOfListComposable()
                             }
                         }
-
-                    } else if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty()) {
-                        item {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .pullRefresh(pullRefreshState)
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(36.dp, 20.dp)
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.empty_state_no_notifications),
-                                    contentDescription = null,
-                                    Modifier.fillMaxWidth()
-                                )
-                            }
-                        }
                     }
                 })
 
+            if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
+                FullscreenEmptyStateComposable()
+            }
 
             CustomPullRefreshIndicator(
                 viewModel.notificationsState.isRefreshing, pullRefreshState

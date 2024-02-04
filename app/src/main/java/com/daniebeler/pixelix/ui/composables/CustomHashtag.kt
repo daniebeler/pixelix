@@ -33,7 +33,8 @@ fun CustomHashtag(hashtag: Tag, navController: NavController) {
             .fillMaxWidth()
             .clickable {
                 Navigate().navigate("hashtag_timeline_screen/${hashtag.name}", navController)
-            }) {
+            }, verticalAlignment = Alignment.CenterVertically
+    ) {
         Box(
             modifier = Modifier
                 .height(46.dp)
@@ -58,12 +59,11 @@ fun CustomHashtag(hashtag: Tag, navController: NavController) {
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
-            } else {
-                Text(
+            } else {/*Text(
                     text = hashtag.total.toString() + " people are talking",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.primary
-                )
+                )*/
             }
         }
     }

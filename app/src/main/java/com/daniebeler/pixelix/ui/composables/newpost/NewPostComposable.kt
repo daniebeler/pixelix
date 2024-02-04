@@ -59,14 +59,13 @@ import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
+import com.daniebeler.pixelix.common.Constants.AUDIENCE_PUBLIC
+import com.daniebeler.pixelix.common.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.MimeType
 import com.daniebeler.pixelix.utils.Navigate
-
-private const val AUDIENCE_PUBLIC = "public"
-private const val AUDIENCE_UNLISTED = "unlisted"
-private const val AUDIENCE_FOLLOWERS_ONLY = "followers only"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
@@ -75,15 +74,15 @@ fun NewPostComposable(
 ) {
     val context = LocalContext.current
 
-    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = { uris ->
-            Navigate().navigate("new_post_screen", navController)
-            uris.forEach {
-                viewModel.addImage(it, context)
-                //viewModel.images += NewPostViewModel.ImageItem(it, "")
-            }
-        })
+    val singlePhotoPickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickMultipleVisualMedia(),
+            onResult = { uris ->
+                Navigate().navigate("new_post_screen", navController)
+                uris.forEach {
+                    viewModel.addImage(it, context)
+                    //viewModel.images += NewPostViewModel.ImageItem(it, "")
+                }
+            })
 
     var expanded by remember { mutableStateOf(false) }
     var showReleaseAlert by remember {
@@ -103,8 +102,7 @@ fun NewPostComposable(
             }
         }, actions = {
             Button(
-                onClick = { showReleaseAlert = true },
-                enabled = (viewModel.images.isNotEmpty() && viewModel.images.find { it.isLoading } == null)
+                onClick = { showReleaseAlert = true }, enabled = (viewModel.images.isNotEmpty())
             ) {
                 Text(text = stringResource(R.string.release))
             }

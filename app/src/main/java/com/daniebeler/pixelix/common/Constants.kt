@@ -15,4 +15,8 @@ object Constants {
     const val LIKED_POSTS_LIMIT = 40
     const val PROFILE_POSTS_LIMIT = 18
     const val LIKED_BY_LIMIT = 40
+
+    const val AUDIENCE_PUBLIC = "public"
+    const val AUDIENCE_UNLISTED = "unlisted"
+    const val AUDIENCE_FOLLOWERS_ONLY = "private"
 }

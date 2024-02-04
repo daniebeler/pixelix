@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.daniebeler.pixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.domain.model.Instance
@@ -38,7 +39,7 @@ class NewPostViewModel @Inject constructor(
     var caption: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
-    var audience: String by mutableStateOf("public")
+    var audience: String by mutableStateOf(AUDIENCE_PUBLIC)
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
     lateinit var instance: Instance
