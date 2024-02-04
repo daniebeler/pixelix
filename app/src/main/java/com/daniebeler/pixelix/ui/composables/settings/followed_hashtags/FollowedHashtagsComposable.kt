@@ -88,7 +88,9 @@ fun FollowedHashtagsComposable(
                 }
 
                 if (!viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
-                    FullscreenEmptyStateComposable()
+                    FullscreenEmptyStateComposable {
+                        Text(text = stringResource(R.string.no_followed_hashtags))
+                    }
                 }
             }
 

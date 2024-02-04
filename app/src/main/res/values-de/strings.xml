@@ -5,8 +5,8 @@
     <string name="liked_posts">Gelikte Beiträge</string>
     <string name="bookmarked_posts">Gespeicherte Beiträge</string>
     <string name="followed_hashtags">Gefolgte Hashtags</string>
-    <string name="blocked_accounts">Blockierte Accounts</string>
-    <string name="muted_accounts">Stummgeschaltete Accounts</string>
+    <string name="blocked_accounts">Blockierte Benutzer</string>
+    <string name="muted_accounts">Stummgeschaltete Benutzer</string>
     <string name="logout">Ausloggen</string>
     <string name="open_in_browser">Im Browser öffnen</string>
     <string name="share_this_profile">Profil teilen</string>
@@ -86,4 +86,6 @@
     <string name="unlisted">Nur erwähnte Profile</string>
     <string name="followers_only">Nur Follower</string>
     <string name="audience_public">Öffentlich</string>
+    <string name="no_followed_hashtags">Keine gefolgten Hashtags</string>
+    <string name="no_muted_accounts">Keine stummgeschalteten Benutzer</string>
 </resources>

@@ -83,7 +83,9 @@ fun BlockedAccountsComposable(
                 }
 
                 if (!viewModel.blockedAccountsState.isLoading && viewModel.blockedAccountsState.error.isEmpty()) {
-                    FullscreenEmptyStateComposable()
+                    FullscreenEmptyStateComposable {
+                        Text(text = stringResource(id = R.string.no_blocked_accounts))
+                    }
                 }
             }
 

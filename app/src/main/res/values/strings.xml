@@ -86,4 +86,6 @@
     <string name="unlisted">unlisted</string>
     <string name="followers_only">followers only</string>
     <string name="audience_public">public</string>
+    <string name="no_followed_hashtags">No followed hashtags</string>
+    <string name="no_muted_accounts">No muted accounts</string>
 </resources>

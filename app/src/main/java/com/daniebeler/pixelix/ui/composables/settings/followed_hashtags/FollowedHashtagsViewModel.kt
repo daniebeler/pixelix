@@ -28,8 +28,10 @@ class FollowedHashtagsViewModel @Inject constructor(
         repository.getFollowedHashtags().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    if (result.data != null) {
-                        result.data.forEach {
+                    if (result.data?.isNotEmpty() == false) {
+                        followedHashtagsState = FollowedHashtagsState()
+                    } else {
+                        result.data!!.forEach {
                             getFollowedHashtagSingle(it)
                         }
                     }

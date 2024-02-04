@@ -85,7 +85,9 @@ fun MutedAccountsComposable(
                 }
 
                 if (!viewModel.mutedAccountsState.isLoading && viewModel.mutedAccountsState.error.isEmpty()) {
-                    FullscreenEmptyStateComposable()
+                    FullscreenEmptyStateComposable {
+                        Text(text = stringResource(R.string.no_muted_accounts))
+                    }
                 }
             }
 
