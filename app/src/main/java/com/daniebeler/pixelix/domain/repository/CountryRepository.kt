@@ -18,7 +18,6 @@ import com.daniebeler.pixelix.domain.model.Reply
 import com.daniebeler.pixelix.domain.model.Search
 import com.daniebeler.pixelix.domain.model.Tag
 import kotlinx.coroutines.flow.Flow
-import java.net.URI
 
 interface CountryRepository {
 
@@ -45,7 +44,7 @@ interface CountryRepository {
     fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
-    fun getLikedPosts(maxId: String = "", limit: String = ""): Flow<Resource<LikedPostsWithNext>>
+    fun getLikedPosts(maxId: String = ""): Flow<Resource<LikedPostsWithNext>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
@@ -95,7 +94,13 @@ interface CountryRepository {
 
     fun search(searchText: String): Flow<Resource<Search>>
 
-    fun uploadMedia(uri: Uri, description: String, context: Context, mediaAttachmentConfiguration: MediaAttachmentConfiguration): Flow<Resource<MediaAttachment>>
+    fun uploadMedia(
+        uri: Uri,
+        description: String,
+        context: Context,
+        mediaAttachmentConfiguration: MediaAttachmentConfiguration
+    ): Flow<Resource<MediaAttachment>>
+
     fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>>
     fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
     fun deletePost(postId: String): Flow<Resource<Post>>

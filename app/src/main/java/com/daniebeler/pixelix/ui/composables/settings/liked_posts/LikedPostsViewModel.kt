@@ -29,8 +29,7 @@ class LikedPostsViewModel @Inject constructor(
                 is Resource.Success -> {
                     LikedPostsState(
                         likedPosts = result.data?.posts ?: emptyList(),
-                        nextMaxId = result.data?.nextId ?: "",
-                        nextLimit = result.data?.nextLimit ?: ""
+                        nextMaxId = result.data?.nextId ?: ""
                     )
                 }
 
@@ -54,15 +53,15 @@ class LikedPostsViewModel @Inject constructor(
     }
 
     fun getItemsPaginated() {
-        if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading) {
+        if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading && likedPostsState.nextMaxId.isNotEmpty()) {
             println("swarox")
-            repository.getLikedPosts(likedPostsState.nextMaxId, likedPostsState.nextLimit).onEach { result ->
+            repository.getLikedPosts(likedPostsState.nextMaxId).onEach { result ->
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(
-                            likedPosts = likedPostsState.likedPosts + (result.data?.posts ?: emptyList()),
+                            likedPosts = likedPostsState.likedPosts + (result.data?.posts
+                                ?: emptyList()),
                             nextMaxId = result.data?.nextId ?: "",
-                            nextLimit = result.data?.nextLimit ?: "",
                             error = "",
                             isLoading = false,
                             isRefreshing = false

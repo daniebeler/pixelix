@@ -238,11 +238,11 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getLikedPosts(maxId: String, limit: String): Flow<Resource<LikedPostsWithNext>> = flow {
+    override fun getLikedPosts(maxId: String): Flow<Resource<LikedPostsWithNext>> = flow {
         try {
             emit(Resource.Loading())
-            val response = if (maxId.isNotBlank() && limit.isNotBlank()) {
-                pixelfedApi.getLikedPosts(accessToken, maxId, limit).awaitResponse()
+            val response = if (maxId.isNotBlank()) {
+                pixelfedApi.getLikedPosts(accessToken, maxId).awaitResponse()
             } else {
                 pixelfedApi.getLikedPosts(accessToken).awaitResponse()
             }
@@ -263,7 +263,7 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
 
                 val res = response.body()?.map { it.toModel() } ?: emptyList()
 
-                val result = LikedPostsWithNext(res, nextLimit, nextMinId)
+                val result = LikedPostsWithNext(res, nextMinId)
                 emit(Resource.Success(result))
             } else {
                 emit(Resource.Error("Unknown Error"))
