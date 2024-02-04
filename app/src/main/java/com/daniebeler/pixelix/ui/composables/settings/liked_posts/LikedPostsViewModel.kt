@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LikedPostsViewModel @Inject constructor(
     private val repository: CountryRepository
-): ViewModel() {
+) : ViewModel() {
 
     var likedPostsState by mutableStateOf(LikedPostsState())
 
@@ -23,31 +23,27 @@ class LikedPostsViewModel @Inject constructor(
         getItemsFirstLoad()
     }
 
-    private fun getItemsFirstLoad(refreshing: Boolean = false) {
+    fun getItemsFirstLoad(refreshing: Boolean = false) {
         repository.getLikedPosts().onEach { result ->
             likedPostsState = when (result) {
                 is Resource.Success -> {
                     LikedPostsState(
-                        likedPosts = result.data ?: emptyList(),
-                        error = "",
-                        isLoading = false,
-                        isRefreshing = false
+                        likedPosts = result.data?.posts ?: emptyList(),
+                        nextMaxId = result.data?.nextId ?: "",
+                        nextLimit = result.data?.nextLimit ?: ""
                     )
                 }
 
                 is Resource.Error -> {
                     LikedPostsState(
                         likedPosts = likedPostsState.likedPosts,
-                        error = result.message ?: "An unexpected error occurred",
-                        isLoading = false,
-                        isRefreshing = false
+                        error = result.message ?: "An unexpected error occurred"
                     )
                 }
 
                 is Resource.Loading -> {
                     LikedPostsState(
                         likedPosts = likedPostsState.likedPosts,
-                        error = "",
                         isLoading = true,
                         isRefreshing = refreshing
                     )
@@ -59,12 +55,14 @@ class LikedPostsViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading) {
-            repository.getLikedPosts(likedPostsState.likedPosts.last().id).onEach { result ->
+            println("swarox")
+            repository.getLikedPosts(likedPostsState.nextMaxId, likedPostsState.nextLimit).onEach { result ->
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(
-                            likedPosts = likedPostsState.likedPosts + (result.data
-                                ?: emptyList()),
+                            likedPosts = likedPostsState.likedPosts + (result.data?.posts ?: emptyList()),
+                            nextMaxId = result.data?.nextId ?: "",
+                            nextLimit = result.data?.nextLimit ?: "",
                             error = "",
                             isLoading = false,
                             isRefreshing = false

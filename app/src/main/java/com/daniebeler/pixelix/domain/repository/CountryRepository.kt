@@ -8,6 +8,7 @@ import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.model.Instance
+import com.daniebeler.pixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pixelix.domain.model.Notification
@@ -44,7 +45,7 @@ interface CountryRepository {
     fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
-    fun getLikedPosts(maxId: String = ""): Flow<Resource<List<Post>>>
+    fun getLikedPosts(maxId: String = "", limit: String = ""): Flow<Resource<LikedPostsWithNext>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 

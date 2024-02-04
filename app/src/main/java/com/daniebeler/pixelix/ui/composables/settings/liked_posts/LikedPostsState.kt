@@ -7,5 +7,7 @@ data class LikedPostsState(
     val isRefreshing: Boolean = false,
     val endReached: Boolean = false,
     val likedPosts: List<Post> = emptyList(),
+    val nextLimit: String = "",
+    val nextMaxId: String = "",
     val error: String = ""
 )

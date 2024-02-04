@@ -95,13 +95,14 @@ interface PixelfedApi {
     // Favourites
 
 
-    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
+    @GET("api/v1/favourites/?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(@Header("Authorization") accessToken: String): Call<List<PostDto>>
 
-    @GET("api/v1/favourites?limit=" + Constants.LIKED_POSTS_LIMIT)
+    @GET("api/v1/favourites")
     fun getLikedPosts(
         @Header("Authorization") accessToken: String,
-        @Query("max_id") maxId: String
+        @Query("max_id") maxId: String,
+        @Query("limit") limit: String
     ): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)

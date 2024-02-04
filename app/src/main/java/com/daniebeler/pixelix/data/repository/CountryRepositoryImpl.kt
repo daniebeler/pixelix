@@ -1,13 +1,9 @@
 package com.daniebeler.pixelix.data.repository
 
 import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.provider.MediaStore
-import android.webkit.MimeTypeMap
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -28,6 +24,7 @@ import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.model.Instance
+import com.daniebeler.pixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pixelix.domain.model.Notification
@@ -56,10 +53,7 @@ import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.Path
 
 
 private val Context.dataStore by preferencesDataStore("settings")
@@ -244,11 +238,38 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
         }
     }
 
-    override fun getLikedPosts(maxId: String): Flow<Resource<List<Post>>> {
-        return if (maxId.isNotEmpty()) {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLikedPosts(accessToken, maxId))
-        } else {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLikedPosts(accessToken))
+    override fun getLikedPosts(maxId: String, limit: String): Flow<Resource<LikedPostsWithNext>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = if (maxId.isNotBlank() && limit.isNotBlank()) {
+                pixelfedApi.getLikedPosts(accessToken, maxId, limit).awaitResponse()
+            } else {
+                pixelfedApi.getLikedPosts(accessToken).awaitResponse()
+            }
+
+            if (response.isSuccessful) {
+
+                val linkHeader = response.headers()["link"] ?: ""
+
+                val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
+
+                println("froof: " + linkHeader)
+
+                val nextLimit = onlyLink.substringAfter("limit=", "").substringBefore("&", "")
+                val nextMinId = onlyLink.substringAfter("min_id=", "")
+
+                println(nextLimit)
+                println(nextMinId)
+
+                val res = response.body()?.map { it.toModel() } ?: emptyList()
+
+                val result = LikedPostsWithNext(res, nextLimit, nextMinId)
+                emit(Resource.Success(result))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
 
