@@ -26,7 +26,7 @@ fun LikedPostsComposable(
     navController: NavController, viewModel: LikedPostsViewModel = hiltViewModel()
 ) {
 
-    Scaffold(topBar = {
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(stringResource(id = R.string.liked_posts))
         }, navigationIcon = {
@@ -46,8 +46,7 @@ fun LikedPostsComposable(
                 .padding(paddingValues)
         ) {
 
-            InfinitePostsGrid(
-                items = viewModel.likedPostsState.likedPosts,
+            InfinitePostsGrid(items = viewModel.likedPostsState.likedPosts,
                 isLoading = viewModel.likedPostsState.isLoading,
                 isRefreshing = viewModel.likedPostsState.isRefreshing,
                 error = viewModel.likedPostsState.error,
@@ -62,8 +61,7 @@ fun LikedPostsComposable(
                 },
                 onRefresh = {
                     viewModel.getItemsFirstLoad(true)
-                }
-            )
+                })
         }
 
     }

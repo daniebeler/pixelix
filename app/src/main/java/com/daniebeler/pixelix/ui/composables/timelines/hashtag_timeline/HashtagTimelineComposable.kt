@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -41,16 +40,17 @@ fun HashtagTimelineComposable(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold(
+    Scaffold(contentWindowInsets = WindowInsets(0),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
+            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
                 scrollBehavior = scrollBehavior,
                 title = {
                     Column {
                         Text(
-                            "#$hashtag", lineHeight = 10.sp, overflow = TextOverflow.Ellipsis,
+                            "#$hashtag",
+                            lineHeight = 10.sp,
+                            overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
                         if (viewModel.hashtagState.hashtag != null) {
@@ -75,20 +75,16 @@ fun HashtagTimelineComposable(
                     }
                 },
                 actions = {
-                    FollowButton(
-                        firstLoaded = viewModel.hashtagState.hashtag != null,
+                    FollowButton(firstLoaded = viewModel.hashtagState.hashtag != null,
                         isLoading = viewModel.hashtagState.isLoading,
                         isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
                         onFollowClick = { viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name) },
                         onUnFollowClick = { viewModel.unfollowHashtag(viewModel.hashtagState.hashtag!!.name) })
-                }
-            )
+                })
 
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            InfinitePostsList(
-                items = viewModel.postsState.hashtagTimeline,
+            InfinitePostsList(items = viewModel.postsState.hashtagTimeline,
                 isLoading = viewModel.postsState.isLoading,
                 isRefreshing = viewModel.postsState.isRefreshing,
                 error = viewModel.postsState.error,
@@ -100,8 +96,7 @@ fun HashtagTimelineComposable(
                 onRefresh = {
                     viewModel.refresh()
                 },
-                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
-            )
+                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
         }
     }
 }

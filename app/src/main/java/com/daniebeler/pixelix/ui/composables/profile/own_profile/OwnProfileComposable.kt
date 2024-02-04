@@ -1,11 +1,9 @@
 package com.daniebeler.pixelix.ui.composables.profile.own_profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,28 +33,29 @@ fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         topBar = {
-        TopAppBar(
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            title = {
-            Text(text = viewModel.accountState.account?.username ?: "")
-        }, actions = {
-            IconButton(onClick = {
-                Navigate().navigate("settings_screen", navController)
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.Settings, contentDescription = ""
-                )
-            }
-        })
+            TopAppBar(
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                title = {
+                    Text(text = viewModel.accountState.account?.username ?: "")
+                }, actions = {
+                    IconButton(onClick = {
+                        Navigate().navigate("settings_screen", navController)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings, contentDescription = ""
+                        )
+                    }
+                })
 
-    }, floatingActionButton = {
-        FloatingActionButton(onClick = {
-            Navigate().navigate("new_post_screen", navController)
-        }) {
-            Icon(Icons.Default.Add, contentDescription = "Add")
+        }, floatingActionButton = {
+            FloatingActionButton(onClick = {
+                Navigate().navigate("new_post_screen", navController)
+            }) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
         }
-    }
 
     ) { paddingValues ->
         Box(

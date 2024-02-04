@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,43 +24,29 @@ import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun BookmarkedPostsComposable(
-    navController: NavController,
-    viewModel: BookmarkedPostsViewModel = hiltViewModel()
+    navController: NavController, viewModel: BookmarkedPostsViewModel = hiltViewModel()
 ) {
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.bookmarkedPostsState.isLoading,
-        onRefresh = { viewModel.getBookmarkedPosts() }
-    )
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            Text(stringResource(id = R.string.bookmarked_posts))
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                )
+            }
+        })
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(stringResource(id = R.string.bookmarked_posts))
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                }
-            )
-
-        }
-    ) { paddingValues ->
+    }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            InfinitePostsGrid(
-                items = viewModel.bookmarkedPostsState.bookmarkedPosts,
+            InfinitePostsGrid(items = viewModel.bookmarkedPostsState.bookmarkedPosts,
                 isLoading = viewModel.bookmarkedPostsState.isLoading,
                 isRefreshing = viewModel.bookmarkedPostsState.isRefreshing,
                 error = viewModel.bookmarkedPostsState.error,
@@ -73,6 +58,5 @@ fun BookmarkedPostsComposable(
                 getItemsPaginated = { /*TODO*/ },
                 onRefresh = { viewModel.getBookmarkedPosts(true) })
         }
-
     }
 }

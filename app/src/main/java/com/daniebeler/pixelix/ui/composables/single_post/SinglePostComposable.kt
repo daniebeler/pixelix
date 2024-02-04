@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.ui.composables.single_post
 
-import com.daniebeler.pixelix.ui.composables.post.PostComposable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
+import com.daniebeler.pixelix.ui.composables.post.PostComposable
 import com.daniebeler.pixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pixelix.utils.Navigate
@@ -31,9 +31,7 @@ import com.daniebeler.pixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(
-    navController: NavController,
-    postId: String,
-    viewModel: SinglePostViewModel = hiltViewModel()
+    navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
 
@@ -41,33 +39,28 @@ fun SinglePostComposable(
         viewModel.getPost(postId)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(
-                        text = (stringResource(R.string.post_by) + " " + (viewModel.postState.post?.account?.acct ?: "")),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                }
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            Text(
+                text = (stringResource(R.string.post_by) + " " + (viewModel.postState.post?.account?.acct
+                    ?: "")), overflow = TextOverflow.Ellipsis, maxLines = 1
             )
-        }
-    ) { paddingValues ->
-        Box(modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()) {
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = ""
+                )
+            }
+        })
+    }) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
                     PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {

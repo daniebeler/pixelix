@@ -1,18 +1,12 @@
 package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
-import android.content.Context
-import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Block
@@ -20,14 +14,10 @@ import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,17 +31,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.ui.composables.FollowButton
-import com.daniebeler.pixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pixelix.ui.composables.profile.own_profile.CustomProfilePage
 import com.daniebeler.pixelix.utils.Navigate
 import com.daniebeler.pixelix.utils.Share
@@ -74,18 +61,15 @@ fun OtherProfileComposable(
     }
 
 
-    Scaffold(topBar = {
-        TopAppBar(
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            title = {
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(text = viewModel.accountState.account?.username ?: "")
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         }, actions = {
@@ -105,8 +89,7 @@ fun OtherProfileComposable(
                 .padding(paddingValues)
         ) {
 
-            CustomProfilePage(
-                accountState = viewModel.accountState,
+            CustomProfilePage(accountState = viewModel.accountState,
                 postsState = viewModel.postsState,
                 navController = navController,
                 refresh = {
@@ -123,8 +106,7 @@ fun OtherProfileComposable(
                         if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(12.dp))
                         }
-                        FollowButton(
-                            firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                        FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
                             isLoading = viewModel.relationshipState.isLoading,
                             isFollowing = viewModel.relationshipState.accountRelationship?.following
                                 ?: false,
@@ -133,8 +115,7 @@ fun OtherProfileComposable(
 
                         Spacer(modifier = Modifier.height(24.dp))
                     }
-                }
-            )
+                })
         }
     }
 

@@ -34,41 +34,31 @@ import com.daniebeler.pixelix.ui.composables.states.FullscreenLoadingComposable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FollowedHashtagsComposable(
-    navController: NavController,
-    viewModel: FollowedHashtagsViewModel = hiltViewModel()
+    navController: NavController, viewModel: FollowedHashtagsViewModel = hiltViewModel()
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.followedHashtagsState.isRefreshing,
-        onRefresh = { viewModel.getFollowedHashtags(true) }
-    )
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(stringResource(id = R.string.followed_hashtags))
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                }
-            )
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.followedHashtagsState.isRefreshing,
+            onRefresh = { viewModel.getFollowedHashtags(true) })
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            Text(stringResource(id = R.string.followed_hashtags))
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                )
+            }
+        })
 
-        }
-    ) { paddingValues ->
+    }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .pullRefresh(pullRefreshState),

@@ -41,7 +41,7 @@ fun BlockedAccountsComposable(
         rememberPullRefreshState(refreshing = viewModel.blockedAccountsState.isRefreshing,
             onRefresh = { viewModel.getBlockedAccounts(true) })
 
-    Scaffold(topBar = {
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(text = stringResource(id = R.string.blocked_accounts))
         }, navigationIcon = {
@@ -56,12 +56,13 @@ fun BlockedAccountsComposable(
 
     }) { paddingValues ->
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
+            modifier = Modifier.padding(paddingValues)
         ) {
-            LazyColumn(modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pullRefresh(pullRefreshState)
+            ) {
                 items(viewModel.blockedAccountsState.blockedAccounts, key = {
                     it.id
                 }) {

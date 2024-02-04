@@ -54,6 +54,7 @@ fun TrendingComposable(navController: NavController) {
     var range by remember { mutableStateOf("daily") }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
