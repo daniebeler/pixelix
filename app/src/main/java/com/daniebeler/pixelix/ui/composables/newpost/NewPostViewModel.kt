@@ -178,7 +178,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun post(navController: NavController) {
-        if (images.find { it.isLoading } != null) {
+        if (images.find { it.isLoading } != null && images.isEmpty()) {
             return
         }
         createPostState = CreatePostState(isLoading = true)

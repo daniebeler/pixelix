@@ -86,6 +86,10 @@ fun NewPostComposable(
         })
 
     var expanded by remember { mutableStateOf(false) }
+    var showReleaseAlert by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(text = stringResource(R.string.new_post))
@@ -98,7 +102,10 @@ fun NewPostComposable(
                 )
             }
         }, actions = {
-            Button(onClick = { viewModel.post(navController) }) {
+            Button(
+                onClick = { showReleaseAlert = true },
+                enabled = (viewModel.images.isNotEmpty() && viewModel.images.find { it.isLoading } == null)
+            ) {
                 Text(text = stringResource(R.string.release))
             }
         })
@@ -295,6 +302,27 @@ fun NewPostComposable(
                         viewModel.addImageError = Pair("", "")
                     }) {
                         Text("Ok")
+                    }
+                })
+            }
+
+            if (showReleaseAlert) {
+                AlertDialog(title = {
+                    Text(text = "Are you sure?")
+                }, onDismissRequest = {
+                    showReleaseAlert = false
+                }, dismissButton = {
+                    TextButton(onClick = {
+                        showReleaseAlert = false
+                    }) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
+                }, confirmButton = {
+                    TextButton(onClick = {
+                        showReleaseAlert = false
+                        viewModel.post(navController)
+                    }) {
+                        Text(stringResource(id = R.string.release))
                     }
                 })
             }

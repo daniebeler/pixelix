@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.trending.trending_accounts
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -25,7 +26,7 @@ fun TrendingAccountsComposable(
         rememberPullRefreshState(refreshing = viewModel.trendingAccountsState.isRefreshing,
             onRefresh = { viewModel.getTrendingAccountsState(true) })
 
-    LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState), content = {
+    LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize(), content = {
         items(viewModel.trendingAccountsState.trendingAccounts, key = {
             it.id
         }) {

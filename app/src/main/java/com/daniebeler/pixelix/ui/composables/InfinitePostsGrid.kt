@@ -92,13 +92,13 @@ fun InfinitePostsGrid(
             }
         }
 
+        if (items.isEmpty() && error.isNotBlank()) {
+            FullscreenErrorComposable(message = error)
+        }
+
         if (before == null && items.isEmpty()) {
             if (isLoading && !isRefreshing) {
                 FullscreenLoadingComposable()
-            }
-
-            if (error.isNotEmpty()) {
-                FullscreenErrorComposable(message = error)
             }
 
             if (!isLoading && error.isEmpty()) {
