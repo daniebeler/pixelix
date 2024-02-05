@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -54,13 +56,12 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
-private val Context.dataStore by preferencesDataStore("settings")
-
-class CountryRepositoryImpl(context: Context) : CountryRepository {
-
-    private val settingsDataStore = context.dataStore
+class CountryRepositoryImpl @Inject constructor(
+    private val userDataStorePreferences: DataStore<Preferences>
+): CountryRepository {
 
     private var baseUrl = ""
     private var accessToken: String = ""
@@ -104,13 +105,13 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override suspend fun storeClientId(clientId: String) {
-        settingsDataStore.edit { preferences ->
+        userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] = clientId
         }
     }
 
     override suspend fun storeBaseUrl(url: String) {
-        settingsDataStore.edit { preferences ->
+        userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = url
         }
         baseUrl = url
@@ -118,43 +119,43 @@ class CountryRepositoryImpl(context: Context) : CountryRepository {
     }
 
     override fun getClientIdFromStorage(): Flow<String> =
-        settingsDataStore.data.map { preferences ->
+        userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
         }
 
-    override fun getBaseUrlFromStorage(): Flow<String> = settingsDataStore.data.map { preferences ->
+    override fun getBaseUrlFromStorage(): Flow<String> = userDataStorePreferences.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
     }
 
     override suspend fun storeClientSecret(clientSecret: String) {
-        settingsDataStore.edit { preferences ->
+        userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] = clientSecret
         }
     }
 
     override fun getClientSecretFromStorage(): Flow<String> =
-        settingsDataStore.data.map { preferences ->
+        userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
         }
 
     override suspend fun storeAccessToken(accessToken: String) {
-        settingsDataStore.edit { preferences ->
+        userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
         }
     }
 
     override suspend fun storeAccountId(accountId: String) {
-        settingsDataStore.edit { preferences ->
+        userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] = accountId
         }
     }
 
-    override suspend fun getAccountId(): Flow<String> = settingsDataStore.data.map { preferences ->
+    override suspend fun getAccountId(): Flow<String> = userDataStorePreferences.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
     }
 
     override fun getAccessTokenFromStorage(): Flow<String> =
-        settingsDataStore.data.map { preferences ->
+        userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
         }
 
