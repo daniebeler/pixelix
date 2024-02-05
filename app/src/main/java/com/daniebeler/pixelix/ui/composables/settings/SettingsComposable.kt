@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,6 +70,7 @@ fun SettingsComposable(
 
     LaunchedEffect(Unit) {
         getCacheSize(context, settingsViewModel)
+        settingsViewModel.getVersionName(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
@@ -138,6 +141,16 @@ fun SettingsComposable(
             ), onClick = {
                 showLogoutDialog.value = true
             })
+
+
+            HorizontalDivider(modifier = Modifier.padding(12.dp))
+
+            Text(
+                text = "Pixelix v" + settingsViewModel.versionName,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp
+            )
         }
 
         if (showLogoutDialog.value) {
