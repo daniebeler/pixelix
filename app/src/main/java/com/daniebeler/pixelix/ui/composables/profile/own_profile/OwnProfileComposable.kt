@@ -32,30 +32,26 @@ import com.daniebeler.pixelix.utils.Navigate
 fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        contentWindowInsets = WindowInsets(0),
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(text = viewModel.accountState.account?.username ?: "")
-                }, actions = {
-                    IconButton(onClick = {
-                        Navigate().navigate("settings_screen", navController)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings, contentDescription = ""
-                        )
-                    }
-                })
-
-        }, floatingActionButton = {
-            FloatingActionButton(onClick = {
-                Navigate().navigate("new_post_screen", navController)
+    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
+        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            Text(text = viewModel.accountState.account?.username ?: "")
+        }, actions = {
+            IconButton(onClick = {
+                Navigate().navigate("settings_screen", navController)
             }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+                Icon(
+                    imageVector = Icons.Outlined.Settings, contentDescription = ""
+                )
             }
+        })
+
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = {
+            Navigate().navigate("new_post_screen", navController)
+        }) {
+            Icon(Icons.Default.Add, contentDescription = "Add")
         }
+    }
 
     ) { paddingValues ->
         Box(
@@ -64,8 +60,7 @@ fun OwnProfileComposable(
                 .padding(paddingValues)
         ) {
 
-            CustomProfilePage(
-                accountState = viewModel.accountState,
+            CustomProfilePage(accountState = viewModel.accountState,
                 postsState = viewModel.postsState,
                 navController = navController,
                 refresh = {
@@ -74,8 +69,7 @@ fun OwnProfileComposable(
                 getPostsPaginated = {
                     viewModel.getPostsPaginated()
                 },
-                otherAccountTopSectionAdditions = {}
-            )
+                otherAccountTopSectionAdditions = {})
         }
     }
 }
@@ -90,8 +84,7 @@ fun CustomProfilePage(
     otherAccountTopSectionAdditions: @Composable () -> Unit
 ) {
     Box {
-        InfinitePostsGrid(
-            items = postsState.posts,
+        InfinitePostsGrid(items = postsState.posts,
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
@@ -110,7 +103,6 @@ fun CustomProfilePage(
                     otherAccountTopSectionAdditions()
                 }
 
-            }
-        ) { refresh() }
+            }) { refresh() }
     }
 }

@@ -7,43 +7,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetOwnAccount
+import com.daniebeler.pixelix.domain.usecase.GetOwnPosts
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OwnProfileViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getOwnAccount: GetOwnAccount, private val getOwnPosts: GetOwnPosts
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
-    private var accountId: String = ""
 
     init {
         loadData()
     }
 
     fun loadData() {
-        CoroutineScope(Dispatchers.Default).launch {
-            accountId = repository.getAccountId().first()
-
-            getPostsFirstLoad(accountId)
-
-            getAccount(accountId)
-        }
+        getAccount()
+        getPostsFirstLoad()
     }
 
-    private fun getAccount(userId: String) {
-        repository.getAccount(userId).onEach { result ->
+    private fun getAccount() {
+        getOwnAccount().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)
@@ -60,8 +51,8 @@ class OwnProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostsFirstLoad(userId: String) {
-        repository.getPostsByAccountId(userId).onEach { result ->
+    private fun getPostsFirstLoad() {
+        getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -81,7 +72,7 @@ class OwnProfileViewModel @Inject constructor(
 
     fun getPostsPaginated() {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            repository.getPostsByAccountId(accountId, postsState.posts.last().id).onEach { result ->
+            getOwnPosts(postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
