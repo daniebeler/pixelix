@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
@@ -31,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -68,29 +72,38 @@ fun SettingsComposable(
 
     val showLogoutDialog = remember { mutableStateOf(false) }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     LaunchedEffect(Unit) {
         getCacheSize(context, settingsViewModel)
         settingsViewModel.getVersionName(context)
     }
 
-    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(text = stringResource(R.string.settings))
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                )
-            }
-        })
+    Scaffold(contentWindowInsets = WindowInsets(0.dp),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
+                scrollBehavior = scrollBehavior,
+                title = {
+                    Text(text = stringResource(R.string.settings))
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                })
 
-    }) { paddingValues ->
+        }) { paddingValues ->
         Column(
             Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
+                .verticalScroll(state = rememberScrollState())
         ) {
 
             CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder,
@@ -130,7 +143,7 @@ fun SettingsComposable(
                 })
 
             CustomSettingsElement(icon = Icons.Outlined.Save,
-                text = "Clear cache",
+                text = stringResource(R.string.clear_cache),
                 smallText = settingsViewModel.cacheSize,
                 onClick = {
                     deleteCache(context, viewModel = settingsViewModel)

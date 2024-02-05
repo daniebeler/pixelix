@@ -88,4 +88,6 @@
     <string name="audience_public">Öffentlich</string>
     <string name="no_followed_hashtags">Keine gefolgten Hashtags</string>
     <string name="no_muted_accounts">Keine stummgeschalteten Benutzer</string>
+    <string name="visibility_x">Sichtbarkeit: %1$s</string>
+    <string name="clear_cache">Cache löschen</string>
 </resources>

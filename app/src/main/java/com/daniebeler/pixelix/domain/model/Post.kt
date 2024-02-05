@@ -19,5 +19,6 @@ data class Post(
     val bookmarked: Boolean,
     val mentions: List<Account>,
     val place: Place?,
-    val likedBy: LikedBy?
+    val likedBy: LikedBy?,
+    val visibility: String
 )
