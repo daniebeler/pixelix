@@ -1,23 +1,19 @@
 package com.daniebeler.pixelix.ui.composables.timelines.home_timeline
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.ui.composables.InfinitePostsList
 
 @Composable
 fun HomeTimelineComposable(
-    navController: NavController,
-    viewModel: HomeTimelineViewModel = hiltViewModel()
+    navController: NavController, viewModel: HomeTimelineViewModel = hiltViewModel()
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        InfinitePostsList(
-            items = viewModel.homeTimelineState.homeTimeline,
+        InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,
             isLoading = viewModel.homeTimelineState.isLoading,
             isRefreshing = viewModel.homeTimelineState.refreshing,
             error = viewModel.homeTimelineState.error,
@@ -29,7 +25,6 @@ fun HomeTimelineComposable(
             onRefresh = {
                 viewModel.refresh()
             },
-            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
-        )
+            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
     }
 }

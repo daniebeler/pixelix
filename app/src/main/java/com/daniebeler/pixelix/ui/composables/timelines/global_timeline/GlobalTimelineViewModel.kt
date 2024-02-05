@@ -6,8 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.ui.composables.timelines.local_timeline.LocalTimelineState
+import com.daniebeler.pixelix.domain.usecase.GetGlobalTimeline
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GlobalTimelineViewModel @Inject constructor(
-    private val repository: CountryRepository
-): ViewModel() {
+    private val getGlobalTimeline: GetGlobalTimeline
+) : ViewModel() {
 
     var globalTimelineState by mutableStateOf(GlobalTimelineState())
 
@@ -25,7 +24,7 @@ class GlobalTimelineViewModel @Inject constructor(
     }
 
     private fun getItemsFirstLoad(refreshing: Boolean) {
-        repository.getGlobalTimeline().onEach { result ->
+        getGlobalTimeline().onEach { result ->
             globalTimelineState = when (result) {
                 is Resource.Success -> {
                     GlobalTimelineState(
@@ -60,15 +59,12 @@ class GlobalTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (globalTimelineState.globalTimeline.isNotEmpty() && !globalTimelineState.isLoading) {
-            repository.getGlobalTimeline(globalTimelineState.globalTimeline.last().id).onEach { result ->
+            getGlobalTimeline(globalTimelineState.globalTimeline.last().id).onEach { result ->
                 globalTimelineState = when (result) {
                     is Resource.Success -> {
                         GlobalTimelineState(
                             globalTimeline = globalTimelineState.globalTimeline + (result.data
-                                ?: emptyList()),
-                            error = "",
-                            isLoading = false,
-                            refreshing = false
+                                ?: emptyList()), error = "", isLoading = false, refreshing = false
                         )
                     }
 
@@ -99,6 +95,7 @@ class GlobalTimelineViewModel @Inject constructor(
     }
 
     fun postGetsDeleted(postId: String) {
-        globalTimelineState = globalTimelineState.copy(globalTimeline = globalTimelineState.globalTimeline.filter { post -> post.id != postId })
+        globalTimelineState =
+            globalTimelineState.copy(globalTimeline = globalTimelineState.globalTimeline.filter { post -> post.id != postId })
     }
 }

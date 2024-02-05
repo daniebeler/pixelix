@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetHashtagTimeline
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,14 +16,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HashtagTimelineViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val repository: CountryRepository,
+    private val getHashtagTimeline: GetHashtagTimeline
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
-        repository.getHashtagTimeline(hashtag).onEach { result ->
+        getHashtagTimeline(hashtag).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached =
@@ -60,7 +62,7 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated(hashtag: String) {
         if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            repository.getHashtagTimeline(hashtag, postsState.hashtagTimeline.last().id)
+            getHashtagTimeline(hashtag, postsState.hashtagTimeline.last().id)
                 .onEach { result ->
                     postsState = when (result) {
                         is Resource.Success -> {

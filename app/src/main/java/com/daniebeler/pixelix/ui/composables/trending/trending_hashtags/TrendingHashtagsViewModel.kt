@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetTrendingHashtags
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrendingHashtagsViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getTrendingHashtagsUseCase: GetTrendingHashtags
 ) : ViewModel() {
 
     var trendingHashtagsState by mutableStateOf(TrendingHashtagsState())
@@ -24,7 +24,7 @@ class TrendingHashtagsViewModel @Inject constructor(
     }
 
     fun getTrendingHashtags(refreshing: Boolean = false) {
-        repository.getTrendingHashtags().onEach { result ->
+        getTrendingHashtagsUseCase().onEach { result ->
             trendingHashtagsState = when (result) {
                 is Resource.Success -> {
                     TrendingHashtagsState(trendingHashtags = result.data ?: emptyList())

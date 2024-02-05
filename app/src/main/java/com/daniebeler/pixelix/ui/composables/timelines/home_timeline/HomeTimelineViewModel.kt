@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetHomeTimeline
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeTimelineViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getHomeTimeline: GetHomeTimeline
 ) : ViewModel() {
 
     var homeTimelineState by mutableStateOf(HomeTimelineState())
@@ -24,7 +24,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     private fun getItemsFirstLoad(refreshing: Boolean) {
-        repository.getHomeTimeline().onEach { result ->
+        getHomeTimeline().onEach { result ->
             homeTimelineState = when (result) {
                 is Resource.Success -> {
                     HomeTimelineState(
@@ -59,15 +59,12 @@ class HomeTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (homeTimelineState.homeTimeline.isNotEmpty() && !homeTimelineState.isLoading) {
-            repository.getHomeTimeline(homeTimelineState.homeTimeline.last().id).onEach { result ->
+            getHomeTimeline(homeTimelineState.homeTimeline.last().id).onEach { result ->
                 homeTimelineState = when (result) {
                     is Resource.Success -> {
                         HomeTimelineState(
                             homeTimeline = homeTimelineState.homeTimeline + (result.data
-                                ?: emptyList()),
-                            error = "",
-                            isLoading = false,
-                            refreshing = false
+                                ?: emptyList()), error = "", isLoading = false, refreshing = false
                         )
                     }
 
@@ -99,6 +96,7 @@ class HomeTimelineViewModel @Inject constructor(
 
     fun postGetsDeleted(postId: String) {
         println("delete post $postId filter")
-        homeTimelineState = homeTimelineState.copy(homeTimeline = homeTimelineState.homeTimeline.filter { post -> post.id != postId })
+        homeTimelineState =
+            homeTimelineState.copy(homeTimeline = homeTimelineState.homeTimeline.filter { post -> post.id != postId })
     }
 }

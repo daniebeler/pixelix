@@ -84,7 +84,7 @@ fun CustomNotification(notification: Notification, navController: NavController)
             )
         }
 
-        if (showImage) {
+        if (showImage && (notification.post?.mediaAttachments?.size ?: 0) > 0) {
             Spacer(modifier = Modifier.weight(1f))
             AsyncImage(
                 model = notification.post?.mediaAttachments?.get(0)?.previewUrl,
