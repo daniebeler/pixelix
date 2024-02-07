@@ -1,5 +1,7 @@
 package com.daniebeler.pixelix.ui.composables.settings.preferences
 
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,8 +21,26 @@ class PreferencesViewModel @Inject constructor(
 ) : ViewModel() {
     var isSensitiveContentHidden by mutableStateOf(true)
 
+    var cacheSize by mutableStateOf("")
+
+    var versionName by mutableStateOf("")
+
     init {
         getHideSensitiveContent().asLiveData()
+    }
+
+
+    fun getVersionName(context: Context) {
+        try {
+            versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun logout() {
+
+
     }
 
     fun storeHideSensitiveContent(value: Boolean) {

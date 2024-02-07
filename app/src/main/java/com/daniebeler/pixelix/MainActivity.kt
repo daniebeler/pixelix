@@ -2,17 +2,13 @@ package com.daniebeler.pixelix
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -29,10 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,7 +38,6 @@ import com.daniebeler.pixelix.ui.composables.notifications.NotificationsComposab
 import com.daniebeler.pixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pixelix.ui.composables.search.SearchComposable
-import com.daniebeler.pixelix.ui.composables.settings.SettingsComposable
 import com.daniebeler.pixelix.ui.composables.settings.about_instance.AboutInstanceComposable
 import com.daniebeler.pixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
@@ -69,7 +61,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-       WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         if (!mainViewModel.doesTokenExist()) {
             gotoLoginActivity(this@MainActivity)
         } else {
@@ -77,16 +69,14 @@ class MainActivity : ComponentActivity() {
                 PixelixTheme {
                     val navController: NavHostController = rememberNavController()
 
-                    Scaffold(
-                        bottomBar = {
-                            BottomBar(navController = navController)
-                        }) { paddingValues ->
+                    Scaffold(bottomBar = {
+                        BottomBar(navController = navController)
+                    }) { paddingValues ->
                         Box(
                             modifier = Modifier.padding(paddingValues)
                         ) {
                             NavigationGraph(
-                                navController = navController,
-                                viewModel = mainViewModel
+                                navController = navController, viewModel = mainViewModel
                             )
                         }
                     }
@@ -106,97 +96,74 @@ fun gotoLoginActivity(context: Context) {
 
 
 sealed class Destinations(
-    val route: String,
-    val icon: ImageVector? = null
+    val route: String, val icon: ImageVector? = null
 ) {
     object HomeScreen : Destinations(
-        route = "home_screen",
-        icon = Icons.Outlined.Home
+        route = "home_screen", icon = Icons.Outlined.Home
     )
 
     object TrendingScreen : Destinations(
-        route = "trending_screen",
-        icon = Icons.AutoMirrored.Outlined.TrendingUp
+        route = "trending_screen", icon = Icons.AutoMirrored.Outlined.TrendingUp
     )
 
     object NotificationsScreen : Destinations(
-        route = "notifications_screen",
-        icon = Icons.Outlined.Mail
+        route = "notifications_screen", icon = Icons.Outlined.Mail
     )
 
     object OwnProfile : Destinations(
-        route = "own_profile_screen",
-        icon = Icons.Outlined.AccountCircle
+        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle
     )
 
     object Profile : Destinations(
-        route = "profile_screen/{userid}",
-        icon = Icons.Outlined.Favorite
-    )
-
-    object Settings : Destinations(
-        route = "settings_screen",
-        icon = Icons.Outlined.Settings
+        route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite
     )
 
     object Preferences : Destinations(
-        route = "preferences_screen",
-        icon = Icons.Outlined.Settings
+        route = "preferences_screen", icon = Icons.Outlined.Settings
     )
 
     object MutedAccounts : Destinations(
-        route = "muted_accounts_screen",
-        icon = Icons.Outlined.Settings
+        route = "muted_accounts_screen", icon = Icons.Outlined.Settings
     )
 
     object BlockedAccounts : Destinations(
-        route = "blocked_accounts_screen",
-        icon = Icons.Outlined.Settings
+        route = "blocked_accounts_screen", icon = Icons.Outlined.Settings
     )
 
     object LikedPosts : Destinations(
-        route = "liked_posts_screen",
-        icon = Icons.Outlined.Settings
+        route = "liked_posts_screen", icon = Icons.Outlined.Settings
     )
 
     object BookmarkedPosts : Destinations(
-        route = "bookmarked_posts_screen",
-        icon = Icons.Outlined.Settings
+        route = "bookmarked_posts_screen", icon = Icons.Outlined.Settings
     )
 
     object FollowedHashtags : Destinations(
-        route = "followed_hashtags_screen",
-        icon = Icons.Outlined.Settings
+        route = "followed_hashtags_screen", icon = Icons.Outlined.Settings
     )
 
     object AboutInstance : Destinations(
-        route = "about_instance_screen",
-        icon = Icons.Outlined.Settings
+        route = "about_instance_screen", icon = Icons.Outlined.Settings
     )
 
     object NewPost : Destinations(
-        route = "new_post_screen",
-        icon = Icons.Outlined.Settings
+        route = "new_post_screen", icon = Icons.Outlined.Settings
     )
 
     object Hashtag : Destinations(
-        route = "hashtag_timeline_screen/{hashtag}",
-        icon = Icons.Outlined.Settings
+        route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings
     )
 
     object SinglePost : Destinations(
-        route = "single_post_screen/{postid}",
-        icon = Icons.Outlined.Favorite
+        route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
     )
 
     object Followers : Destinations(
-        route = "followers_screen/{page}/{userid}",
-        icon = Icons.Outlined.Favorite
+        route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite
     )
 
     object Search : Destinations(
-        route = "search_screen",
-        icon = Icons.Outlined.Search
+        route = "search_screen", icon = Icons.Outlined.Search
     )
 }
 
@@ -226,10 +193,6 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
             uId?.let { id ->
                 HashtagTimelineComposable(navController, id)
             }
-        }
-
-        composable(Destinations.Settings.route) {
-            SettingsComposable(navController, viewModel)
         }
 
         composable(Destinations.Preferences.route) {
@@ -305,15 +268,11 @@ fun BottomBar(navController: NavHostController) {
 
         screens.forEach { screen ->
 
-            NavigationBarItem(
-                icon = {
-                    Icon(imageVector = screen.icon!!, contentDescription = "")
-                },
-                selected = currentRoute == screen.route,
-                onClick = {
-                    Navigate().navigateWithPopUp(screen.route, navController)
-                }
-            )
+            NavigationBarItem(icon = {
+                Icon(imageVector = screen.icon!!, contentDescription = "")
+            }, selected = currentRoute == screen.route, onClick = {
+                Navigate().navigateWithPopUp(screen.route, navController)
+            })
         }
     }
 }
