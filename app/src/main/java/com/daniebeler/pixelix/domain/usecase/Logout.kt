@@ -5,7 +5,21 @@ import com.daniebeler.pixelix.domain.repository.CountryRepository
 class Logout(
     private val repository: CountryRepository
 ) {
-    operator fun invoke(accountId: String = "") {
+    suspend operator fun invoke(accountId: String = "") {
+        storeAccessToken("")
+        storeClientId("")
+        storeClientSecret("")
+    }
 
+    private suspend fun storeClientId(clientId: String) {
+        repository.storeClientId(clientId)
+    }
+
+    private suspend fun storeClientSecret(clientSecret: String) {
+        repository.storeClientSecret(clientSecret)
+    }
+
+    private suspend fun storeAccessToken(accessToken: String) {
+        repository.storeAccessToken(accessToken)
     }
 }

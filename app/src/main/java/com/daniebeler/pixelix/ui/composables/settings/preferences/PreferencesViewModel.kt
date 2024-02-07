@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.domain.usecase.GetHideSensitiveContent
+import com.daniebeler.pixelix.domain.usecase.Logout
 import com.daniebeler.pixelix.domain.usecase.StoreHideSensitiveContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
     private val storeHideSensitiveContentUseCase: StoreHideSensitiveContent,
-    private val getHideSensitiveContent: GetHideSensitiveContent
+    private val getHideSensitiveContent: GetHideSensitiveContent,
+    private val logoutUseCase: Logout
 ) : ViewModel() {
     var isSensitiveContentHidden by mutableStateOf(true)
 
@@ -38,9 +40,10 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
-    suspend fun logout() {
-
-
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase()
+        }
     }
 
     fun storeHideSensitiveContent(value: Boolean) {
