@@ -90,4 +90,6 @@
     <string name="no_muted_accounts">Keine stummgeschalteten Benutzer</string>
     <string name="visibility_x">Sichtbarkeit: %1$s</string>
     <string name="clear_cache">Cache löschen</string>
+    <string name="preferences">Preferences</string>
+    <string name="hide_sensitive_content">Hide sensitive Content</string>
 </resources>

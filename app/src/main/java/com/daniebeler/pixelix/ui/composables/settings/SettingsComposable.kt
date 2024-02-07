@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -105,6 +106,12 @@ fun SettingsComposable(
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
+
+            CustomSettingsElement(icon = Icons.Outlined.Tune,
+                text = stringResource(R.string.preferences),
+                onClick = {
+                    Navigate().navigate("preferences_screen", navController)
+                })
 
             CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder,
                 text = stringResource(R.string.liked_posts),

@@ -52,6 +52,7 @@ import com.daniebeler.pixelix.ui.composables.settings.bookmarked_posts.Bookmarke
 import com.daniebeler.pixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
 import com.daniebeler.pixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
+import com.daniebeler.pixelix.ui.composables.settings.preferences.PreferencesComposable
 import com.daniebeler.pixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pixelix.ui.composables.trending.TrendingComposable
@@ -135,6 +136,11 @@ sealed class Destinations(
 
     object Settings : Destinations(
         route = "settings_screen",
+        icon = Icons.Outlined.Settings
+    )
+
+    object Preferences : Destinations(
+        route = "preferences_screen",
         icon = Icons.Outlined.Settings
     )
 
@@ -224,6 +230,10 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) 
 
         composable(Destinations.Settings.route) {
             SettingsComposable(navController, viewModel)
+        }
+
+        composable(Destinations.Preferences.route) {
+            PreferencesComposable(navController)
         }
 
         composable(Destinations.NewPost.route) {

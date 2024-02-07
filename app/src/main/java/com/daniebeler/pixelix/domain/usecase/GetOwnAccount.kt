@@ -11,7 +11,7 @@ class GetOwnAccount(
     private val repository: CountryRepository
 ) {
     operator fun invoke(): Flow<Resource<Account>> {
-        var accountId = ""
+        var accountId: String
         runBlocking {
             accountId = repository.getAccountId().first()
         }
