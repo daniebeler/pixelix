@@ -6,6 +6,7 @@ object Constants {
     const val ACCESS_TOKEN_DATASTORE_KEY = "access_token"
     const val ACCOUNT_ID_DATASTORE_KEY = "account_id"
     const val BASE_URL_DATASTORE_KEY = "base_url"
+    const val SHOW_SENSITIVE_CONTENT_DATASTORE_KEY = "show_sensitive_content"
 
     const val HASHTAG_TIMELINE_POSTS_LIMIT = 20
     const val HOME_TIMELINE_POSTS_LIMIT = 20

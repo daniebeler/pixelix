@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.NoAdultContent
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,9 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pixelix.MainViewModel
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,17 +66,18 @@ fun PreferencesComposable(
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
-            CustomPreferencesItem(Icons.Outlined.NoAdultContent,
+            CustomPreferencesItem(
+                Icons.Outlined.NoAdultContent,
                 stringResource(R.string.hide_sensitive_content),
                 viewModel.isSensitiveContentHidden
-            ) { viewModel.isSensitiveContentHidden = !viewModel.isSensitiveContentHidden }
+            ) { checked -> viewModel.storeHideSensitiveContent(checked) }
         }
     }
 }
 
 @Composable
 fun CustomPreferencesItem(
-    icon: ImageVector, text: String, isChecked: Boolean, onCheckedChange: () -> Unit
+    icon: ImageVector, text: String, isChecked: Boolean, onCheckedChange: (checked: Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -91,6 +89,6 @@ fun CustomPreferencesItem(
             Spacer(modifier = Modifier.width(12.dp))
             Text(text = text)
         }
-        Switch(checked = isChecked, onCheckedChange = { onCheckedChange() })
+        Switch(checked = isChecked, onCheckedChange = { onCheckedChange(it) })
     }
 }

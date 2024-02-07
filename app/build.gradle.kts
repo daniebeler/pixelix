@@ -78,6 +78,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.0")
+
 
     implementation ("com.google.dagger:hilt-android:2.48")
     kapt ("com.google.dagger:hilt-android-compiler:2.45")

@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.data.repository.CountryRepositoryImpl
-import dagger.Binds
+import com.daniebeler.pixelix.data.repository.StorageRepositoryImpl
+import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.StorageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,24 +19,28 @@ private val Context.dataStore by preferencesDataStore("settings")
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class Module {
+class Module {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindUserPreferencesRepository(
-        myUserPreferencesRepository: CountryRepositoryImpl
-    ): CountryRepository
-
-
-
-    companion object {
-        @Provides
-        @Singleton
-        fun provideUserDataStorePreferences(
-            @ApplicationContext applicationContext: Context
-        ): DataStore<Preferences> {
-            return applicationContext.dataStore
-        }
+    fun provideUserDataStorePreferences(
+        @ApplicationContext applicationContext: Context
+    ): DataStore<Preferences> {
+        return applicationContext.dataStore
     }
+
+    @Provides
+    @Singleton
+    fun provideStorageRepository(
+        dataStore: DataStore<Preferences>
+    ): StorageRepository = StorageRepositoryImpl(dataStore)
+
+
+    @Provides
+    @Singleton
+    fun provideApiRepository(
+        dataStore: DataStore<Preferences>
+    ): CountryRepository = CountryRepositoryImpl(dataStore)
+
 
 }
