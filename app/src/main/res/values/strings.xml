@@ -34,7 +34,6 @@
     <string name="admin">Admin</string>
     <string name="users">Users</string>
     <string name="stats">Stats</string>
-    <string name="about_this_instance">About this instance</string>
     <string name="unblock">unblock</string>
     <string name="unblock_caps">Unblock</string>
     <string name="unblock_account">Unblock Account</string>
@@ -92,4 +91,5 @@
     <string name="clear_cache">Clear cache</string>
     <string name="preferences">Preferences</string>
     <string name="hide_sensitive_content">Hide sensitive Content</string>
+    <string name="about_x">About %1$s</string>
 </resources>

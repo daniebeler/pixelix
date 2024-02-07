@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,7 +55,15 @@ fun OwnProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(text = viewModel.accountState.account?.username ?: "")
+            Column {
+                Text(text = viewModel.accountState.account?.username ?: "")
+                Text(
+                    text = viewModel.ownDomain,
+                    fontSize = 12.sp,
+                    lineHeight = 6.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }, actions = {
             IconButton(onClick = {
                 //Navigate().navigate("settings_screen", navController)
@@ -100,9 +109,11 @@ fun OwnProfileComposable(
                     showBottomSheet = false
                 }, sheetState = sheetState
             ) {
-                ModalBottomSheetContent(navController = navController, closeBottomSheet = {
-                    showBottomSheet = false
-                })
+                ModalBottomSheetContent(navController = navController,
+                    instanceDomain = viewModel.ownDomain,
+                    closeBottomSheet = {
+                        showBottomSheet = false
+                    })
             }
         }
     }

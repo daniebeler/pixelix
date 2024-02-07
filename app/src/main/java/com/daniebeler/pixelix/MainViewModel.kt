@@ -32,17 +32,8 @@ class MainViewModel @Inject constructor(
         return repository.doesAccessTokenExist()
     }
 
-
-    private suspend fun storeClientId(clientId: String) {
-        repository.storeClientId(clientId)
-    }
-
     private fun getClientIdFromStorage(): Flow<String> {
         return repository.getClientIdFromStorage()
-    }
-
-    private suspend fun storeClientSecret(clientSecret: String) {
-        repository.storeClientSecret(clientSecret)
     }
 
     private fun getClientSecretFromStorage(): Flow<String> {
@@ -51,13 +42,6 @@ class MainViewModel @Inject constructor(
 
     private suspend fun storeAccessToken(accessToken: String) {
         repository.storeAccessToken(accessToken)
-    }
-
-    suspend fun logout() {
-        storeAccessToken("")
-        storeClientId("")
-        storeClientSecret("")
-
     }
 
 }

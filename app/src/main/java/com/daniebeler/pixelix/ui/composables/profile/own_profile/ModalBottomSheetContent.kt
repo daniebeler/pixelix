@@ -20,7 +20,7 @@ import com.daniebeler.pixelix.R
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
-fun ModalBottomSheetContent(navController: NavController, closeBottomSheet: () -> Unit) {
+fun ModalBottomSheetContent(navController: NavController, instanceDomain: String, closeBottomSheet: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -70,7 +70,7 @@ fun ModalBottomSheetContent(navController: NavController, closeBottomSheet: () -
             })
 
         CustomSettingsElement(icon = Icons.Outlined.Dns,
-            text = stringResource(R.string.about_this_instance),
+            text = stringResource(R.string.about_x, instanceDomain),
             onClick = {
                 closeBottomSheet()
                 Navigate().navigate("about_instance_screen", navController)

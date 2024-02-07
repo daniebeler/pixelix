@@ -8,24 +8,40 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.usecase.GetOwnAccount
+import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomain
 import com.daniebeler.pixelix.domain.usecase.GetOwnPosts
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OwnProfileViewModel @Inject constructor(
-    private val getOwnAccount: GetOwnAccount, private val getOwnPosts: GetOwnPosts
+    private val getOwnAccount: GetOwnAccount,
+    private val getOwnPosts: GetOwnPosts,
+    private val getOwnInstanceDomain: GetOwnInstanceDomain
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
+    var ownDomain by mutableStateOf("")
 
     init {
         loadData()
+
+        viewModelScope.launch {
+            getInstanceDomain()
+        }
+
+    }
+
+    private suspend fun getInstanceDomain() {
+        getOwnInstanceDomain().collect { res ->
+            ownDomain = res
+        }
     }
 
     fun loadData() {

@@ -34,7 +34,6 @@
     <string name="admin">Administrator</string>
     <string name="users">Benutzer</string>
     <string name="stats">Statistiken</string>
-    <string name="about_this_instance">Über diese Instanz</string>
     <string name="unblock">entblocken</string>
     <string name="unblock_caps">Entblocken</string>
     <string name="unblock_account">Nicht mehr blockieren</string>
@@ -92,4 +91,5 @@
     <string name="clear_cache">Cache löschen</string>
     <string name="preferences">Preferences</string>
     <string name="hide_sensitive_content">Hide sensitive Content</string>
+    <string name="about_x">Über %1$s</string>
 </resources>

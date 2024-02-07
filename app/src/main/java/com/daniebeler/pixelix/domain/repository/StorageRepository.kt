@@ -8,5 +8,6 @@ interface StorageRepository {
 
     suspend fun storeHideSensitiveContent(hideSensitiveContent: Boolean)
 
+    fun getBaseUrlFromStorage(): Flow<String>
 
 }

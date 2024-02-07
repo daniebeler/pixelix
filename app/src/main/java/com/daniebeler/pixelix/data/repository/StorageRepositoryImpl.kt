@@ -27,4 +27,8 @@ class StorageRepositoryImpl @Inject constructor(
         }
         this.hideSensitiveContent = hideSensitiveContent
     }
+
+    override fun getBaseUrlFromStorage(): Flow<String> = storage.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
+    }
 }
