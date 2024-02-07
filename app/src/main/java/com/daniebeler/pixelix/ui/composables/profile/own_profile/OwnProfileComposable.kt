@@ -11,17 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.Bookmarks
-import androidx.compose.material.icons.outlined.Dns
-import androidx.compose.material.icons.outlined.DoNotDisturbOn
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -69,7 +61,7 @@ fun OwnProfileComposable(
                 showBottomSheet = true
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.Settings, contentDescription = ""
+                    imageVector = Icons.Outlined.MoreVert, contentDescription = ""
                 )
             }
         })
@@ -146,66 +138,6 @@ fun CustomProfilePage(
                 }
 
             }) { refresh() }
-    }
-}
-
-@Composable
-private fun ModalBottomSheetContent(navController: NavController, closeBottomSheet: () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(state = rememberScrollState())
-    ) {
-
-        CustomSettingsElement(icon = Icons.Outlined.Settings,
-            text = stringResource(R.string.settings),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("preferences_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.FavoriteBorder,
-            text = stringResource(R.string.liked_posts),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("liked_posts_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.Bookmarks,
-            text = stringResource(R.string.bookmarked_posts),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("bookmarked_posts_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.Tag,
-            text = stringResource(R.string.followed_hashtags),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("followed_hashtags_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.DoNotDisturbOn,
-            text = stringResource(R.string.muted_accounts),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("muted_accounts_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.Block,
-            text = stringResource(R.string.blocked_accounts),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("blocked_accounts_screen", navController)
-            })
-
-        CustomSettingsElement(icon = Icons.Outlined.Dns,
-            text = stringResource(R.string.about_this_instance),
-            onClick = {
-                closeBottomSheet()
-                Navigate().navigate("about_instance_screen", navController)
-            })
-
     }
 }
 
