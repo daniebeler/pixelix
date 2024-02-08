@@ -7,21 +7,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.ui.composables.profile.AccountState
+import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AboutInstanceViewModel @Inject constructor(
-    val repository: CountryRepository
+    val repository: CountryRepository, private val getOwnInstanceDomain: GetOwnInstanceDomain
 ) : ViewModel() {
 
     var instanceState by mutableStateOf(InstanceState())
 
+    var ownInstanceDomain by mutableStateOf("")
+
     init {
         getInstance()
+        viewModelScope.launch {
+            getInstanceDomain()
+        }
+    }
+
+    private suspend fun getInstanceDomain() {
+        getOwnInstanceDomain().collect { res ->
+            ownInstanceDomain = res
+        }
     }
 
     private fun getInstance() {

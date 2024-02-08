@@ -52,7 +52,7 @@ fun AboutInstanceComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            viewModel.instanceState.instance?.domain?.let { Text(text = it) }
+            Text(text = viewModel.ownInstanceDomain)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
