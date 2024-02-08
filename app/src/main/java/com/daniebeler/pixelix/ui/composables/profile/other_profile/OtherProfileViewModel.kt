@@ -29,6 +29,8 @@ class OtherProfileViewModel @Inject constructor(
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
     var postsState by mutableStateOf(PostsState())
 
+    var domain by mutableStateOf("")
+
 
     fun loadData(userId: String) {
         getAccount(userId)
@@ -96,6 +98,10 @@ class OtherProfileViewModel @Inject constructor(
                 is Resource.Loading -> {
                     AccountState(isLoading = true, account = accountState.account)
                 }
+            }
+
+            if (accountState.account != null) {
+                domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/") ?: ""
             }
         }.launchIn(viewModelScope)
     }
