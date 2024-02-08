@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.domain.usecase.GetHideSensitiveContent
 import com.daniebeler.pixelix.domain.usecase.Logout
@@ -28,7 +27,11 @@ class PreferencesViewModel @Inject constructor(
     var versionName by mutableStateOf("")
 
     init {
-        getHideSensitiveContent().asLiveData()
+        viewModelScope.launch {
+            getHideSensitiveContent().collect { res ->
+                isSensitiveContentHidden = res
+            }
+        }
     }
 
 
