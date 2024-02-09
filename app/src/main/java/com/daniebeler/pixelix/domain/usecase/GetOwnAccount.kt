@@ -11,6 +11,7 @@ class GetOwnAccount(
     private val repository: CountryRepository
 ) {
     operator fun invoke(): Flow<Resource<Account>> = flow {
+        emit(Resource.Loading())
         val accountId = repository.getAccountId().first()
         if (accountId.isNotBlank()) {
             repository.getAccount(accountId).collect { res ->
