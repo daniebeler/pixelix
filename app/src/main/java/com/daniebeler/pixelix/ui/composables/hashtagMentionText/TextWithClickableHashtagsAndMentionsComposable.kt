@@ -16,7 +16,6 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,7 +25,7 @@ fun HashtagsMentionsTextView(
     modifier: Modifier = Modifier,
     mentions: List<Account>?,
     navController: NavController,
-    viewModel: HashtagMentionsTextViewModel = hiltViewModel(key = text)
+    viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = text)
 ) {
 
     val colorScheme = MaterialTheme.colorScheme

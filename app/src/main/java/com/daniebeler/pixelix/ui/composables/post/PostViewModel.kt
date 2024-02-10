@@ -3,12 +3,18 @@ package com.daniebeler.pixelix.ui.composables.post
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.BookmarkPostUseCase
+import com.daniebeler.pixelix.domain.usecase.CreateReplyUseCase
+import com.daniebeler.pixelix.domain.usecase.DeletePostUseCase
+import com.daniebeler.pixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
+import com.daniebeler.pixelix.domain.usecase.GetOwnAccountIdUseCase
+import com.daniebeler.pixelix.domain.usecase.GetRepliesUseCase
+import com.daniebeler.pixelix.domain.usecase.LikePostUseCase
+import com.daniebeler.pixelix.domain.usecase.UnbookmarkPostUseCase
+import com.daniebeler.pixelix.domain.usecase.UnlikePostUseCase
 import com.daniebeler.pixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +27,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getRepliesUseCase: GetRepliesUseCase,
+    private val createReplyUseCase: CreateReplyUseCase,
+    private val likePostUseCase: LikePostUseCase,
+    private val unlikePostUseCase: UnlikePostUseCase,
+    private val bookmarkPostUseCase: BookmarkPostUseCase,
+    private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+    private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
+    private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase
 ) : ViewModel() {
 
     var repliesState by mutableStateOf(RepliesState())
@@ -44,13 +58,13 @@ class PostViewModel @Inject constructor(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            myAccountId = repository.getAccountId().first()
+            myAccountId = getOwnAccountIdUseCase().first()
         }
     }
 
     fun deletePost(postId: String) {
         deleteDialog = null
-        repository.deletePost(postId).onEach { result ->
+        deletePostUseCase(postId).onEach { result ->
             deleteState = when (result) {
                 is Resource.Success -> {
                     DeleteState(deleted = true)
@@ -76,7 +90,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadReplies(accountId: String, postId: String) {
-        repository.getReplies(accountId, postId).onEach { result ->
+        getRepliesUseCase(accountId, postId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
                     RepliesState(replies = result.data ?: emptyList())
@@ -95,7 +109,7 @@ class PostViewModel @Inject constructor(
 
     fun createReply(postId: String) {
         if (newComment.isNotEmpty()) {
-            repository.createReply(postId, newComment).onEach { result ->
+            createReplyUseCase(postId, newComment).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
@@ -103,7 +117,8 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        ownReplyState = OwnReplyState(error = result.message ?: "An unexpected error occurred")
+                        ownReplyState =
+                            OwnReplyState(error = result.message ?: "An unexpected error occurred")
                     }
 
                     is Resource.Loading -> {
@@ -115,7 +130,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadLikedBy(postId: String) {
-        repository.getLikedBy(postId).onEach { result ->
+        getAccountsWhoLikedPostUseCase(postId).onEach { result ->
             likedByState = when (result) {
                 is Resource.Success -> {
                     LikedByState(likedBy = result.data ?: emptyList())
@@ -134,7 +149,7 @@ class PostViewModel @Inject constructor(
 
     fun likePost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.likePost(postId).onEach { result ->
+            likePostUseCase(postId).onEach { result ->
                 likeState = when (result) {
                     is Resource.Success -> {
                         LikeState(
@@ -149,9 +164,7 @@ class PostViewModel @Inject constructor(
 
                     is Resource.Loading -> {
                         LikeState(
-                            isLoading = true,
-                            liked = true,
-                            likesCount = if (likeState.liked) {
+                            isLoading = true, liked = true, likesCount = if (likeState.liked) {
                                 likeState.likesCount
                             } else {
                                 likeState.likesCount + 1
@@ -165,7 +178,7 @@ class PostViewModel @Inject constructor(
 
     fun unlikePost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.unlikePost(postId).onEach { result ->
+            unlikePostUseCase(postId).onEach { result ->
                 likeState = when (result) {
                     is Resource.Success -> {
                         LikeState(
@@ -180,9 +193,7 @@ class PostViewModel @Inject constructor(
 
                     is Resource.Loading -> {
                         LikeState(
-                            isLoading = true,
-                            liked = false,
-                            likesCount = if (!likeState.liked) {
+                            isLoading = true, liked = false, likesCount = if (!likeState.liked) {
                                 likeState.likesCount
                             } else {
                                 likeState.likesCount - 1
@@ -196,7 +207,7 @@ class PostViewModel @Inject constructor(
 
     fun bookmarkPost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.bookmarkPost(postId).onEach { result ->
+            bookmarkPostUseCase(postId).onEach { result ->
                 bookmarkState = when (result) {
                     is Resource.Success -> {
                         BookmarkState(bookmarked = result.data?.bookmarked ?: false)
@@ -216,7 +227,7 @@ class PostViewModel @Inject constructor(
 
     fun unBookmarkPost(postId: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            repository.unBookmarkPost(postId).onEach { result ->
+            unbookmarkPostUseCase(postId).onEach { result ->
                 bookmarkState = when (result) {
                     is Resource.Success -> {
                         BookmarkState(bookmarked = result.data?.bookmarked ?: false)
@@ -233,5 +244,4 @@ class PostViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
-
 }

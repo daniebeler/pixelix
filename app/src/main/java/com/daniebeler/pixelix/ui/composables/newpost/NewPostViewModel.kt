@@ -12,7 +12,10 @@ import com.daniebeler.pixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.domain.model.Instance
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.CreatePostUseCase
+import com.daniebeler.pixelix.domain.usecase.GetInstanceUseCase
+import com.daniebeler.pixelix.domain.usecase.UpdateMediaUseCase
+import com.daniebeler.pixelix.domain.usecase.UploadMediaUseCase
 import com.daniebeler.pixelix.utils.GetFile
 import com.daniebeler.pixelix.utils.MimeType
 import com.daniebeler.pixelix.utils.Navigate
@@ -26,13 +29,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewPostViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val uploadMediaUseCase: UploadMediaUseCase,
+    private val updateMediaUseCase: UpdateMediaUseCase,
+    private val createPostUseCase: CreatePostUseCase,
+    private val getInstanceUseCase: GetInstanceUseCase
 ) : ViewModel() {
     data class ImageItem(
-        val imageUri: Uri,
-        var id: String?,
-        var text: String = "",
-        var isLoading: Boolean
+        val imageUri: Uri, var id: String?, var text: String = "", var isLoading: Boolean
     )
 
     var images by mutableStateOf(emptyList<ImageItem>())
@@ -50,7 +53,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     private fun getInstance() {
-        repository.getInstance().onEach { result ->
+        getInstanceUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
@@ -112,8 +115,7 @@ class NewPostViewModel @Inject constructor(
         if (fileType.take(5) == "image") {
             if (size > instance.configuration.mediaAttachmentConfig.imageSizeLimit) {
                 addImageError = Pair(
-                    "Image is to big",
-                    "This image is to big, the max size for this server is ${
+                    "Image is to big", "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
                         )
@@ -124,8 +126,7 @@ class NewPostViewModel @Inject constructor(
         } else if (fileType.take(5) == "video") {
             if (size > instance.configuration.mediaAttachmentConfig.videoSizeLimit) {
                 addImageError = Pair(
-                    "Video is to big",
-                    "This Video is to big, the max size for this server is ${
+                    "Video is to big", "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
                         )
@@ -139,11 +140,8 @@ class NewPostViewModel @Inject constructor(
     }
 
     private fun uploadImage(context: Context, instance: Instance, uri: Uri, text: String) {
-        repository.uploadMedia(
-            uri,
-            text,
-            context,
-            instance.configuration.mediaAttachmentConfig
+        uploadMediaUseCase(
+            uri, text, context, instance.configuration.mediaAttachmentConfig
         ).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
@@ -174,8 +172,7 @@ class NewPostViewModel @Inject constructor(
                     }
                 }
             }
-        }
-            .flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
     }
 
     fun post(navController: NavController) {
@@ -186,7 +183,7 @@ class NewPostViewModel @Inject constructor(
         if (images.size == mediaUploadState.mediaAttachments.size) {
             images.forEachIndexed { index, it ->
                 if (it.text != "") {
-                   updateAltText(index, it.text)
+                    updateAltText(index, it.text)
                 }
             }
             createNewPost(mediaUploadState, navController)
@@ -198,9 +195,8 @@ class NewPostViewModel @Inject constructor(
         if (image.id == null) {
             return
         }
-        repository.updateMedia(
-            image.id!!,
-            image.text
+        updateMediaUseCase(
+            image.id!!, image.text
         ).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
@@ -214,8 +210,7 @@ class NewPostViewModel @Inject constructor(
                     mediaUploadState.copy(
                         mediaAttachments = mediaUploadState.mediaAttachments.toMutableList().also {
                             it[index] = result.data!!
-                        },
-                        isLoading = false
+                        }, isLoading = false
                     )
                 }
 
@@ -241,7 +236,7 @@ class NewPostViewModel @Inject constructor(
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
         val createPostDto = CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText)
-        repository.createPost(createPostDto).onEach { result ->
+        createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

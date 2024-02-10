@@ -10,4 +10,6 @@ interface StorageRepository {
 
     fun getBaseUrlFromStorage(): Flow<String>
 
+    fun getAccountId(): Flow<String>
+
 }

@@ -5,7 +5,10 @@ import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.GetAccountsFollowersUseCase
+import com.daniebeler.pixelix.domain.usecase.GetAccountsFollowingUseCase
 import com.daniebeler.pixelix.domain.usecase.GetMutualFollowersUseCase
+import com.daniebeler.pixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccountUseCase
@@ -26,7 +29,8 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAccountUseCase(repository: CountryRepository): GetAccountUseCase = GetAccountUseCase(repository)
+    fun provideGetAccountUseCase(repository: CountryRepository): GetAccountUseCase =
+        GetAccountUseCase(repository)
 
     @Provides
     @Singleton
@@ -84,4 +88,19 @@ class AccountUseCaseModule {
     @Singleton
     fun provideGetMutualFollowersUseCase(repository: CountryRepository): GetMutualFollowersUseCase =
         GetMutualFollowersUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetAccountsFollowersUseCase(repository: CountryRepository): GetAccountsFollowersUseCase =
+        GetAccountsFollowersUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetAccountsFollowingUseCase(repository: CountryRepository): GetAccountsFollowingUseCase =
+        GetAccountsFollowingUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetOwnAccountIdUseCase(repository: StorageRepository): GetOwnAccountIdUseCase =
+        GetOwnAccountIdUseCase(repository)
 }

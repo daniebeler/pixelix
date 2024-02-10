@@ -23,12 +23,17 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun storeHideSensitiveContent(hideSensitiveContent: Boolean) {
         storage.edit { preferences ->
-            preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] = hideSensitiveContent
+            preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] =
+                hideSensitiveContent
         }
         this.hideSensitiveContent = hideSensitiveContent
     }
 
     override fun getBaseUrlFromStorage(): Flow<String> = storage.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
+    }
+
+    override fun getAccountId(): Flow<String> = storage.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
     }
 }

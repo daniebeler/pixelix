@@ -6,8 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.GetAccountsFollowersUseCase
+import com.daniebeler.pixelix.domain.usecase.GetAccountsFollowingUseCase
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -16,9 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FollowersViewModel @Inject constructor(
-    private val repository: CountryRepository,
+    private val getAccountsFollowingUseCase: GetAccountsFollowingUseCase,
+    private val getAccountsFollowersUseCase: GetAccountsFollowersUseCase,
     private val getAccountUseCase: GetAccountUseCase
-): ViewModel() {
+) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var followersState by mutableStateOf(FollowersState())
@@ -49,7 +51,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowersFirstLoad(refreshing: Boolean = false) {
-        repository.getAccountsFollowers(accountId).onEach { result ->
+        getAccountsFollowersUseCase(accountId).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < 40
@@ -61,7 +63,11 @@ class FollowersViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    FollowersState(isLoading = true, isRefreshing = refreshing, followers = followersState.followers)
+                    FollowersState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        followers = followersState.followers
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -69,7 +75,9 @@ class FollowersViewModel @Inject constructor(
 
     fun getFollowersPaginated() {
         if (followersState.followers.isNotEmpty() && !followersState.isLoading && !followersState.endReached) {
-            repository.getAccountsFollowers(accountId, followersState.followers.last().id).onEach { result ->
+            getAccountsFollowersUseCase(
+                accountId, followersState.followers.last().id
+            ).onEach { result ->
                 followersState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < 40
@@ -84,7 +92,11 @@ class FollowersViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        FollowersState(isLoading = true, isRefreshing = false, followers = followersState.followers)
+                        FollowersState(
+                            isLoading = true,
+                            isRefreshing = false,
+                            followers = followersState.followers
+                        )
                     }
                 }
             }.launchIn(viewModelScope)
@@ -92,7 +104,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowingFirstLoad(refreshing: Boolean = false) {
-        repository.getAccountsFollowing(accountId).onEach { result ->
+        getAccountsFollowingUseCase(accountId).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < 40
@@ -104,7 +116,11 @@ class FollowersViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    FollowingState(isLoading = true, isRefreshing = refreshing, following = followingState.following)
+                    FollowingState(
+                        isLoading = true,
+                        isRefreshing = refreshing,
+                        following = followingState.following
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -112,7 +128,9 @@ class FollowersViewModel @Inject constructor(
 
     fun getFollowingPaginated() {
         if (followingState.following.isNotEmpty() && !followingState.isLoading && !followingState.endReached) {
-            repository.getAccountsFollowing(accountId, followingState.following.last().id).onEach { result ->
+            getAccountsFollowingUseCase(
+                accountId, followingState.following.last().id
+            ).onEach { result ->
                 followingState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < 40
@@ -127,7 +145,11 @@ class FollowersViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        FollowingState(isLoading = true, isRefreshing = false, following = followingState.following)
+                        FollowingState(
+                            isLoading = true,
+                            isRefreshing = false,
+                            following = followingState.following
+                        )
                     }
                 }
             }.launchIn(viewModelScope)
