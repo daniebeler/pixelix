@@ -4,6 +4,6 @@ import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 
 data class AccessToken(
     val accessToken: String,
-    val scope: String,
+    val scope: String?,
     val createdAt: String
 )

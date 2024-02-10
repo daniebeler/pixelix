@@ -14,20 +14,6 @@ class MainViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    suspend fun obtainToken(code: String): Boolean {
-        val clientId: String = getClientIdFromStorage().first()
-        val clientSecret: String = getClientSecretFromStorage().first()
-
-        val token = repository.obtainToken(clientId, clientSecret, code) ?: return false
-
-        storeAccessToken(token.accessToken)
-        val account = repository.verifyToken(token.accessToken) ?: return false
-        repository.storeAccountId(account.id)
-        return true
-
-    }
-
-
     fun doesTokenExist(): Boolean {
         return repository.doesAccessTokenExist()
     }

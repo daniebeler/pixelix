@@ -18,7 +18,7 @@ class StorageRepositoryImpl @Inject constructor(
     private var hideSensitiveContent = false
 
     override fun getHideSensitiveContent(): Flow<Boolean> = storage.data.map { preferences ->
-        preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] ?: false
+        preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] ?: true
     }
 
     override suspend fun storeHideSensitiveContent(hideSensitiveContent: Boolean) {

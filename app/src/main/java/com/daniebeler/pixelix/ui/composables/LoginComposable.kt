@@ -50,7 +50,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginComposable(isLoading: Boolean, viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginComposable(isLoading: Boolean, error: String, viewModel: LoginViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -76,6 +76,10 @@ fun LoginComposable(isLoading: Boolean, viewModel: LoginViewModel = hiltViewMode
             if (isLoading) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     CircularProgressIndicator()
+                }
+            } else if (error.isNotBlank()) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(text = error)
                 }
             } else {
                 Row(verticalAlignment = Alignment.Bottom) {

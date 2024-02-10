@@ -109,7 +109,9 @@ interface CountryRepository {
 
     suspend fun createApplication(): Application?
 
-    suspend fun obtainToken(clientId: String, clientSecret: String, code: String): AccessToken?
+    fun obtainToken(
+        clientId: String, clientSecret: String, code: String
+    ): Flow<Resource<AccessToken>>
 
-    suspend fun verifyToken(token: String): Account?
+    fun verifyToken(token: String): Flow<Resource<Account>>
 }

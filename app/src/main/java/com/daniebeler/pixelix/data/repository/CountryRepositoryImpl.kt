@@ -8,12 +8,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.PixelfedApi
+import com.daniebeler.pixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pixelix.data.remote.dto.AccountDto
 import com.daniebeler.pixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pixelix.data.remote.dto.CreateReplyDto
@@ -61,7 +61,7 @@ import javax.inject.Inject
 
 class CountryRepositoryImpl @Inject constructor(
     private val userDataStorePreferences: DataStore<Preferences>
-): CountryRepository {
+) : CountryRepository {
 
     private var baseUrl = ""
     private var accessToken: String = ""
@@ -123,9 +123,10 @@ class CountryRepositoryImpl @Inject constructor(
             preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
         }
 
-    override fun getBaseUrlFromStorage(): Flow<String> = userDataStorePreferences.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
-    }
+    override fun getBaseUrlFromStorage(): Flow<String> =
+        userDataStorePreferences.data.map { preferences ->
+            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
+        }
 
     override suspend fun storeClientSecret(clientSecret: String) {
         userDataStorePreferences.edit { preferences ->
@@ -150,9 +151,10 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAccountId(): Flow<String> = userDataStorePreferences.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
-    }
+    override suspend fun getAccountId(): Flow<String> =
+        userDataStorePreferences.data.map { preferences ->
+            preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
+        }
 
     override fun getAccessTokenFromStorage(): Flow<String> =
         userDataStorePreferences.data.map { preferences ->
@@ -252,7 +254,8 @@ class CountryRepositoryImpl @Inject constructor(
 
                 val linkHeader = response.headers()["link"] ?: ""
 
-                val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
+                val onlyLink =
+                    linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
 
                 println("froof: " + linkHeader)
 
@@ -480,8 +483,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
             pixelfedApi.getAccountsWhoLikedPost(
-                accessToken,
-                postId
+                accessToken, postId
             )
         )
     }
@@ -554,9 +556,7 @@ class CountryRepositoryImpl @Inject constructor(
                 if (thumbnailBitmap != null) {
                     bitmapToBytes(thumbnailBitmap)?.let {
                         builder.addFormDataPart(
-                            "thumbnail",
-                            "thumbnail",
-                            it.toRequestBody()
+                            "thumbnail", "thumbnail", it.toRequestBody()
                         )
                     }
                 }
@@ -564,8 +564,7 @@ class CountryRepositoryImpl @Inject constructor(
 
             val requestBody: RequestBody = builder.build()
             val response = pixelfedApi.uploadMedia(
-                accessToken,
-                requestBody
+                accessToken, requestBody
             ).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toModel()
@@ -587,11 +586,7 @@ class CountryRepositoryImpl @Inject constructor(
     private suspend fun getThumbnail(uri: Uri, context: Context): Bitmap? {
         return try {
             withContext(Dispatchers.IO) {
-                Glide.with(context)
-                    .asBitmap()
-                    .load(uri)
-                    .apply(RequestOptions().frame(0))
-                    .submit()
+                Glide.with(context).asBitmap().load(uri).apply(RequestOptions().frame(0)).submit()
                     .get()
             }
         } catch (e: Exception) {
@@ -654,32 +649,18 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun obtainToken(
+    override fun obtainToken(
         clientId: String, clientSecret: String, code: String
-    ): AccessToken? {
-        return try {
-            val response = pixelfedApi.obtainToken(clientId, clientSecret, code).awaitResponse()
-            if (response.isSuccessful) {
-                response.body()?.toModel()
-            } else {
-                null
-            }
-        } catch (exception: Exception) {
-            null
-        }
+    ): Flow<Resource<AccessToken>> {
+        return NetworkCall<AccessToken, AccessTokenDto>().makeCall(
+            pixelfedApi.obtainToken(clientId, clientSecret, code)
+        )
     }
 
-    override suspend fun verifyToken(token: String): Account? {
-        return try {
-            val response = pixelfedApi.verifyToken("Bearer $token").awaitResponse()
-            if (response.isSuccessful) {
-                response.body()?.toModel()
-            } else {
-                null
-            }
-        } catch (exception: Exception) {
-            null
-        }
+    override fun verifyToken(token: String): Flow<Resource<Account>> {
+        return NetworkCall<Account, AccountDto>().makeCall(
+            pixelfedApi.verifyToken("Bearer $token")
+        )
     }
 
 }

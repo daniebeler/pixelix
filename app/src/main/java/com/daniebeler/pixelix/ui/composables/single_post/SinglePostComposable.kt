@@ -31,7 +31,9 @@ import com.daniebeler.pixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(
-    navController: NavController, postId: String, viewModel: SinglePostViewModel = hiltViewModel()
+    navController: NavController,
+    postId: String,
+    viewModel: SinglePostViewModel = hiltViewModel(key = postId)
 ) {
     val scrollState = rememberScrollState()
 
@@ -50,8 +52,7 @@ fun SinglePostComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         })
