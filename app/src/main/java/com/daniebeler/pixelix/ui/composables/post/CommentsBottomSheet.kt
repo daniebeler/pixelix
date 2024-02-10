@@ -194,11 +194,8 @@ fun CommentsBottomSheet(
 private fun ReplyElement(reply: Reply, navController: NavController) {
 
     var timeAgo: String by remember { mutableStateOf("") }
-    println("fiirst")
 
     LaunchedEffect(reply.createdAt) {
-        println("fropf")
-        println(reply.createdAt)
         timeAgo = TimeAgo().covertTimeToText(reply.createdAt)
     }
 

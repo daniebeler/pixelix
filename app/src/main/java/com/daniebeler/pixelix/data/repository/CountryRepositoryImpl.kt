@@ -72,7 +72,6 @@ class CountryRepositoryImpl @Inject constructor(
         runBlocking {
             val accessTokenFromStorage = getAccessTokenFromStorage().first()
             if (accessTokenFromStorage.isNotEmpty()) {
-                println("Bearer $accessTokenFromStorage")
                 accessToken = "Bearer $accessTokenFromStorage"
             }
             val baseUrlFromStorage = getBaseUrlFromStorage().first()
@@ -257,13 +256,8 @@ class CountryRepositoryImpl @Inject constructor(
                 val onlyLink =
                     linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
 
-                println("froof: " + linkHeader)
-
                 val nextLimit = onlyLink.substringAfter("limit=", "").substringBefore("&", "")
                 val nextMinId = onlyLink.substringAfter("min_id=", "")
-
-                println(nextLimit)
-                println(nextMinId)
 
                 val res = response.body()?.map { it.toModel() } ?: emptyList()
 

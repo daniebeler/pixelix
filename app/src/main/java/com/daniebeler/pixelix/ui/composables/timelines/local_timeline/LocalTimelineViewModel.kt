@@ -95,7 +95,6 @@ class LocalTimelineViewModel @Inject constructor(
     }
 
     fun postGetsDeleted(postId: String) {
-        println("delete post $postId filter")
         localTimelineState =
             localTimelineState.copy(localTimeline = localTimelineState.localTimeline.filter { post -> post.id != postId })
     }

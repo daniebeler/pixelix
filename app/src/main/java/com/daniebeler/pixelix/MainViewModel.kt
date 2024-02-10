@@ -17,17 +17,4 @@ class MainViewModel @Inject constructor(
     fun doesTokenExist(): Boolean {
         return repository.doesAccessTokenExist()
     }
-
-    private fun getClientIdFromStorage(): Flow<String> {
-        return repository.getClientIdFromStorage()
-    }
-
-    private fun getClientSecretFromStorage(): Flow<String> {
-        return repository.getClientSecretFromStorage()
-    }
-
-    private suspend fun storeAccessToken(accessToken: String) {
-        repository.storeAccessToken(accessToken)
-    }
-
 }

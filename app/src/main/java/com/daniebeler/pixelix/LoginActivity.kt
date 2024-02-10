@@ -109,7 +109,6 @@ class LoginActivity : ComponentActivity() {
                 is Resource.Error -> {
                     error = result.message ?: "Error"
                     isLoadingAfterRedirect = false
-                    println("sees: " + result.message)
                 }
 
                 is Resource.Loading -> {
@@ -130,7 +129,6 @@ class LoginActivity : ComponentActivity() {
                 is Resource.Error -> {
                     error = result.message ?: "Error"
                     isLoadingAfterRedirect = false
-                    println("soos: " + result.message)
                 }
 
                 is Resource.Loading -> {
