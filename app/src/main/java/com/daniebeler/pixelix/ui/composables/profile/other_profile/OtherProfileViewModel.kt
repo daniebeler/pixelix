@@ -7,8 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetAccount
+import com.daniebeler.pixelix.domain.usecase.GetMutualFollowersUseCase
+import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccount
+import com.daniebeler.pixelix.domain.usecase.GetRelationshipsUseCase
+import com.daniebeler.pixelix.domain.usecase.MuteAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.UnblockAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.UnfollowAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
@@ -20,8 +28,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
-    private val repository: CountryRepository,
-    private val getAccountUseCase: GetAccount
+    private val getAccountUseCase: GetAccount,
+    private val getPostsOfAccount: GetPostsOfAccount,
+    private val followAccountUseCase: FollowAccountUseCase,
+    private val unfollowAccountUseCase: UnfollowAccountUseCase,
+    private val muteAccountUseCase: MuteAccountUseCase,
+    private val unmuteAccountUseCase: UnmuteAccountUseCase,
+    private val blockAccountUseCase: BlockAccountUseCase,
+    private val unblockAccountUseCase: UnblockAccountUseCase,
+    private val getMutualFollowersUseCase: GetMutualFollowersUseCase,
+    private val getRelationshipsUseCase: GetRelationshipsUseCase
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -43,10 +59,16 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getRelationship(userId: String) {
-        repository.getRelationships(List(1) { userId }).onEach { result ->
+        getRelationshipsUseCase(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
-                    RelationshipState(accountRelationship = if (!result.data.isNullOrEmpty()){result.data[0]} else {null})
+                    RelationshipState(
+                        accountRelationship = if (!result.data.isNullOrEmpty()) {
+                            result.data[0]
+                        } else {
+                            null
+                        }
+                    )
                 }
 
                 is Resource.Error -> {
@@ -64,7 +86,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getMutualFollowers(userId: String) {
-        repository.getMutualFollowers(userId).onEach { result ->
+        getMutualFollowersUseCase(userId).onEach { result ->
             mutualFollowersState = when (result) {
                 is Resource.Success -> {
                     MutualFollowersState(mutualFollowers = result.data ?: emptyList())
@@ -76,8 +98,7 @@ class OtherProfileViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     MutualFollowersState(
-                        isLoading = true,
-                        mutualFollowers = mutualFollowersState.mutualFollowers
+                        isLoading = true, mutualFollowers = mutualFollowersState.mutualFollowers
                     )
                 }
             }
@@ -101,13 +122,14 @@ class OtherProfileViewModel @Inject constructor(
             }
 
             if (accountState.account != null) {
-                domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/") ?: ""
+                domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
+                    ?: ""
             }
         }.launchIn(viewModelScope)
     }
 
     private fun getPostsFirstLoad(userId: String) {
-        repository.getPostsByAccountId(userId).onEach { result ->
+        getPostsOfAccount(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -127,7 +149,7 @@ class OtherProfileViewModel @Inject constructor(
 
     fun getPostsPaginated(userId: String) {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            repository.getPostsByAccountId(userId, postsState.posts.last().id).onEach { result ->
+            getPostsOfAccount(userId, postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -150,7 +172,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun followAccount(userId: String) {
-        repository.followAccount(userId).onEach { result ->
+        followAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -171,7 +193,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unfollowAccount(userId: String) {
-        repository.unfollowAccount(userId).onEach { result ->
+        unfollowAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -192,7 +214,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun muteAccount(userId: String) {
-        repository.muteAccount(userId).onEach { result ->
+        muteAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -210,7 +232,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unMuteAccount(userId: String) {
-        repository.unMuteAccount(userId).onEach { result ->
+        unmuteAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -228,7 +250,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun blockAccount(userId: String) {
-        repository.blockAccount(userId).onEach { result ->
+        blockAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -246,7 +268,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unblockAccount(userId: String) {
-        repository.unblockAccount(userId).onEach { result ->
+        unblockAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)

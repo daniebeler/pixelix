@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.Tag
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetFollowedHashtagsUseCase
+import com.daniebeler.pixelix.domain.usecase.GetHashtagUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FollowedHashtagsViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getFollowedHashtagsUseCase: GetFollowedHashtagsUseCase,
+    private val getHashtagUseCase: GetHashtagUseCase
 ) : ViewModel() {
 
     var followedHashtagsState by mutableStateOf(FollowedHashtagsState())
@@ -25,7 +27,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     fun getFollowedHashtags(refreshing: Boolean = false) {
-        repository.getFollowedHashtags().onEach { result ->
+        getFollowedHashtagsUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data?.isNotEmpty() == false) {
@@ -55,7 +57,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     private fun getFollowedHashtagSingle(tag: Tag) {
-        repository.getHashtag(tag.name).onEach { result ->
+        getHashtagUseCase(tag.name).onEach { result ->
             followedHashtagsState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

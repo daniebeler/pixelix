@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetLikedPostsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LikedPostsViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getLikedPostsUseCase: GetLikedPostsUseCase
 ) : ViewModel() {
 
     var likedPostsState by mutableStateOf(LikedPostsState())
@@ -24,7 +24,7 @@ class LikedPostsViewModel @Inject constructor(
     }
 
     fun getItemsFirstLoad(refreshing: Boolean = false) {
-        repository.getLikedPosts().onEach { result ->
+        getLikedPostsUseCase().onEach { result ->
             likedPostsState = when (result) {
                 is Resource.Success -> {
                     LikedPostsState(
@@ -54,8 +54,7 @@ class LikedPostsViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading && likedPostsState.nextMaxId.isNotEmpty()) {
-            println("swarox")
-            repository.getLikedPosts(likedPostsState.nextMaxId).onEach { result ->
+            getLikedPostsUseCase(likedPostsState.nextMaxId).onEach { result ->
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(

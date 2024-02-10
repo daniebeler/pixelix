@@ -6,10 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.model.Account
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pixelix.ui.composables.profile.RelationshipState
-import com.daniebeler.pixelix.ui.composables.settings.muted_accounts.MutedAccountsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,14 +16,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CustomAccountViewModel @Inject constructor(
-    val repository: CountryRepository
-): ViewModel() {
+    private val followAccountUseCase: FollowAccountUseCase,
+    private val unfollowAccountUseCase: UnfollowAccountUseCase
+) : ViewModel() {
 
     var relationshipState by mutableStateOf(RelationshipState())
     var gotUpdatedRelationship by mutableStateOf(false)
 
     fun followAccount(userId: String) {
-        repository.followAccount(userId).onEach { result ->
+        followAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true
@@ -47,7 +47,7 @@ class CustomAccountViewModel @Inject constructor(
     }
 
     fun unfollowAccount(userId: String) {
-        repository.unfollowAccount(userId).onEach { result ->
+        unfollowAccountUseCase(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true

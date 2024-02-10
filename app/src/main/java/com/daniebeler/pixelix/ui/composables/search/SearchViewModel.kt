@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val searchUseCase: SearchUseCase
 ) : ViewModel() {
     var textInput: String by mutableStateOf("")
     var searchState by mutableStateOf(SearchState())
@@ -39,7 +39,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getSearchResults(text: String) {
-        repository.search(text).onEach { result ->
+        searchUseCase(text).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)

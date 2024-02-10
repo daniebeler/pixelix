@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.Account
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetMutedAccountsUseCase
+import com.daniebeler.pixelix.domain.usecase.UnmuteAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MutedAccountsViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val getMutedAccountsUseCase: GetMutedAccountsUseCase,
+    private val unmuteAccountUseCase: UnmuteAccountUseCase
 ) : ViewModel() {
 
 
@@ -28,7 +30,7 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun getMutedAccounts(refreshing: Boolean = false) {
-        repository.getMutedAccounts().onEach { result ->
+        getMutedAccountsUseCase().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
                     MutedAccountsState(mutedAccounts = result.data ?: emptyList())
@@ -50,7 +52,7 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun unmuteAccount(accountId: String) {
-        repository.unMuteAccount(accountId).onEach { result ->
+        unmuteAccountUseCase(accountId).onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
                     val newMutedAccounts =

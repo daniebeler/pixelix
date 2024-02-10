@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -16,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AboutInstanceViewModel @Inject constructor(
-    val repository: CountryRepository, private val getOwnInstanceDomain: GetOwnInstanceDomain
+    private val getInstanceUseCase: GetInstanceUseCase,
+    private val getOwnInstanceDomain: GetOwnInstanceDomain
 ) : ViewModel() {
 
     var instanceState by mutableStateOf(InstanceState())
@@ -37,7 +38,7 @@ class AboutInstanceViewModel @Inject constructor(
     }
 
     private fun getInstance() {
-        repository.getInstance().onEach { result ->
+        getInstanceUseCase().onEach { result ->
             println(result)
             instanceState = when (result) {
                 is Resource.Success -> {

@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pixelix.domain.usecase.GetHashtagTimeline
+import com.daniebeler.pixelix.domain.usecase.GetHashtagUseCase
+import com.daniebeler.pixelix.domain.usecase.UnfollowHashtagUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HashtagTimelineViewModel @Inject constructor(
-    private val repository: CountryRepository,
+    private val getHashtagUseCase: GetHashtagUseCase,
+    private val followHashtagUseCase: FollowHashtagUseCase,
+    private val unfollowHashtagUseCase: UnfollowHashtagUseCase,
     private val getHashtagTimeline: GetHashtagTimeline
 ) : ViewModel() {
 
@@ -62,41 +66,39 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated(hashtag: String) {
         if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getHashtagTimeline(hashtag, postsState.hashtagTimeline.last().id)
-                .onEach { result ->
-                    postsState = when (result) {
-                        is Resource.Success -> {
-                            val endReached =
-                                (result.data?.size ?: 0) == 0
-                            HashtagTimelineState(
-                                hashtagTimeline = postsState.hashtagTimeline + (result.data
-                                    ?: emptyList()),
-                                error = "",
-                                isLoading = false,
-                                isRefreshing = false,
-                                endReached = endReached
-                            )
-                        }
-
-                        is Resource.Error -> {
-                            HashtagTimelineState(
-                                hashtagTimeline = postsState.hashtagTimeline,
-                                error = result.message ?: "An unexpected error occurred",
-                                isLoading = false,
-                                isRefreshing = false
-                            )
-                        }
-
-                        is Resource.Loading -> {
-                            HashtagTimelineState(
-                                hashtagTimeline = postsState.hashtagTimeline,
-                                error = "",
-                                isLoading = true,
-                                isRefreshing = false
-                            )
-                        }
+            getHashtagTimeline(hashtag, postsState.hashtagTimeline.last().id).onEach { result ->
+                postsState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data?.size ?: 0) == 0
+                        HashtagTimelineState(
+                            hashtagTimeline = postsState.hashtagTimeline + (result.data
+                                ?: emptyList()),
+                            error = "",
+                            isLoading = false,
+                            isRefreshing = false,
+                            endReached = endReached
+                        )
                     }
-                }.launchIn(viewModelScope)
+
+                    is Resource.Error -> {
+                        HashtagTimelineState(
+                            hashtagTimeline = postsState.hashtagTimeline,
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false,
+                            isRefreshing = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        HashtagTimelineState(
+                            hashtagTimeline = postsState.hashtagTimeline,
+                            error = "",
+                            isLoading = true,
+                            isRefreshing = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -108,11 +110,12 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun postGetsDeleted(postId: String) {
-        postsState = postsState.copy(hashtagTimeline = postsState.hashtagTimeline.filter { post -> post.id != postId })
+        postsState =
+            postsState.copy(hashtagTimeline = postsState.hashtagTimeline.filter { post -> post.id != postId })
     }
 
     fun getHashtagInfo(hashtag: String) {
-        repository.getHashtag(hashtag).onEach { result ->
+        getHashtagUseCase(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -130,7 +133,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun followHashtag(hashtag: String) {
-        repository.followHashtag(hashtag).onEach { result ->
+        followHashtagUseCase(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -148,7 +151,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun unfollowHashtag(hashtag: String) {
-        repository.unfollowHashtag(hashtag).onEach { result ->
+        unfollowHashtagUseCase(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
