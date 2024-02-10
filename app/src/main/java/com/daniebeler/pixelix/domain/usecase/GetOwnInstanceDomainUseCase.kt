@@ -4,7 +4,7 @@ import com.daniebeler.pixelix.domain.repository.StorageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetOwnInstanceDomain(
+class GetOwnInstanceDomainUseCase(
     private val repository: StorageRepository
 ) {
     operator fun invoke(): Flow<String> = flow {

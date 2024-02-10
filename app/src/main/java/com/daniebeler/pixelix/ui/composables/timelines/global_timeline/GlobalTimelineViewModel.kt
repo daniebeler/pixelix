@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.usecase.GetGlobalTimeline
+import com.daniebeler.pixelix.domain.usecase.GetGlobalTimelineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GlobalTimelineViewModel @Inject constructor(
-    private val getGlobalTimeline: GetGlobalTimeline
+    private val getGlobalTimelineUseCase: GetGlobalTimelineUseCase
 ) : ViewModel() {
 
     var globalTimelineState by mutableStateOf(GlobalTimelineState())
@@ -24,7 +24,7 @@ class GlobalTimelineViewModel @Inject constructor(
     }
 
     private fun getItemsFirstLoad(refreshing: Boolean) {
-        getGlobalTimeline().onEach { result ->
+        getGlobalTimelineUseCase().onEach { result ->
             globalTimelineState = when (result) {
                 is Resource.Success -> {
                     GlobalTimelineState(
@@ -59,7 +59,7 @@ class GlobalTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (globalTimelineState.globalTimeline.isNotEmpty() && !globalTimelineState.isLoading) {
-            getGlobalTimeline(globalTimelineState.globalTimeline.last().id).onEach { result ->
+            getGlobalTimelineUseCase(globalTimelineState.globalTimeline.last().id).onEach { result ->
                 globalTimelineState = when (result) {
                     is Resource.Success -> {
                         GlobalTimelineState(

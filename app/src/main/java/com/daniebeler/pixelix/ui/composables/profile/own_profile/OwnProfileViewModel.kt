@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.usecase.GetOwnAccount
-import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomain
-import com.daniebeler.pixelix.domain.usecase.GetOwnPosts
+import com.daniebeler.pixelix.domain.usecase.GetOwnAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomainUseCase
+import com.daniebeler.pixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,9 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OwnProfileViewModel @Inject constructor(
-    private val getOwnAccount: GetOwnAccount,
-    private val getOwnPosts: GetOwnPosts,
-    private val getOwnInstanceDomain: GetOwnInstanceDomain
+    private val getOwnAccountUseCase: GetOwnAccountUseCase,
+    private val getOwnPostsUseCase: GetOwnPostsUseCase,
+    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -39,7 +39,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private suspend fun getInstanceDomain() {
-        getOwnInstanceDomain().collect { res ->
+        getOwnInstanceDomainUseCase().collect { res ->
             ownDomain = res
         }
     }
@@ -50,7 +50,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private fun getAccount() {
-        getOwnAccount().onEach { result ->
+        getOwnAccountUseCase().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)
@@ -68,7 +68,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private fun getPostsFirstLoad() {
-        getOwnPosts().onEach { result ->
+        getOwnPostsUseCase().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -88,7 +88,7 @@ class OwnProfileViewModel @Inject constructor(
 
     fun getPostsPaginated() {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getOwnPosts(postsState.posts.last().id).onEach { result ->
+            getOwnPostsUseCase(postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT

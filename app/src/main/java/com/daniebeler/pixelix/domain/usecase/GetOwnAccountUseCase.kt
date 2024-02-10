@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class GetOwnAccount(
+class GetOwnAccountUseCase(
     private val repository: CountryRepository
 ) {
     operator fun invoke(): Flow<Resource<Account>> = flow {

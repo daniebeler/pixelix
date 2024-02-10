@@ -5,7 +5,7 @@ import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetTrendingAccounts(
+class GetTrendingAccountsUseCase(
     private val repository: CountryRepository
 ) {
     operator fun invoke(): Flow<Resource<List<Account>>> {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class GetTrendingPosts(
+class GetTrendingPostsUseCase(
     private val repository: CountryRepository, private val storageRepository: StorageRepository
 ) {
     operator fun invoke(timeRange: String): Flow<Resource<List<Post>>> = flow {

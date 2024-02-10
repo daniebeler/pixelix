@@ -4,11 +4,11 @@ import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
-import com.daniebeler.pixelix.domain.usecase.GetAccount
+import com.daniebeler.pixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetMutualFollowersUseCase
-import com.daniebeler.pixelix.domain.usecase.GetOwnAccount
-import com.daniebeler.pixelix.domain.usecase.GetOwnPosts
-import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccount
+import com.daniebeler.pixelix.domain.usecase.GetOwnAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.GetOwnPostsUseCase
+import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.UnblockAccountUseCase
@@ -26,24 +26,24 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAccountUseCase(repository: CountryRepository): GetAccount = GetAccount(repository)
+    fun provideGetAccountUseCase(repository: CountryRepository): GetAccountUseCase = GetAccountUseCase(repository)
 
     @Provides
     @Singleton
-    fun provideGetOwnAccountUseCase(repository: CountryRepository): GetOwnAccount =
-        GetOwnAccount(repository)
+    fun provideGetOwnAccountUseCase(repository: CountryRepository): GetOwnAccountUseCase =
+        GetOwnAccountUseCase(repository)
 
 
     @Provides
     @Singleton
-    fun provideGetOwnPostsUseCase(repository: CountryRepository): GetOwnPosts =
-        GetOwnPosts(repository)
+    fun provideGetOwnPostsUseCase(repository: CountryRepository): GetOwnPostsUseCase =
+        GetOwnPostsUseCase(repository)
 
     @Provides
     @Singleton
     fun provideGetPostsOfAccountUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetPostsOfAccount = GetPostsOfAccount(repository, storageRepository)
+    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(repository, storageRepository)
 
     @Provides
     @Singleton

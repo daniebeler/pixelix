@@ -1,7 +1,7 @@
 package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.domain.usecase.GetNotifications
+import com.daniebeler.pixelix.domain.usecase.GetNotificationsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +15,6 @@ class NotificationUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetNotificationsUseCase(repository: CountryRepository): GetNotifications =
-        GetNotifications(repository)
+    fun provideGetNotificationsUseCase(repository: CountryRepository): GetNotificationsUseCase =
+        GetNotificationsUseCase(repository)
 }

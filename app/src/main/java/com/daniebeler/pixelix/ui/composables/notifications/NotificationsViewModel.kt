@@ -7,8 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
-import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.domain.usecase.GetNotifications
+import com.daniebeler.pixelix.domain.usecase.GetNotificationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
-    private val getNotifications: GetNotifications
+    private val getNotificationsUseCase: GetNotificationsUseCase
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
@@ -26,7 +25,7 @@ class NotificationsViewModel @Inject constructor(
     }
 
     private fun getNotificationsFirstLoad(refreshing: Boolean) {
-        getNotifications().onEach { result ->
+        getNotificationsUseCase().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT
@@ -50,7 +49,7 @@ class NotificationsViewModel @Inject constructor(
 
     fun getNotificationsPaginated() {
         if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading && !notificationsState.endReached) {
-            getNotifications(notificationsState.notifications.last().id).onEach { result ->
+            getNotificationsUseCase(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT

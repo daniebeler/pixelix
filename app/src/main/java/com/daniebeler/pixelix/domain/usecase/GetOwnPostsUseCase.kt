@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class GetOwnPosts(
+class GetOwnPostsUseCase(
     private val repository: CountryRepository
 ) {
     operator fun invoke(maxPostId: String = ""): Flow<Resource<List<Post>>> = flow {

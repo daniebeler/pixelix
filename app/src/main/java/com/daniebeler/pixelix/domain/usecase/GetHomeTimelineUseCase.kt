@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class GetHomeTimeline(
+class GetHomeTimelineUseCase(
     private val repository: CountryRepository,
     private val storageRepository: StorageRepository
 ) {

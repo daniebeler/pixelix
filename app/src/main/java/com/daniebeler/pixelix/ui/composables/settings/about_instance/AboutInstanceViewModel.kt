@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.usecase.GetInstanceUseCase
-import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomain
+import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AboutInstanceViewModel @Inject constructor(
     private val getInstanceUseCase: GetInstanceUseCase,
-    private val getOwnInstanceDomain: GetOwnInstanceDomain
+    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase
 ) : ViewModel() {
 
     var instanceState by mutableStateOf(InstanceState())
@@ -32,7 +32,7 @@ class AboutInstanceViewModel @Inject constructor(
     }
 
     private suspend fun getInstanceDomain() {
-        getOwnInstanceDomain().collect { res ->
+        getOwnInstanceDomainUseCase().collect { res ->
             ownInstanceDomain = res
         }
     }

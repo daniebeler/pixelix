@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.usecase.GetRelationshipsUseCase
-import com.daniebeler.pixelix.domain.usecase.GetTrendingAccounts
+import com.daniebeler.pixelix.domain.usecase.GetTrendingAccountsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingAccountsViewModel @Inject constructor(
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
-    private val getTrendingAccounts: GetTrendingAccounts
+    private val getTrendingAccountsUseCase: GetTrendingAccountsUseCase
 ) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
     var accountRelationShipsState by mutableStateOf(AccountRelationshipsState())
@@ -27,7 +27,7 @@ class TrendingAccountsViewModel @Inject constructor(
     }
 
     fun getTrendingAccountsState(refreshing: Boolean = false) {
-        getTrendingAccounts().onEach { result ->
+        getTrendingAccountsUseCase().onEach { result ->
             trendingAccountsState = when (result) {
                 is Resource.Success -> {
                     result.data?.let { getRelationships(it) }

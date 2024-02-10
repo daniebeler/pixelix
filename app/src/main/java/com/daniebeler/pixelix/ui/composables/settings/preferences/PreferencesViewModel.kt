@@ -7,18 +7,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pixelix.domain.usecase.GetHideSensitiveContent
-import com.daniebeler.pixelix.domain.usecase.Logout
-import com.daniebeler.pixelix.domain.usecase.StoreHideSensitiveContent
+import com.daniebeler.pixelix.domain.usecase.GetHideSensitiveContentUseCase
+import com.daniebeler.pixelix.domain.usecase.LogoutUseCase
+import com.daniebeler.pixelix.domain.usecase.StoreHideSensitiveContentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
-    private val storeHideSensitiveContentUseCase: StoreHideSensitiveContent,
-    private val getHideSensitiveContent: GetHideSensitiveContent,
-    private val logoutUseCase: Logout
+    private val storeHideSensitiveContentUseCase: StoreHideSensitiveContentUseCase,
+    private val getHideSensitiveContentUseCase: GetHideSensitiveContentUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
     var isSensitiveContentHidden by mutableStateOf(true)
 
@@ -28,7 +28,7 @@ class PreferencesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getHideSensitiveContent().collect { res ->
+            getHideSensitiveContentUseCase().collect { res ->
                 isSensitiveContentHidden = res
             }
         }

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.usecase.FollowHashtagUseCase
-import com.daniebeler.pixelix.domain.usecase.GetHashtagTimeline
+import com.daniebeler.pixelix.domain.usecase.GetHashtagTimelineUseCase
 import com.daniebeler.pixelix.domain.usecase.GetHashtagUseCase
 import com.daniebeler.pixelix.domain.usecase.UnfollowHashtagUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,14 +21,14 @@ class HashtagTimelineViewModel @Inject constructor(
     private val getHashtagUseCase: GetHashtagUseCase,
     private val followHashtagUseCase: FollowHashtagUseCase,
     private val unfollowHashtagUseCase: UnfollowHashtagUseCase,
-    private val getHashtagTimeline: GetHashtagTimeline
+    private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
-        getHashtagTimeline(hashtag).onEach { result ->
+        getHashtagTimelineUseCase(hashtag).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached =
@@ -66,7 +66,7 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated(hashtag: String) {
         if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getHashtagTimeline(hashtag, postsState.hashtagTimeline.last().id).onEach { result ->
+            getHashtagTimelineUseCase(hashtag, postsState.hashtagTimeline.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) == 0

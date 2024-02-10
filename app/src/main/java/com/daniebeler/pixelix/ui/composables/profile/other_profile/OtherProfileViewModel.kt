@@ -9,9 +9,9 @@ import com.daniebeler.pixelix.common.Constants
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
-import com.daniebeler.pixelix.domain.usecase.GetAccount
+import com.daniebeler.pixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetMutualFollowersUseCase
-import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccount
+import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.UnblockAccountUseCase
@@ -28,8 +28,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
-    private val getAccountUseCase: GetAccount,
-    private val getPostsOfAccount: GetPostsOfAccount,
+    private val getAccountUseCase: GetAccountUseCase,
+    private val getPostsOfAccountUseCase: GetPostsOfAccountUseCase,
     private val followAccountUseCase: FollowAccountUseCase,
     private val unfollowAccountUseCase: UnfollowAccountUseCase,
     private val muteAccountUseCase: MuteAccountUseCase,
@@ -129,7 +129,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getPostsFirstLoad(userId: String) {
-        getPostsOfAccount(userId).onEach { result ->
+        getPostsOfAccountUseCase(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -149,7 +149,7 @@ class OtherProfileViewModel @Inject constructor(
 
     fun getPostsPaginated(userId: String) {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getPostsOfAccount(userId, postsState.posts.last().id).onEach { result ->
+            getPostsOfAccountUseCase(userId, postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT

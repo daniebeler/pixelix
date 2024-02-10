@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.repository.CountryRepository
-import com.daniebeler.pixelix.domain.usecase.GetAccount
+import com.daniebeler.pixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowersViewModel @Inject constructor(
     private val repository: CountryRepository,
-    private val getAccountUseCase: GetAccount
+    private val getAccountUseCase: GetAccountUseCase
 ): ViewModel() {
 
     var accountState by mutableStateOf(AccountState())

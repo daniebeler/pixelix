@@ -2,10 +2,10 @@ package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
-import com.daniebeler.pixelix.domain.usecase.GetGlobalTimeline
-import com.daniebeler.pixelix.domain.usecase.GetHashtagTimeline
-import com.daniebeler.pixelix.domain.usecase.GetHomeTimeline
-import com.daniebeler.pixelix.domain.usecase.GetLocalTimeline
+import com.daniebeler.pixelix.domain.usecase.GetGlobalTimelineUseCase
+import com.daniebeler.pixelix.domain.usecase.GetHashtagTimelineUseCase
+import com.daniebeler.pixelix.domain.usecase.GetHomeTimelineUseCase
+import com.daniebeler.pixelix.domain.usecase.GetLocalTimelineUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,23 +21,23 @@ class TimelineUseCaseModule {
     @Singleton
     fun provideGetHomeTimelineUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetHomeTimeline = GetHomeTimeline(repository, storageRepository)
+    ): GetHomeTimelineUseCase = GetHomeTimelineUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetLocalTimelineUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetLocalTimeline = GetLocalTimeline(repository, storageRepository)
+    ): GetLocalTimelineUseCase = GetLocalTimelineUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetGlobalTimelineUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetGlobalTimeline = GetGlobalTimeline(repository, storageRepository)
+    ): GetGlobalTimelineUseCase = GetGlobalTimelineUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetHashtagTimelineUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetHashtagTimeline = GetHashtagTimeline(repository, storageRepository)
+    ): GetHashtagTimelineUseCase = GetHashtagTimelineUseCase(repository, storageRepository)
 }

@@ -2,9 +2,9 @@ package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
-import com.daniebeler.pixelix.domain.usecase.GetTrendingAccounts
-import com.daniebeler.pixelix.domain.usecase.GetTrendingHashtags
-import com.daniebeler.pixelix.domain.usecase.GetTrendingPosts
+import com.daniebeler.pixelix.domain.usecase.GetTrendingAccountsUseCase
+import com.daniebeler.pixelix.domain.usecase.GetTrendingHashtagsUseCase
+import com.daniebeler.pixelix.domain.usecase.GetTrendingPostsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,15 +20,15 @@ class TrendingUseCaseModule {
     @Singleton
     fun provideGetTrendingPostsUseCase(
         repository: CountryRepository, storageRepository: StorageRepository
-    ): GetTrendingPosts = GetTrendingPosts(repository, storageRepository)
+    ): GetTrendingPostsUseCase = GetTrendingPostsUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
-    fun provideGetTrendingAccountsUseCase(repository: CountryRepository): GetTrendingAccounts =
-        GetTrendingAccounts(repository)
+    fun provideGetTrendingAccountsUseCase(repository: CountryRepository): GetTrendingAccountsUseCase =
+        GetTrendingAccountsUseCase(repository)
 
     @Provides
     @Singleton
-    fun provideGetTrendingHashtagsUseCase(repository: CountryRepository): GetTrendingHashtags =
-        GetTrendingHashtags(repository)
+    fun provideGetTrendingHashtagsUseCase(repository: CountryRepository): GetTrendingHashtagsUseCase =
+        GetTrendingHashtagsUseCase(repository)
 }

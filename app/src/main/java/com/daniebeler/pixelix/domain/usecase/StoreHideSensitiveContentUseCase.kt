@@ -2,7 +2,7 @@ package com.daniebeler.pixelix.domain.usecase
 
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 
-class StoreHideSensitiveContent(
+class StoreHideSensitiveContentUseCase(
     private val storageRepository: StorageRepository
 ) {
 
