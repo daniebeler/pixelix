@@ -143,6 +143,7 @@ class CountryRepositoryImpl @Inject constructor(
         userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
         }
+        this.accessToken = accessToken
     }
 
     override suspend fun storeAccountId(accountId: String) {

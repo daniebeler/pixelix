@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -33,8 +32,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-
-    private val mainViewModel: MainViewModel by viewModels()
 
     @Inject
     lateinit var obtainTokenUseCase: ObtainTokenUseCase

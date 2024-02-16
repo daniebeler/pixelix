@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -31,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.ui.composables.HomeComposable
 import com.daniebeler.pixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pixelix.ui.composables.newpost.NewPostComposable
@@ -51,18 +51,19 @@ import com.daniebeler.pixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pixelix.ui.theme.PixelixTheme
 import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val mainViewModel: MainViewModel by viewModels()
+    @Inject
+    lateinit var repository: CountryRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        if (!mainViewModel.doesTokenExist()) {
+        if (!repository.doesAccessTokenExist()) {
             gotoLoginActivity(this@MainActivity)
         } else {
             setContent {
@@ -76,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(paddingValues)
                         ) {
                             NavigationGraph(
-                                navController = navController, viewModel = mainViewModel
+                                navController = navController
                             )
                         }
                     }
@@ -168,7 +169,7 @@ sealed class Destinations(
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel) {
+fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = Destinations.HomeScreen.route) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
