@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.ui.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -50,7 +53,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginComposable(isLoading: Boolean, error: String, viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginComposable(
+    isLoading: Boolean, error: String, viewModel: LoginViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -83,8 +88,7 @@ fun LoginComposable(isLoading: Boolean, error: String, viewModel: LoginViewModel
                 }
             } else {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    OutlinedTextField(
-                        value = viewModel.customUrl,
+                    OutlinedTextField(value = viewModel.customUrl,
                         onValueChange = {
                             viewModel.customUrl = it
                             viewModel.domainChanged()
@@ -100,44 +104,60 @@ fun LoginComposable(isLoading: Boolean, error: String, viewModel: LoginViewModel
                         ),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                                CoroutineScope(Dispatchers.Default).launch {
-                                    viewModel.login(viewModel.customUrl, context)
-                                }
-                            }
-                        )
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Button(
-                        onClick = {
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
                             CoroutineScope(Dispatchers.Default).launch {
                                 viewModel.login(viewModel.customUrl, context)
                             }
-                        },
-                        Modifier
-                            .height(56.dp)
-                            .width(56.dp)
-                            .padding(0.dp, 0.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(12.dp),
-                        enabled = viewModel.isValidUrl
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "submit",
+                        })
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    if (viewModel.loading) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .height(56.dp)
+                                .width(56.dp)
+                                .padding(0.dp, 0.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.primary)
+
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    viewModel.login(viewModel.customUrl, context)
+                                }
+                            },
                             Modifier
-                                .fillMaxSize()
-                                .fillMaxWidth()
-                        )
+                                .height(56.dp)
+                                .width(56.dp)
+                                .padding(0.dp, 0.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(12.dp),
+                            enabled = viewModel.isValidUrl
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "submit",
+                                Modifier
+                                    .fillMaxSize()
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
+
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = stringResource(R.string.i_don_t_have_an_account),
+                    Text(text = stringResource(R.string.i_don_t_have_an_account),
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
                             .align(Alignment.Center)
