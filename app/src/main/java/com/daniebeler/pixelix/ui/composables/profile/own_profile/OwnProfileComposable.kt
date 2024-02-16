@@ -151,31 +151,3 @@ fun CustomProfilePage(
             }) { refresh() }
     }
 }
-
-@Composable
-fun CustomSettingsElement(
-    icon: ImageVector, text: String, smallText: String = "", onClick: () -> Unit
-) {
-
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "",
-            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text)
-            if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp)
-            }
-        }
-    }
-}

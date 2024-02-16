@@ -2,6 +2,7 @@ package com.daniebeler.pixelix.ui.composables.settings.preferences
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -46,7 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pixelix.LoginActivity
 import com.daniebeler.pixelix.R
-import com.daniebeler.pixelix.ui.composables.profile.own_profile.CustomSettingsElement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,24 +92,29 @@ fun PreferencesComposable(
         Column(
             Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 18.dp)
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
-            CustomPreferencesItem(
+            SwitchPreferencesItem(
                 Icons.Outlined.NoAdultContent,
                 stringResource(R.string.hide_sensitive_content),
                 viewModel.isSensitiveContentHidden
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
-            CustomSettingsElement(icon = Icons.Outlined.Save,
+            ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
                 smallText = viewModel.cacheSize,
                 onClick = {
                     deleteCache(context, viewModel = viewModel)
                 })
 
-            CustomSettingsElement(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
+            ButtonPreferencesItem(icon = Icons.Outlined.Settings,
+                text = stringResource(R.string.more_settings),
+                onClick = {
+                    viewModel.openMoreSettingsPage(context)
+                })
+
+            ButtonPreferencesItem(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
                 R.string.logout
             ), onClick = {
                 showLogoutDialog.value = true
@@ -155,11 +161,13 @@ fun PreferencesComposable(
 }
 
 @Composable
-fun CustomPreferencesItem(
+private fun SwitchPreferencesItem(
     icon: ImageVector, text: String, isChecked: Boolean, onCheckedChange: (checked: Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -172,6 +180,34 @@ fun CustomPreferencesItem(
     }
 }
 
+@Composable
+private fun ButtonPreferencesItem(
+    icon: ImageVector, text: String, smallText: String = "", onClick: () -> Unit
+) {
+
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "",
+            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(text = text)
+            if (smallText.isNotBlank()) {
+                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp)
+            }
+        }
+    }
+}
+
 private fun getCacheSize(context: Context, settingsViewModel: PreferencesViewModel) {
     val cacheInbytes: Long =
         context.cacheDir.walkBottomUp().fold(0L, { acc, file -> acc + file.length() })
@@ -179,7 +215,7 @@ private fun getCacheSize(context: Context, settingsViewModel: PreferencesViewMod
     settingsViewModel.cacheSize = humanReadableByteCountSI(cacheInbytes)
 }
 
-fun humanReadableByteCountSI(bytes: Long): String {
+private fun humanReadableByteCountSI(bytes: Long): String {
     var bytes = bytes
     if (-1000 < bytes && bytes < 1000) {
         return "$bytes B"
