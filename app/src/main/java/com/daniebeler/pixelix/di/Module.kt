@@ -5,17 +5,20 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pixelix.data.repository.StorageRepositoryImpl
+import com.daniebeler.pixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
+import com.daniebeler.pixelix.domain.repository.TimelineRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -43,20 +46,34 @@ class Module {
 
     @Provides
     @Singleton
-    fun provideHostSelectionInterceptor(): HostSelectionInterceptorInterface = HostSelectionInterceptor()
+    fun provideTimelineRepository(
+        pixelfedApi: PixelfedApi
+    ): TimelineRepository = TimelineRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun provideHostSelectionInterceptor(): HostSelectionInterceptorInterface =
+        HostSelectionInterceptor()
 
     @Provides
     @Singleton
     fun provideApiRepository(
-        dataStore: DataStore<Preferences>, retrofit: Retrofit, hostSelectionInterceptor: HostSelectionInterceptorInterface
-    ): CountryRepository = CountryRepositoryImpl(dataStore, retrofit, hostSelectionInterceptor)
-
+        dataStore: DataStore<Preferences>,
+        hostSelectionInterceptor: HostSelectionInterceptorInterface,
+        pixelfedApi: PixelfedApi
+    ): CountryRepository = CountryRepositoryImpl(dataStore, hostSelectionInterceptor, pixelfedApi)
 
 
     @Provides
     @Singleton
-    fun provideOKHttpClient(hostSelectionInterceptor: HostSelectionInterceptorInterface): OkHttpClient =
-        OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor).build()
+    fun provideOKHttpClient(hostSelectionInterceptor: HostSelectionInterceptorInterface): OkHttpClient {
+
+        var loggi = HttpLoggingInterceptor()
+        loggi.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor)
+            .addInterceptor(loggi).build()
+    }
 
 
     @Provides
@@ -64,5 +81,11 @@ class Module {
     fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder().addConverterFactory(
         GsonConverterFactory.create()
     ).client(client).baseUrl("https://pixelfed.fief/").build()
+
+
+    @Provides
+    @Singleton
+    fun providePixelfedApi(retrofit: Retrofit): PixelfedApi =
+        retrofit.create(PixelfedApi::class.java)
 
 }

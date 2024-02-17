@@ -33,7 +33,6 @@ interface CountryRepository {
     suspend fun storeAccountId(accountId: String)
     suspend fun getAccountId(): Flow<String>
     fun getAccessTokenFromStorage(): Flow<String>
-    fun setBaseUrl(url: String)
     fun setAccessToken(token: String)
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
@@ -43,7 +42,6 @@ interface CountryRepository {
     fun getHashtagTimeline(hashtag: String, maxId: String = ""): Flow<Resource<List<Post>>>
     fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
-    fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
     fun getLikedPosts(maxId: String = ""): Flow<Resource<LikedPostsWithNext>>
     fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>

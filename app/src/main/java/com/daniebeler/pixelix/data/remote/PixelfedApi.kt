@@ -76,11 +76,11 @@ interface PixelfedApi {
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    fun getHomeTimeline(@Header("Authorization") accessToken: String): Call<List<PostDto>>
+    fun getHomeTimeline(): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(
-        @Query("max_id") maxPostId: String, @Header("Authorization") accessToken: String
+        @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
 
@@ -92,8 +92,7 @@ interface PixelfedApi {
 
     @GET("api/v1/favourites/?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(
-        @Header("Authorization") accessToken: String,
-        @Query("max_id") maxId: String
+        @Header("Authorization") accessToken: String, @Query("max_id") maxId: String
     ): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)

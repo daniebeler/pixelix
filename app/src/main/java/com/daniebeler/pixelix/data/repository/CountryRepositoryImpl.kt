@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.data.repository
 
-import HostSelectionInterceptor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -47,37 +46,31 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
 class CountryRepositoryImpl @Inject constructor(
     private val userDataStorePreferences: DataStore<Preferences>,
-    private val retrofitInjected: Retrofit,
-    private val hostSelectionInterceptor: HostSelectionInterceptorInterface
+    private val hostSelectionInterceptor: HostSelectionInterceptorInterface,
+    private val pixelfedApi: PixelfedApi
 ) : CountryRepository {
 
-    private var baseUrl = ""
     private var accessToken: String = ""
 
-    private lateinit var pixelfedApi: PixelfedApi
 
     init {
         runBlocking {
             val accessTokenFromStorage = getAccessTokenFromStorage().first()
             if (accessTokenFromStorage.isNotEmpty()) {
                 accessToken = "Bearer $accessTokenFromStorage"
+                hostSelectionInterceptor.setToken(accessTokenFromStorage)
             }
             val baseUrlFromStorage = getBaseUrlFromStorage().first()
             if (baseUrlFromStorage.isNotEmpty()) {
@@ -85,17 +78,11 @@ class CountryRepositoryImpl @Inject constructor(
                 println("fief: " + baseUrlFromStorage)
                 hostSelectionInterceptor.setHost(baseUrlFromStorage.replace("https://", ""))
 
-                baseUrl = baseUrlFromStorage
-                pixelfedApi = buildPixelFedApi(false)
             }
         }
     }
 
-    private fun buildPixelFedApi(imageUpload: Boolean): PixelfedApi {
-        // OkHttpClient.Builder().writeTimeout(25, TimeUnit.SECONDS) wenn imageupload true ist
 
-        return retrofitInjected.create(PixelfedApi::class.java)
-    }
 
     override fun doesAccessTokenExist(): Boolean {
         return accessToken.isNotEmpty()
@@ -108,11 +95,11 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun storeBaseUrl(url: String) {
+        val host = url.replace("https://", "")
         userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = url
+            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = host
         }
-        baseUrl = url
-        hostSelectionInterceptor.setHost(url.replace("https://", ""))
+        hostSelectionInterceptor.setHost(host)
     }
 
     override fun getClientIdFromStorage(): Flow<String> =
@@ -159,10 +146,6 @@ class CountryRepositoryImpl @Inject constructor(
         userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
         }
-
-    override fun setBaseUrl(url: String) {
-        baseUrl = url
-    }
 
     override fun setAccessToken(token: String) {
         this.accessToken = token
@@ -228,17 +211,7 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
-        return if (maxPostId.isNotEmpty()) {
-            NetworkCall<Post, PostDto>().makeCallList(
-                pixelfedApi.getHomeTimeline(
-                    maxPostId, accessToken
-                )
-            )
-        } else {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getHomeTimeline(accessToken))
-        }
-    }
+
 
     override fun getLikedPosts(maxId: String): Flow<Resource<LikedPostsWithNext>> = flow {
         try {
@@ -531,7 +504,7 @@ class CountryRepositoryImpl @Inject constructor(
         try {
             emit(Resource.Loading())
 
-            val pixelfedApi = buildPixelFedApi(true)
+            //val pixelfedApi = buildPixelFedApi(true)
 
             val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
 
