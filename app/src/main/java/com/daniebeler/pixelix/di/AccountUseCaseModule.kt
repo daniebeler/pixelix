@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.di
 
+import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
@@ -29,19 +30,20 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAccountUseCase(repository: CountryRepository): GetAccountUseCase =
-        GetAccountUseCase(repository)
+    fun provideGetAccountUseCase(accountRepository: AccountRepository): GetAccountUseCase =
+        GetAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideGetOwnAccountUseCase(repository: CountryRepository): GetOwnAccountUseCase =
-        GetOwnAccountUseCase(repository)
+    fun provideGetOwnAccountUseCase(
+        storageRepository: StorageRepository, accountRepository: AccountRepository
+    ): GetOwnAccountUseCase = GetOwnAccountUseCase(storageRepository, accountRepository)
 
 
     @Provides
     @Singleton
-    fun provideGetOwnPostsUseCase(repository: CountryRepository): GetOwnPostsUseCase =
-        GetOwnPostsUseCase(repository)
+    fun provideGetOwnPostsUseCase(countryRepository: CountryRepository, storageRepository: StorageRepository): GetOwnPostsUseCase =
+        GetOwnPostsUseCase(countryRepository, storageRepository)
 
     @Provides
     @Singleton
@@ -51,33 +53,33 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideFollowAccountUseCase(repository: CountryRepository): FollowAccountUseCase =
-        FollowAccountUseCase(repository)
+    fun provideFollowAccountUseCase(accountRepository: AccountRepository): FollowAccountUseCase =
+        FollowAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideUnfollowAccountUseCase(repository: CountryRepository): UnfollowAccountUseCase =
-        UnfollowAccountUseCase(repository)
+    fun provideUnfollowAccountUseCase(accountRepository: AccountRepository): UnfollowAccountUseCase =
+        UnfollowAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideMuteAccountUseCase(repository: CountryRepository): MuteAccountUseCase =
-        MuteAccountUseCase(repository)
+    fun provideMuteAccountUseCase(accountRepository: AccountRepository): MuteAccountUseCase =
+        MuteAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideUnmuteAccountUseCase(repository: CountryRepository): UnmuteAccountUseCase =
-        UnmuteAccountUseCase(repository)
+    fun provideUnmuteAccountUseCase(accountRepository: AccountRepository): UnmuteAccountUseCase =
+        UnmuteAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideBlockAccountUseCase(repository: CountryRepository): BlockAccountUseCase =
-        BlockAccountUseCase(repository)
+    fun provideBlockAccountUseCase(accountRepository: AccountRepository): BlockAccountUseCase =
+        BlockAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideUnblockAccountUseCase(repository: CountryRepository): UnblockAccountUseCase =
-        UnblockAccountUseCase(repository)
+    fun provideUnblockAccountUseCase(accountRepository: AccountRepository): UnblockAccountUseCase =
+        UnblockAccountUseCase(accountRepository)
 
     @Provides
     @Singleton
@@ -91,13 +93,13 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAccountsFollowersUseCase(repository: CountryRepository): GetAccountsFollowersUseCase =
-        GetAccountsFollowersUseCase(repository)
+    fun provideGetAccountsFollowersUseCase(accountRepository: AccountRepository): GetAccountsFollowersUseCase =
+        GetAccountsFollowersUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideGetAccountsFollowingUseCase(repository: CountryRepository): GetAccountsFollowingUseCase =
-        GetAccountsFollowingUseCase(repository)
+    fun provideGetAccountsFollowingUseCase(accountRepository: AccountRepository): GetAccountsFollowingUseCase =
+        GetAccountsFollowingUseCase(accountRepository)
 
     @Provides
     @Singleton

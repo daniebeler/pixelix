@@ -2,13 +2,13 @@ package com.daniebeler.pixelix.domain.usecase
 
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.Account
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetAccountsWhoLikedPostUseCase(
-    private val repository: CountryRepository
+    private val accountRepository: AccountRepository
 ) {
     operator fun invoke(postId: String): Flow<Resource<List<Account>>> {
-        return repository.getLikedBy(postId)
+        return accountRepository.getLikedBy(postId)
     }
 }

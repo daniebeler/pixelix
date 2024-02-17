@@ -12,4 +12,10 @@ interface StorageRepository {
 
     fun getAccountId(): Flow<String>
 
+    suspend fun storeClientId(clientId: String)
+    suspend fun storeClientSecret(clientSecret: String)
+    fun getClientSecretFromStorage(): Flow<String>
+    suspend fun storeAccountId(accountId: String)
+    fun getClientIdFromStorage(): Flow<String>
+
 }

@@ -1,9 +1,11 @@
 package com.daniebeler.pixelix.domain.usecase
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.StorageRepository
 
 class LogoutUseCase(
-    private val repository: CountryRepository
+    private val repository: CountryRepository,
+    private val storageRepository: StorageRepository
 ) {
     suspend operator fun invoke(accountId: String = "") {
         storeAccessToken("")
@@ -12,11 +14,11 @@ class LogoutUseCase(
     }
 
     private suspend fun storeClientId(clientId: String) {
-        repository.storeClientId(clientId)
+        storageRepository.storeClientId(clientId)
     }
 
     private suspend fun storeClientSecret(clientSecret: String) {
-        repository.storeClientSecret(clientSecret)
+        storageRepository.storeClientSecret(clientSecret)
     }
 
     private suspend fun storeAccessToken(accessToken: String) {

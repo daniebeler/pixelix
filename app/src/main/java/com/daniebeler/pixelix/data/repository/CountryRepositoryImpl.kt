@@ -86,12 +86,6 @@ class CountryRepositoryImpl @Inject constructor(
         return accessToken.isNotEmpty()
     }
 
-    override suspend fun storeClientId(clientId: String) {
-        userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] = clientId
-        }
-    }
-
     override suspend fun storeBaseUrl(url: String) {
         val host = url.replace("https://", "")
         userDataStorePreferences.edit { preferences ->
@@ -100,26 +94,14 @@ class CountryRepositoryImpl @Inject constructor(
         hostSelectionInterceptor.setHost(host)
     }
 
-    override fun getClientIdFromStorage(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
-        }
+
 
     override fun getBaseUrlFromStorage(): Flow<String> =
         userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
         }
 
-    override suspend fun storeClientSecret(clientSecret: String) {
-        userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] = clientSecret
-        }
-    }
 
-    override fun getClientSecretFromStorage(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
-        }
 
     override suspend fun storeAccessToken(accessToken: String) {
         this.accessToken = "Bearer $accessToken"
@@ -129,16 +111,7 @@ class CountryRepositoryImpl @Inject constructor(
         this.accessToken = accessToken
     }
 
-    override suspend fun storeAccountId(accountId: String) {
-        userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] = accountId
-        }
-    }
 
-    override suspend fun getAccountId(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.ACCOUNT_ID_DATASTORE_KEY)] ?: ""
-        }
 
     override fun getAccessTokenFromStorage(): Flow<String> =
         userDataStorePreferences.data.map { preferences ->
@@ -221,29 +194,7 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAccount(accountId: String): Flow<Resource<Account>> {
-        return NetworkCall<Account, AccountDto>().makeCall(
-            pixelfedApi.getAccount(
-                accountId
-            )
-        )
-    }
 
-    override fun followAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.followAccount(
-                accountId
-            )
-        )
-    }
-
-    override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.unfollowAccount(
-                accountId
-            )
-        )
-    }
 
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> {
         return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.followHashtag(tagId))
@@ -273,88 +224,7 @@ class CountryRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun muteAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.muteAccount(
-                accountId
-            )
-        )
-    }
 
-    override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.unmuteAccount(
-                accountId
-            )
-        )
-    }
-
-    override fun blockAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.blockAccount(
-                accountId
-            )
-        )
-    }
-
-    override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> {
-        return NetworkCall<Relationship, RelationshipDto>().makeCall(
-            pixelfedApi.unblockAccount(
-                accountId
-            )
-        )
-    }
-
-    override fun getAccountsFollowers(
-        accountId: String, maxId: String
-    ): Flow<Resource<List<Account>>> {
-        return if (maxId.isNotEmpty()) {
-            NetworkCall<Account, AccountDto>().makeCallList(
-                pixelfedApi.getAccountsFollowers(
-                    accountId, maxId
-                )
-            )
-        } else {
-            NetworkCall<Account, AccountDto>().makeCallList(
-                pixelfedApi.getAccountsFollowers(
-                    accountId
-                )
-            )
-        }
-    }
-
-    override fun getAccountsFollowing(
-        accountId: String, maxId: String
-    ): Flow<Resource<List<Account>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getAccountsFollowing(accountId, maxId).awaitResponse()
-            } else {
-                pixelfedApi.getAccountsFollowing(accountId).awaitResponse()
-            }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toModel() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error("Unknown Error"))
-        }
-    }
-
-    override fun getMutedAccounts(): Flow<Resource<List<Account>>> {
-        return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getMutedAccounts()
-        )
-    }
-
-    override fun getBlockedAccounts(): Flow<Resource<List<Account>>> {
-        return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getBlockedAccounts( )
-        )
-    }
 
 
     override fun getNotifications(maxNotificationId: String): Flow<Resource<List<Notification>>> =
@@ -397,13 +267,7 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> {
-        return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getAccountsWhoLikedPost(
-                postId
-            )
-        )
-    }
+
 
     override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCallList(

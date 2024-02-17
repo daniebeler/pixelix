@@ -67,12 +67,10 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                         Text(text = stringResource(R.string.posts), fontSize = 12.sp)
                     }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
                             Navigate().navigate(
-                                "followers_screen/" + "followers/" + account.id,
-                                navController
+                                "followers_screen/" + "followers/" + account.id, navController
                             )
                         }) {
                         Text(
@@ -83,12 +81,10 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                         Text(text = stringResource(R.string.followers), fontSize = 12.sp)
                     }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
                             Navigate().navigate(
-                                "followers_screen/" + "following/" + account.id,
-                                navController
+                                "followers_screen/" + "following/" + account.id, navController
                             )
                         }) {
                         Text(
@@ -101,9 +97,10 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = account.displayname, fontWeight = FontWeight.Bold)
-            Text(
-                text = "@" + account.acct,
+            if (account.displayname != null) {
+                Text(text = account.displayname, fontWeight = FontWeight.Bold)
+            }
+            Text(text = "@" + account.acct,
                 fontSize = 12.sp,
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(onLongPress = {
@@ -113,9 +110,7 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(
-                    text = account.note,
-                    mentions = null,
-                    navController = navController
+                    text = account.note, mentions = null, navController = navController
                 )
             }
 

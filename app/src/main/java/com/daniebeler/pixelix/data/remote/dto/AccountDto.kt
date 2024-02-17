@@ -14,7 +14,7 @@ data class AccountDto(
     @SerializedName("discoverable")
     val discoverable: Boolean,
     @SerializedName("display_name")
-    val displayName: String,
+    val displayName: String?,
     @SerializedName("followers_count")
     val followersCount: Int,
     @SerializedName("following_count")

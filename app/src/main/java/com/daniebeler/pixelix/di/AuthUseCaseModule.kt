@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.GetClientIdUseCase
 import com.daniebeler.pixelix.domain.usecase.GetClientSecretUseCase
 import com.daniebeler.pixelix.domain.usecase.ObtainTokenUseCase
@@ -24,13 +25,13 @@ class AuthUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetClientSecretUseCase(repository: CountryRepository): GetClientSecretUseCase =
-        GetClientSecretUseCase(repository)
+    fun provideGetClientSecretUseCase(storageRepository: StorageRepository): GetClientSecretUseCase =
+        GetClientSecretUseCase(storageRepository)
 
     @Provides
     @Singleton
-    fun provideGetClientIdUseCase(repository: CountryRepository): GetClientIdUseCase =
-        GetClientIdUseCase(repository)
+    fun provideGetClientIdUseCase(storageRepository: StorageRepository): GetClientIdUseCase =
+        GetClientIdUseCase(storageRepository)
 
     @Provides
     @Singleton
@@ -39,8 +40,8 @@ class AuthUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideStoreAccountIdUseCase(repository: CountryRepository): StoreAccountIdUseCase =
-        StoreAccountIdUseCase(repository)
+    fun provideStoreAccountIdUseCase(storageRepository: StorageRepository): StoreAccountIdUseCase =
+        StoreAccountIdUseCase(storageRepository)
 
     @Provides
     @Singleton

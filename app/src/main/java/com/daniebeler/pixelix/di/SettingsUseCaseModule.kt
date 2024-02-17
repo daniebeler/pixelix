@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.di
 
+import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.GetBlockedAccountsUseCase
@@ -32,7 +33,8 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLogoutUseCase(repository: CountryRepository): LogoutUseCase = LogoutUseCase(repository)
+    fun provideLogoutUseCase(repository: CountryRepository, storageRepository: StorageRepository): LogoutUseCase =
+        LogoutUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
@@ -41,13 +43,13 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetMutedAccountsUseCase(repository: CountryRepository): GetMutedAccountsUseCase =
-        GetMutedAccountsUseCase(repository)
+    fun provideGetMutedAccountsUseCase(accountRepository: AccountRepository): GetMutedAccountsUseCase =
+        GetMutedAccountsUseCase(accountRepository)
 
     @Provides
     @Singleton
-    fun provideGetBlockedAccountsUseCase(repository: CountryRepository): GetBlockedAccountsUseCase =
-        GetBlockedAccountsUseCase(repository)
+    fun provideGetBlockedAccountsUseCase(accountRepository: AccountRepository): GetBlockedAccountsUseCase =
+        GetBlockedAccountsUseCase(accountRepository)
 
     @Provides
     @Singleton

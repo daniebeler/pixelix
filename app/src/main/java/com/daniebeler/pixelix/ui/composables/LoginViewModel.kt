@@ -7,13 +7,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pixelix.domain.model.Application
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.utils.Navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: CountryRepository
+    private val repository: CountryRepository,
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
 
     private val domainRegex: Regex = "^(https:\\/\\/www\\.|https:\\/\\/)?[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})(\\.[a-zA-Z0-9]{2,})?$".toRegex()
@@ -28,8 +30,8 @@ class LoginViewModel @Inject constructor(
     private suspend fun registerApplication(): String {
         _authApplication = repository.createApplication()
         if (_authApplication != null) {
-            repository.storeClientId(_authApplication!!.clientId)
-            repository.storeClientSecret(_authApplication!!.clientSecret)
+            storageRepository.storeClientId(_authApplication!!.clientId)
+            storageRepository.storeClientSecret(_authApplication!!.clientSecret)
             return _authApplication!!.clientId
         }
         return ""

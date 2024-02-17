@@ -6,9 +6,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixelix.data.remote.PixelfedApi
+import com.daniebeler.pixelix.data.repository.AccountRepositoryImpl
 import com.daniebeler.pixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pixelix.data.repository.TimelineRepositoryImpl
+import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.repository.TimelineRepository
@@ -52,6 +54,12 @@ class Module {
 
     @Provides
     @Singleton
+    fun provideAccountRepository(
+        pixelfedApi: PixelfedApi
+    ): AccountRepository = AccountRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
     fun provideHostSelectionInterceptor(): HostSelectionInterceptorInterface =
         HostSelectionInterceptor()
 
@@ -71,8 +79,8 @@ class Module {
         var loggi = HttpLoggingInterceptor()
         loggi.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        return OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor)
-            .addInterceptor(loggi).build()
+        return OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor).addInterceptor(loggi)
+            .build()
     }
 
 

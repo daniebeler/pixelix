@@ -1,11 +1,11 @@
 package com.daniebeler.pixelix.domain.usecase
 
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.StorageRepository
 
 class StoreAccountIdUseCase(
-    private val repository: CountryRepository
+    private val storageRepository: StorageRepository
 ) {
     suspend operator fun invoke(accountId: String) {
-        return repository.storeAccountId(accountId)
+        return storageRepository.storeAccountId(accountId)
     }
 }

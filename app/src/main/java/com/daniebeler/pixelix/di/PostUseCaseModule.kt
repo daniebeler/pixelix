@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.di
 
+import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pixelix.domain.usecase.CreatePostUseCase
@@ -57,8 +58,8 @@ class PostUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAccountsWhoLikedPostUseCase(repository: CountryRepository): GetAccountsWhoLikedPostUseCase =
-        GetAccountsWhoLikedPostUseCase(repository)
+    fun provideGetAccountsWhoLikedPostUseCase(accountRepository: AccountRepository): GetAccountsWhoLikedPostUseCase =
+        GetAccountsWhoLikedPostUseCase(accountRepository)
 
     @Provides
     @Singleton
