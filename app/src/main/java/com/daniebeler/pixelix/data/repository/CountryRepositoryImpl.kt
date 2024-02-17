@@ -50,7 +50,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -81,7 +80,6 @@ class CountryRepositoryImpl @Inject constructor(
             }
         }
     }
-
 
 
     override fun doesAccessTokenExist(): Boolean {
@@ -156,18 +154,16 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
     override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> {
-        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getTrendingHashtags(accessToken))
+        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getTrendingHashtags())
     }
 
     override fun getHashtag(hashtag: String): Flow<Resource<Tag>> {
-        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.getHashtag(hashtag, accessToken))
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.getHashtag(hashtag))
     }
 
     override fun getTrendingAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getTrendingAccounts(
-                accessToken
-            )
+            pixelfedApi.getTrendingAccounts()
         )
     }
 
@@ -175,13 +171,13 @@ class CountryRepositoryImpl @Inject constructor(
         return if (maxId.isNotEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getHashtagTimeline(
-                    hashtag, accessToken, maxId
+                    hashtag, maxId
                 )
             )
         } else {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getHashtagTimeline(
-                    hashtag, accessToken
+                    hashtag
                 )
             )
         }
@@ -191,11 +187,11 @@ class CountryRepositoryImpl @Inject constructor(
         return if (maxPostId.isNotEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getLocalTimeline(
-                    maxPostId, accessToken
+                    maxPostId
                 )
             )
         } else {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLocalTimeline(accessToken))
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLocalTimeline())
         }
     }
 
@@ -203,23 +199,22 @@ class CountryRepositoryImpl @Inject constructor(
         return if (maxPostId.isNotEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getGlobalTimeline(
-                    maxPostId, accessToken
+                    maxPostId
                 )
             )
         } else {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getGlobalTimeline(accessToken))
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getGlobalTimeline())
         }
     }
-
 
 
     override fun getLikedPosts(maxId: String): Flow<Resource<LikedPostsWithNext>> = flow {
         try {
             emit(Resource.Loading())
             val response = if (maxId.isNotBlank()) {
-                pixelfedApi.getLikedPosts(accessToken, maxId).awaitResponse()
+                pixelfedApi.getLikedPosts(maxId).awaitResponse()
             } else {
-                pixelfedApi.getLikedPosts(accessToken).awaitResponse()
+                pixelfedApi.getLikedPosts().awaitResponse()
             }
 
             if (response.isSuccessful) {
@@ -245,11 +240,11 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
     override fun getBookmarkedPosts(): Flow<Resource<List<Post>>> {
-        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getBookmarkedPosts(accessToken))
+        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getBookmarkedPosts())
     }
 
     override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> {
-        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getFollowedHashtags(accessToken))
+        return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getFollowedHashtags())
     }
 
     override fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>> = flow {
@@ -270,7 +265,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun getAccount(accountId: String): Flow<Resource<Account>> {
         return NetworkCall<Account, AccountDto>().makeCall(
             pixelfedApi.getAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -278,7 +273,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun followAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.followAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -286,35 +281,35 @@ class CountryRepositoryImpl @Inject constructor(
     override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.unfollowAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
 
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> {
-        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.followHashtag(tagId, accessToken))
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.followHashtag(tagId))
     }
 
     override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> {
-        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.unfollowHashtag(tagId, accessToken))
+        return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.unfollowHashtag(tagId))
     }
 
     override fun likePost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.likePost(postId, accessToken))
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.likePost(postId))
     }
 
     override fun unlikePost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unlikePost(postId, accessToken))
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unlikePost(postId))
     }
 
     override fun bookmarkPost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.bookmarkPost(postId, accessToken))
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.bookmarkPost(postId))
     }
 
     override fun unBookmarkPost(postId: String): Flow<Resource<Post>> {
         return NetworkCall<Post, PostDto>().makeCall(
             pixelfedApi.unbookmarkPost(
-                postId, accessToken
+                postId
             )
         )
     }
@@ -322,7 +317,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun muteAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.muteAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -330,7 +325,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.unmuteAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -338,7 +333,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun blockAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.blockAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -346,7 +341,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCall(
             pixelfedApi.unblockAccount(
-                accountId, accessToken
+                accountId
             )
         )
     }
@@ -357,13 +352,13 @@ class CountryRepositoryImpl @Inject constructor(
         return if (maxId.isNotEmpty()) {
             NetworkCall<Account, AccountDto>().makeCallList(
                 pixelfedApi.getAccountsFollowers(
-                    accountId, accessToken, maxId
+                    accountId, maxId
                 )
             )
         } else {
             NetworkCall<Account, AccountDto>().makeCallList(
                 pixelfedApi.getAccountsFollowers(
-                    accountId, accessToken
+                    accountId
                 )
             )
         }
@@ -375,9 +370,9 @@ class CountryRepositoryImpl @Inject constructor(
         try {
             emit(Resource.Loading())
             val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getAccountsFollowing(accountId, accessToken, maxId).awaitResponse()
+                pixelfedApi.getAccountsFollowing(accountId, maxId).awaitResponse()
             } else {
-                pixelfedApi.getAccountsFollowing(accountId, accessToken).awaitResponse()
+                pixelfedApi.getAccountsFollowing(accountId).awaitResponse()
             }
             if (response.isSuccessful) {
                 val res = response.body()?.map { it.toModel() } ?: emptyList()
@@ -392,17 +387,13 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun getMutedAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getMutedAccounts(
-                accessToken
-            )
+            pixelfedApi.getMutedAccounts()
         )
     }
 
     override fun getBlockedAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getBlockedAccounts(
-                accessToken
-            )
+            pixelfedApi.getBlockedAccounts( )
         )
     }
 
@@ -412,9 +403,9 @@ class CountryRepositoryImpl @Inject constructor(
             try {
                 emit(Resource.Loading())
                 val response = if (maxNotificationId.isNotEmpty()) {
-                    pixelfedApi.getNotifications(accessToken, maxNotificationId).awaitResponse()
+                    pixelfedApi.getNotifications(maxNotificationId).awaitResponse()
                 } else {
-                    pixelfedApi.getNotifications(accessToken).awaitResponse()
+                    pixelfedApi.getNotifications().awaitResponse()
                 }
 
                 if (response.isSuccessful) {
@@ -435,13 +426,13 @@ class CountryRepositoryImpl @Inject constructor(
         return if (maxPostId.isEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getPostsByAccountId(
-                    accountId, accessToken
+                    accountId
                 )
             )
         } else {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getPostsByAccountId(
-                    accountId, accessToken, maxPostId
+                    accountId, maxPostId
                 )
             )
         }
@@ -450,7 +441,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
             pixelfedApi.getAccountsWhoLikedPost(
-                accessToken, postId
+                postId
             )
         )
     }
@@ -458,7 +449,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> {
         return NetworkCall<Relationship, RelationshipDto>().makeCallList(
             pixelfedApi.getRelationships(
-                userIds, accessToken
+                userIds
             )
         )
     }
@@ -466,19 +457,19 @@ class CountryRepositoryImpl @Inject constructor(
     override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
             pixelfedApi.getMutalFollowers(
-                userId, accessToken
+                userId
             )
         )
     }
 
     override fun getPostById(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.getPostById(postId, accessToken))
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.getPostById(postId))
     }
 
     override fun search(searchText: String): Flow<Resource<Search>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getSearch(accessToken, searchText).awaitResponse()
+            val response = pixelfedApi.getSearch(searchText).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
@@ -530,8 +521,7 @@ class CountryRepositoryImpl @Inject constructor(
             }
 
             val requestBody: RequestBody = builder.build()
-            val response = pixelfedApi.uploadMedia(
-                accessToken, requestBody
+            val response = pixelfedApi.uploadMedia(requestBody
             ).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toModel()
@@ -565,7 +555,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>> {
         return NetworkCall<MediaAttachment, MediaAttachmentDto>().makeCall(
             pixelfedApi.updateMedia(
-                accessToken, id, description
+                id, description
             )
         )
     }
@@ -573,7 +563,7 @@ class CountryRepositoryImpl @Inject constructor(
     override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.createPost(accessToken, createPostDto)
+            val response = pixelfedApi.createPost(createPostDto)
             if (response != null) {
                 val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
@@ -590,15 +580,14 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun deletePost(postId: String): Flow<Resource<Post>> {
         return NetworkCall<Post, PostDto>().makeCall(
-            pixelfedApi.deletePost(
-                accessToken, postId
+            pixelfedApi.deletePost(postId
             )
         )
     }
 
     override fun createReply(postId: String, content: String): Flow<Resource<Post>> {
         val dto = CreateReplyDto(status = content, in_reply_to_id = postId)
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.createReply(accessToken, dto))
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.createReply(dto))
     }
 
 // Auth
