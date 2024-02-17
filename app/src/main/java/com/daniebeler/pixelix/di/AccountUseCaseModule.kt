@@ -90,8 +90,8 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetMutualFollowersUseCase(repository: CountryRepository): GetMutualFollowersUseCase =
-        GetMutualFollowersUseCase(repository)
+    fun provideGetMutualFollowersUseCase(accountRepository: AccountRepository): GetMutualFollowersUseCase =
+        GetMutualFollowersUseCase(accountRepository)
 
     @Provides
     @Singleton

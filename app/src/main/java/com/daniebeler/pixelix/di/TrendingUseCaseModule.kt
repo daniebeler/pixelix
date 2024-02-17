@@ -1,6 +1,7 @@
 package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.HashtagRepository
 import com.daniebeler.pixelix.domain.repository.PostRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.GetTrendingAccountsUseCase
@@ -30,6 +31,6 @@ class TrendingUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetTrendingHashtagsUseCase(repository: CountryRepository): GetTrendingHashtagsUseCase =
-        GetTrendingHashtagsUseCase(repository)
+    fun provideGetTrendingHashtagsUseCase(hashtagRepository: HashtagRepository): GetTrendingHashtagsUseCase =
+        GetTrendingHashtagsUseCase(hashtagRepository)
 }

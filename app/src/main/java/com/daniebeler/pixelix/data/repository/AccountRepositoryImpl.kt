@@ -15,11 +15,20 @@ import javax.inject.Inject
 
 class AccountRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi
-): AccountRepository {
+) : AccountRepository {
+
     override fun getAccount(accountId: String): Flow<Resource<Account>> {
         return NetworkCall<Account, AccountDto>().makeCall(
             pixelfedApi.getAccount(
                 accountId
+            )
+        )
+    }
+
+    override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> {
+        return NetworkCall<Account, AccountDto>().makeCallList(
+            pixelfedApi.getMutalFollowers(
+                userId
             )
         )
     }
@@ -80,7 +89,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override fun getBlockedAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
-            pixelfedApi.getBlockedAccounts( )
+            pixelfedApi.getBlockedAccounts()
         )
     }
 

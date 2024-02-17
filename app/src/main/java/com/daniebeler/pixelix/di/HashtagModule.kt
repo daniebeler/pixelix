@@ -1,6 +1,6 @@
 package com.daniebeler.pixelix.di
 
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.HashtagRepository
 import com.daniebeler.pixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pixelix.domain.usecase.GetFollowedHashtagsUseCase
 import com.daniebeler.pixelix.domain.usecase.GetHashtagUseCase
@@ -17,21 +17,21 @@ class HashtagModule {
 
     @Provides
     @Singleton
-    fun provideGetHashtagUseCase(repository: CountryRepository): GetHashtagUseCase =
-        GetHashtagUseCase(repository)
+    fun provideGetHashtagUseCase(hashtagRepository: HashtagRepository): GetHashtagUseCase =
+        GetHashtagUseCase(hashtagRepository)
 
     @Provides
     @Singleton
-    fun provideFollowHashtagUseCase(repository: CountryRepository): FollowHashtagUseCase =
-        FollowHashtagUseCase(repository)
+    fun provideFollowHashtagUseCase(hashtagRepository: HashtagRepository): FollowHashtagUseCase =
+        FollowHashtagUseCase(hashtagRepository)
 
     @Provides
     @Singleton
-    fun provideUnfollowHashtagUseCase(repository: CountryRepository): UnfollowHashtagUseCase =
-        UnfollowHashtagUseCase(repository)
+    fun provideUnfollowHashtagUseCase(hashtagRepository: HashtagRepository): UnfollowHashtagUseCase =
+        UnfollowHashtagUseCase(hashtagRepository)
 
     @Provides
     @Singleton
-    fun provideGetFollowedHashtagsUseCase(repository: CountryRepository): GetFollowedHashtagsUseCase =
-        GetFollowedHashtagsUseCase(repository)
+    fun provideGetFollowedHashtagsUseCase(hashtagRepository: HashtagRepository): GetFollowedHashtagsUseCase =
+        GetFollowedHashtagsUseCase(hashtagRepository)
 }
