@@ -32,14 +32,13 @@ interface CountryRepository {
 
     fun getAccessTokenFromStorage(): Flow<String>
     fun setAccessToken(token: String)
-    fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
+
     fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
 
     fun getHashtag(hashtag: String): Flow<Resource<Tag>>
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
 
-    fun getLikedPosts(maxId: String = ""): Flow<Resource<LikedPostsWithNext>>
-    fun getBookmarkedPosts(): Flow<Resource<List<Post>>>
+
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
@@ -58,12 +57,7 @@ interface CountryRepository {
 
     fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
 
-    fun likePost(postId: String): Flow<Resource<Post>>
-    fun unlikePost(postId: String): Flow<Resource<Post>>
 
-    fun bookmarkPost(postId: String): Flow<Resource<Post>>
-
-    fun unBookmarkPost(postId: String): Flow<Resource<Post>>
 
 
 
@@ -71,24 +65,11 @@ interface CountryRepository {
 
     fun getNotifications(maxNotificationId: String = ""): Flow<Resource<List<Notification>>>
 
-    fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
 
-
-
-    fun getPostById(postId: String): Flow<Resource<Post>>
 
     fun search(searchText: String): Flow<Resource<Search>>
 
-    fun uploadMedia(
-        uri: Uri,
-        description: String,
-        context: Context,
-        mediaAttachmentConfiguration: MediaAttachmentConfiguration
-    ): Flow<Resource<MediaAttachment>>
 
-    fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>>
-    fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>>
-    fun deletePost(postId: String): Flow<Resource<Post>>
 
     fun createReply(postId: String, content: String): Flow<Resource<Post>>
 

@@ -2,6 +2,7 @@ package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.PostRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.GetBlockedAccountsUseCase
 import com.daniebeler.pixelix.domain.usecase.GetBookmarkedPostsUseCase
@@ -33,13 +34,14 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLogoutUseCase(repository: CountryRepository, storageRepository: StorageRepository): LogoutUseCase =
-        LogoutUseCase(repository, storageRepository)
+    fun provideLogoutUseCase(
+        repository: CountryRepository, storageRepository: StorageRepository
+    ): LogoutUseCase = LogoutUseCase(repository, storageRepository)
 
     @Provides
     @Singleton
-    fun provideGetBookmarkedPostsUseCase(repository: CountryRepository): GetBookmarkedPostsUseCase =
-        GetBookmarkedPostsUseCase(repository)
+    fun provideGetBookmarkedPostsUseCase(postRepository: PostRepository): GetBookmarkedPostsUseCase =
+        GetBookmarkedPostsUseCase(postRepository)
 
     @Provides
     @Singleton

@@ -39,6 +39,7 @@ import com.daniebeler.pixelix.domain.model.Tag
 import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.utils.GetFile
 import com.daniebeler.pixelix.utils.MimeType
+import com.daniebeler.pixelix.utils.NetworkCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -122,9 +123,7 @@ class CountryRepositoryImpl @Inject constructor(
         this.accessToken = token
     }
 
-    override fun getTrendingPosts(range: String): Flow<Resource<List<Post>>> {
-        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getTrendingPosts(range))
-    }
+
 
     override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> {
         return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getTrendingHashtags())
@@ -140,40 +139,7 @@ class CountryRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getLikedPosts(maxId: String): Flow<Resource<LikedPostsWithNext>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = if (maxId.isNotBlank()) {
-                pixelfedApi.getLikedPosts(maxId).awaitResponse()
-            } else {
-                pixelfedApi.getLikedPosts().awaitResponse()
-            }
 
-            if (response.isSuccessful) {
-
-                val linkHeader = response.headers()["link"] ?: ""
-
-                val onlyLink =
-                    linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
-
-                val nextLimit = onlyLink.substringAfter("limit=", "").substringBefore("&", "")
-                val nextMinId = onlyLink.substringAfter("min_id=", "")
-
-                val res = response.body()?.map { it.toModel() } ?: emptyList()
-
-                val result = LikedPostsWithNext(res, nextMinId)
-                emit(Resource.Success(result))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Unknown Error"))
-        }
-    }
-
-    override fun getBookmarkedPosts(): Flow<Resource<List<Post>>> {
-        return NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getBookmarkedPosts())
-    }
 
     override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> {
         return NetworkCall<Tag, TagDto>().makeCallList(pixelfedApi.getFollowedHashtags())
@@ -204,25 +170,7 @@ class CountryRepositoryImpl @Inject constructor(
         return NetworkCall<Tag, TagDto>().makeCall(pixelfedApi.unfollowHashtag(tagId))
     }
 
-    override fun likePost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.likePost(postId))
-    }
 
-    override fun unlikePost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unlikePost(postId))
-    }
-
-    override fun bookmarkPost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.bookmarkPost(postId))
-    }
-
-    override fun unBookmarkPost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(
-            pixelfedApi.unbookmarkPost(
-                postId
-            )
-        )
-    }
 
 
 
@@ -249,23 +197,7 @@ class CountryRepositoryImpl @Inject constructor(
         }
 
 
-    override fun getPostsByAccountId(
-        accountId: String, maxPostId: String
-    ): Flow<Resource<List<Post>>> {
-        return if (maxPostId.isEmpty()) {
-            NetworkCall<Post, PostDto>().makeCallList(
-                pixelfedApi.getPostsByAccountId(
-                    accountId
-                )
-            )
-        } else {
-            NetworkCall<Post, PostDto>().makeCallList(
-                pixelfedApi.getPostsByAccountId(
-                    accountId, maxPostId
-                )
-            )
-        }
-    }
+
 
 
 
@@ -285,9 +217,7 @@ class CountryRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getPostById(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.getPostById(postId))
-    }
+
 
     override fun search(searchText: String): Flow<Resource<Search>> = flow {
         try {
@@ -308,105 +238,9 @@ class CountryRepositoryImpl @Inject constructor(
         return NetworkCall<Instance, InstanceDto>().makeCall(pixelfedApi.getInstance())
     }
 
-    @SuppressLint("Recycle")
-    override fun uploadMedia(
-        uri: Uri,
-        description: String,
-        context: Context,
-        mediaAttachmentConfiguration: MediaAttachmentConfiguration
-    ): Flow<Resource<MediaAttachment>> = flow {
-        try {
-            emit(Resource.Loading())
 
-            //val pixelfedApi = buildPixelFedApi(true)
 
-            val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
 
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val fileRequestBody =
-                inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
-
-            val file = GetFile().getFile(uri, context) ?: return@flow
-
-            val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            builder.addFormDataPart("description", description)
-                .addFormDataPart("file", file.name, fileRequestBody!!)
-
-            if (fileType.take(5) != "image" || fileType == "image/gif") {
-                val thumbnailBitmap = getThumbnail(uri, context)
-                if (thumbnailBitmap != null) {
-                    bitmapToBytes(thumbnailBitmap)?.let {
-                        builder.addFormDataPart(
-                            "thumbnail", "thumbnail", it.toRequestBody()
-                        )
-                    }
-                }
-            }
-
-            val requestBody: RequestBody = builder.build()
-            val response = pixelfedApi.uploadMedia(requestBody
-            ).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toModel()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message!!))
-        }
-    }
-
-    private fun bitmapToBytes(photo: Bitmap): ByteArray? {
-        val stream = ByteArrayOutputStream()
-        photo.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        return stream.toByteArray()
-    }
-
-    private suspend fun getThumbnail(uri: Uri, context: Context): Bitmap? {
-        return try {
-            withContext(Dispatchers.IO) {
-                Glide.with(context).asBitmap().load(uri).apply(RequestOptions().frame(0)).submit()
-                    .get()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    override fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>> {
-        return NetworkCall<MediaAttachment, MediaAttachmentDto>().makeCall(
-            pixelfedApi.updateMedia(
-                id, description
-            )
-        )
-    }
-
-    override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.createPost(createPostDto)
-            if (response != null) {
-                val res = response.body()!!.toModel()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
-        } catch (exception: Exception) {
-            if (exception.message != null) {
-                emit(Resource.Error(exception.message!!))
-            }
-            emit(Resource.Error("Unknown Error"))
-        }
-    }
-
-    override fun deletePost(postId: String): Flow<Resource<Post>> {
-        return NetworkCall<Post, PostDto>().makeCall(
-            pixelfedApi.deletePost(postId
-            )
-        )
-    }
 
     override fun createReply(postId: String, content: String): Flow<Resource<Post>> {
         val dto = CreateReplyDto(status = content, in_reply_to_id = postId)

@@ -1,4 +1,4 @@
-package com.daniebeler.pixelix.data.repository
+package com.daniebeler.pixelix.utils
 
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.data.remote.dto.DtoInterface

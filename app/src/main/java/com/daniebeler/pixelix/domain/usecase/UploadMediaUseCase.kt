@@ -5,11 +5,11 @@ import android.net.Uri
 import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.model.MediaAttachment
 import com.daniebeler.pixelix.domain.model.MediaAttachmentConfiguration
-import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.PostEditorRepository
 import kotlinx.coroutines.flow.Flow
 
 class UploadMediaUseCase(
-    private val repository: CountryRepository
+    private val postEditorRepository: PostEditorRepository
 ) {
     operator fun invoke(
         url: Uri,
@@ -17,6 +17,8 @@ class UploadMediaUseCase(
         context: Context,
         mediaAttachmentConfiguration: MediaAttachmentConfiguration
     ): Flow<Resource<MediaAttachment>> {
-        return repository.uploadMedia(url, description, context, mediaAttachmentConfiguration)
+        return postEditorRepository.uploadMedia(
+            url, description, context, mediaAttachmentConfiguration
+        )
     }
 }

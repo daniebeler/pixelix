@@ -5,6 +5,7 @@ import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.domain.model.Post
 import com.daniebeler.pixelix.domain.repository.TimelineRepository
+import com.daniebeler.pixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

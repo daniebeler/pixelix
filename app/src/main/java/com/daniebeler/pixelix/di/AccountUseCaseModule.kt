@@ -2,6 +2,7 @@ package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.PostRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.FollowAccountUseCase
@@ -42,14 +43,15 @@ class AccountUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetOwnPostsUseCase(countryRepository: CountryRepository, storageRepository: StorageRepository): GetOwnPostsUseCase =
-        GetOwnPostsUseCase(countryRepository, storageRepository)
+    fun provideGetOwnPostsUseCase(
+        postRepository: PostRepository, storageRepository: StorageRepository
+    ): GetOwnPostsUseCase = GetOwnPostsUseCase(postRepository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetPostsOfAccountUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository
-    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(repository, storageRepository)
+        postRepository: PostRepository, storageRepository: StorageRepository
+    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(postRepository, storageRepository)
 
     @Provides
     @Singleton

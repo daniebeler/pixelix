@@ -2,6 +2,8 @@ package com.daniebeler.pixelix.di
 
 import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.PostEditorRepository
+import com.daniebeler.pixelix.domain.repository.PostRepository
 import com.daniebeler.pixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pixelix.domain.usecase.CreatePostUseCase
 import com.daniebeler.pixelix.domain.usecase.CreateReplyUseCase
@@ -27,34 +29,34 @@ class PostUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetPostUseCase(repository: CountryRepository): GetPostUseCase =
-        GetPostUseCase(repository)
+    fun provideGetPostUseCase(postRepository: PostRepository): GetPostUseCase =
+        GetPostUseCase(postRepository)
 
     @Provides
     @Singleton
-    fun provideGetLikedPostsUseCase(repository: CountryRepository): GetLikedPostsUseCase =
-        GetLikedPostsUseCase(repository)
+    fun provideGetLikedPostsUseCase(postRepository: PostRepository): GetLikedPostsUseCase =
+        GetLikedPostsUseCase(postRepository)
 
     @Provides
     @Singleton
-    fun provideBookmarkPostUseCase(repository: CountryRepository): BookmarkPostUseCase =
-        BookmarkPostUseCase(repository)
+    fun provideBookmarkPostUseCase(postRepository: PostRepository): BookmarkPostUseCase =
+        BookmarkPostUseCase(postRepository)
 
     @Provides
     @Singleton
-    fun provideUnbookmarkPostUseCase(repository: CountryRepository): UnbookmarkPostUseCase =
-        UnbookmarkPostUseCase(repository)
+    fun provideUnbookmarkPostUseCase(postRepository: PostRepository): UnbookmarkPostUseCase =
+        UnbookmarkPostUseCase(postRepository)
 
 
     @Provides
     @Singleton
-    fun provideLikePostUseCase(repository: CountryRepository): LikePostUseCase =
-        LikePostUseCase(repository)
+    fun provideLikePostUseCase(postRepository: PostRepository): LikePostUseCase =
+        LikePostUseCase(postRepository)
 
     @Provides
     @Singleton
-    fun provideUnlikePostUseCase(repository: CountryRepository): UnlikePostUseCase =
-        UnlikePostUseCase(repository)
+    fun provideUnlikePostUseCase(postRepository: PostRepository): UnlikePostUseCase =
+        UnlikePostUseCase(postRepository)
 
     @Provides
     @Singleton
@@ -73,21 +75,21 @@ class PostUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideDeletePostUseCase(repository: CountryRepository): DeletePostUseCase =
-        DeletePostUseCase(repository)
+    fun provideDeletePostUseCase(postEditorRepository: PostEditorRepository): DeletePostUseCase =
+        DeletePostUseCase(postEditorRepository)
 
     @Provides
     @Singleton
-    fun provideCreatePostUseCase(repository: CountryRepository): CreatePostUseCase =
-        CreatePostUseCase(repository)
+    fun provideCreatePostUseCase(postEditorRepository: PostEditorRepository): CreatePostUseCase =
+        CreatePostUseCase(postEditorRepository)
 
     @Provides
     @Singleton
-    fun provideUploadMediaUseCase(repository: CountryRepository): UploadMediaUseCase =
-        UploadMediaUseCase(repository)
+    fun provideUploadMediaUseCase(postEditorRepository: PostEditorRepository): UploadMediaUseCase =
+        UploadMediaUseCase(postEditorRepository)
 
     @Provides
     @Singleton
-    fun provideUpdateMediaUseCase(repository: CountryRepository): UpdateMediaUseCase =
-        UpdateMediaUseCase(repository)
+    fun provideUpdateMediaUseCase(postEditorRepository: PostEditorRepository): UpdateMediaUseCase =
+        UpdateMediaUseCase(postEditorRepository)
 }

@@ -8,10 +8,14 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.daniebeler.pixelix.data.remote.PixelfedApi
 import com.daniebeler.pixelix.data.repository.AccountRepositoryImpl
 import com.daniebeler.pixelix.data.repository.CountryRepositoryImpl
+import com.daniebeler.pixelix.data.repository.PostEditorRepositoryImpl
+import com.daniebeler.pixelix.data.repository.PostRepositoryImpl
 import com.daniebeler.pixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pixelix.domain.repository.AccountRepository
 import com.daniebeler.pixelix.domain.repository.CountryRepository
+import com.daniebeler.pixelix.domain.repository.PostEditorRepository
+import com.daniebeler.pixelix.domain.repository.PostRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.repository.TimelineRepository
 import dagger.Module
@@ -57,6 +61,18 @@ class Module {
     fun provideAccountRepository(
         pixelfedApi: PixelfedApi
     ): AccountRepository = AccountRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun providePostRepository(
+        pixelfedApi: PixelfedApi
+    ): PostRepository = PostRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun providePostEditorRepository(
+        pixelfedApi: PixelfedApi
+    ): PostEditorRepository = PostEditorRepositoryImpl(pixelfedApi)
 
     @Provides
     @Singleton

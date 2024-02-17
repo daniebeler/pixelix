@@ -7,6 +7,7 @@ import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Relationship
 import com.daniebeler.pixelix.domain.repository.AccountRepository
+import com.daniebeler.pixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.awaitResponse
