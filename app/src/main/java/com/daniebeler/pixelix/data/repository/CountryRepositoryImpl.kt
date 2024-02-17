@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.data.repository
 
+import HostSelectionInterceptor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -22,6 +23,7 @@ import com.daniebeler.pixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pixelix.data.remote.dto.PostDto
 import com.daniebeler.pixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pixelix.data.remote.dto.TagDto
+import com.daniebeler.pixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pixelix.domain.model.AccessToken
 import com.daniebeler.pixelix.domain.model.Account
 import com.daniebeler.pixelix.domain.model.Application
@@ -45,6 +47,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -60,7 +63,9 @@ import javax.inject.Inject
 
 
 class CountryRepositoryImpl @Inject constructor(
-    private val userDataStorePreferences: DataStore<Preferences>
+    private val userDataStorePreferences: DataStore<Preferences>,
+    private val retrofitInjected: Retrofit,
+    private val hostSelectionInterceptor: HostSelectionInterceptorInterface
 ) : CountryRepository {
 
     private var baseUrl = ""
@@ -76,6 +81,10 @@ class CountryRepositoryImpl @Inject constructor(
             }
             val baseUrlFromStorage = getBaseUrlFromStorage().first()
             if (baseUrlFromStorage.isNotEmpty()) {
+
+                println("fief: " + baseUrlFromStorage)
+                hostSelectionInterceptor.setHost(baseUrlFromStorage.replace("https://", ""))
+
                 baseUrl = baseUrlFromStorage
                 pixelfedApi = buildPixelFedApi(false)
             }
@@ -83,20 +92,9 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
     private fun buildPixelFedApi(imageUpload: Boolean): PixelfedApi {
-        val mHttpLoggingInterceptor =
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val mOkHttpClient = if (imageUpload) {
-            OkHttpClient.Builder().writeTimeout(25, TimeUnit.SECONDS)
-                .addInterceptor(mHttpLoggingInterceptor).build()
-        } else {
-            OkHttpClient.Builder().addInterceptor(mHttpLoggingInterceptor).build()
-        }
+        // OkHttpClient.Builder().writeTimeout(25, TimeUnit.SECONDS) wenn imageupload true ist
 
-        val retrofit: Retrofit =
-            Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
-                .client(mOkHttpClient).build()
-
-        return retrofit.create(PixelfedApi::class.java)
+        return retrofitInjected.create(PixelfedApi::class.java)
     }
 
     override fun doesAccessTokenExist(): Boolean {
@@ -114,7 +112,7 @@ class CountryRepositoryImpl @Inject constructor(
             preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = url
         }
         baseUrl = url
-        pixelfedApi = buildPixelFedApi(false)
+        hostSelectionInterceptor.setHost(url.replace("https://", ""))
     }
 
     override fun getClientIdFromStorage(): Flow<String> =
