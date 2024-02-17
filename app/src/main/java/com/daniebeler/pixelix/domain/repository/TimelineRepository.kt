@@ -7,4 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface TimelineRepository {
 
     fun getHomeTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
+    fun getHashtagTimeline(hashtag: String, maxId: String = ""): Flow<Resource<List<Post>>>
+    fun getLocalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
+    fun getGlobalTimeline(maxPostId: String = ""): Flow<Resource<List<Post>>>
 }

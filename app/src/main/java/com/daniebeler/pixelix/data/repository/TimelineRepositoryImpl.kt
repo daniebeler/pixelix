@@ -23,4 +23,44 @@ class TimelineRepositoryImpl @Inject constructor(
             NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getHomeTimeline())
         }
     }
+
+    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> {
+        return if (maxId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getHashtagTimeline(
+                    hashtag, maxId
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getHashtagTimeline(
+                    hashtag
+                )
+            )
+        }
+    }
+
+    override fun getLocalTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getLocalTimeline(
+                    maxPostId
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getLocalTimeline())
+        }
+    }
+
+    override fun getGlobalTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+        return if (maxPostId.isNotEmpty()) {
+            NetworkCall<Post, PostDto>().makeCallList(
+                pixelfedApi.getGlobalTimeline(
+                    maxPostId
+                )
+            )
+        } else {
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getGlobalTimeline())
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.daniebeler.pixelix.di
 
-import com.daniebeler.pixelix.domain.repository.CountryRepository
 import com.daniebeler.pixelix.domain.repository.StorageRepository
 import com.daniebeler.pixelix.domain.repository.TimelineRepository
 import com.daniebeler.pixelix.domain.usecase.GetGlobalTimelineUseCase
@@ -27,18 +26,18 @@ class TimelineUseCaseModule {
     @Provides
     @Singleton
     fun provideGetLocalTimelineUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository
-    ): GetLocalTimelineUseCase = GetLocalTimelineUseCase(repository, storageRepository)
+        timelineRepository: TimelineRepository, storageRepository: StorageRepository
+    ): GetLocalTimelineUseCase = GetLocalTimelineUseCase(timelineRepository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetGlobalTimelineUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository
-    ): GetGlobalTimelineUseCase = GetGlobalTimelineUseCase(repository, storageRepository)
+        timelineRepository: TimelineRepository, storageRepository: StorageRepository
+    ): GetGlobalTimelineUseCase = GetGlobalTimelineUseCase(timelineRepository, storageRepository)
 
     @Provides
     @Singleton
     fun provideGetHashtagTimelineUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository
-    ): GetHashtagTimelineUseCase = GetHashtagTimelineUseCase(repository, storageRepository)
+        timelineRepository: TimelineRepository, storageRepository: StorageRepository
+    ): GetHashtagTimelineUseCase = GetHashtagTimelineUseCase(timelineRepository, storageRepository)
 }
