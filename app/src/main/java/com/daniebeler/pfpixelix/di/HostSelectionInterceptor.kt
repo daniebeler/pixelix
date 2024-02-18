@@ -35,25 +35,4 @@ class HostSelectionInterceptor : HostSelectionInterceptorInterface {
         }
         return chain.proceed(request)
     }
-
-    companion object {
-        @Throws(Exception::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val interceptor = HostSelectionInterceptor()
-            val okHttpClient: OkHttpClient =
-                OkHttpClient.Builder().addInterceptor(interceptor).build()
-            val request: Request =
-                Request.Builder().url("http://www.coca-cola.com/robots.txt").build()
-            val call1 = okHttpClient.newCall(request)
-            val response1 = call1.execute()
-            println("RESPONSE FROM: " + response1.request.url)
-            println(response1.body!!.string())
-            interceptor.setHost("www.pepsi.com")
-            val call2 = okHttpClient.newCall(request)
-            val response2 = call2.execute()
-            println("RESPONSE FROM: " + response2.request.url)
-            println(response2.body!!.string())
-        }
-    }
 }

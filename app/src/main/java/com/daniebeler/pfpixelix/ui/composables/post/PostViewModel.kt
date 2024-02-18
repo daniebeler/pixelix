@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
@@ -41,14 +42,14 @@ class PostViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
 
+    var post: Post? by mutableStateOf(null)
+
     var repliesState by mutableStateOf(RepliesState())
 
     var ownReplyState by mutableStateOf(OwnReplyState())
 
     var likedByState by mutableStateOf(LikedByState())
 
-    var likeState by mutableStateOf(LikeState())
-    var bookmarkState by mutableStateOf(BookmarkState())
     var deleteState by mutableStateOf(DeleteState())
     var deleteDialog: String? by mutableStateOf(null)
     var timeAgoString: String by mutableStateOf("")
@@ -60,6 +61,7 @@ class PostViewModel @Inject constructor(
     var newComment: String by mutableStateOf("")
 
     init {
+        println("fief")
         CoroutineScope(Dispatchers.Default).launch {
             myAccountId = getOwnAccountIdUseCase().first()
         }
@@ -151,101 +153,92 @@ class PostViewModel @Inject constructor(
     }
 
     fun likePost(postId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            likePostUseCase(postId).onEach { result ->
-                likeState = when (result) {
-                    is Resource.Success -> {
-                        LikeState(
-                            liked = result.data?.favourited ?: false,
-                            likesCount = result.data?.favouritesCount ?: likeState.likesCount
-                        )
-                    }
+        if (post?.favourited == false) {
+            post = post?.copy(favourited = true)
+            CoroutineScope(Dispatchers.Default).launch {
+                likePostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(favourited = result.data?.favourited ?: false)
+                        }
 
-                    is Resource.Error -> {
-                        LikeState(error = result.message ?: "An unexpected error occurred")
-                    }
+                        is Resource.Error -> {
+                            post = post?.copy(favourited = false)
+                        }
 
-                    is Resource.Loading -> {
-                        LikeState(
-                            isLoading = true, liked = true, likesCount = if (likeState.liked) {
-                                likeState.likesCount
-                            } else {
-                                likeState.likesCount + 1
-                            }
-                        )
+                        is Resource.Loading -> {
+                        }
                     }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
+            }
         }
+
     }
 
     fun unlikePost(postId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            unlikePostUseCase(postId).onEach { result ->
-                likeState = when (result) {
-                    is Resource.Success -> {
-                        LikeState(
-                            liked = result.data?.favourited ?: false,
-                            likesCount = result.data?.favouritesCount ?: likeState.likesCount
-                        )
-                    }
+        if (post?.favourited == true) {
+            CoroutineScope(Dispatchers.Default).launch {
+                unlikePostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(favourited = result.data?.favourited ?: false)
+                        }
 
-                    is Resource.Error -> {
-                        LikeState(error = result.message ?: "An unexpected error occurred")
-                    }
+                        is Resource.Error -> {
+                            post = post?.copy(favourited = true)
+                        }
 
-                    is Resource.Loading -> {
-                        LikeState(
-                            isLoading = true, liked = false, likesCount = if (!likeState.liked) {
-                                likeState.likesCount
-                            } else {
-                                likeState.likesCount - 1
-                            }
-                        )
+                        is Resource.Loading -> {
+                        }
                     }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
+            }
         }
     }
 
     fun bookmarkPost(postId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            bookmarkPostUseCase(postId).onEach { result ->
-                bookmarkState = when (result) {
-                    is Resource.Success -> {
-                        BookmarkState(bookmarked = result.data?.bookmarked ?: false)
-                    }
+        if (post?.bookmarked == false) {
+            post = post?.copy(bookmarked = true)
+            CoroutineScope(Dispatchers.Default).launch {
+                bookmarkPostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
+                        }
 
-                    is Resource.Error -> {
-                        BookmarkState(error = result.message ?: "An unexpected error occurred")
-                    }
+                        is Resource.Error -> {
+                            post = post?.copy(bookmarked = false)
+                        }
 
-                    is Resource.Loading -> {
-                        BookmarkState(isLoading = true, bookmarked = true)
+                        is Resource.Loading -> {
+                        }
                     }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
+            }
         }
     }
 
     fun unBookmarkPost(postId: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            unbookmarkPostUseCase(postId).onEach { result ->
-                bookmarkState = when (result) {
-                    is Resource.Success -> {
-                        BookmarkState(bookmarked = result.data?.bookmarked ?: false)
-                    }
+        if (post?.bookmarked == true) {
+            post = post?.copy(bookmarked = false)
+            CoroutineScope(Dispatchers.Default).launch {
+                unbookmarkPostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
+                        }
 
-                    is Resource.Error -> {
-                        BookmarkState(error = result.message ?: "An unexpected error occurred")
-                    }
+                        is Resource.Error -> {
+                            post = post?.copy(bookmarked = true)
+                        }
 
-                    is Resource.Loading -> {
-                        BookmarkState(isLoading = true, bookmarked = false)
+                        is Resource.Loading -> {
+                        }
                     }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
+            }
         }
+
     }
 
     fun openUrl(context: Context, url: String) {
