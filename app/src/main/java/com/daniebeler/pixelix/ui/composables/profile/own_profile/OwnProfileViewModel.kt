@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.profile.own_profile
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import com.daniebeler.pixelix.common.Resource
 import com.daniebeler.pixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnPostsUseCase
+import com.daniebeler.pixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pixelix.ui.composables.profile.AccountState
 import com.daniebeler.pixelix.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +24,8 @@ import javax.inject.Inject
 class OwnProfileViewModel @Inject constructor(
     private val getOwnAccountUseCase: GetOwnAccountUseCase,
     private val getOwnPostsUseCase: GetOwnPostsUseCase,
-    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase
+    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -108,5 +111,9 @@ class OwnProfileViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun openUrl(context: Context, url: String) {
+        openExternalUrlUseCase(context, url)
     }
 }

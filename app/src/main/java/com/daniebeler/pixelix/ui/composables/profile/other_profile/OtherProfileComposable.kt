@@ -107,6 +107,7 @@ fun OtherProfileComposable(
                 getPostsPaginated = {
                     viewModel.getPostsPaginated(userId)
                 },
+                openUrl = { viewModel.openUrl(context, it) },
                 otherAccountTopSectionAdditions = {
                     Column(Modifier.padding(12.dp)) {
 

@@ -1,16 +1,10 @@
 package com.daniebeler.pixelix.ui.composables.profile.own_profile
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
@@ -29,11 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -52,6 +44,8 @@ fun OwnProfileComposable(
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
@@ -99,6 +93,7 @@ fun OwnProfileComposable(
                 getPostsPaginated = {
                     viewModel.getPostsPaginated()
                 },
+                openUrl = { viewModel.openUrl(context, it) },
                 otherAccountTopSectionAdditions = {})
         }
 
@@ -126,6 +121,7 @@ fun CustomProfilePage(
     navController: NavController,
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit,
+    openUrl: (url: String) -> Unit,
     otherAccountTopSectionAdditions: @Composable () -> Unit
 ) {
     Box {
@@ -141,9 +137,11 @@ fun CustomProfilePage(
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(
-                        account = accountState.account, navController
-                    )
+                    ProfileTopSection(account = accountState.account,
+                        navController,
+                        openUrl = { url ->
+                            openUrl(url)
+                        })
 
                     otherAccountTopSectionAdditions()
                 }

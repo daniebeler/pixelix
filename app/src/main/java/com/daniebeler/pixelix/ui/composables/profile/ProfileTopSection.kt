@@ -37,7 +37,7 @@ import com.daniebeler.pixelix.ui.composables.hashtagMentionText.HashtagsMentions
 import com.daniebeler.pixelix.utils.Navigate
 
 @Composable
-fun ProfileTopSection(account: Account?, navController: NavController) {
+fun ProfileTopSection(account: Account?, navController: NavController, openUrl: (url: String) -> Unit) {
     val uriHandler = LocalUriHandler.current
 
     val clipboardManager = LocalClipboardManager.current
@@ -126,7 +126,7 @@ fun ProfileTopSection(account: Account?, navController: NavController) {
                     Text(
                         text = account.website.toString(),
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = { uriHandler.openUri(account.website.toString()) })
+                        modifier = Modifier.clickable(onClick = { openUrl(account.website.toString()) })
                     )
                 }
             }
