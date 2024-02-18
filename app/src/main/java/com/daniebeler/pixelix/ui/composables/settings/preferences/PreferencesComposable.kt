@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.NoAdultContent
+import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
@@ -100,6 +101,12 @@ fun PreferencesComposable(
                 stringResource(R.string.hide_sensitive_content),
                 viewModel.isSensitiveContentHidden
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
+
+            SwitchPreferencesItem(
+                Icons.Outlined.OpenInBrowser,
+                stringResource(R.string.use_in_app_browser),
+                viewModel.isUsingInAppBrowser
+            ) { checked -> viewModel.storeUseInAppBrowser(checked) }
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),

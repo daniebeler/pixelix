@@ -88,7 +88,8 @@ fun LoginComposable(
                 }
             } else {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    OutlinedTextField(value = viewModel.customUrl,
+                    OutlinedTextField(
+                        value = viewModel.customUrl,
                         onValueChange = {
                             viewModel.customUrl = it
                             viewModel.domainChanged()

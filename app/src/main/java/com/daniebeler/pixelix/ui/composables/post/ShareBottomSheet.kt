@@ -77,7 +77,7 @@ fun ShareBottomSheet(
         CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
-            Navigate().openUrlInApp(context, url)
+            viewModel.openUrl(context, url)
         })
 
         CustomBottomSheetElement(icon = Icons.Outlined.Share,

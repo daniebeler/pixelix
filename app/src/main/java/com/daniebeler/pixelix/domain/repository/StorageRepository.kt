@@ -8,6 +8,10 @@ interface StorageRepository {
 
     suspend fun storeHideSensitiveContent(hideSensitiveContent: Boolean)
 
+    fun getUseInAppBrowser(): Flow<Boolean>
+
+    suspend fun storeUseInAppBrowser(hideSensitiveContent: Boolean)
+
     fun getBaseUrlFromStorage(): Flow<String>
 
     fun getAccountId(): Flow<String>

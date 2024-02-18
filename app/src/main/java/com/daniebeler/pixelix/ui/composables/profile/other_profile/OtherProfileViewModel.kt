@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.profile.other_profile
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +15,7 @@ import com.daniebeler.pixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pixelix.domain.usecase.MuteAccountUseCase
+import com.daniebeler.pixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pixelix.domain.usecase.UnmuteAccountUseCase
@@ -37,7 +39,8 @@ class OtherProfileViewModel @Inject constructor(
     private val blockAccountUseCase: BlockAccountUseCase,
     private val unblockAccountUseCase: UnblockAccountUseCase,
     private val getMutualFollowersUseCase: GetMutualFollowersUseCase,
-    private val getRelationshipsUseCase: GetRelationshipsUseCase
+    private val getRelationshipsUseCase: GetRelationshipsUseCase,
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -283,5 +286,9 @@ class OtherProfileViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun openUrl(context: Context, url: String) {
+        openExternalUrlUseCase(context, url)
     }
 }

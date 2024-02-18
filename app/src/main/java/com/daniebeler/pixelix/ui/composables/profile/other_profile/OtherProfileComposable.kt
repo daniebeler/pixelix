@@ -42,7 +42,6 @@ import com.daniebeler.pixelix.ui.composables.FollowButton
 import com.daniebeler.pixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pixelix.ui.composables.profile.own_profile.CustomProfilePage
-import com.daniebeler.pixelix.utils.Navigate
 import com.daniebeler.pixelix.utils.Share
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,7 +176,7 @@ fun OtherProfileComposable(
                 CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
-                    Navigate().openUrlInApp(context, viewModel.accountState.account!!.url)
+                    viewModel.openUrl(context, viewModel.accountState.account!!.url)
                 })
 
                 CustomBottomSheetElement(icon = Icons.Outlined.Share,

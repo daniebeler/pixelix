@@ -10,8 +10,11 @@ import com.daniebeler.pixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pixelix.domain.usecase.GetMutedAccountsUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnInstanceDomainUseCase
+import com.daniebeler.pixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pixelix.domain.usecase.LogoutUseCase
+import com.daniebeler.pixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pixelix.domain.usecase.StoreHideSensitiveContentUseCase
+import com.daniebeler.pixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -62,4 +65,19 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideGetOwnInstanceDomainUseCase(repository: StorageRepository): GetOwnInstanceDomainUseCase =
         GetOwnInstanceDomainUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideOpenExternalUrlUseCase(repository: StorageRepository): OpenExternalUrlUseCase =
+        OpenExternalUrlUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideStoreUseInAppBrowserUseCase(repository: StorageRepository): StoreUseInAppBrowserUseCase =
+        StoreUseInAppBrowserUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetUseInAppBrowserUseCase(repository: StorageRepository): GetUseInAppBrowserUseCase =
+        GetUseInAppBrowserUseCase(repository)
 }

@@ -29,6 +29,17 @@ class StorageRepositoryImpl @Inject constructor(
         this.hideSensitiveContent = hideSensitiveContent
     }
 
+    override fun getUseInAppBrowser(): Flow<Boolean> = storage.data.map { preferences ->
+        preferences[booleanPreferencesKey(Constants.USE_IN_APP_BROWSER_DATASTORE_KEY)] ?: true
+    }
+
+    override suspend fun storeUseInAppBrowser(hideSensitiveContent: Boolean) {
+        storage.edit { preferences ->
+            preferences[booleanPreferencesKey(Constants.USE_IN_APP_BROWSER_DATASTORE_KEY)] =
+                hideSensitiveContent
+        }
+    }
+
     override fun getBaseUrlFromStorage(): Flow<String> = storage.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
     }

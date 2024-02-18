@@ -1,5 +1,6 @@
 package com.daniebeler.pixelix.ui.composables.post
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +14,7 @@ import com.daniebeler.pixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pixelix.domain.usecase.LikePostUseCase
+import com.daniebeler.pixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pixelix.domain.usecase.UnlikePostUseCase
 import com.daniebeler.pixelix.utils.TimeAgo
@@ -35,7 +37,8 @@ class PostViewModel @Inject constructor(
     private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
     private val deletePostUseCase: DeletePostUseCase,
     private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
-    private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase
+    private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
 
     var repliesState by mutableStateOf(RepliesState())
@@ -243,5 +246,9 @@ class PostViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun openUrl(context: Context, url: String) {
+        openExternalUrlUseCase(context, url)
     }
 }

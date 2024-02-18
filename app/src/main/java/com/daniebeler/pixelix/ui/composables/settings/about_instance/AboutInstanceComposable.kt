@@ -164,7 +164,7 @@ fun AboutInstanceComposable(
                             .padding(12.dp, 0.dp)
                             .clickable {
                                 if (viewModel.instanceState.instance != null) {
-                                    Navigate().openUrlInApp(
+                                    viewModel.openUrl(
                                         context = context,
                                         url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
                                     )
@@ -188,7 +188,7 @@ fun AboutInstanceComposable(
                             .padding(12.dp, 0.dp)
                             .clickable {
                                 if (viewModel.instanceState.instance != null) {
-                                    Navigate().openUrlInApp(
+                                    viewModel.openUrl(
                                         context = context,
                                         url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
                                     )

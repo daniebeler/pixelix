@@ -93,4 +93,5 @@
     <string name="hide_sensitive_content">Hide sensitive Content</string>
     <string name="about_x">About %1$s</string>
     <string name="more_settings">More settings</string>
+    <string name="use_in_app_browser">Use in-app-browser</string>
 </resources>
