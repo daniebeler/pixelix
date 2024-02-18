@@ -32,7 +32,7 @@ fun CustomAccount(
     account: Account,
     relationship: Relationship?,
     navController: NavController,
-    viewModel: CustomAccountViewModel = hiltViewModel(key = account.id)
+    viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
 ) {
     Row(
         modifier = Modifier

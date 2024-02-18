@@ -52,10 +52,7 @@ class CountryRepositoryImpl @Inject constructor(
             }
             val baseUrlFromStorage = getBaseUrlFromStorage().first()
             if (baseUrlFromStorage.isNotEmpty()) {
-
-                println("fief: " + baseUrlFromStorage)
                 hostSelectionInterceptor.setHost(baseUrlFromStorage.replace("https://", ""))
-
             }
         }
     }

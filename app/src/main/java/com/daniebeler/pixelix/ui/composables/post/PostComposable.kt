@@ -103,7 +103,7 @@ fun PostComposable(
     post: Post,
     navController: NavController,
     postGetsDeleted: (postId: String) -> Unit,
-    viewModel: PostViewModel = hiltViewModel(key = post.id)
+    viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
     val context = LocalContext.current

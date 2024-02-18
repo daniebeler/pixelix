@@ -8,8 +8,8 @@ class GetOwnInstanceDomainUseCase(
     private val repository: StorageRepository
 ) {
     operator fun invoke(): Flow<String> = flow {
-        repository.getBaseUrlFromStorage().collect { fief ->
-            val res = fief.substringAfter("https://")
+        repository.getBaseUrlFromStorage().collect { url ->
+            val res = url.substringAfter("https://")
             emit(res)
         }
     }

@@ -25,7 +25,7 @@ fun HashtagsMentionsTextView(
     modifier: Modifier = Modifier,
     mentions: List<Account>?,
     navController: NavController,
-    viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = text)
+    viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = "hashtags-mentions-tv$text")
 ) {
 
     val colorScheme = MaterialTheme.colorScheme

@@ -30,7 +30,7 @@ import com.daniebeler.pixelix.ui.composables.InfinitePostsList
 fun HashtagTimelineComposable(
     navController: NavController,
     hashtag: String,
-    viewModel: HashtagTimelineViewModel = hiltViewModel(key = hashtag)
+    viewModel: HashtagTimelineViewModel = hiltViewModel(key = "hashtag-timeline$hashtag")
 ) {
 
     LaunchedEffect(hashtag) {

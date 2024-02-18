@@ -49,7 +49,7 @@ import com.daniebeler.pixelix.utils.Share
 fun OtherProfileComposable(
     navController: NavController,
     userId: String,
-    viewModel: OtherProfileViewModel = hiltViewModel(key = userId)
+    viewModel: OtherProfileViewModel = hiltViewModel(key = "other-profile$userId")
 ) {
 
     val sheetState = rememberModalBottomSheetState()

@@ -55,7 +55,7 @@ class Module {
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder().addConverterFactory(
         GsonConverterFactory.create()
-    ).client(client).baseUrl("https://pixelfed.fief/").build()
+    ).client(client).baseUrl("https://err.or/").build()
 
 
     @Provides

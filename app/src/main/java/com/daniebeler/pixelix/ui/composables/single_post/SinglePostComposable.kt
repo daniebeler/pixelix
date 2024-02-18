@@ -33,7 +33,7 @@ import com.daniebeler.pixelix.utils.Navigate
 fun SinglePostComposable(
     navController: NavController,
     postId: String,
-    viewModel: SinglePostViewModel = hiltViewModel(key = postId)
+    viewModel: SinglePostViewModel = hiltViewModel(key = "single-post$postId")
 ) {
     val scrollState = rememberScrollState()
 
