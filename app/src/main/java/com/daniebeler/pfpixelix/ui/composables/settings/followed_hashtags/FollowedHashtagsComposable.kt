@@ -32,6 +32,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -83,7 +84,12 @@ fun FollowedHashtagsComposable(
                     FullscreenEmptyStateComposable(
                         EmptyState(
                             icon = Icons.Outlined.Tag,
-                            heading = stringResource(R.string.no_followed_hashtags)
+                            heading = stringResource(R.string.no_followed_hashtags),
+                            message = "Followed hashtags will appear here",
+                            buttonText = "Explore trending hashtags",
+                            onClick = {
+                                Navigate().navigate("trending_screen/hashtags", navController)
+                            }
                         )
                     )
                 }

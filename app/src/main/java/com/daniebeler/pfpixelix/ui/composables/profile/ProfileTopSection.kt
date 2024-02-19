@@ -38,8 +38,6 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun ProfileTopSection(account: Account?, navController: NavController, openUrl: (url: String) -> Unit) {
-    val uriHandler = LocalUriHandler.current
-
     val clipboardManager = LocalClipboardManager.current
 
     if (account != null) {

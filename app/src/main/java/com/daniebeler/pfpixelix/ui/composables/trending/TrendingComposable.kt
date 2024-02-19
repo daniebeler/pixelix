@@ -37,15 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts.TrendingAccountsComposable
-import com.daniebeler.pfpixelix.ui.composables.trending.trending_posts.TrendingPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
+import com.daniebeler.pfpixelix.ui.composables.trending.trending_posts.TrendingPostsComposable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun TrendingComposable(navController: NavController) {
+fun TrendingComposable(navController: NavController, page: String) {
 
-    val pagerState = rememberPagerState { 3 }
+    val pageId = if (page == "accounts") 1 else if (page == "hashtags") 2 else 0
+    val pagerState = rememberPagerState(initialPage = pageId, pageCount = { 3 })
 
     val scope = rememberCoroutineScope()
 
@@ -53,70 +54,55 @@ fun TrendingComposable(navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     var range by remember { mutableStateOf("daily") }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
+    Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    Text(stringResource(R.string.trending))
-                },
-                actions = {
-                    if (pagerState.currentPage == 0) {
-                        IconButton(onClick = { expanded = !expanded }) {
-                            Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.daily)) },
-                                onClick = { range = "daily" },
-                                trailingIcon = {
-                                    if (range == "daily") {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
+            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+                Text(stringResource(R.string.trending))
+            }, actions = {
+                if (pagerState.currentPage == 0) {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+                    }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.daily)) },
+                            onClick = { range = "daily" },
+                            trailingIcon = {
+                                if (range == "daily") {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.monthly)) },
-                                onClick = { range = "monthly" },
-                                trailingIcon = {
-                                    if (range == "monthly") {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
+                            })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.monthly)) },
+                            onClick = { range = "monthly" },
+                            trailingIcon = {
+                                if (range == "monthly") {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.yearly)) },
-                                onClick = { range = "yearly" },
-                                trailingIcon = {
-                                    if (range == "yearly") {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
+                            })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.yearly)) },
+                            onClick = { range = "yearly" },
+                            trailingIcon = {
+                                if (range == "yearly") {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            )
-                        }
+                            })
                     }
                 }
-            )
+            })
 
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -124,8 +110,7 @@ fun TrendingComposable(navController: NavController) {
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(
-                    text = { Text(stringResource(id = R.string.posts)) },
+                Tab(text = { Text(stringResource(id = R.string.posts)) },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -136,8 +121,7 @@ fun TrendingComposable(navController: NavController) {
 
                     })
 
-                Tab(
-                    text = { Text(stringResource(R.string.accounts)) },
+                Tab(text = { Text(stringResource(R.string.accounts)) },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -147,8 +131,7 @@ fun TrendingComposable(navController: NavController) {
                         }
                     })
 
-                Tab(
-                    text = { Text(stringResource(R.string.hashtags)) },
+                Tab(text = { Text(stringResource(R.string.hashtags)) },
                     selected = pagerState.currentPage == 2,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -166,20 +149,17 @@ fun TrendingComposable(navController: NavController) {
                     .background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->
                 when (tabIndex) {
-                    0 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingPostsComposable(range, navController = navController)
-                        }
+                    0 -> Box(modifier = Modifier.fillMaxSize()) {
+                        TrendingPostsComposable(range, navController = navController)
+                    }
 
-                    1 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingAccountsComposable(navController = navController)
-                        }
+                    1 -> Box(modifier = Modifier.fillMaxSize()) {
+                        TrendingAccountsComposable(navController = navController)
+                    }
 
-                    2 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            TrendingHashtagsComposable(navController = navController)
-                        }
+                    2 -> Box(modifier = Modifier.fillMaxSize()) {
+                        TrendingHashtagsComposable(navController = navController)
+                    }
 
                 }
             }

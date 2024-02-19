@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun HomeTimelineComposable(
@@ -25,7 +26,11 @@ fun HomeTimelineComposable(
             emptyMessage = EmptyState(
                 icon = Icons.Outlined.PhotoLibrary,
                 heading = "No posts",
-                message = "Follow accounts or hashtags to fill your home timeline"
+                message = "Follow accounts or hashtags to fill your home timeline",
+                buttonText = "Explore trending profiles",
+                onClick = {
+                    Navigate().navigate("trending_screen/accounts", navController)
+                }
             ),
             getItemsPaginated = {
                 viewModel.getItemsPaginated()

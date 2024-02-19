@@ -104,7 +104,7 @@ sealed class Destinations(
     )
 
     object TrendingScreen : Destinations(
-        route = "trending_screen", icon = Icons.AutoMirrored.Outlined.TrendingUp
+        route = "trending_screen/{page}", icon = Icons.AutoMirrored.Outlined.TrendingUp
     )
 
     object NotificationsScreen : Destinations(
@@ -174,8 +174,9 @@ fun NavigationGraph(navController: NavHostController) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
         }
-        composable(Destinations.TrendingScreen.route) {
-            TrendingComposable(navController)
+        composable(Destinations.TrendingScreen.route) { navBackStackEntry ->
+            val page = navBackStackEntry.arguments?.getString("page") ?: "posts"
+            TrendingComposable(navController, page)
         }
 
         composable(Destinations.NotificationsScreen.route) {
