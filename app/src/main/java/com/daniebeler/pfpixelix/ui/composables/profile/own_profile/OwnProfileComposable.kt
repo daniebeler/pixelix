@@ -96,6 +96,13 @@ fun OwnProfileComposable(
                     viewModel.getPostsPaginated()
                 },
                 openUrl = { viewModel.openUrl(context, it) },
+                emptyState = EmptyState(icon = Icons.Outlined.Photo,
+                    heading = stringResource(R.string.no_posts_yet),
+                    message = "Upload your first post",
+                    buttonText = "New Post",
+                    onClick = {
+                        Navigate().navigate("new_post_screen", navController)
+                    }),
                 otherAccountTopSectionAdditions = {})
         }
 
@@ -121,6 +128,7 @@ fun CustomProfilePage(
     accountState: AccountState,
     postsState: PostsState,
     navController: NavController,
+    emptyState: EmptyState,
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit,
     openUrl: (url: String) -> Unit,
@@ -131,13 +139,7 @@ fun CustomProfilePage(
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
-            emptyMessage = EmptyState(icon = Icons.Outlined.Photo,
-                heading = stringResource(R.string.no_posts_yet),
-                message = "Upload your first post",
-                buttonText = "New Post",
-                onClick = {
-                    Navigate().navigate("new_post_screen", navController)
-                }),
+            emptyMessage = emptyState,
             endReached = postsState.endReached,
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },

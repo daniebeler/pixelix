@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,6 +43,7 @@ import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePage
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Share
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,6 +110,11 @@ fun OtherProfileComposable(
                     viewModel.getPostsPaginated(userId)
                 },
                 openUrl = { viewModel.openUrl(context, it) },
+                emptyState = EmptyState(
+                    icon = Icons.Outlined.Photo,
+                    heading = stringResource(R.string.no_posts_yet),
+                    message = "This user has not postet anything yet"
+                ),
                 otherAccountTopSectionAdditions = {
                     Column(Modifier.padding(12.dp)) {
 
