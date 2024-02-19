@@ -8,10 +8,13 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
@@ -26,7 +29,9 @@ fun TrendingAccountsComposable(
         rememberPullRefreshState(refreshing = viewModel.trendingAccountsState.isRefreshing,
             onRefresh = { viewModel.getTrendingAccountsState(true) })
 
-    LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize(), content = {
+    LazyColumn(modifier = Modifier
+        .pullRefresh(pullRefreshState)
+        .fillMaxSize(), content = {
         items(viewModel.trendingAccountsState.trendingAccounts, key = {
             it.id
         }) {
@@ -50,7 +55,7 @@ fun TrendingAccountsComposable(
         }
 
         if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
-            FullscreenEmptyStateComposable()
+            FullscreenEmptyStateComposable(EmptyState(heading = stringResource(R.string.no_trending_profiles)))
         }
     }
 

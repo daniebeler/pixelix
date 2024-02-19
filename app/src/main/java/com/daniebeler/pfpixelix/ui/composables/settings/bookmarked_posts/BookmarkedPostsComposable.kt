@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -51,9 +52,7 @@ fun BookmarkedPostsComposable(
                 isRefreshing = viewModel.bookmarkedPostsState.isRefreshing,
                 error = viewModel.bookmarkedPostsState.error,
                 endReached = false,
-                emptyMessage = {
-                    Text(text = stringResource(R.string.no_bookmarked_posts))
-                },
+                emptyMessage = EmptyState(heading = stringResource(R.string.no_bookmarked_posts)),
                 navController = navController,
                 getItemsPaginated = { /*TODO*/ },
                 onRefresh = { viewModel.getBookmarkedPosts(true) })

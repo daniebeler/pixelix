@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
@@ -31,7 +32,7 @@ fun InfinitePostsGrid(
     isRefreshing: Boolean,
     error: String,
     endReached: Boolean = false,
-    emptyMessage: @Composable () -> Unit,
+    emptyMessage: EmptyState,
     navController: NavController,
     getItemsPaginated: () -> Unit = { },
     before: @Composable (() -> Unit)? = null,
@@ -83,9 +84,7 @@ fun InfinitePostsGrid(
                 if (items.isEmpty()) {
                     if (!isLoading && error.isEmpty()) {
                         item(span = { GridItemSpan(3) }) {
-                            FixedHeightEmptyStateComposable {
-                                emptyMessage()
-                            }
+                            FixedHeightEmptyStateComposable(emptyMessage)
                         }
                     }
                 }
@@ -102,9 +101,7 @@ fun InfinitePostsGrid(
             }
 
             if (!isLoading && error.isEmpty()) {
-                FullscreenEmptyStateComposable {
-                    emptyMessage()
-                }
+                FullscreenEmptyStateComposable(emptyMessage)
             }
         }
     }

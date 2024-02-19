@@ -6,9 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @Composable
 fun TrendingPostsComposable(
@@ -29,9 +32,7 @@ fun TrendingPostsComposable(
             isRefreshing = viewModel.trendingState.isRefreshing,
             endReached = true,
             error = viewModel.trendingState.error,
-            emptyMessage = {
-                Text(text = "no posts")
-            },
+            emptyMessage = EmptyState(heading = stringResource(R.string.no_trending_posts)),
             navController = navController
         ) {
             viewModel.getTrendingPosts(range, true)

@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
@@ -84,9 +85,7 @@ fun BlockedAccountsComposable(
                 }
 
                 if (!viewModel.blockedAccountsState.isLoading && viewModel.blockedAccountsState.error.isEmpty()) {
-                    FullscreenEmptyStateComposable {
-                        Text(text = stringResource(id = R.string.no_blocked_accounts))
-                    }
+                    FullscreenEmptyStateComposable(EmptyState(heading = stringResource(id = R.string.no_blocked_accounts)))
                 }
             }
 

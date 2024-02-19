@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 
@@ -30,7 +32,7 @@ fun InfinitePostsList(
     isRefreshing: Boolean,
     error: String,
     endReached: Boolean,
-    emptyMessage: @Composable () -> Unit = { Text(text = "No Posts") },
+    emptyMessage: EmptyState,
     navController: NavController,
     getItemsPaginated: () -> Unit,
     onRefresh: () -> Unit,
@@ -82,13 +84,7 @@ fun InfinitePostsList(
         }
 
         if (items.isEmpty() && !isLoading && error.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                emptyMessage()
-            }
+            FullscreenEmptyStateComposable(emptyMessage)
         }
 
         if (!isRefreshing && items.isEmpty() && isLoading) {

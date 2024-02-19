@@ -94,4 +94,7 @@
     <string name="about_x">Über %1$s</string>
     <string name="more_settings">Mehr Einstellungen</string>
     <string name="use_in_app_browser">In-App-Browser verwenden</string>
+    <string name="no_trending_profiles">No trending profiles</string>
+    <string name="no_trending_hashtags">No trending Hashtags</string>
+    <string name="no_trending_posts">No trending posts</string>
 </resources>

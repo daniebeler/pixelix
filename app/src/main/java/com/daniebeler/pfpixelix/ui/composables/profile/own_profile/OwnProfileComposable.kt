@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,15 +131,20 @@ fun CustomProfilePage(
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
-            emptyMessage = {
-                Text(text = stringResource(R.string.no_posts_yet))
-            },
+            emptyMessage = EmptyState(icon = Icons.Outlined.Photo,
+                heading = stringResource(R.string.no_posts_yet),
+                message = "Upload your first post",
+                buttonText = "New Post",
+                onClick = {
+                    Navigate().navigate("new_post_screen", navController)
+                }),
             endReached = postsState.endReached,
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(account = accountState.account,
+                    ProfileTopSection(
+                        account = accountState.account,
                         navController,
                         openUrl = { url ->
                             openUrl(url)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,11 +52,10 @@ fun LikedPostsComposable(
                 isLoading = viewModel.likedPostsState.isLoading,
                 isRefreshing = viewModel.likedPostsState.isRefreshing,
                 error = viewModel.likedPostsState.error,
-                emptyMessage = {
-                    Text(
-                        text = stringResource(R.string.no_liked_posts)
-                    )
-                },
+                emptyMessage = EmptyState(
+                    icon = Icons.Outlined.FavoriteBorder,
+                    heading = stringResource(R.string.no_liked_posts)
+                ),
                 navController = navController,
                 getItemsPaginated = {
                     viewModel.getItemsPaginated()

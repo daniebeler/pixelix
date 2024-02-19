@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +91,7 @@ fun HashtagTimelineComposable(
                 error = viewModel.postsState.error,
                 endReached = viewModel.postsState.endReached,
                 navController = navController,
+                emptyMessage = EmptyState(heading = "No posts"),
                 getItemsPaginated = {
                     viewModel.getItemsPaginated(hashtag)
                 },
