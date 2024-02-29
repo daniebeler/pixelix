@@ -261,7 +261,6 @@ interface PixelfedApi {
     fun uploadMedia(@Body body: RequestBody
     ): Call<MediaAttachmentDto>
 
-    @Headers("CONNECT_TIMEOUT:1", "READ_TIMEOUT:1", "WRITE_TIMEOUT:1")
     @FormUrlEncoded
     @PUT("/api/v1/media/{id}")
     fun updateMedia(
