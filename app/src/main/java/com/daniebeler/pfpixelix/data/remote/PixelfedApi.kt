@@ -23,6 +23,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -188,7 +189,7 @@ interface PixelfedApi {
     ): Call<List<AccountDto>>
 
     @GET("api/v1/accounts/verify_credentials")
-    fun verifyToken(@Header("Authorization") token: String): Call<AccountDto>
+    fun verifyToken(): Call<AccountDto>
 
 
     // Statuses
@@ -260,6 +261,7 @@ interface PixelfedApi {
     fun uploadMedia(@Body body: RequestBody
     ): Call<MediaAttachmentDto>
 
+    @Headers("CONNECT_TIMEOUT:1", "READ_TIMEOUT:1", "WRITE_TIMEOUT:1")
     @FormUrlEncoded
     @PUT("/api/v1/media/{id}")
     fun updateMedia(

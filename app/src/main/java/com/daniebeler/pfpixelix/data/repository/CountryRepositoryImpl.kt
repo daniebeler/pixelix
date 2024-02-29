@@ -82,7 +82,7 @@ class CountryRepositoryImpl @Inject constructor(
         userDataStorePreferences.edit { preferences ->
             preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
         }
-        this.accessToken = accessToken
+        hostSelectionInterceptor.setToken(accessToken)
     }
 
 
@@ -200,7 +200,7 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun verifyToken(token: String): Flow<Resource<Account>> {
         return NetworkCall<Account, AccountDto>().makeCall(
-            pixelfedApi.verifyToken("Bearer $token")
+            pixelfedApi.verifyToken()
         )
     }
 
