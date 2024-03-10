@@ -104,4 +104,7 @@
     <string name="empty">Leer</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Folge Benutzern oder Hashtags um deine Home Timeline zu füllen</string>
     <string name="no_posts">Keine Beiträge</string>
+    <string name="home_timeline_explained">Die Home Timeline beinhaltet alle Beiträge von Benutzern und Hashtags denen du folgst</string>
+    <string name="local_timeline_explained">Die lokale Timeline beinhaltet alle Beiträge von Benutzern von deinem Server</string>
+    <string name="global_timeline_explained">Die globale Timeline beinhaltet Beiträge von allen Servern mit denen dein Server federiert</string>
 </resources>
