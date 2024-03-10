@@ -62,7 +62,7 @@ fun OwnProfileComposable(
             }
         }, actions = {
             IconButton(onClick = {
-                //Navigate().navigate("settings_screen", navController)
+                //Navigate.navigate("settings_screen", navController)
                 showBottomSheet = true
             }) {
                 Icon(
@@ -73,7 +73,7 @@ fun OwnProfileComposable(
 
     }, floatingActionButton = {
         FloatingActionButton(onClick = {
-            Navigate().navigate("new_post_screen", navController)
+            Navigate.navigate("new_post_screen", navController)
         }) {
             Icon(Icons.Default.Add, contentDescription = "Add")
         }
@@ -101,7 +101,7 @@ fun OwnProfileComposable(
                     message = stringResource(R.string.upload_your_first_post),
                     buttonText = stringResource(id = R.string.new_post),
                     onClick = {
-                        Navigate().navigate("new_post_screen", navController)
+                        Navigate.navigate("new_post_screen", navController)
                     }),
                 otherAccountTopSectionAdditions = {})
         }

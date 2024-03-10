@@ -196,7 +196,7 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
     var timeAgo: String by remember { mutableStateOf("") }
 
     LaunchedEffect(reply.createdAt) {
-        timeAgo = TimeAgo().covertTimeToText(reply.createdAt)
+        timeAgo = TimeAgo.convertTimeToText(reply.createdAt)
     }
 
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -207,7 +207,7 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
                 .width(42.dp)
                 .clip(CircleShape)
                 .clickable {
-                    Navigate().navigate(
+                    Navigate.navigate(
                         "profile_screen/" + reply.account.id, navController
                     )
                 })
@@ -220,7 +220,7 @@ private fun ReplyElement(reply: Reply, navController: NavController) {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable {
-                        Navigate().navigate(
+                        Navigate.navigate(
                             "profile_screen/" + reply.account.id, navController
                         )
                     })

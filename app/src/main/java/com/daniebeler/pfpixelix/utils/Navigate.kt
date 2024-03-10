@@ -7,7 +7,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
-class Navigate {
+object Navigate {
     fun navigate(route: String, navController: NavController) {
         navController.navigate(route) {
             launchSingleTop = true

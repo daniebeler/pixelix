@@ -82,7 +82,7 @@ fun ShareBottomSheet(
         CustomBottomSheetElement(icon = Icons.Outlined.Share,
             text = stringResource(R.string.share_this_post),
             onClick = {
-                Share().shareText(context, url)
+                Share.shareText(context, url)
             })
 
         if (minePost) {

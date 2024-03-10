@@ -66,6 +66,6 @@ class LoginViewModel @Inject constructor(
     private fun openUrl(context: Context, clientId: String, baseUrl: String) {
         val url =
             "${baseUrl}/oauth/authorize?response_type=code&redirect_uri=pixelix-android-auth://callback&client_id=" + clientId
-        Navigate().openUrlInApp(context, url)
+        Navigate.openUrlInApp(context, url)
     }
 }

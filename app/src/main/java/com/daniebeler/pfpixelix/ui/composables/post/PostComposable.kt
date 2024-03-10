@@ -139,7 +139,7 @@ fun PostComposable(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .clickable(onClick = {
-                        Navigate().navigate("profile_screen/" + viewModel.post!!.account.id, navController)
+                        Navigate.navigate("profile_screen/" + viewModel.post!!.account.id, navController)
                     })
             ) {
                 AsyncImage(
@@ -337,7 +337,7 @@ fun PostComposable(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.clickable {
-                                Navigate().navigate(
+                                Navigate.navigate(
                                     "profile_screen/" + post.likedBy.id, navController
                                 )
                             })

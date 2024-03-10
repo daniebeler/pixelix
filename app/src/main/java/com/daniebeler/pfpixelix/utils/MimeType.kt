@@ -4,7 +4,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.webkit.MimeTypeMap
 
-class MimeType {
+object MimeType {
     fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
         return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
             contentResolver.getType(uri)

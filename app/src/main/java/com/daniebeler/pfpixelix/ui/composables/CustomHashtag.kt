@@ -32,7 +32,7 @@ fun CustomHashtag(hashtag: Tag, navController: NavController) {
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                Navigate().navigate("hashtag_timeline_screen/${hashtag.name}", navController)
+                Navigate.navigate("hashtag_timeline_screen/${hashtag.name}", navController)
             }, verticalAlignment = Alignment.CenterVertically
     ) {
         Box(

@@ -26,7 +26,7 @@ data class NotificationDto(
             type = type,
             post = post?.toModel(),
             createdAt = createdAt,
-            timeAgo = TimeAgo().covertTimeToText(createdAt)
+            timeAgo = TimeAgo.convertTimeToText(createdAt)
         )
     }
 }

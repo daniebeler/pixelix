@@ -91,7 +91,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun convertTime(createdAt: String) {
-        timeAgoString = TimeAgo().covertTimeToText(createdAt) ?: ""
+        timeAgoString = TimeAgo.convertTimeToText(createdAt) ?: ""
     }
 
     fun loadReplies(accountId: String, postId: String) {

@@ -15,9 +15,9 @@ class OpenExternalUrlUseCase(
         CoroutineScope(Dispatchers.Default).launch {
             val useInAppBrowser = repository.getUseInAppBrowser().first()
             if (useInAppBrowser) {
-                Navigate().openUrlInApp(context, url)
+                Navigate.openUrlInApp(context, url)
             } else {
-                Navigate().openUrlInBrowser(context, url)
+                Navigate.openUrlInBrowser(context, url)
             }
         }
     }

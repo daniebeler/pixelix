@@ -6,9 +6,9 @@ import java.time.Instant
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-class TimeAgo {
+object TimeAgo {
 
-    fun covertTimeToText(dataDate: String): String {
+    fun convertTimeToText(dataDate: String): String {
         var convTime: String = ""
         val suffix = "ago"
         try {

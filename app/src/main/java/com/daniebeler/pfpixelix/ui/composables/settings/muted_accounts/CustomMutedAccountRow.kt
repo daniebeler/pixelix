@@ -37,7 +37,7 @@ fun CustomMutedAccountRow(
 
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
-                Navigate().navigate("profile_screen/" + account.id, navController)
+                Navigate.navigate("profile_screen/" + account.id, navController)
             }
         ) {
             AsyncImage(

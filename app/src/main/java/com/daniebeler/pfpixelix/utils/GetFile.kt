@@ -5,7 +5,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import java.io.File
 
-class GetFile {
+object GetFile {
     fun getFile(uri: Uri, context: Context): File? {
 
         val contentResolver = context.contentResolver

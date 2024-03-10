@@ -44,49 +44,49 @@ fun ModalBottomSheetContent(navController: NavController, instanceDomain: String
             text = stringResource(R.string.settings),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("preferences_screen", navController)
+                Navigate.navigate("preferences_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.FavoriteBorder,
             text = stringResource(R.string.liked_posts),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("liked_posts_screen", navController)
+                Navigate.navigate("liked_posts_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.Bookmarks,
             text = stringResource(R.string.bookmarked_posts),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("bookmarked_posts_screen", navController)
+                Navigate.navigate("bookmarked_posts_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.Tag,
             text = stringResource(R.string.followed_hashtags),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("followed_hashtags_screen", navController)
+                Navigate.navigate("followed_hashtags_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
             text = stringResource(R.string.muted_accounts),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("muted_accounts_screen", navController)
+                Navigate.navigate("muted_accounts_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.Block,
             text = stringResource(R.string.blocked_accounts),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("blocked_accounts_screen", navController)
+                Navigate.navigate("blocked_accounts_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.Dns,
             text = stringResource(R.string.about_x, instanceDomain),
             onClick = {
                 closeBottomSheet()
-                Navigate().navigate("about_instance_screen", navController)
+                Navigate.navigate("about_instance_screen", navController)
             })
 
     }

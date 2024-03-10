@@ -73,7 +73,7 @@ fun FollowingComposable(
                 message = stringResource(R.string.the_profiles_you_follow_will_appear_here),
                 buttonText = stringResource(R.string.explore_trending_profiles),
                 onClick = {
-                    Navigate().navigate("trending_screen/accounts", navController)
+                    Navigate.navigate("trending_screen/accounts", navController)
                 })
         )
     }

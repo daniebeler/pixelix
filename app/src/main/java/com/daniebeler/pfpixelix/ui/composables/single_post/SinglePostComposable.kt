@@ -65,7 +65,7 @@ fun SinglePostComposable(
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
                     PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
-                        Navigate().navigateAndDeleteBackStack("own_profile_screen", navController)
+                        Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
                     })
                 }
             }

@@ -47,13 +47,13 @@ class PostEditorRepositoryImpl @Inject constructor(
 
             //val pixelfedApi = buildPixelFedApi(true)
 
-            val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
+            val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
 
             val inputStream = context.contentResolver.openInputStream(uri)
             val fileRequestBody =
                 inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
 
-            val file = GetFile().getFile(uri, context) ?: return@flow
+            val file = GetFile.getFile(uri, context) ?: return@flow
 
             val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
             builder.addFormDataPart("description", description)

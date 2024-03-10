@@ -164,7 +164,7 @@ fun LoginComposable(
                             .align(Alignment.Center)
                             .clickable {
                                 val url = "https://pixelfed.org/servers"
-                                Navigate().openUrlInApp(context, url)
+                                Navigate.openUrlInApp(context, url)
                             })
                 }
             }

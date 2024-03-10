@@ -273,7 +273,7 @@ fun BottomBar(navController: NavHostController) {
             NavigationBarItem(icon = {
                 Icon(imageVector = screen.icon!!, contentDescription = "")
             }, selected = currentRoute == screen.route, onClick = {
-                Navigate().navigateWithPopUp(screen.route, navController)
+                Navigate.navigateWithPopUp(screen.route, navController)
             })
         }
     }

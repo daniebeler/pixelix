@@ -3,7 +3,7 @@ package com.daniebeler.pfpixelix.utils
 import android.content.Context
 import android.content.Intent
 
-class Share {
+object Share {
 
     fun shareText(context: Context, text: String) {
         val sendIntent: Intent = Intent().apply {

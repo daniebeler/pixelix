@@ -101,7 +101,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun addImage(uri: Uri, context: Context) {
-        val fileType = MimeType().getMimeType(uri, context.contentResolver) ?: "image/*"
+        val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
         if (!instance.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(fileType)) {
             addImageError = Pair(
                 "Media type is not supported",
@@ -109,7 +109,7 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        val file = GetFile().getFile(uri, context) ?: return
+        val file = GetFile.getFile(uri, context) ?: return
 
         val size = file.length()
         if (fileType.take(5) == "image") {
@@ -240,7 +240,7 @@ class NewPostViewModel @Inject constructor(
             createPostState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
-                        Navigate().navigateAndDeleteBackStack("own_profile_screen", navController)
+                        Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
                     }
                     CreatePostState(post = result.data, isLoading = true)
                 }

@@ -126,7 +126,7 @@ fun AboutInstanceComposable(
                                 .padding(horizontal = 12.dp, vertical = 8.dp)
                                 .fillMaxWidth()
                                 .clickable {
-                                    Navigate().navigate(
+                                    Navigate.navigate(
                                         "profile_screen/" + account.id, navController
                                     )
                                 }, verticalAlignment = Alignment.CenterVertically

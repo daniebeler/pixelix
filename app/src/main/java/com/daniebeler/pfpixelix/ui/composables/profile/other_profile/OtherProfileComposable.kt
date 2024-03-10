@@ -190,7 +190,7 @@ fun OtherProfileComposable(
                 CustomBottomSheetElement(icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
-                        Share().shareText(context, viewModel.accountState.account!!.url)
+                        Share.shareText(context, viewModel.accountState.account!!.url)
                     })
             }
         }

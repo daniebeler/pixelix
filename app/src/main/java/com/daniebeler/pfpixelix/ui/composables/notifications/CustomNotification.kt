@@ -69,7 +69,7 @@ fun CustomNotification(notification: Notification, navController: NavController)
         Column {
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    Navigate().navigate("profile_screen/" + notification.account.id, navController)
+                    Navigate.navigate("profile_screen/" + notification.account.id, navController)
                 }
             ) {
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold)

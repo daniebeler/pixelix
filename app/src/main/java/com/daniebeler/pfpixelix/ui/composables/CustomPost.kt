@@ -47,7 +47,7 @@ fun CustomPost(post: Post, navController: NavController) {
             modifier = Modifier
                 .aspectRatio(1f)
                 .clickable(onClick = {
-                    Navigate().navigate("single_post_screen/" + post.id, navController)
+                    Navigate.navigate("single_post_screen/" + post.id, navController)
                 }),
         ) {
 
@@ -60,7 +60,7 @@ fun CustomPost(post: Post, navController: NavController) {
         }
     } else {
         Box(Modifier.clickable(onClick = {
-            Navigate().navigate("single_post_screen/" + post.id, navController)
+            Navigate.navigate("single_post_screen/" + post.id, navController)
         })) {
 
             if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {

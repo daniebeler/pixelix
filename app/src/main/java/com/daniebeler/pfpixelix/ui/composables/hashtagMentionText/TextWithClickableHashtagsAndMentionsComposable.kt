@@ -123,7 +123,7 @@ fun HashtagsMentionsTextView(
                     }
                     withContext(Dispatchers.Main) {
                         if (route.isNotBlank() && route.isNotEmpty()) {
-                            Navigate().navigate(route, navController)
+                            Navigate.navigate(route, navController)
                         }
                     }
                 }

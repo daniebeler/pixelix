@@ -77,7 +77,7 @@ fun NewPostComposable(
     val singlePhotoPickerLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickMultipleVisualMedia(),
             onResult = { uris ->
-                Navigate().navigate("new_post_screen", navController)
+                Navigate.navigate("new_post_screen", navController)
                 uris.forEach {
                     viewModel.addImage(it, context)
                     //viewModel.images += NewPostViewModel.ImageItem(it, "")
@@ -121,7 +121,7 @@ fun NewPostComposable(
                         Box(contentAlignment = Alignment.Center) {
 
                             val type =
-                                MimeType().getMimeType(image.imageUri, context.contentResolver)
+                                MimeType.getMimeType(image.imageUri, context.contentResolver)
                             if (type != null && type.take(5) == "video") {
                                 val model = ImageRequest.Builder(context).data(image.imageUri)
                                     .decoderFactory { result, options, _ ->
