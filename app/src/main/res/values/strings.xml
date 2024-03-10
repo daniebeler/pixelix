@@ -97,4 +97,11 @@
     <string name="no_trending_profiles">No trending profiles</string>
     <string name="no_trending_hashtags">No trending Hashtags</string>
     <string name="no_trending_posts">No trending posts</string>
+    <string name="upload_your_first_post">Upload your first post</string>
+    <string name="the_profiles_you_follow_will_appear_here">The profiles you follow will appear here</string>
+    <string name="explore_trending_profiles">Explore trending profiles</string>
+    <string name="nobody_follows_you_yet">Nobody follows you yet</string>
+    <string name="empty">Empty</string>
+    <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Follow accounts or hashtags to fill your home timeline</string>
+    <string name="no_posts">No posts</string>
 </resources>

@@ -94,7 +94,14 @@
     <string name="about_x">Über %1$s</string>
     <string name="more_settings">Mehr Einstellungen</string>
     <string name="use_in_app_browser">In-App-Browser verwenden</string>
-    <string name="no_trending_profiles">No trending profiles</string>
-    <string name="no_trending_hashtags">No trending Hashtags</string>
-    <string name="no_trending_posts">No trending posts</string>
+    <string name="no_trending_profiles">Keine Benutzer im Trend</string>
+    <string name="no_trending_hashtags">Keine Hashtags im Trend</string>
+    <string name="no_trending_posts">Keine Beiträge im Trend</string>
+    <string name="upload_your_first_post">Erstelle deinen ersten Beitrag</string>
+    <string name="the_profiles_you_follow_will_appear_here">Die Benutzer denen du folgst erscheinen hier</string>
+    <string name="explore_trending_profiles">Erkunde beliebte Benutzer</string>
+    <string name="nobody_follows_you_yet">Noch niemand folgt dir</string>
+    <string name="empty">Leer</string>
+    <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Folge Benutzern oder Hashtags um deine Home Timeline zu füllen</string>
+    <string name="no_posts">Keine Beiträge</string>
 </resources>

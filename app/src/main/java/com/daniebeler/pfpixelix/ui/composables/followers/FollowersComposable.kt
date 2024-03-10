@@ -14,9 +14,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
@@ -66,7 +68,7 @@ fun FollowersComposable(
     if (!viewModel.followersState.isLoading && viewModel.followersState.error.isEmpty() && viewModel.followersState.followers.isEmpty()) {
         FullscreenEmptyStateComposable(
             emptyState = EmptyState(
-                icon = Icons.Outlined.Groups, heading = "Empty", message = "Nobody follows you yet"
+                icon = Icons.Outlined.Groups, heading = stringResource(R.string.empty), message = stringResource(R.string.nobody_follows_you_yet)
             )
         )
     }

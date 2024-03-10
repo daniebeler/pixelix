@@ -98,8 +98,8 @@ fun OwnProfileComposable(
                 openUrl = { viewModel.openUrl(context, it) },
                 emptyState = EmptyState(icon = Icons.Outlined.Photo,
                     heading = stringResource(R.string.no_posts_yet),
-                    message = "Upload your first post",
-                    buttonText = "New Post",
+                    message = stringResource(R.string.upload_your_first_post),
+                    buttonText = stringResource(id = R.string.new_post),
                     onClick = {
                         Navigate().navigate("new_post_screen", navController)
                     }),
@@ -145,8 +145,7 @@ fun CustomProfilePage(
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(
-                        account = accountState.account,
+                    ProfileTopSection(account = accountState.account,
                         navController,
                         openUrl = { url ->
                             openUrl(url)
