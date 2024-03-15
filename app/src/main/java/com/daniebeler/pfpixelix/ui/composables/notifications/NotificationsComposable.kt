@@ -105,7 +105,10 @@ fun NotificationsComposable(
                 })
 
             if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                FullscreenEmptyStateComposable(EmptyState(icon = Icons.Outlined.Email, heading = "You don't have any notifications"))
+                FullscreenEmptyStateComposable(EmptyState(icon = Icons.Outlined.Email, heading = stringResource(
+                    R.string.you_don_t_have_any_notifications
+                )
+                ))
             }
 
             CustomPullRefreshIndicator(

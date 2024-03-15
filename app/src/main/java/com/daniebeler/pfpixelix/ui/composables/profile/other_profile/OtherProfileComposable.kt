@@ -113,7 +113,7 @@ fun OtherProfileComposable(
                 emptyState = EmptyState(
                     icon = Icons.Outlined.Photo,
                     heading = stringResource(R.string.no_posts_yet),
-                    message = "This user has not postet anything yet"
+                    message = stringResource(R.string.this_user_has_not_postet_anything_yet)
                 ),
                 otherAccountTopSectionAdditions = {
                     Column(Modifier.padding(12.dp)) {
