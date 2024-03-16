@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
 object Navigate {
+    var currentBottomBarRoute: String? = null
     fun navigate(route: String, navController: NavController) {
         navController.navigate(route) {
             launchSingleTop = true
@@ -15,15 +16,24 @@ object Navigate {
         }
     }
 
-    fun navigateWithPopUp(route: String, navController: NavController) {
-        navController.navigate(route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+    fun navigateWithPopUp(newRoute: String, navController: NavController) {
+        if (newRoute == currentBottomBarRoute) {
+            navController.navigate(newRoute) {
+                popUpTo(currentBottomBarRoute!!) {
+                    inclusive = true
+                }
+                launchSingleTop = true
             }
-
-            launchSingleTop = true
-            restoreState = true
+        } else {
+            navController.navigate(newRoute) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
+        currentBottomBarRoute = newRoute
     }
 
     fun navigateAndDeleteBackStack(route: String, navController: NavController) {
