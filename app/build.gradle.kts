@@ -81,7 +81,7 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.3")
 
 
-    implementation ("com.google.dagger:hilt-android:2.48")
+    implementation ("com.google.dagger:hilt-android:2.49")
     kapt ("com.google.dagger:hilt-android-compiler:2.45")
 
     implementation ("io.coil-kt:coil-compose:2.5.0")
