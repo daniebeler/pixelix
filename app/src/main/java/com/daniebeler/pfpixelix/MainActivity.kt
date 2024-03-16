@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -170,7 +172,11 @@ sealed class Destinations(
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController, startDestination = Destinations.HomeScreen.route) {
+    NavHost(
+        navController,
+        startDestination = Destinations.HomeScreen.route,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
         }
