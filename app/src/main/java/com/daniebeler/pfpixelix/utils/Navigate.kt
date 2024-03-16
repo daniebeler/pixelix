@@ -19,9 +19,7 @@ object Navigate {
     fun navigateWithPopUp(newRoute: String, navController: NavController) {
         if (newRoute == currentBottomBarRoute) {
             navController.navigate(newRoute) {
-                popUpTo(currentBottomBarRoute!!) {
-                    inclusive = true
-                }
+                popUpTo(currentBottomBarRoute!!)
                 launchSingleTop = true
             }
         } else {
