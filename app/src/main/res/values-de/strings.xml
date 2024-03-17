@@ -109,4 +109,5 @@
     <string name="global_timeline_explained">Die globale Timeline beinhaltet Beiträge von allen Servern mit denen dein Server federiert</string>
     <string name="this_user_has_not_postet_anything_yet">Dieser Benutzer hat noch keine Beiträge</string>
     <string name="you_don_t_have_any_notifications">Du hast keine Benachrichtigungen</string>
+    <string name="view_more">mehr anzeigen</string>
 </resources>

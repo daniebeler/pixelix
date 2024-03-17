@@ -36,7 +36,7 @@ fun TrendingHashtagsComposable(
             it.hashtag ?: ""
         }) {
             it.name = it.hashtag ?: ""
-            CustomHashtag(hashtag = it, navController = navController)
+            TrendingHashtagElement(hashtag = it, navController = navController)
         }
     })
 

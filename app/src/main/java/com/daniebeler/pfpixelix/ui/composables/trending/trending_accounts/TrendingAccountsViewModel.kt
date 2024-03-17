@@ -27,26 +27,30 @@ class TrendingAccountsViewModel @Inject constructor(
     }
 
     fun getTrendingAccountsState(refreshing: Boolean = false) {
-        getTrendingAccountsUseCase().onEach { result ->
-            trendingAccountsState = when (result) {
-                is Resource.Success -> {
-                    result.data?.let { getRelationships(it) }
-                    TrendingAccountsState(trendingAccounts = result.data ?: emptyList())
-                }
+        if (refreshing || trendingAccountsState.trendingAccounts.isEmpty()) {
+            getTrendingAccountsUseCase().onEach { result ->
+                trendingAccountsState = when (result) {
+                    is Resource.Success -> {
+                        result.data?.let { getRelationships(it) }
+                        TrendingAccountsState(trendingAccounts = result.data ?: emptyList())
+                    }
 
-                is Resource.Error -> {
-                    TrendingAccountsState(error = result.message ?: "An unexpected error occurred")
-                }
+                    is Resource.Error -> {
+                        TrendingAccountsState(
+                            error = result.message ?: "An unexpected error occurred"
+                        )
+                    }
 
-                is Resource.Loading -> {
-                    TrendingAccountsState(
-                        isLoading = true,
-                        isRefreshing = refreshing,
-                        trendingAccounts = trendingAccountsState.trendingAccounts
-                    )
+                    is Resource.Loading -> {
+                        TrendingAccountsState(
+                            isLoading = true,
+                            isRefreshing = refreshing,
+                            trendingAccounts = trendingAccountsState.trendingAccounts
+                        )
+                    }
                 }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        }
     }
 
     private fun getRelationships(accounts: List<Account>) {

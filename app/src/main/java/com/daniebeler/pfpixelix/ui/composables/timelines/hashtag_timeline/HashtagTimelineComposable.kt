@@ -18,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -56,7 +58,9 @@ fun HashtagTimelineComposable(
                         )
                         if (viewModel.hashtagState.hashtag != null) {
                             Text(
-                                text = viewModel.hashtagState.hashtag!!.count.toString() + " posts",
+                                text = viewModel.hashtagState.hashtag!!.count.toString() + " " + stringResource(
+                                    R.string.posts
+                                ),
                                 fontSize = 14.sp,
                                 lineHeight = 12.sp,
                                 color = MaterialTheme.colorScheme.primary
