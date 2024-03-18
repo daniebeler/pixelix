@@ -10,6 +10,7 @@ import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.model.Type
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
@@ -68,6 +69,12 @@ class SearchViewModel @Inject constructor(
             viewModelScope.launch {
                 savedSearchesRepository.addSearch(text);
             }
+        }
+    }
+
+    fun deleteSavedSearch(item: SavedSearchItem) {
+        viewModelScope.launch {
+            savedSearchesRepository.deleteElement(item)
         }
     }
 

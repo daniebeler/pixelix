@@ -21,7 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.HorizontalDivider
@@ -85,6 +87,12 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                     onValueChange = { viewModel.textInputChange(it) },
                     label = { Text(stringResource(R.string.search)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    trailingIcon = {
+                        Box(modifier = Modifier.clickable {
+                            viewModel.textInput = ""
+                            viewModel.searchState = SearchState()
+                        }) { Icon(Icons.Filled.Clear, contentDescription = null) }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -107,7 +115,11 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
             }
             if (viewModel.textInput.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
                 viewModel.savedSearches.pastSearches.reversed().map {
-                    PastSearchItem(item = it, navController) { text -> viewModel.onSearch(text) }
+                    PastSearchItem(
+                        item = it,
+                        navController,
+                        { text -> viewModel.onSearch(text) },
+                        { viewModel.deleteSavedSearch(it) })
                 }
             }
             LazyColumn(content = {
@@ -139,15 +151,28 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
 }
 
 @Composable
-private fun PastSearchItem(item: SavedSearchItem, navController: NavController, setSearchText: (text: String) -> Unit) {
+private fun PastSearchItem(
+    item: SavedSearchItem,
+    navController: NavController,
+    setSearchText: (text: String) -> Unit,
+    deleteSavedSearch: () -> Unit
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
                 when (item.type) {
-                    Type.Account -> Navigate.navigate("profile_screen/" + item.accountId, navController)
-                    Type.Hashtag -> Navigate.navigate("hashtag_timeline_screen/${item.value}", navController)
+                    Type.Account -> Navigate.navigate(
+                        "profile_screen/" + item.accountId,
+                        navController
+                    )
+
+                    Type.Hashtag -> Navigate.navigate(
+                        "hashtag_timeline_screen/${item.value}",
+                        navController
+                    )
+
                     Type.Search -> setSearchText(item.value)
                 }
             },
@@ -175,7 +200,7 @@ private fun PastSearchItem(item: SavedSearchItem, navController: NavController, 
                     } else {
                         Icons.Outlined.Search
                     },
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -190,5 +215,19 @@ private fun PastSearchItem(item: SavedSearchItem, navController: NavController, 
             item.value
         }
         Text(text = text)
+        Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .height(22.dp)
+                .width(22.dp)
+                .clickable { deleteSavedSearch() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }

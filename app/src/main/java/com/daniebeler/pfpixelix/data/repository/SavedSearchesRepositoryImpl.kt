@@ -36,8 +36,26 @@ class SavedSearchesRepositoryImpl @Inject constructor(private val dataStore: Dat
     private suspend fun addItem(item: SavedSearchItem) {
         try {
             dataStore.updateData { savedSearches ->
+                if (savedSearches.pastSearches.any { it == item }) {
+                    savedSearches.copy(
+                        pastSearches = savedSearches.pastSearches.filterNot { it.value == item.value && it.type == item.type } + item
+                    )
+                } else {
+                    savedSearches.copy(
+                        pastSearches = savedSearches.pastSearches + item
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
+
+    override suspend fun deleteElement(item: SavedSearchItem) {
+        try {
+            dataStore.updateData { savedSearches ->
                 savedSearches.copy(
-                    pastSearches = savedSearches.pastSearches + item
+                    pastSearches = savedSearches.pastSearches.filterNot { it == item }
                 )
             }
         } catch (e: Exception) {
