@@ -26,7 +26,6 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.utils.Navigate
-
 @Composable
 fun CustomAccount(
     account: Account,
@@ -34,11 +33,45 @@ fun CustomAccount(
     navController: NavController,
     viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
 ) {
+    CustomAccountPrivate(
+        account = account,
+        relationship = relationship,
+        navController = navController,
+        onClick = {},
+        viewModel = viewModel
+    )
+}
+
+@Composable
+fun CustomAccount(
+    account: Account,
+    relationship: Relationship?,
+    onClick: () -> Unit,
+    navController: NavController,
+    viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
+) {
+CustomAccountPrivate(
+    account = account,
+    relationship = relationship,
+    onClick = onClick,
+    navController = navController,
+    viewModel = viewModel
+)
+}
+
+@Composable
+private fun CustomAccountPrivate(account: Account,
+                          relationship: Relationship?,
+                          onClick: () -> Unit,
+                          navController: NavController,
+                          viewModel: CustomAccountViewModel)
+{
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
+                onClick()
                 Navigate.navigate("profile_screen/" + account.id, navController)
             },
         verticalAlignment = Alignment.CenterVertically
