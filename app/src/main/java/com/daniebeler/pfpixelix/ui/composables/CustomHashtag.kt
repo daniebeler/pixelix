@@ -27,11 +27,22 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun CustomHashtag(hashtag: Tag, navController: NavController) {
+    CustomHashtagPrivate(hashtag = hashtag, onClick = {}, navController = navController)
+}
+
+@Composable
+fun CustomHashtag(hashtag: Tag, onClick: () -> Unit, navController: NavController) {
+    CustomHashtagPrivate(hashtag = hashtag, onClick = onClick, navController = navController)
+}
+
+@Composable
+private fun CustomHashtagPrivate(hashtag: Tag, onClick: () -> Unit, navController: NavController) {
     Row(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
+                onClick()
                 Navigate.navigate("hashtag_timeline_screen/${hashtag.name}", navController)
             }, verticalAlignment = Alignment.CenterVertically
     ) {
