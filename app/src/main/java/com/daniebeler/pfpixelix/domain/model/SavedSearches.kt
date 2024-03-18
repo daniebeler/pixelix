@@ -9,12 +9,12 @@ data class SavedSearches(
 
 @Serializable
 data class SavedSearchItem(
-    val type: Type = Type.Search,
+    val savedSearchType: SavedSearchType = SavedSearchType.Search,
     val value: String,
     val avatar: String?,
     val accountId: String?
 )
 
-enum class Type {
+enum class SavedSearchType {
     Account, Hashtag, Search
 }

@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.search
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -34,42 +32,24 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.datastore.dataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
-import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.model.Type
-import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
+import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
-import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import java.lang.Exception
 
 @Composable
 fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
@@ -162,23 +142,23 @@ private fun PastSearchItem(
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                when (item.type) {
-                    Type.Account -> Navigate.navigate(
+                when (item.savedSearchType) {
+                    SavedSearchType.Account -> Navigate.navigate(
                         "profile_screen/" + item.accountId,
                         navController
                     )
 
-                    Type.Hashtag -> Navigate.navigate(
+                    SavedSearchType.Hashtag -> Navigate.navigate(
                         "hashtag_timeline_screen/${item.value}",
                         navController
                     )
 
-                    Type.Search -> setSearchText(item.value)
+                    SavedSearchType.Search -> setSearchText(item.value)
                 }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (item.type == Type.Account) {
+        if (item.savedSearchType == SavedSearchType.Account) {
             AsyncImage(
                 model = item.avatar, contentDescription = "",
                 modifier = Modifier
@@ -195,7 +175,7 @@ private fun PastSearchItem(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (item.type == Type.Hashtag) {
+                    imageVector = if (item.savedSearchType == SavedSearchType.Hashtag) {
                         Icons.Outlined.Tag
                     } else {
                         Icons.Outlined.Search
@@ -207,12 +187,16 @@ private fun PastSearchItem(
         }
         Spacer(modifier = Modifier.width(10.dp))
 
-        val text = if (item.type == Type.Account) {
-            "@${item.value}"
-        } else if (item.type == Type.Hashtag) {
-            "#${item.value}"
-        } else {
-            item.value
+        val text = when (item.savedSearchType) {
+            SavedSearchType.Account -> {
+                "@${item.value}"
+            }
+            SavedSearchType.Hashtag -> {
+                "#${item.value}"
+            }
+            else -> {
+                item.value
+            }
         }
         Text(text = text)
         Spacer(modifier = Modifier.weight(1f))

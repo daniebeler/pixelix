@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.domain.repository
 
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.model.Type
 import kotlinx.coroutines.flow.Flow
 
 interface SavedSearchesRepository {
