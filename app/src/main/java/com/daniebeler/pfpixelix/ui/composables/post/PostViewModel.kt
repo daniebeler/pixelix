@@ -117,7 +117,7 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        myAccountId?.let { loadReplies(it, postId) }
+                        loadReplies(post!!.account.id, postId)
                         newComment = ""
                     }
 
@@ -133,6 +133,24 @@ class PostViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
+
+    fun deleteReply(postId: String) {
+        deletePostUseCase(postId).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    repliesState = repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
+                }
+
+                is Resource.Error -> {
+                    println(result.message)
+                }
+                is Resource.Loading -> {
+                    println("is loading")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
     fun loadLikedBy(postId: String) {
         getAccountsWhoLikedPostUseCase(postId).onEach { result ->

@@ -28,6 +28,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -36,9 +38,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -94,7 +98,13 @@ fun CommentsBottomSheet(
                             post.createdAt,
                             post.replyCount
                         )
-                    ReplyElement(reply = ownDescription, false, navController = navController)
+                    ReplyElement(
+                        reply = ownDescription,
+                        true,
+                        navController = navController,
+                        {},
+                        viewModel.myAccountId
+                    )
                 }
 
                 Row(verticalAlignment = Alignment.Bottom) {
@@ -157,7 +167,9 @@ fun CommentsBottomSheet(
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
-                ReplyElement(reply = reply, true, navController = navController)
+                ReplyElement(reply = reply, false, navController = navController,
+                    { viewModel.deleteReply(reply.id) }, viewModel.myAccountId
+                )
             }
 
             if (viewModel.repliesState.isLoading) {
@@ -200,12 +212,16 @@ fun CommentsBottomSheet(
 @Composable
 private fun ReplyElement(
     reply: Reply,
-    showSubReplies: Boolean,
+    postDescription: Boolean,
     navController: NavController,
+    deleteReply: () -> Unit,
+    myAccountId: String?,
     viewModel: ReplyElementViewModel = hiltViewModel(key = reply.id)
 ) {
 
     var timeAgo: String by remember { mutableStateOf("") }
+    var replyCount: Int by remember { mutableIntStateOf(reply.replyCount) }
+    val openAddReplyDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(reply.createdAt) {
         timeAgo = TimeAgo.convertTimeToText(reply.createdAt)
@@ -251,15 +267,30 @@ private fun ReplyElement(
                 )
             }
         }
-        if (showSubReplies) {
-            if (reply.replyCount != 0 && viewModel.repliesState.replies.isEmpty()) {
+
+        if (!postDescription) {
+            Row (Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
+                if (reply.account.id == myAccountId) {
+                    TextButton(onClick = { deleteReply() }) {
+                        Text(text = "Delete", color = MaterialTheme.colorScheme.onBackground)
+                    }
+                }
+                TextButton(onClick = { openAddReplyDialog.value = true }) {
+                    Text(text = "Reply", color = MaterialTheme.colorScheme.onBackground)
+                }
+                TextButton(onClick = { openAddReplyDialog.value = true }) {
+                    Text(text = "Like", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+
+            if (replyCount != 0 && viewModel.repliesState.replies.isEmpty()) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
                     TextButton(onClick = { viewModel.loadReplies(reply.account.id, reply.id) }) {
                         Text(
-                            text = if (reply.replyCount == 1) {
-                                "view ${reply.replyCount} reply"
+                            text = if (replyCount == 1) {
+                                "view $replyCount reply"
                             } else {
-                                "view ${reply.replyCount} replies"
+                                "view $replyCount replies"
                             }, fontSize = 12.sp
                         )
                     }
@@ -277,11 +308,65 @@ private fun ReplyElement(
                 Box(Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp)) {
                     Column {
                         viewModel.repliesState.replies.map {
-                            ReplyElement(reply = it, true, navController = navController)
+                            ReplyElement(reply = it, false, navController = navController,
+                                {
+                                    viewModel.deleteReply(it.id)
+                                    replyCount--
+                                }, myAccountId
+                            )
                         }
                     }
                 }
             }
         }
     }
+    if (openAddReplyDialog.value) {
+        AddReplyDialog(onDismissRequest = { openAddReplyDialog.value = false }, onConfirmation = {
+            openAddReplyDialog.value = false
+            if (myAccountId != null) {
+                viewModel.createReply(reply.id, it, myAccountId)
+            }
+        })
+    }
+}
+
+@Composable
+fun AddReplyDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: (replyText: String) -> Unit,
+) {
+    var replyText by remember { mutableStateOf("") }
+
+    AlertDialog(
+        icon = {
+            Icon(Icons.Outlined.Edit, contentDescription = "Edit")
+        },
+        title = {
+            Text(text = "Add Reply")
+        },
+        text = {
+            TextField(value = replyText, onValueChange = { replyText = it })
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation(replyText)
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }
