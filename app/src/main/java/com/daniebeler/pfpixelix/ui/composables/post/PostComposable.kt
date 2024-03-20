@@ -386,7 +386,7 @@ fun PostComposable(
             }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
-                CommentsBottomSheet(post, sheetState, navController, viewModel)
+                CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
                     ShareBottomSheet(context, post.url, true, viewModel, post)

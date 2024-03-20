@@ -90,7 +90,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun convertTime(createdAt: String) {
-        timeAgoString = TimeAgo.convertTimeToText(createdAt) ?: ""
+        timeAgoString = TimeAgo.convertTimeToText(createdAt)
     }
 
     fun loadReplies(accountId: String, postId: String) {
@@ -117,6 +117,7 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
+                        myAccountId?.let { loadReplies(it, postId) }
                         newComment = ""
                     }
 

@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,13 +30,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,19 +53,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.TimeAgo
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CommentsBottomSheet(
-    post: Post, sheetState: SheetState, navController: NavController, viewModel: PostViewModel
+    post: Post, navController: NavController, viewModel: PostViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -77,7 +77,6 @@ fun CommentsBottomSheet(
             .fillMaxSize()
             .padding(horizontal = 12.dp)
     ) {
-        // LazyColumn with replies
         LazyColumn(
             modifier = Modifier
                 .imePadding()
@@ -87,12 +86,20 @@ fun CommentsBottomSheet(
             item {
                 if (post.content.isNotEmpty()) {
                     val ownDescription =
-                        Reply("0", post.content, post.mentions, post.account, post.createdAt)
-                    ReplyElement(reply = ownDescription, navController = navController)
+                        Reply(
+                            "0",
+                            post.content,
+                            post.mentions,
+                            post.account,
+                            post.createdAt,
+                            post.replyCount
+                        )
+                    ReplyElement(reply = ownDescription, false, navController = navController)
                 }
 
                 Row(verticalAlignment = Alignment.Bottom) {
-                    OutlinedTextField(value = viewModel.newComment,
+                    OutlinedTextField(
+                        value = viewModel.newComment,
                         onValueChange = { viewModel.newComment = it },
                         label = { Text(stringResource(R.string.reply)) },
                         modifier = Modifier
@@ -150,7 +157,7 @@ fun CommentsBottomSheet(
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
-                ReplyElement(reply = reply, navController = navController)
+                ReplyElement(reply = reply, true, navController = navController)
             }
 
             if (viewModel.repliesState.isLoading) {
@@ -191,52 +198,90 @@ fun CommentsBottomSheet(
 
 
 @Composable
-private fun ReplyElement(reply: Reply, navController: NavController) {
+private fun ReplyElement(
+    reply: Reply,
+    showSubReplies: Boolean,
+    navController: NavController,
+    viewModel: ReplyElementViewModel = hiltViewModel(key = reply.id)
+) {
 
     var timeAgo: String by remember { mutableStateOf("") }
 
     LaunchedEffect(reply.createdAt) {
         timeAgo = TimeAgo.convertTimeToText(reply.createdAt)
     }
-
-    Row(modifier = Modifier.padding(vertical = 8.dp)) {
-        AsyncImage(model = reply.account.avatar,
-            contentDescription = "",
-            modifier = Modifier
-                .height(42.dp)
-                .width(42.dp)
-                .clip(CircleShape)
-                .clickable {
-                    Navigate.navigate(
-                        "profile_screen/" + reply.account.id, navController
-                    )
-                })
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column {
-            Row {
-                Text(text = reply.account.acct,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Row {
+            AsyncImage(model = reply.account.avatar,
+                contentDescription = "",
+                modifier = Modifier
+                    .height(42.dp)
+                    .width(42.dp)
+                    .clip(CircleShape)
+                    .clickable {
                         Navigate.navigate(
                             "profile_screen/" + reply.account.id, navController
                         )
                     })
 
-                Text(
-                    text = " • $timeAgo",
-                    fontSize = 12.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column {
+                Row {
+                    Text(text = reply.account.acct,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable {
+                            Navigate.navigate(
+                                "profile_screen/" + reply.account.id, navController
+                            )
+                        })
+
+                    Text(
+                        text = " • $timeAgo",
+                        fontSize = 12.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+
+
+                HashtagsMentionsTextView(
+                    text = reply.content, mentions = reply.mentions, navController = navController
                 )
             }
-
-
-            HashtagsMentionsTextView(
-                text = reply.content, mentions = reply.mentions, navController = navController
-            )
+        }
+        if (showSubReplies) {
+            if (reply.replyCount != 0 && viewModel.repliesState.replies.isEmpty()) {
+                Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
+                    TextButton(onClick = { viewModel.loadReplies(reply.account.id, reply.id) }) {
+                        Text(
+                            text = if (reply.replyCount == 1) {
+                                "view ${reply.replyCount} reply"
+                            } else {
+                                "view ${reply.replyCount} replies"
+                            }, fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+            if (viewModel.repliesState.isLoading) {
+                Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
+                    FixedHeightLoadingComposable()
+                }
+            } else if (viewModel.repliesState.error != "") {
+                Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
+                    ErrorComposable(viewModel.repliesState.error)
+                }
+            } else if (viewModel.repliesState.replies.isNotEmpty()) {
+                Box(Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp)) {
+                    Column {
+                        viewModel.repliesState.replies.map {
+                            ReplyElement(reply = it, true, navController = navController)
+                        }
+                    }
+                }
+            }
         }
     }
 }

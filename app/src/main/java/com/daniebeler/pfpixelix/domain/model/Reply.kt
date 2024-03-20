@@ -5,5 +5,6 @@ data class Reply(
     val content: String,
     val mentions: List<Account>,
     val account: Account,
-    val createdAt: String
+    val createdAt: String,
+    val replyCount: Int
 )
