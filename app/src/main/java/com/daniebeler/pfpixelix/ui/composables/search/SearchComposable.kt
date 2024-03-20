@@ -94,12 +94,14 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                 )
             }
             if (viewModel.textInput.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
-                viewModel.savedSearches.pastSearches.reversed().map {
-                    PastSearchItem(
-                        item = it,
-                        navController,
-                        { text -> viewModel.onSearch(text) },
-                        { viewModel.deleteSavedSearch(it) })
+                LazyColumn {
+                    items(viewModel.savedSearches.pastSearches.reversed()) {
+                        PastSearchItem(
+                            item = it,
+                            navController,
+                            { text -> viewModel.onSearch(text) },
+                            { viewModel.deleteSavedSearch(it) })
+                    }
                 }
             }
             LazyColumn(content = {
