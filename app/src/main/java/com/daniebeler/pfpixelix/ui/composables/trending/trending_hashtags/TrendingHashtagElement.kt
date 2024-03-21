@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
 import com.daniebeler.pfpixelix.utils.Navigate
+import java.util.Locale
 
 @Composable
 fun TrendingHashtagElement(
@@ -50,7 +53,6 @@ fun TrendingHashtagElement(
             }) {
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 12.dp)
@@ -59,9 +61,11 @@ fun TrendingHashtagElement(
             Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             if (viewModel.hashtagState.hashtag != null) {
                 Text(
-                    text = viewModel.hashtagState.hashtag!!.count!!.toString() + " " + stringResource(
+                    text = "  • " + String.format(Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!) + " " + stringResource(
                         id = R.string.posts
-                    )
+                    ),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
         }

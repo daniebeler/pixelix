@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,9 +34,12 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
+import java.util.Locale
 
 @Composable
-fun ProfileTopSection(account: Account?, navController: NavController, openUrl: (url: String) -> Unit) {
+fun ProfileTopSection(
+    account: Account?, navController: NavController, openUrl: (url: String) -> Unit
+) {
     val clipboardManager = LocalClipboardManager.current
 
     if (account != null) {
@@ -58,7 +60,7 @@ fun ProfileTopSection(account: Account?, navController: NavController, openUrl: 
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = account.postsCount.toString(),
+                            text = String.format(Locale.GERMANY, "%,d", account.postsCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -72,7 +74,7 @@ fun ProfileTopSection(account: Account?, navController: NavController, openUrl: 
                             )
                         }) {
                         Text(
-                            text = account.followersCount.toString(),
+                            text = String.format(Locale.GERMANY, "%,d", account.followersCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -86,7 +88,7 @@ fun ProfileTopSection(account: Account?, navController: NavController, openUrl: 
                             )
                         }) {
                         Text(
-                            text = account.followingCount.toString(),
+                            text = String.format(Locale.GERMANY, "%,d", account.followingCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
