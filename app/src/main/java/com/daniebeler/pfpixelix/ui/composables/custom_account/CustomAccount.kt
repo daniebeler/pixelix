@@ -26,6 +26,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.utils.Navigate
+
 @Composable
 fun CustomAccount(
     account: Account,
@@ -50,22 +51,23 @@ fun CustomAccount(
     navController: NavController,
     viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
 ) {
-CustomAccountPrivate(
-    account = account,
-    relationship = relationship,
-    onClick = onClick,
-    navController = navController,
-    viewModel = viewModel
-)
+    CustomAccountPrivate(
+        account = account,
+        relationship = relationship,
+        onClick = onClick,
+        navController = navController,
+        viewModel = viewModel
+    )
 }
 
 @Composable
-private fun CustomAccountPrivate(account: Account,
-                          relationship: Relationship?,
-                          onClick: () -> Unit,
-                          navController: NavController,
-                          viewModel: CustomAccountViewModel)
-{
+private fun CustomAccountPrivate(
+    account: Account,
+    relationship: Relationship?,
+    onClick: () -> Unit,
+    navController: NavController,
+    viewModel: CustomAccountViewModel
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -73,11 +75,11 @@ private fun CustomAccountPrivate(account: Account,
             .clickable {
                 onClick()
                 Navigate.navigate("profile_screen/" + account.id, navController)
-            },
-        verticalAlignment = Alignment.CenterVertically
+            }, verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = account.avatar, contentDescription = "",
+            model = account.avatar,
+            contentDescription = "",
             modifier = Modifier
                 .height(46.dp)
                 .width(46.dp)
@@ -94,13 +96,11 @@ private fun CustomAccountPrivate(account: Account,
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        FollowButton(
-            firstLoaded = relationship != null,
+        FollowButton(firstLoaded = relationship != null,
             isLoading = viewModel.relationshipState.isLoading,
             isFollowing = if (viewModel.gotUpdatedRelationship) viewModel.relationshipState.accountRelationship?.following
                 ?: false else relationship?.following ?: false,
             onFollowClick = { viewModel.followAccount(account.id) },
-            onUnFollowClick = { viewModel.unfollowAccount(account.id) }
-        )
+            onUnFollowClick = { viewModel.unfollowAccount(account.id) })
     }
 }

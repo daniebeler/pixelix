@@ -44,7 +44,7 @@ fun FollowersComposable(
         items(viewModel.followersState.followers, key = {
             it.id
         }) {
-            CustomAccount(account = it, null, navController)
+            FollowerElementComposable(account = it, navController)
         }
 
         if (viewModel.followersState.followers.isNotEmpty() && viewModel.followersState.isLoading && !viewModel.followersState.isRefreshing) {
