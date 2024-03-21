@@ -96,7 +96,8 @@ fun CommentsBottomSheet(
                             post.mentions,
                             post.account,
                             post.createdAt,
-                            post.replyCount
+                            post.replyCount,
+                            post.likedBy
                         )
                     ReplyElement(
                         reply = ownDescription,
@@ -224,6 +225,9 @@ private fun ReplyElement(
     val openAddReplyDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(reply.createdAt) {
+        if (myAccountId != null) {
+            viewModel.onInit(reply, myAccountId)
+        }
         timeAgo = TimeAgo.convertTimeToText(reply.createdAt)
     }
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -278,8 +282,14 @@ private fun ReplyElement(
                 TextButton(onClick = { openAddReplyDialog.value = true }) {
                     Text(text = "Reply", color = MaterialTheme.colorScheme.onBackground)
                 }
-                TextButton(onClick = { openAddReplyDialog.value = true }) {
-                    Text(text = "Like", color = MaterialTheme.colorScheme.onBackground)
+                if (viewModel.likedReply) {
+                    TextButton(onClick = { viewModel.unlikeReply(reply.id) }) {
+                        Text(text = "Liked")
+                    }
+                } else {
+                    TextButton(onClick = { viewModel.likeReply(reply.id) }) {
+                        Text(text = "Like", color = MaterialTheme.colorScheme.onBackground)
+                    }
                 }
             }
 

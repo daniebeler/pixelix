@@ -91,7 +91,8 @@ data class ReplyDto(
             mentions = mentions.map { accountDto -> accountDto.toModel() },
             account = account.toModel(),
             createdAt = createdAt,
-            replyCount = replyCount
+            replyCount = replyCount,
+            likedBy = likedBy.toModel()
         )
     }
 }

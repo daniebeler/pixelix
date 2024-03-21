@@ -6,5 +6,6 @@ data class Reply(
     val mentions: List<Account>,
     val account: Account,
     val createdAt: String,
-    val replyCount: Int
+    val replyCount: Int,
+    val likedBy: LikedBy?
 )
