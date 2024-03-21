@@ -31,7 +31,9 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -73,9 +76,6 @@ import com.daniebeler.pfpixelix.utils.TimeAgo
 fun CommentsBottomSheet(
     post: Post, navController: NavController, viewModel: PostViewModel
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,59 +108,7 @@ fun CommentsBottomSheet(
                     )
                 }
 
-                Row(verticalAlignment = Alignment.Bottom) {
-                    OutlinedTextField(
-                        value = viewModel.newComment,
-                        onValueChange = { viewModel.newComment = it },
-                        label = { Text(stringResource(R.string.reply)) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(0.dp, 0.dp),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        keyboardActions = KeyboardActions(onSend = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            viewModel.createReply(post.id)
-                        })
-                    )
-
-                    Spacer(Modifier.width(12.dp))
-
-                    Button(
-                        onClick = {
-                            if (!viewModel.ownReplyState.isLoading) {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                                viewModel.createReply(post.id)
-                            }
-                        },
-                        Modifier
-                            .height(56.dp)
-                            .width(56.dp)
-                            .padding(0.dp, 0.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(12.dp),
-                        enabled = viewModel.newComment.isNotBlank()
-                    ) {
-                        if (viewModel.ownReplyState.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "submit",
-                                Modifier
-                                    .fillMaxSize()
-                                    .fillMaxWidth()
-                            )
-                        }
-
-                    }
-                }
+                CreateComment ({ replyText -> viewModel.createReply(post.id, replyText) }, post.id, viewModel.ownReplyState)
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }

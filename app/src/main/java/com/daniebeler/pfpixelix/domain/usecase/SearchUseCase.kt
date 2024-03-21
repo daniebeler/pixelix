@@ -9,6 +9,10 @@ class SearchUseCase(
     private val repository: CountryRepository
 ) {
     operator fun invoke(searchText: String): Flow<Resource<Search>> {
-        return repository.search(searchText)
+        return repository.search(searchText, null)
+    }
+
+    operator fun invoke(searchText: String, type: String?): Flow<Resource<Search>> {
+        return repository.search(searchText, type)
     }
 }

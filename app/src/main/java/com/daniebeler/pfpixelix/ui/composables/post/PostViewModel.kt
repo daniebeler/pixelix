@@ -58,7 +58,6 @@ class PostViewModel @Inject constructor(
 
     var myAccountId: String? = null
 
-    var newComment: String by mutableStateOf("")
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
@@ -111,14 +110,13 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun createReply(postId: String) {
-        if (newComment.isNotEmpty()) {
-            createReplyUseCase(postId, newComment).onEach { result ->
+    fun createReply(postId: String, commentText: String) {
+        if (commentText.isNotEmpty()) {
+            createReplyUseCase(postId, commentText).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
                         loadReplies(post!!.account.id, postId)
-                        newComment = ""
                     }
 
                     is Resource.Error -> {
