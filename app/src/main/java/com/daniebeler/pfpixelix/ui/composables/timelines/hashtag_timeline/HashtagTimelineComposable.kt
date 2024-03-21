@@ -27,6 +27,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,7 @@ fun HashtagTimelineComposable(
                         )
                         if (viewModel.hashtagState.hashtag != null) {
                             Text(
-                                text = viewModel.hashtagState.hashtag!!.count.toString() + " " + stringResource(
+                                text = String.format(Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count) + " " + stringResource(
                                     R.string.posts
                                 ),
                                 fontSize = 14.sp,

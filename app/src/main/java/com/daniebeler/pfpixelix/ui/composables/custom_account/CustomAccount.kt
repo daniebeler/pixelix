@@ -26,6 +26,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.utils.Navigate
+import java.util.Locale
 
 @Composable
 fun CustomAccount(
@@ -70,12 +71,13 @@ private fun CustomAccountPrivate(
 ) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth()
             .clickable {
                 onClick()
                 Navigate.navigate("profile_screen/" + account.id, navController)
-            }, verticalAlignment = Alignment.CenterVertically
+            }
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            , verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             model = account.avatar,
@@ -89,7 +91,7 @@ private fun CustomAccountPrivate(
         Column {
             Text(text = "@${account.username}")
             Text(
-                text = "${account.followersCount} " + stringResource(id = R.string.followers),
+                text = String.format(Locale.GERMANY, "%,d", account.followersCount) + " " + stringResource(id = R.string.followers),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )
