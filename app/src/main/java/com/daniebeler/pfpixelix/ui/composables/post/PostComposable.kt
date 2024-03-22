@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -139,7 +140,9 @@ fun PostComposable(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .clickable(onClick = {
-                        Navigate.navigate("profile_screen/" + viewModel.post!!.account.id, navController)
+                        Navigate.navigate(
+                            "profile_screen/" + viewModel.post!!.account.id, navController
+                        )
                     })
             ) {
                 AsyncImage(
@@ -168,7 +171,10 @@ fun PostComposable(
                             Row {
                                 Text(text = viewModel.post!!.place?.name ?: "", fontSize = 12.sp)
                                 if (post.place?.country != null) {
-                                    Text(text = ", " + (viewModel.post!!.place?.country ?: ""), fontSize = 12.sp)
+                                    Text(
+                                        text = ", " + (viewModel.post!!.place?.country ?: ""),
+                                        fontSize = 12.sp
+                                    )
                                 }
                             }
                         }
@@ -192,7 +198,8 @@ fun PostComposable(
 
                 Box {
                     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
-                        LocalContext.current.resources, viewModel.post!!.mediaAttachments[0].blurHash
+                        LocalContext.current.resources,
+                        viewModel.post!!.mediaAttachments[0].blurHash
                     )
 
                     if (blurHashAsDrawable.bitmap != null) {
@@ -201,7 +208,8 @@ fun PostComposable(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.aspectRatio(
-                                viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                                viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
+                                    ?: 1.5f
                             )
                         )
                     }
@@ -209,7 +217,8 @@ fun PostComposable(
 
                     Column(
                         Modifier.aspectRatio(
-                            viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+                            viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
+                                ?: 1.5f
                         ),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -235,7 +244,9 @@ fun PostComposable(
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
                     HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) { page ->
                         PostImage(
-                            mediaAttachment = viewModel.post!!.mediaAttachments[page], viewModel.post!!.id, viewModel
+                            mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                            viewModel.post!!.id,
+                            viewModel
                         )
                     }
                     Spacer(modifier = Modifier.height(5.dp))
@@ -261,7 +272,9 @@ fun PostComposable(
                     }
                 } else {
                     PostImage(
-                        mediaAttachment = viewModel.post!!.mediaAttachments[0], viewModel.post!!.id, viewModel
+                        mediaAttachment = viewModel.post!!.mediaAttachments[0],
+                        viewModel.post!!.id,
+                        viewModel
                     )
                 }
             }
@@ -363,7 +376,9 @@ fun PostComposable(
 
                 if (viewModel.post!!.content.isNotBlank()) {
                     HashtagsMentionsTextView(
-                        text = viewModel.post!!.content, mentions = viewModel.post!!.mentions, navController = navController
+                        text = viewModel.post!!.content,
+                        mentions = viewModel.post!!.mentions,
+                        navController = navController
                     )
                 }
 
@@ -372,7 +387,11 @@ fun PostComposable(
                         viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
                         showBottomSheet = 1
                     }) {
-                        Text(text = stringResource(R.string.view_comments, viewModel.post!!.replyCount))
+                        Text(
+                            text = stringResource(
+                                R.string.view_comments, viewModel.post!!.replyCount
+                            )
+                        )
                     }
                 }
             }
@@ -426,7 +445,12 @@ fun PostComposable(
 }
 
 @Composable
-fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Unit) {
+fun CustomBottomSheetElement(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.onSurface
+) {
 
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -436,13 +460,14 @@ fun CustomBottomSheetElement(icon: ImageVector, text: String, onClick: () -> Uni
             }) {
         Icon(
             imageVector = icon,
+            tint = color,
             contentDescription = "",
-            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+            modifier = Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        Text(text = text)
+        Text(text = text, color = color)
     }
 }
 

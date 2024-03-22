@@ -44,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -226,15 +225,19 @@ private fun ReplyElement(
         if (!postDescription) {
             Row(Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
                 if (reply.account.id == myAccountId) {
-                    IconButton(onClick = { showDeleteReplyDialog.value = true}) {
+                    IconButton(onClick = { showDeleteReplyDialog.value = true }) {
                         Icon(
-                            imageVector = Icons.Outlined.Delete, contentDescription = "",
-                            tint = Color(0xFFEE5670)
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
                 TextButton(onClick = { openAddReplyDialog.value = true }) {
-                    Text(text = stringResource(id = R.string.reply), color = MaterialTheme.colorScheme.onBackground)
+                    Text(
+                        text = stringResource(id = R.string.reply),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
 
                 if (viewModel.likedReply) {
@@ -307,7 +310,11 @@ private fun ReplyElement(
 
     if (showDeleteReplyDialog.value) {
         AlertDialog(icon = {
-            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null, tint = Color(0xFFEE5670) )
+            Icon(
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
         }, title = {
             Text(text = stringResource(R.string.delete_reply))
         }, text = {
@@ -318,7 +325,7 @@ private fun ReplyElement(
             TextButton(onClick = {
                 deleteReply()
             }) {
-                Text(stringResource(R.string.delete), color = Color(0xFFEE5670))
+                Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
             }
         }, dismissButton = {
             TextButton(onClick = {
@@ -344,9 +351,7 @@ fun AddReplyDialog(
         Text(text = stringResource(R.string.reply))
     }, text = {
         CreateComment(
-            createNewComment = { onConfirmation(it) },
-            postId = replyId,
-            newReplyState = replyState
+            createNewComment = { onConfirmation(it) }, postId = replyId, newReplyState = replyState
         )
     }, onDismissRequest = {
         onDismissRequest()
