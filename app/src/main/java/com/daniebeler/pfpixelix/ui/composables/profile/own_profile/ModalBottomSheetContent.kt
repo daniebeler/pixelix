@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Tag
@@ -45,6 +46,13 @@ fun ModalBottomSheetContent(navController: NavController, instanceDomain: String
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("preferences_screen", navController)
+            })
+
+        CustomBottomSheetElement(icon = Icons.Outlined.Edit,
+            text = stringResource(R.string.edit_profile),
+            onClick = {
+                closeBottomSheet()
+                Navigate.navigate("edit_profile_screen", navController)
             })
 
         CustomBottomSheetElement(icon = Icons.Outlined.FavoriteBorder,

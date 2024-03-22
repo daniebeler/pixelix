@@ -110,4 +110,5 @@
     <string name="this_user_has_not_postet_anything_yet">Dieser Benutzer hat noch keine Beiträge</string>
     <string name="you_don_t_have_any_notifications">Du hast keine Benachrichtigungen</string>
     <string name="view_more">mehr anzeigen</string>
+    <string name="edit_profile">Profil bearbeiten</string>
 </resources>
