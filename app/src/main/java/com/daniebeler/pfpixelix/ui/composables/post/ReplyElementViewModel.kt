@@ -28,6 +28,7 @@ class ReplyElementViewModel @Inject constructor(
 {
     var repliesState by mutableStateOf(RepliesState())
     var likedReply by mutableStateOf(false)
+    var newReplyState by mutableStateOf(OwnReplyState())
 
     fun onInit(reply: Reply, myAccountId: String) {
         likedReply = reply.likedBy?.id == myAccountId
@@ -54,18 +55,18 @@ class ReplyElementViewModel @Inject constructor(
     fun createReply(replyId: String, replyText: String, myAccountId: String) {
         if (replyText.isNotBlank()) {
             createReplyUseCase(replyId, replyText).onEach { result ->
-                when (result) {
+                newReplyState = when (result) {
                     is Resource.Success -> {
                         loadReplies(myAccountId, replyId)
+                        OwnReplyState(reply = result.data)
                     }
 
                     is Resource.Error -> {
-                        //ownReplyState =
-                          //  OwnReplyState(error = result.message ?: "An unexpected error occurred")
+                        OwnReplyState(error = result.message ?: "An unexpected error occurred")
                     }
 
                     is Resource.Loading -> {
-                        //ownReplyState = OwnReplyState(isLoading = true)
+                        OwnReplyState(isLoading = true)
                     }
                 }
             }.launchIn(viewModelScope)

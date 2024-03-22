@@ -60,6 +60,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -108,7 +109,11 @@ fun CommentsBottomSheet(
                     )
                 }
 
-                CreateComment ({ replyText -> viewModel.createReply(post.id, replyText) }, post.id, viewModel.ownReplyState)
+                CreateComment(
+                    { replyText -> viewModel.createReply(post.id, replyText) },
+                    post.id,
+                    viewModel.ownReplyState
+                )
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }
@@ -116,7 +121,8 @@ fun CommentsBottomSheet(
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
-                ReplyElement(reply = reply, false, navController = navController,
+                ReplyElement(
+                    reply = reply, false, navController = navController,
                     { viewModel.deleteReply(reply.id) }, viewModel.myAccountId
                 )
             }
@@ -221,7 +227,7 @@ private fun ReplyElement(
         }
 
         if (!postDescription) {
-            Row (Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
+            Row(Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
                 if (reply.account.id == myAccountId) {
                     TextButton(onClick = { deleteReply() }) {
                         Text(text = "Delete", color = MaterialTheme.colorScheme.onBackground)
@@ -266,7 +272,8 @@ private fun ReplyElement(
                 Box(Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp)) {
                     Column {
                         viewModel.repliesState.replies.map {
-                            ReplyElement(reply = it, false, navController = navController,
+                            ReplyElement(
+                                reply = it, false, navController = navController,
                                 {
                                     viewModel.deleteReply(it.id)
                                     replyCount--
@@ -281,10 +288,11 @@ private fun ReplyElement(
     if (openAddReplyDialog.value) {
         AddReplyDialog(onDismissRequest = { openAddReplyDialog.value = false }, onConfirmation = {
             openAddReplyDialog.value = false
+            replyCount++
             if (myAccountId != null) {
                 viewModel.createReply(reply.id, it, myAccountId)
             }
-        })
+        }, reply.id, viewModel.newReplyState)
     }
 }
 
@@ -292,8 +300,9 @@ private fun ReplyElement(
 fun AddReplyDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (replyText: String) -> Unit,
+    replyId: String,
+    replyState: OwnReplyState
 ) {
-    var replyText by remember { mutableStateOf("") }
 
     AlertDialog(
         icon = {
@@ -303,19 +312,16 @@ fun AddReplyDialog(
             Text(text = "Add Reply")
         },
         text = {
-            TextField(value = replyText, onValueChange = { replyText = it })
-        },
+            CreateComment(
+                createNewComment = { onConfirmation(it) },
+                postId = replyId,
+                newReplyState = replyState
+            )        },
         onDismissRequest = {
             onDismissRequest()
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation(replyText)
-                }
-            ) {
-                Text("Confirm")
-            }
+
         },
         dismissButton = {
             TextButton(
