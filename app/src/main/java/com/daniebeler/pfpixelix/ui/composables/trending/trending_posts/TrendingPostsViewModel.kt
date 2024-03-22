@@ -35,7 +35,7 @@ class TrendingPostsViewModel @Inject constructor(
                     TrendingPostsState(
                         isLoading = true,
                         isRefreshing = refreshing,
-                        trendingPosts = trendingState.trendingPosts
+                        trendingPosts = emptyList()
                     )
                 }
             }
