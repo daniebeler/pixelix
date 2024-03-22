@@ -254,7 +254,7 @@ interface PixelfedApi {
     fun getBlockedAccounts(): Call<List<AccountDto>>
 
     @GET("/api/v2/search?limit=5&_pe=1")
-    fun getSearch(@Query("q") searchText: String
+    fun getSearch(@Query("q") searchText: String, @Query("type") type: String?
     ): Call<SearchDto>
 
     @POST("/api/v2/media")

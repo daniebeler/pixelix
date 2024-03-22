@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -121,11 +123,13 @@ fun PreferencesComposable(
                     viewModel.openMoreSettingsPage(context)
                 })
 
-            ButtonPreferencesItem(icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
-                R.string.logout
-            ), onClick = {
-                showLogoutDialog.value = true
-            })
+            ButtonPreferencesItem(
+                icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
+                    R.string.logout
+                ), onClick = {
+                    showLogoutDialog.value = true
+                }, color = MaterialTheme.colorScheme.error
+            )
 
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
@@ -189,9 +193,12 @@ private fun SwitchPreferencesItem(
 
 @Composable
 private fun ButtonPreferencesItem(
-    icon: ImageVector, text: String, smallText: String = "", onClick: () -> Unit
+    icon: ImageVector,
+    text: String,
+    smallText: String = "",
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.onBackground
 ) {
-
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -201,15 +208,16 @@ private fun ButtonPreferencesItem(
         Icon(
             imageVector = icon,
             contentDescription = "",
-            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
+            tint = color
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text)
+            Text(text = text, color = color)
             if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp)
+                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
             }
         }
     }
