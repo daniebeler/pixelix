@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.post
+package com.daniebeler.pfpixelix.ui.composables.post.reply
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

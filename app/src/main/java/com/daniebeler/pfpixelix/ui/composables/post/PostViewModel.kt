@@ -18,6 +18,8 @@ import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
+import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
+import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

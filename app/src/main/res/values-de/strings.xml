@@ -59,7 +59,7 @@
     <string name="are_you_sure_you_want_to_log_out">Bist du dir sicher?</string>
     <string name="logout_questionmark">Ausloggen?</string>
     <string name="view_comments">Alle %1$s Kommentare ansehen</string>
-    <string name="reply">Kommentieren…</string>
+    <string name="comment">Kommentieren…</string>
     <string name="no_comments_yet">Noch keine Kommentare</string>
     <string name="no_likes_yet">Noch keine Likes</string>
     <string name="no_liked_posts">Noch keine gelikten Beiträge</string>
@@ -110,4 +110,6 @@
     <string name="this_user_has_not_postet_anything_yet">Dieser Benutzer hat noch keine Beiträge</string>
     <string name="you_don_t_have_any_notifications">Du hast keine Benachrichtigungen</string>
     <string name="view_more">mehr anzeigen</string>
+    <string name="delete_reply">Antwort löschen</string>
+    <string name="reply">Antworten</string>
 </resources>
