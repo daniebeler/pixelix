@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,9 +9,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,19 +52,39 @@ fun EditProfileComposable(
                             contentDescription = ""
                         )
                     }
+                },
+                actions = {
+                    if (viewModel.displayname == (viewModel.accountState.account?.displayname
+                            ?: "")
+                    ) {
+                        Button(onClick = {}, enabled = false) {
+                            Text(text = stringResource(R.string.save))
+                        }
+                    } else {
+                        Button(onClick = {
+
+                        }) {
+                            Text(text = stringResource(R.string.save))
+                        }
+                    }
+
                 })
         }) { paddingValues ->
-        Column(
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(state = rememberScrollState())
-        ) {
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(state = rememberScrollState())
+            ) {
 
-            if (viewModel.accountState.account != null) {
-                OutlinedTextField(value = viewModel.displayname, onValueChange = {})
+                if (viewModel.accountState.account != null) {
+                    OutlinedTextField(
+                        value = viewModel.displayname,
+                        onValueChange = { viewModel.displayname = it })
+                }
+
             }
-
         }
+
     }
 }
