@@ -100,13 +100,13 @@ fun ProfileTopSection(
             if (account.displayname != null) {
                 Text(text = account.displayname, fontWeight = FontWeight.Bold)
             }
-            Text(text = "@" + account.acct,
+            /*Text(text = "@" + account.acct,
                 fontSize = 12.sp,
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(onLongPress = {
                         clipboardManager.setText(AnnotatedString("@" + account.acct))
                     })
-                })
+                })*/
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(
