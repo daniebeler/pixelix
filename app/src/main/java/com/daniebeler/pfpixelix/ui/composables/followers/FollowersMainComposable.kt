@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
@@ -53,40 +54,38 @@ fun FollowersMainComposable(
 
 
     val pageId = if (page == "followers") 0 else 1
-    val pagerState = rememberPagerState(
-        initialPage = pageId,
-        pageCount = { 2 }
-    )
+    val pagerState = rememberPagerState(initialPage = pageId, pageCount = { 2 })
 
     val scope = rememberCoroutineScope()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
+    Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets(0, 0, 0, 0),
-                title = {
-                    if (viewModel.accountState.account != null) {
-                        Text("@" + viewModel.accountState.account?.acct)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
-                }
-            )
+            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+                Column {
+                    Text(viewModel.accountState.account?.username ?: "")
 
-        }
-    ) { paddingValues ->
+                    Text(
+                        text = viewModel.accountState.account?.url?.substringAfter("https://")
+                            ?.substringBefore("/") ?: "",
+                        fontSize = 12.sp,
+                        lineHeight = 6.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            })
+
+        }) { paddingValues ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -94,18 +93,17 @@ fun FollowersMainComposable(
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(
-                    text = {
-                        if (viewModel.accountState.account != null) {
-                            Text(
-                                viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
-                                    id = R.string.followers
-                                )
+                Tab(text = {
+                    if (viewModel.accountState.account != null) {
+                        Text(
+                            viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
+                                id = R.string.followers
                             )
-                        } else {
-                            Text(text = stringResource(id = R.string.followers))
-                        }
-                    },
+                        )
+                    } else {
+                        Text(text = stringResource(id = R.string.followers))
+                    }
+                },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -115,18 +113,17 @@ fun FollowersMainComposable(
                         }
                     })
 
-                Tab(
-                    text = {
-                        if (viewModel.accountState.account != null) {
-                            Text(
-                                viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
-                                    id = R.string.following
-                                )
+                Tab(text = {
+                    if (viewModel.accountState.account != null) {
+                        Text(
+                            viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
+                                id = R.string.following
                             )
-                        } else {
-                            Text(text = stringResource(id = R.string.following))
-                        }
-                    },
+                        )
+                    } else {
+                        Text(text = stringResource(id = R.string.following))
+                    }
+                },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -144,15 +141,13 @@ fun FollowersMainComposable(
                     .background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->
                 when (tabIndex) {
-                    0 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            FollowersComposable(navController = navController)
-                        }
+                    0 -> Box(modifier = Modifier.fillMaxSize()) {
+                        FollowersComposable(navController = navController)
+                    }
 
-                    1 ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            FollowingComposable(navController = navController)
-                        }
+                    1 -> Box(modifier = Modifier.fillMaxSize()) {
+                        FollowingComposable(navController = navController)
+                    }
 
                 }
             }
