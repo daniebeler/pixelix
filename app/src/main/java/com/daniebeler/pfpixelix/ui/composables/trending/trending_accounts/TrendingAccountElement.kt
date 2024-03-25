@@ -72,21 +72,6 @@ fun TrendingAccountElement(
                     CustomPost(post = item, navController = navController)
                 }
             }
-
-            item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .height(150.dp)
-                        .padding(horizontal = 18.dp)
-                ) {
-                    Button(onClick = {
-                        Navigate.navigate("profile_screen/" + account.id, navController)
-                    }) {
-                        Text(text = stringResource(R.string.view_more))
-                    }
-                }
-            }
         }
     }
 }

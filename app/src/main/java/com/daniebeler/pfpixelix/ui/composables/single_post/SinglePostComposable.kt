@@ -44,8 +44,7 @@ fun SinglePostComposable(
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(
-                text = (stringResource(R.string.post_by) + " " + (viewModel.postState.post?.account?.acct
-                    ?: "")), overflow = TextOverflow.Ellipsis, maxLines = 1
+                text = stringResource(R.string.post), overflow = TextOverflow.Ellipsis, maxLines = 1
             )
         }, navigationIcon = {
             IconButton(onClick = {

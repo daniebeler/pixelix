@@ -112,4 +112,5 @@
     <string name="view_more">mehr anzeigen</string>
     <string name="delete_reply">Antwort löschen</string>
     <string name="reply">Antworten</string>
+    <string name="post">Beitrag</string>
 </resources>
