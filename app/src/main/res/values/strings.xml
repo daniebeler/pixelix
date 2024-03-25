@@ -59,7 +59,7 @@
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
     <string name="logout_questionmark">Logout?</string>
     <string name="view_comments">View %1$s comments</string>
-    <string name="reply">Reply</string>
+    <string name="comment">Leave a comment</string>
     <string name="no_comments_yet">No comments yet</string>
     <string name="no_likes_yet">No likes yet</string>
     <string name="no_liked_posts">no liked posts</string>
@@ -110,4 +110,7 @@
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
     <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
     <string name="view_more">view more</string>
+    <string name="delete_reply">Delete reply</string>
+    <string name="reply">Reply</string>
+    <string name="post">Post</string>
 </resources>

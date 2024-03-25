@@ -18,6 +18,8 @@ import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
+import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
+import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +60,6 @@ class PostViewModel @Inject constructor(
 
     var myAccountId: String? = null
 
-    var newComment: String by mutableStateOf("")
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
@@ -90,7 +91,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun convertTime(createdAt: String) {
-        timeAgoString = TimeAgo.convertTimeToText(createdAt) ?: ""
+        timeAgoString = TimeAgo.convertTimeToText(createdAt)
     }
 
     fun loadReplies(accountId: String, postId: String) {
@@ -111,13 +112,13 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun createReply(postId: String) {
-        if (newComment.isNotEmpty()) {
-            createReplyUseCase(postId, newComment).onEach { result ->
+    fun createReply(postId: String, commentText: String) {
+        if (commentText.isNotEmpty()) {
+            createReplyUseCase(postId, commentText).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        newComment = ""
+                        loadReplies(post!!.account.id, postId)
                     }
 
                     is Resource.Error -> {
@@ -132,6 +133,24 @@ class PostViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
+
+    fun deleteReply(postId: String) {
+        deletePostUseCase(postId).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    repliesState = repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
+                }
+
+                is Resource.Error -> {
+                    println(result.message)
+                }
+                is Resource.Loading -> {
+                    println("is loading")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
     fun loadLikedBy(postId: String) {
         getAccountsWhoLikedPostUseCase(postId).onEach { result ->

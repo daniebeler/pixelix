@@ -39,6 +39,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,18 +94,22 @@ fun AboutInstanceComposable(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = viewModel.instanceState.instance?.stats?.userCount.toString(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.instanceState.instance?.stats?.userCount
+                                ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                             )
                             Text(text = stringResource(R.string.users), fontSize = 12.sp)
                         }
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = viewModel.instanceState.instance?.stats?.statusCount.toString(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.instanceState.instance?.stats?.statusCount
+                                ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                             )
                             Text(text = stringResource(id = R.string.posts), fontSize = 12.sp)
                         }
@@ -121,16 +126,15 @@ fun AboutInstanceComposable(
 
                     if (viewModel.instanceState.instance != null) {
                         val account = viewModel.instanceState.instance!!.admin
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                .fillMaxWidth()
-                                .clickable {
-                                    Navigate.navigate(
-                                        "profile_screen/" + account.id, navController
-                                    )
-                                }, verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(modifier = Modifier
+                            .clickable {
+                                Navigate.navigate(
+                                    "profile_screen/" + account.id, navController
+                                )
+                            }
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically) {
                             AsyncImage(
                                 model = account.avatar,
                                 contentDescription = "",
@@ -233,6 +237,8 @@ fun AboutInstanceComposable(
                         text = viewModel.instanceState.instance?.version ?: "",
                         modifier = Modifier.padding(12.dp, 0.dp)
                     )
+
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
 

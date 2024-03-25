@@ -147,7 +147,8 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(
+                            icon = Icons.Outlined.DoNotDisturbOn,
                             text = stringResource(
                                 R.string.unmute_this_profile
                             ),
@@ -155,7 +156,8 @@ fun OtherProfileComposable(
                                 viewModel.unMuteAccount(userId)
                             })
                     } else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(
+                            icon = Icons.Outlined.DoNotDisturbOn,
                             text = stringResource(
                                 R.string.mute_this_profile
                             ),
@@ -165,13 +167,15 @@ fun OtherProfileComposable(
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                        CustomBottomSheetElement(
+                            icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
                             viewModel.unblockAccount(userId)
                         })
                     } else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                        CustomBottomSheetElement(
+                            icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
                             viewModel.blockAccount(userId)
@@ -181,13 +185,15 @@ fun OtherProfileComposable(
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                CustomBottomSheetElement(
+                    icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
                     viewModel.openUrl(context, viewModel.accountState.account!!.url)
                 })
 
-                CustomBottomSheetElement(icon = Icons.Outlined.Share,
+                CustomBottomSheetElement(
+                    icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
                         Share.shareText(context, viewModel.accountState.account!!.url)

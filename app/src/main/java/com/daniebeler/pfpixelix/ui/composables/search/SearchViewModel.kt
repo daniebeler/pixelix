@@ -6,6 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
+import com.daniebeler.pfpixelix.domain.model.SavedSearches
+import com.daniebeler.pfpixelix.domain.model.SavedSearchType
+import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,10 +21,61 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchUseCase: SearchUseCase
+    private val searchUseCase: SearchUseCase,
+    private val savedSearchesRepository: SavedSearchesRepository
 ) : ViewModel() {
     var textInput: String by mutableStateOf("")
     var searchState by mutableStateOf(SearchState())
+    var savedSearches: SavedSearches by mutableStateOf(SavedSearches())
+
+    init {
+        viewModelScope.launch { getSavedSearches() }
+    }
+
+    private suspend fun getSavedSearches() {
+        savedSearchesRepository.getSavedSearches().collect {
+            savedSearches = it
+        }
+    }
+
+    fun saveAccount(accountUsername: String, accountId: String, avatarUrl: String) {
+        viewModelScope.launch {
+            savedSearchesRepository.addAccount(accountUsername, accountId, avatarUrl)
+        }
+    }
+
+    fun saveHashtag(accountId: String) {
+        viewModelScope.launch {
+            savedSearchesRepository.addHashtag(accountId)
+        }
+    }
+
+    fun saveSearch(text: String) {
+        if (text.isNotBlank()) {
+
+            val savedSearchesBefore = savedSearches.pastSearches.filter { it.savedSearchType == SavedSearchType.Search }
+            if (savedSearchesBefore.find { it.value == text } != null) {
+                return
+            }
+
+            viewModelScope.launch {
+                savedSearchesRepository.addSearch(text)
+            }
+        }
+    }
+
+    fun deleteSavedSearch(item: SavedSearchItem) {
+        viewModelScope.launch {
+            savedSearchesRepository.deleteElement(item)
+        }
+    }
+
+    fun onSearch(text: String) {
+        if (text.isNotBlank()) {
+            textInputChange(text)
+        }
+    }
+
     fun textInputChange(text: String) {
         textInput = text
         searchDebounced(text)

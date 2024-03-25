@@ -32,7 +32,7 @@ fun HashtagsMentionsTextView(
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
-    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+)")
+    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:\\.\\w+)?(?:\\/\\w+)*)")
 
     val annotatedStringList = remember {
 
@@ -44,6 +44,7 @@ fun HashtagsMentionsTextView(
 
             val start = match.range.first
             val end = match.range.last + 1
+
             val string = text.substring(start, end)
 
             if (start > lastIndex) {

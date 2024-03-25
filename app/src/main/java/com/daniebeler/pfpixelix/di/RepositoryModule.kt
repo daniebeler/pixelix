@@ -1,6 +1,9 @@
 package com.daniebeler.pfpixelix.di
 
+import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.Preferences
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.repository.AccountRepositoryImpl
@@ -8,24 +11,43 @@ import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.HashtagRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.PostEditorRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.PostRepositoryImpl
+import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
+import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
+import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
+import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class RepositoryModule {
+    @Provides
+    @Singleton
+    fun savedSearchesRepository(
+        dataStore: DataStore<SavedSearches>
+    ): SavedSearchesRepository = SavedSearchesRepositoryImpl(dataStore)
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<SavedSearches> =
+        DataStoreFactory.create(serializer = SavedSearchesSerializer(),
+            produceFile = { context.dataStoreFile("saved_searches.json") })
 
     @Provides
     @Singleton

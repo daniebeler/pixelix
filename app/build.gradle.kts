@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id ("kotlin-kapt")
+    id ("org.jetbrains.kotlin.plugin.serialization")
 }
 
 
@@ -14,8 +15,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -91,6 +92,10 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.2.1")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation ("androidx.datastore:datastore:1.0.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation ("androidx.browser:browser:1.8.0")
 

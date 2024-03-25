@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +28,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,13 +54,15 @@ fun HashtagTimelineComposable(
                     Column {
                         Text(
                             "#$hashtag",
-                            lineHeight = 10.sp,
+                            fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
                         if (viewModel.hashtagState.hashtag != null) {
                             Text(
-                                text = viewModel.hashtagState.hashtag!!.count.toString() + " " + stringResource(
+                                text = String.format(
+                                    Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count
+                                ) + " " + stringResource(
                                     R.string.posts
                                 ),
                                 fontSize = 14.sp,

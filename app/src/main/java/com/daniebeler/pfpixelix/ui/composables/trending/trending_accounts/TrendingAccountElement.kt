@@ -1,44 +1,43 @@
-package com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags
+package com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.domain.model.Tag
+import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
+import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
+import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
-import java.util.Locale
 
 @Composable
-fun TrendingHashtagElement(
-    hashtag: Tag,
+fun TrendingAccountElement(
+    account: Account,
+    relationship: Relationship?,
     navController: NavController,
-    viewModel: TrendingHashtagElementViewModel = hiltViewModel(key = "the" + hashtag.name)
+    viewModel: TrendingAccountElementViewModel = hiltViewModel(key = account.id)
 ) {
 
-    LaunchedEffect(hashtag) {
-        viewModel.loadItems(hashtag.name)
-        viewModel.getHashtagInfo(hashtag.name)
+    LaunchedEffect(account) {
+        viewModel.loadItems(account.id)
     }
 
     Column(
@@ -46,30 +45,21 @@ fun TrendingHashtagElement(
             .padding(vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                Navigate.navigate("hashtag_timeline_screen/${hashtag.name}", navController)
+                Navigate.navigate("profile_screen/" + account.id, navController)
             }) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 12.dp)
-                .fillMaxWidth()
-        ) {
-            Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            if (viewModel.hashtagState.hashtag != null) {
-                Text(
-                    text = "  • " + String.format(
-                        Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!
-                    ) + " " + stringResource(
-                        id = R.string.posts
-                    ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
-                )
-            }
+        CustomAccount(account = account, relationship = relationship, navController = navController)
+
+        if (account.note.isNotBlank()) {
+            HashtagsMentionsTextView(
+                text = account.note,
+                mentions = null,
+                navController = navController,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
         }
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 10.dp), modifier = Modifier.height(150.dp)
-        ) {
+        LazyRow(contentPadding = PaddingValues(horizontal = 10.dp)) {
             items(viewModel.postsState.posts, key = {
                 it.id
             }) { item ->
@@ -83,6 +73,5 @@ fun TrendingHashtagElement(
                 }
             }
         }
-
     }
 }
