@@ -111,8 +111,11 @@ fun HashtagsMentionsTextView(
                         if (mentions == null) {
                             ""
                         } else {
-                            val account =
+                            var account =
                                 mentions.find { account: Account -> account.acct == newItem }
+                            if (account == null) {
+                                account = mentions.find { account: Account -> account.username == newItem }
+                            }
                             if (account != null) {
                                 //get my account id and check if it is mine account
                                 val myAccountId = viewModel.getMyAccountId()
