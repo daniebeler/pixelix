@@ -32,7 +32,7 @@ fun HashtagsMentionsTextView(
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
-    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:\\.\\w+)?(?:\\/\\w+)*)")
+    val hashtags = Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)?(?:\\/\\w+)*")
 
     val annotatedStringList = remember {
 
@@ -107,7 +107,7 @@ fun HashtagsMentionsTextView(
                             ""
                         } else {
                             val account =
-                                mentions.find { account: Account -> account.username == newItem }
+                                mentions.find { account: Account -> account.acct == newItem }
                             if (account != null) {
                                 //get my account id and check if it is mine account
                                 val myAccountId = viewModel.getMyAccountId()
