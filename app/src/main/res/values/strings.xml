@@ -113,4 +113,10 @@
     <string name="delete_reply">Delete reply</string>
     <string name="reply">Reply</string>
     <string name="post">Post</string>
+    <string name="pixelfed_description">Pixelfed is a photo and image sharing network on the Fediverse with a photo-oriented interface that includes albums, filters, moments etc.</string>
+    <string name="mastodon_description">Mastodon is a microblogging platform</string>
+    <string name="peertube_description">PeerTube is a tool for sharing online videos developed by Framasoft, a french non-profit.</string>
+    <string name="lemmy_description">Lemmy is a selfhosted social link aggregation and discussion platform. It is completely free and open, and not controlled by any company. This means that there is no advertising, tracking, or secret algorithms. Content is organized into communities, so it is easy to subscribe to topics that you are interested in, and ignore others. Voting is used to bring the most interesting items to the top.</string>
+    <string name="threads_description">Threads is an app from Meta where you can view and share public conversations. You can also post threads, reply to others and follow profiles you are interested in.</string>
+    <string name="more_information">More information</string>
 </resources>
