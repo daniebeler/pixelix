@@ -41,10 +41,10 @@ interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
-    @GET("api/v1.1/discover/posts/hashtags?range=daily&_pe=1")
+    @GET("api/v1.1/discover/posts/hashtags?_pe=1")
     fun getTrendingHashtags(): Call<List<TagDto>>
 
-    @GET("/api/v1.1/discover/accounts/popular?range=daily")
+    @GET("/api/v1.1/discover/accounts/popular")
     fun getTrendingAccounts(): Call<List<AccountDto>>
 
 
