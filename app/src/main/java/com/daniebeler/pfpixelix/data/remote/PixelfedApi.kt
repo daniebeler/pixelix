@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
+import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -24,6 +25,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -116,6 +118,11 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(
         @Path("accountid") accountId: String
+    ): Call<AccountDto>
+
+    @POST("api/v1/accounts/update_credentials")
+    fun updateAccount(
+        @Body body: RequestBody
     ): Call<AccountDto>
 
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)

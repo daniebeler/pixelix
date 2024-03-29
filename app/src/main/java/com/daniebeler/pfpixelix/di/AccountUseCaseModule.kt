@@ -19,6 +19,7 @@ import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateAccountUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -107,4 +108,9 @@ class AccountUseCaseModule {
     @Singleton
     fun provideGetOwnAccountIdUseCase(repository: StorageRepository): GetOwnAccountIdUseCase =
         GetOwnAccountIdUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateAccountUseCase(repository: AccountRepository): UpdateAccountUseCase =
+        UpdateAccountUseCase(repository)
 }
