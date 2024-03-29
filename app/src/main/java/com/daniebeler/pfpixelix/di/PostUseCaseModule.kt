@@ -13,8 +13,10 @@ import com.daniebeler.pfpixelix.domain.usecase.GetLikedPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.ReblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
 import dagger.Module
@@ -57,6 +59,16 @@ class PostUseCaseModule {
     @Singleton
     fun provideUnlikePostUseCase(postRepository: PostRepository): UnlikePostUseCase =
         UnlikePostUseCase(postRepository)
+
+    @Provides
+    @Singleton
+    fun provideReblogPostUseCase(postRepository: PostRepository): ReblogPostUseCase =
+        ReblogPostUseCase(postRepository)
+
+    @Provides
+    @Singleton
+    fun provideUnreblogPostUseCase(postRepository: PostRepository): UnreblogPostUseCase =
+        UnreblogPostUseCase(postRepository)
 
     @Provides
     @Singleton

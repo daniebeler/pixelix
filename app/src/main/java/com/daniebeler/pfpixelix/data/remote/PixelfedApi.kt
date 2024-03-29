@@ -209,6 +209,13 @@ interface PixelfedApi {
     fun unlikePost(
         @Path("id") userId: String): Call<PostDto>
 
+    @POST("api/v1/statuses/{id}/reblog")
+    fun reblogPost(@Path("id") userId: String): Call<PostDto>
+
+    @POST("api/v1/statuses/{id}/unreblog")
+    fun unreblogPost(
+        @Path("id") userId: String): Call<PostDto>
+
     @POST("api/v1/statuses/{id}/bookmark")
     fun bookmarkPost(
         @Path("id") userId: String): Call<PostDto>
