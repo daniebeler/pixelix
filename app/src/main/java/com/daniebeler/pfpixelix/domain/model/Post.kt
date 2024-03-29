@@ -16,6 +16,7 @@ data class Post(
     val sensitive: Boolean,
     val spoilerText: String,
     var favourited: Boolean,
+    var reblogged: Boolean,
     val bookmarked: Boolean,
     val mentions: List<Account>,
     val place: Place?,

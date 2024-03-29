@@ -16,8 +16,10 @@ import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.ReblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.utils.TimeAgo
@@ -36,6 +38,8 @@ class PostViewModel @Inject constructor(
     private val createReplyUseCase: CreateReplyUseCase,
     private val likePostUseCase: LikePostUseCase,
     private val unlikePostUseCase: UnlikePostUseCase,
+    private val reblogPostUseCase: ReblogPostUseCase,
+    private val unreblogPostUseCase: UnreblogPostUseCase,
     private val bookmarkPostUseCase: BookmarkPostUseCase,
     private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
     private val deletePostUseCase: DeletePostUseCase,
@@ -190,7 +194,6 @@ class PostViewModel @Inject constructor(
                 }.launchIn(viewModelScope)
             }
         }
-
     }
 
     fun unlikePost(postId: String) {
@@ -204,6 +207,49 @@ class PostViewModel @Inject constructor(
 
                         is Resource.Error -> {
                             post = post?.copy(favourited = true)
+                        }
+
+                        is Resource.Loading -> {
+                        }
+                    }
+                }.launchIn(viewModelScope)
+            }
+        }
+    }
+
+    fun reblogPost(postId: String) {
+        if (post?.reblogged == false) {
+            post = post?.copy(reblogged = true)
+            CoroutineScope(Dispatchers.Default).launch {
+                reblogPostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                        }
+
+                        is Resource.Error -> {
+                            post = post?.copy(reblogged = false)
+                        }
+
+                        is Resource.Loading -> {
+                        }
+                    }
+                }.launchIn(viewModelScope)
+            }
+        }
+    }
+
+    fun unreblogPost(postId: String) {
+        if (post?.reblogged == true) {
+            CoroutineScope(Dispatchers.Default).launch {
+                unreblogPostUseCase(postId).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                        }
+
+                        is Resource.Error -> {
+                            post = post?.copy(reblogged = true)
                         }
 
                         is Resource.Loading -> {

@@ -28,8 +28,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
@@ -316,6 +318,28 @@ fun PostComposable(
                                 imageVector = Icons.Outlined.ChatBubbleOutline,
                                 contentDescription = ""
                             )
+                        }
+
+
+                        if (viewModel.post!!.reblogged) {
+                            IconButton(onClick = {
+                                viewModel.unreblogPost(viewModel.post!!.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Cached,
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                viewModel.reblogPost(viewModel.post!!.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Cached,
+                                    contentDescription = ""
+                                )
+                            }
                         }
                     }
 

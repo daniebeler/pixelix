@@ -45,6 +45,14 @@ class PostRepositoryImpl @Inject constructor(
         return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unlikePost(postId))
     }
 
+    override fun reblogPost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.reblogPost(postId))
+    }
+
+    override fun unreblogPost(postId: String): Flow<Resource<Post>> {
+        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.unreblogPost(postId))
+    }
+
     override fun bookmarkPost(postId: String): Flow<Resource<Post>> {
         return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.bookmarkPost(postId))
     }
