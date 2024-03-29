@@ -113,9 +113,10 @@
     <string name="delete_reply">Antwort löschen</string>
     <string name="reply">Antworten</string>
     <string name="post">Beitrag</string>
-    <string name="pixelfed_description">Pixlefed ist cool</string>
-    <string name="mastodon_description">Mastodon Beschreibung</string>
-    <string name="lemmy_description">Lemmy beschreibung</string>
-    <string name="threads_description">Threads Beschreigung</string>
+    <string name="pixelfed_description">Pixelfed ist ein Netzwerk für das Teilen von Fotos und Bildern im Fediverse mit einer auf Fotos ausgerichteten Oberfläche, die Alben, Filter usw. enthält.</string>
+    <string name="mastodon_description">Mastodon ist eine Microblogging Platform</string>
+    <string name="peertube_description">PeerTube ist ein Tool zum Austausch von Online-Videos, das von Framasoft, einer französischen gemeinnützigen Organisation, entwickelt wurde.</string>
+    <string name="lemmy_description">Lemmy ist eine selbstgehostete soziale Link-Aggregations- und Diskussionsplattform. Es ist vollständig kostenlos und offen, und wird von keiner Firma kontrolliert. Das heißt, dass keine Werbung, kein Tracking und keine geheimen Algorithmen verwendet werden. Inhalte sind in Communities organisiert, so dass man einfach interessante Themen verfolgen, und andere ignorieren kann. Durch das Votum der Nutzer werden die interessantesten Inhalte an die Spitze befördert.</string>
+    <string name="threads_description">Threads ist eine App von Meta, in der man öffentliche Unterhaltungen ansehen und teilen kann. Man kann auch eigene Threads posten, auf Threads von anderen antworten und Profilen folgen.</string>
     <string name="more_information">Mehr Infos</string>
 </resources>

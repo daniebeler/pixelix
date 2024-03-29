@@ -1,20 +1,12 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
 import android.content.Context
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.EmojiEmotions
-import androidx.compose.material.icons.outlined.EmojiObjects
-import androidx.compose.material.icons.outlined.VideoCameraFront
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.DomainSoftware
-import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.Retrofit
 
 class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository) {
     operator fun invoke(domain: String, context: Context): Flow<Resource<DomainSoftware>> = flow {
@@ -74,6 +66,15 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
                     icon = R.drawable.mastodon_logo,
                     link = "https://joinmastodon.org/",
                     description = context.resources.getString(R.string.mastodon_description)
+                )
+            }
+
+            "peertube" -> {
+                DomainSoftware(
+                    name = "PeerTube",
+                    icon = R.drawable.peertube_logo,
+                    link = "https://joinpeertube.org/",
+                    description = context.resources.getString(R.string.peertube_description)
                 )
             }
 
