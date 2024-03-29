@@ -9,7 +9,6 @@ interface SavedSearchesRepository {
     suspend fun addHashtag(hashtag: String)
     suspend fun addSearch(search: String)
     suspend fun deleteElement(item: SavedSearchItem)
-
-
-        suspend fun getSavedSearches(): Flow<SavedSearches>
+    suspend fun getSavedSearches(): Flow<SavedSearches>
+    suspend fun clearSavedSearches()
 }
