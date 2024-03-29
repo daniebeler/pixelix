@@ -4,15 +4,19 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -25,20 +29,22 @@ class OwnProfileViewModel @Inject constructor(
     private val getOwnAccountUseCase: GetOwnAccountUseCase,
     private val getOwnPostsUseCase: GetOwnPostsUseCase,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
-) : ViewModel() {
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
+    application: android.app.Application
+) : AndroidViewModel(application) {
 
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
-
+    var domainSoftwareState by mutableStateOf(DomainSoftwareState())
+    var context = application
     init {
         loadData()
 
         viewModelScope.launch {
             getInstanceDomain()
         }
-
     }
 
     private suspend fun getInstanceDomain() {
@@ -56,6 +62,9 @@ class OwnProfileViewModel @Inject constructor(
         getOwnAccountUseCase().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
+                    val domain = result.data?.url?.substringAfter("https://")
+                        ?.substringBefore("/") ?: ""
+                    getDomainSoftware(domain)
                     AccountState(account = result.data)
                 }
 
@@ -111,6 +120,24 @@ class OwnProfileViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun getDomainSoftware(domain: String) {
+        getDomainSoftwareUseCase(domain, context).onEach { result ->
+            domainSoftwareState = when (result) {
+                is Resource.Success -> {
+                    DomainSoftwareState(domainSoftware = result.data)
+                }
+
+                is Resource.Error -> {
+                    DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    DomainSoftwareState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun openUrl(context: Context, url: String) {

@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
@@ -51,14 +54,19 @@ fun OwnProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Column {
-                Text(text = viewModel.accountState.account?.username ?: "")
-                Text(
-                    text = viewModel.ownDomain,
-                    fontSize = 12.sp,
-                    lineHeight = 6.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(text = viewModel.accountState.account?.username ?: "")
+                    Text(
+                        text = viewModel.ownDomain,
+                        fontSize = 12.sp,
+                        lineHeight = 6.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                if (viewModel.domainSoftwareState.domainSoftware != null) {
+                    viewModel.domainSoftwareState.domainSoftware!!.icon?.let { Icon(imageVector = it, contentDescription = null) }
+                }
             }
         }, actions = {
             IconButton(onClick = {

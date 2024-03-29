@@ -9,11 +9,13 @@ import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
+import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
+import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -28,6 +30,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface PixelfedApi {
 
@@ -292,4 +295,10 @@ interface PixelfedApi {
         @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
+
+    @GET("https://techhub.social/.well-known/nodeinfo")
+    fun getWellKnownDomains(): Call<WellKnownDomainsDto>
+
+    @GET
+    fun getNodeInfo(@Url domain: String): Call<NodeInfoDto>
 }

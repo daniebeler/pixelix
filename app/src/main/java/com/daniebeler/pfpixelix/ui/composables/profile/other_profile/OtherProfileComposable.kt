@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,15 +67,21 @@ fun OtherProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Column {
-                Text(text = viewModel.accountState.account?.username ?: "")
-                Text(
-                    text = viewModel.domain,
-                    fontSize = 12.sp,
-                    lineHeight = 6.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+           Row {
+               Column {
+
+                   Text(text = viewModel.accountState.account?.username ?: "")
+                   Text(
+                       text = viewModel.domain,
+                       fontSize = 12.sp,
+                       lineHeight = 6.sp,
+                       color = MaterialTheme.colorScheme.primary
+                   )
+               }
+               if (viewModel.domainSoftwareState.domainSoftware != null) {
+                   viewModel.domainSoftwareState.domainSoftware!!.icon?.let { Icon(imageVector = it, contentDescription = null) }
+               }
+           }
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

@@ -11,18 +11,22 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
+import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
+import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.NodeInfo
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
+import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
@@ -201,6 +205,18 @@ class CountryRepositoryImpl @Inject constructor(
     override fun verifyToken(token: String): Flow<Resource<Account>> {
         return NetworkCall<Account, AccountDto>().makeCall(
             pixelfedApi.verifyToken()
+        )
+    }
+
+    override fun getWellKnownDomains(domain: String): Flow<Resource<WellKnownDomains>> {
+        return NetworkCall<WellKnownDomains, WellKnownDomainsDto>().makeCall(
+            pixelfedApi.getWellKnownDomains()
+        )
+    }
+
+    override fun getNodeInfo(domain: String): Flow<Resource<NodeInfo>> {
+        return NetworkCall<NodeInfo, NodeInfoDto>().makeCall(
+            pixelfedApi.getNodeInfo(domain)
         )
     }
 
