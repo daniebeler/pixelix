@@ -110,7 +110,7 @@ fun ProfileTopSection(
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(
-                    text = account.note, mentions = null, navController = navController
+                    text = account.note, mentions = null, navController = navController, openUrl = { url -> openUrl(url) }
                 )
             }
 

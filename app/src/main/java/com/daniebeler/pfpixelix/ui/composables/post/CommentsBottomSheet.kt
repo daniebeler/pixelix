@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,6 +69,7 @@ import com.daniebeler.pfpixelix.utils.TimeAgo
 fun CommentsBottomSheet(
     post: Post, navController: NavController, viewModel: PostViewModel
 ) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +97,7 @@ fun CommentsBottomSheet(
                         true,
                         navController = navController,
                         {},
-                        viewModel.myAccountId
+                        viewModel.myAccountId, { url -> viewModel.openUrl(context, url) }
                     )
                 }
 
@@ -116,7 +118,7 @@ fun CommentsBottomSheet(
                     false,
                     navController = navController,
                     { viewModel.deleteReply(reply.id) },
-                    viewModel.myAccountId
+                    viewModel.myAccountId, { url -> viewModel.openUrl(context, url) }
                 )
             }
 
@@ -164,6 +166,7 @@ private fun ReplyElement(
     navController: NavController,
     deleteReply: () -> Unit,
     myAccountId: String?,
+    openUrl: (url: String) -> Unit,
     viewModel: ReplyElementViewModel = hiltViewModel(key = reply.id)
 ) {
 
@@ -217,7 +220,10 @@ private fun ReplyElement(
 
 
                 HashtagsMentionsTextView(
-                    text = reply.content, mentions = reply.mentions, navController = navController
+                    text = reply.content,
+                    mentions = reply.mentions,
+                    navController = navController,
+                    openUrl = { url -> openUrl(url) }
                 )
             }
         }
@@ -290,7 +296,7 @@ private fun ReplyElement(
                                 reply = it, false, navController = navController, {
                                     viewModel.deleteReply(it.id)
                                     replyCount--
-                                }, myAccountId
+                                }, myAccountId, openUrl
                             )
                         }
                     }
