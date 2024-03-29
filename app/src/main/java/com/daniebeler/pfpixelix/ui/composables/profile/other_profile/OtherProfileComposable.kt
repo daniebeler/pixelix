@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,21 +69,19 @@ fun OtherProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-           Row {
-               Column {
+            Row {
+                Column {
 
-                   Text(text = viewModel.accountState.account?.username ?: "")
-                   Text(
-                       text = viewModel.domain,
-                       fontSize = 12.sp,
-                       lineHeight = 6.sp,
-                       color = MaterialTheme.colorScheme.primary
-                   )
-               }
-               if (viewModel.domainSoftwareState.domainSoftware != null) {
-                   viewModel.domainSoftwareState.domainSoftware!!.icon?.let { Icon(imageVector = it, contentDescription = null) }
-               }
-           }
+                    Text(text = viewModel.accountState.account?.username ?: "")
+                    Text(
+                        text = viewModel.domain,
+                        fontSize = 12.sp,
+                        lineHeight = 6.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+            }
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -91,6 +91,13 @@ fun OtherProfileComposable(
                 )
             }
         }, actions = {
+
+            if (viewModel.domainSoftwareState.domainSoftware != null) {
+                viewModel.domainSoftwareState.domainSoftware!!.icon?.let {
+                    Image(painterResource(id = it), contentDescription = "", modifier = Modifier.height(24.dp))
+                }
+            }
+
             IconButton(onClick = {
                 showBottomSheet = true
             }) {
@@ -154,8 +161,7 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        CustomBottomSheetElement(
-                            icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
                             text = stringResource(
                                 R.string.unmute_this_profile
                             ),
@@ -163,8 +169,7 @@ fun OtherProfileComposable(
                                 viewModel.unMuteAccount(userId)
                             })
                     } else {
-                        CustomBottomSheetElement(
-                            icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
                             text = stringResource(
                                 R.string.mute_this_profile
                             ),
@@ -174,15 +179,13 @@ fun OtherProfileComposable(
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
-                        CustomBottomSheetElement(
-                            icon = Icons.Outlined.Block, text = stringResource(
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
                             viewModel.unblockAccount(userId)
                         })
                     } else {
-                        CustomBottomSheetElement(
-                            icon = Icons.Outlined.Block, text = stringResource(
+                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
                             viewModel.blockAccount(userId)
@@ -192,15 +195,13 @@ fun OtherProfileComposable(
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                CustomBottomSheetElement(
-                    icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
                     viewModel.openUrl(context, viewModel.accountState.account!!.url)
                 })
 
-                CustomBottomSheetElement(
-                    icon = Icons.Outlined.Share,
+                CustomBottomSheetElement(icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
                         Share.shareText(context, viewModel.accountState.account!!.url)

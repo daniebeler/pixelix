@@ -210,7 +210,7 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun getWellKnownDomains(domain: String): Flow<Resource<WellKnownDomains>> {
         return NetworkCall<WellKnownDomains, WellKnownDomainsDto>().makeCall(
-            pixelfedApi.getWellKnownDomains()
+            pixelfedApi.getWellKnownDomains(domain)
         )
     }
 

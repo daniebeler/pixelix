@@ -1,11 +1,13 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -28,7 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -64,11 +68,14 @@ fun OwnProfileComposable(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                if (viewModel.domainSoftwareState.domainSoftware != null) {
-                    viewModel.domainSoftwareState.domainSoftware!!.icon?.let { Icon(imageVector = it, contentDescription = null) }
-                }
             }
         }, actions = {
+            if (viewModel.domainSoftwareState.domainSoftware != null) {
+                viewModel.domainSoftwareState.domainSoftware!!.icon?.let {
+                    Image(painterResource(id = it), contentDescription = "", modifier = Modifier.height(24.dp))
+                }
+            }
+
             IconButton(onClick = {
                 //Navigate.navigate("settings_screen", navController)
                 showBottomSheet = true
@@ -153,7 +160,8 @@ fun CustomProfilePage(
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(account = accountState.account,
+                    ProfileTopSection(
+                        account = accountState.account,
                         navController,
                         openUrl = { url ->
                             openUrl(url)

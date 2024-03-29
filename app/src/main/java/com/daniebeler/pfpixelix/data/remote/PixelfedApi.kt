@@ -296,8 +296,8 @@ interface PixelfedApi {
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
 
-    @GET("https://techhub.social/.well-known/nodeinfo")
-    fun getWellKnownDomains(): Call<WellKnownDomainsDto>
+    @GET
+    fun getWellKnownDomains(@Url domain: String): Call<WellKnownDomainsDto>
 
     @GET
     fun getNodeInfo(@Url domain: String): Call<NodeInfoDto>
