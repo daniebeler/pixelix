@@ -113,4 +113,8 @@
     <string name="delete_reply">Delete reply</string>
     <string name="reply">Reply</string>
     <string name="post">Post</string>
+    <string name="pixelfed_description">Pixelfed is a photo and image sharing network on the Fediverse with a photo-oriented interface that includes albums, filters, moments etc. You can follow Pixelfed accounts from Mastodon, and Mastodon accounts from Pixelfed.</string>
+    <string name="mastodon_description">Mastodon description</string>
+    <string name="lemmy_description">Lemmy description</string>
+    <string name="threads_description">Threads description</string>
 </resources>

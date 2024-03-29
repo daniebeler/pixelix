@@ -113,4 +113,8 @@
     <string name="delete_reply">Antwort löschen</string>
     <string name="reply">Antworten</string>
     <string name="post">Beitrag</string>
+    <string name="pixelfed_description">Pixlefed ist cool</string>
+    <string name="mastodon_description">Mastodon Beschreibung</string>
+    <string name="lemmy_description">Lemmy beschreibung</string>
+    <string name="threads_description">Threads Beschreigung</string>
 </resources>

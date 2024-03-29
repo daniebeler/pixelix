@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -71,9 +72,8 @@ fun OwnProfileComposable(
             }
         }, actions = {
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                viewModel.domainSoftwareState.domainSoftware!!.icon?.let {
-                    Image(painterResource(id = it), contentDescription = "", modifier = Modifier.height(24.dp))
-                }
+                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
+                    { url -> viewModel.openUrl(context, url) })
             }
 
             IconButton(onClick = {
@@ -160,8 +160,7 @@ fun CustomProfilePage(
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(
-                        account = accountState.account,
+                    ProfileTopSection(account = accountState.account,
                         navController,
                         openUrl = { url ->
                             openUrl(url)

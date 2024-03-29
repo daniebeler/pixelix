@@ -5,7 +5,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class DomainSoftware(
     val name: String,
-    val version: String,
     @DrawableRes
-    val icon: Int?
+    val icon: Int,
+    val link: String,
+    val description: String
 )

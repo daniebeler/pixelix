@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePage
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -93,9 +94,9 @@ fun OtherProfileComposable(
         }, actions = {
 
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                viewModel.domainSoftwareState.domainSoftware!!.icon?.let {
-                    Image(painterResource(id = it), contentDescription = "", modifier = Modifier.height(24.dp))
-                }
+                DomainSoftwareComposable(
+                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
+                    { url -> viewModel.openUrl(context, url) })
             }
 
             IconButton(onClick = {

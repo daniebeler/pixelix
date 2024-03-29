@@ -18,47 +18,76 @@ import retrofit2.Retrofit
 
 class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository) {
     operator fun invoke(domain: String, context: Context): Flow<Resource<DomainSoftware>> = flow {
-        emit(Resource.Loading())
-        countryRepository.getWellKnownDomains("https://$domain/.well-known/nodeinfo").collect { wellKnownDomains ->
-            if (wellKnownDomains is Resource.Error) {
-                emit(Resource.Error(wellKnownDomains.message!!))
-            }
-            if (wellKnownDomains is Resource.Success) {
-                if (wellKnownDomains.data?.links == null || wellKnownDomains.data.links.isEmpty()) {
-                    emit(Resource.Error("an error occurred"))
-                } else {
-                    wellKnownDomains.data.links[0].let {
-                        countryRepository.getNodeInfo(it.href).collect { nodeInfo ->
-                            if (nodeInfo is Resource.Success && nodeInfo.data != null) {
-                                var apiData: DomainSoftware = nodeInfo.data.software
-                                val res = getData(apiData, context)
-                                emit(Resource.Success(res))
-                            } else if (nodeInfo is Resource.Error) {
-                                emit(Resource.Error(nodeInfo.message!!))
+        if (domain == "threads.net") {
+            val domainSoftware = DomainSoftware(
+                name = "threads",
+                icon = R.drawable.threads_logo,
+                link = "https://www.threads.net",
+                description = context.resources.getString(R.string.threads_description)
+            )
+            emit(Resource.Success(domainSoftware))
+        } else {
+            emit(Resource.Loading())
+            countryRepository.getWellKnownDomains("https://$domain/.well-known/nodeinfo")
+                .collect { wellKnownDomains ->
+                    if (wellKnownDomains is Resource.Error) {
+                        emit(Resource.Error(wellKnownDomains.message!!))
+                    }
+                    if (wellKnownDomains is Resource.Success) {
+                        if (wellKnownDomains.data?.links == null || wellKnownDomains.data.links.isEmpty()) {
+                            emit(Resource.Error("an error occurred"))
+                        } else {
+                            wellKnownDomains.data.links[0].let {
+                                countryRepository.getNodeInfo(it.href).collect { nodeInfo ->
+                                    if (nodeInfo is Resource.Success && nodeInfo.data != null) {
+                                        val res = getData(nodeInfo.data.software, context)
+                                        if (res != null) {
+                                            emit(Resource.Success(res))
+                                        } else {
+                                            emit(Resource.Error("not valid software"))
+                                        }
+                                    } else if (nodeInfo is Resource.Error) {
+                                        emit(Resource.Error(nodeInfo.message!!))
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
         }
     }
 
-    private fun getData(domainSoftware: DomainSoftware, context: Context): DomainSoftware {
-        return when (domainSoftware.name) {
+    private fun getData(domainSoftware: String, context: Context): DomainSoftware? {
+        return when (domainSoftware) {
             "pixelfed" -> {
-                domainSoftware.copy(icon = R.drawable.pixelfed_logo)
+                DomainSoftware(
+                    name = "Pixelfed",
+                    icon = R.drawable.pixelfed_logo,
+                    link = "https://pixelfed.org/",
+                    description = context.resources.getString(R.string.pixelfed_description)
+                )
             }
 
             "mastodon" -> {
-                domainSoftware.copy(icon = R.drawable.mastodon_logo)
+                DomainSoftware(
+                    name = "Mastodon",
+                    icon = R.drawable.mastodon_logo,
+                    link = "https://joinmastodon.org/",
+                    description = context.resources.getString(R.string.mastodon_description)
+                )
             }
 
             "lemmy" -> {
-                domainSoftware.copy(icon = R.drawable.lemmy_logo)
+                DomainSoftware(
+                    name = "Lemmy",
+                    icon = R.drawable.lemmy_logo,
+                    link = "https://join-lemmy.org/",
+                    description = context.resources.getString(R.string.lemmy_description)
+                )
             }
 
             else -> {
-                return domainSoftware
+                return null
             }
         }
     }
