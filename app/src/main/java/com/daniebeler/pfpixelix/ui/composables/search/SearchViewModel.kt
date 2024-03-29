@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
@@ -38,9 +39,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun saveAccount(accountUsername: String, accountId: String, avatarUrl: String) {
+    fun saveAccount(accountUsername: String, account: Account) {
         viewModelScope.launch {
-            savedSearchesRepository.addAccount(accountUsername, accountId, avatarUrl)
+            savedSearchesRepository.addAccount(accountUsername, account)
         }
     }
 
