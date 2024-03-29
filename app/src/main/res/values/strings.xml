@@ -119,4 +119,10 @@
     <string name="lemmy_description">Lemmy is a selfhosted social link aggregation and discussion platform. It is completely free and open, and not controlled by any company. This means that there is no advertising, tracking, or secret algorithms. Content is organized into communities, so it is easy to subscribe to topics that you are interested in, and ignore others. Voting is used to bring the most interesting items to the top.</string>
     <string name="threads_description">Threads is an app from Meta where you can view and share public conversations. You can also post threads, reply to others and follow profiles you are interested in.</string>
     <string name="more_information">More information</string>
+    <string name="what_makes_a_post_trend">What makes a post trend?</string>
+    <string name="trending_post_description">Posts trend if they were posted during the selected timeframe and have many likes.</string>
+    <string name="trending_account_description">The trending accounts section lists the accounts on your instance with the most followers. The accounts you already follow are hidden.</string>
+    <string name="what_makes_an_account_trend">What makes an account trend?</string>
+    <string name="what_makes_a_hashtag_trend">What makes a hashtag trend?</string>
+    <string name="trending_hashtag_description">Hashtags trend if many people have used them recently.</string>
 </resources>

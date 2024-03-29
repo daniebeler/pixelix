@@ -4,26 +4,32 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_posts.TrendingPostsComposable
@@ -50,6 +57,9 @@ fun TrendingComposable(navController: NavController, page: String) {
 
     val scope = rememberCoroutineScope()
 
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var expanded by remember { mutableStateOf(false) }
     var range by remember { mutableStateOf("daily") }
@@ -62,7 +72,7 @@ fun TrendingComposable(navController: NavController, page: String) {
             }, actions = {
                 if (pagerState.currentPage == 0) {
                     IconButton(onClick = { expanded = !expanded }) {
-                        Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+                        Icon(imageVector = Icons.Outlined.DateRange, contentDescription = null)
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.daily)) },
@@ -99,6 +109,10 @@ fun TrendingComposable(navController: NavController, page: String) {
                                 }
                             })
                     }
+                }
+
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
                 }
             })
 
@@ -161,6 +175,39 @@ fun TrendingComposable(navController: NavController, page: String) {
                         TrendingHashtagsComposable(navController = navController)
                     }
 
+                }
+            }
+        }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+                    showBottomSheet = false
+                }, sheetState = sheetState
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        SheetItem(
+                            header = stringResource(R.string.what_makes_a_post_trend),
+                            description = stringResource(R.string.trending_post_description)
+                        )
+
+                        SheetItem(
+                            header = stringResource(R.string.what_makes_an_account_trend),
+                            description = stringResource(R.string.trending_account_description)
+                        )
+
+                        SheetItem(
+                            header = stringResource(R.string.what_makes_a_hashtag_trend),
+                            description = stringResource(R.string.trending_hashtag_description)
+                        )
+                    }
                 }
             }
         }
