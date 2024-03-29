@@ -6,10 +6,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,13 +31,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -43,7 +46,6 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +61,7 @@ fun EditProfileComposable(
             // use the cropped image
             if (result.uriContent != null) {
                 viewModel.avatarUri = result.uriContent!!
+                viewModel.avatarChanged = true
             }
         } else {
             // an error occurred cropping
@@ -67,21 +70,21 @@ fun EditProfileComposable(
     }
 
 
-    val singlePhotoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    val cropOptions = CropImageContractOptions(
-                        uri, CropImageOptions(
-                            fixAspectRatio = true,
-                            aspectRatioX = 1,
-                            aspectRatioY = 1,
-                            cropShape = CropImageView.CropShape.OVAL
-                        )
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                val cropOptions = CropImageContractOptions(
+                    uri, CropImageOptions(
+                        fixAspectRatio = true,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        cropShape = CropImageView.CropShape.OVAL
                     )
-                    imageCropLauncher.launch(cropOptions)
-                }
-            })
+                )
+                imageCropLauncher.launch(cropOptions)
+            }
+        })
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -102,25 +105,33 @@ fun EditProfileComposable(
                     }
                 },
                 actions = {
-                    if (viewModel.accountState.isLoading) {
-                        Button(onClick = {}) {
-                            CircularProgressIndicator()
-                        }
-                    } else {
+                    if (viewModel.firstLoaded) {
                         if (viewModel.displayname == (viewModel.accountState.account?.displayname
                                 ?: "") && viewModel.note == (viewModel.accountState.account?.note
-                                ?: "") && viewModel.website == (viewModel.accountState.account?.website
-                                ?: "") && viewModel.avatarUri == (viewModel.accountState.account?.avatar?.toUri()
-                                ?: "")
+                                ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
+                                ?: "") && !viewModel.avatarChanged
                         ) {
-                            Button(onClick = {}, enabled = false) {
-                                Text(text = stringResource(R.string.save))
+                            if (!viewModel.accountState.isLoading) {
+                                Button(
+                                    onClick = {}, modifier = Modifier.width(120.dp), enabled = false
+                                ) {
+                                    Text(text = stringResource(R.string.save))
+                                }
                             }
                         } else {
-                            Button(onClick = {
-                                viewModel.save(context)
-                            }) {
-                                Text(text = stringResource(R.string.save))
+                            if (viewModel.accountState.isLoading) {
+                                Button(onClick = {}, modifier = Modifier.width(120.dp)) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            } else {
+                                Button(onClick = {
+                                    viewModel.save(context)
+                                }, modifier = Modifier.width(120.dp)) {
+                                    Text(text = stringResource(R.string.save))
+                                }
                             }
                         }
                     }
@@ -135,33 +146,57 @@ fun EditProfileComposable(
             Column(
                 Modifier
                     .fillMaxSize()
+                    .padding(12.dp)
                     .verticalScroll(state = rememberScrollState())
             ) {
 
                 if (viewModel.accountState.account != null) {
 
-                    AsyncImage(model = viewModel.avatarUri,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(112.dp)
-                            .width(112.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                singlePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            })
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        AsyncImage(model = viewModel.avatarUri,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .height(112.dp)
+                                .width(112.dp)
+                                .clip(CircleShape)
+                                .clickable {
+                                    singlePhotoPickerLauncher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                })
+                    }
 
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(value = viewModel.displayname,
                         singleLine = true,
-                        onValueChange = { viewModel.displayname = it })
+                        onValueChange = { viewModel.displayname = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(text = "Displayname")
+                        })
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     OutlinedTextField(value = viewModel.note,
-                        singleLine = true,
-                        onValueChange = { viewModel.note = it })
+                        onValueChange = { viewModel.note = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(text = "Note")
+                        })
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     OutlinedTextField(value = viewModel.website,
                         singleLine = true,
-                        onValueChange = { viewModel.website = it })
+                        onValueChange = { viewModel.website = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        prefix = {
+                            Text(text = "https://")
+                        },
+                        label = {
+                            Text(text = "Website")
+                        })
                 }
 
             }

@@ -9,10 +9,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateAccountUseCase
-import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,10 +24,13 @@ class EditProfileViewModel @Inject constructor(
 
     var accountState by mutableStateOf(EditProfileState())
 
+    var firstLoaded by mutableStateOf(false)
     var displayname by mutableStateOf("")
     var note by mutableStateOf("")
     var website by mutableStateOf("")
     var avatarUri by mutableStateOf<Uri>(Uri.EMPTY)
+    var avatarChanged by mutableStateOf(false)
+
     init {
         getAccount()
     }
@@ -41,35 +42,52 @@ class EditProfileViewModel @Inject constructor(
                     accountState = EditProfileState(account = result.data)
                     displayname = accountState.account?.displayname ?: ""
                     note = accountState.account?.note ?: ""
-                    website = accountState.account?.website ?: ""
+                    website = accountState.account?.website?.replace("https://", "") ?: ""
                     avatarUri = accountState.account?.avatar!!.toUri()
+                    firstLoaded = true
                 }
 
                 is Resource.Error -> {
-                    accountState = EditProfileState(error = result.message ?: "An unexpected error occurred")
+                    accountState =
+                        EditProfileState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    accountState = EditProfileState(isLoading = true, account = accountState.account)
+                    accountState =
+                        EditProfileState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
     fun save(context: Context) {
-        val newAvatarUri: Uri? = if (avatarUri == accountState.account?.avatar?.toUri()) {null} else {avatarUri}
-        updateAccountUseCase(displayname, note, website, newAvatarUri, context).onEach { result ->
+        val newAvatarUri: Uri? = if (avatarUri == accountState.account?.avatar?.toUri()) {
+            null
+        } else {
+            avatarUri
+        }
+        updateAccountUseCase(
+            displayname, note, "https://$website", newAvatarUri, context
+        ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
+                    avatarChanged = false
+                    println("frpf" + accountState)
+                    println(website)
+                    println(displayname)
+                    println(note)
+                    println(avatarUri)
                 }
 
                 is Resource.Error -> {
-                    accountState = EditProfileState(error = result.message ?: "An unexpected error occurred")
+                    accountState =
+                        EditProfileState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    accountState = EditProfileState(isLoading = true, account = accountState.account)
+                    accountState =
+                        EditProfileState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)

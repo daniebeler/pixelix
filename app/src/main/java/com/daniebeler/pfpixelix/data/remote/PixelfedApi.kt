@@ -120,7 +120,7 @@ interface PixelfedApi {
         @Path("accountid") accountId: String
     ): Call<AccountDto>
 
-    @POST("api/v1/accounts/update_credentials")
+    @POST("api/v1/accounts/update_credentials?_pe=1")
     fun updateAccount(
         @Body body: RequestBody
     ): Call<AccountDto>
