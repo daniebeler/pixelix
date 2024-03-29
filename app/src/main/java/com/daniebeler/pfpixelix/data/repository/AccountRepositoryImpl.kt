@@ -4,12 +4,14 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
+import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.RequestBody
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
@@ -29,6 +31,14 @@ class AccountRepositoryImpl @Inject constructor(
         return NetworkCall<Account, AccountDto>().makeCallList(
             pixelfedApi.getMutalFollowers(
                 userId
+            )
+        )
+    }
+
+    override fun updateAccount(body: RequestBody): Flow<Resource<Account>> {
+        return NetworkCall<Account, AccountDto>().makeCall(
+            pixelfedApi.updateAccount(
+                body
             )
         )
     }

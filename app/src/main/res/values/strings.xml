@@ -110,6 +110,8 @@
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
     <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
     <string name="view_more">view more</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save">save</string>
     <string name="delete_reply">Delete reply</string>
     <string name="reply">Reply</string>
     <string name="post">Post</string>

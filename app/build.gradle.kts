@@ -117,6 +117,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     implementation("io.coil-kt:coil-video:2.5.0")
+
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
 }
 
 kapt {
