@@ -20,7 +20,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
     operator fun invoke(domain: String, context: Context): Flow<Resource<DomainSoftware>> = flow {
         if (domain == "threads.net") {
             val domainSoftware = DomainSoftware(
-                name = "threads",
+                name = "Threads",
                 icon = R.drawable.threads_logo,
                 link = "https://www.threads.net",
                 description = context.resources.getString(R.string.threads_description)

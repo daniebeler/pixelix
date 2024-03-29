@@ -117,4 +117,5 @@
     <string name="mastodon_description">Mastodon description</string>
     <string name="lemmy_description">Lemmy description</string>
     <string name="threads_description">Threads description</string>
+    <string name="more_information">More information</string>
 </resources>
