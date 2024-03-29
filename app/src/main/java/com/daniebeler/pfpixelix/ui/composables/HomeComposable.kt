@@ -101,7 +101,6 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
             }
-            Spacer(modifier = Modifier.height(8.dp))
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
