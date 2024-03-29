@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,13 +54,15 @@ fun HashtagTimelineComposable(
                     Column {
                         Text(
                             "#$hashtag",
-                            lineHeight = 10.sp,
+                            fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
                         if (viewModel.hashtagState.hashtag != null) {
                             Text(
-                                text = String.format(Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count) + " " + stringResource(
+                                text = String.format(
+                                    Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count
+                                ) + " " + stringResource(
                                     R.string.posts
                                 ),
                                 fontSize = 14.sp,

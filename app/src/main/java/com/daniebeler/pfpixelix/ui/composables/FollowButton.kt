@@ -4,9 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +23,102 @@ import com.daniebeler.pfpixelix.R
 
 @Composable
 fun FollowButton(
+    firstLoaded: Boolean,
+    isLoading: Boolean,
+    isFollowing: Boolean,
+    onFollowClick: () -> Unit,
+    onUnFollowClick: () -> Unit,
+    iconButton: Boolean = false
+) {
+    if (iconButton) {
+        IconFollowButton(
+            firstLoaded = firstLoaded,
+            isLoading = isLoading,
+            isFollowing = isFollowing,
+            onFollowClick = onFollowClick,
+            onUnFollowClick = onUnFollowClick
+        )
+    } else {
+        TextFollowButton(
+            firstLoaded = firstLoaded,
+            isLoading = isLoading,
+            isFollowing = isFollowing,
+            onFollowClick = onFollowClick,
+            onUnFollowClick = onUnFollowClick
+        )
+    }
+}
+
+@Composable
+private fun IconFollowButton(
+    firstLoaded: Boolean,
+    isLoading: Boolean,
+    isFollowing: Boolean,
+    onFollowClick: () -> Unit,
+    onUnFollowClick: () -> Unit
+) {
+    Box(modifier = Modifier.height(40.dp)) {
+        if (firstLoaded) {
+            if (isLoading) {
+                if (isFollowing) {
+                    IconButton(
+                        onClick = {}, colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = {}, colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            } else {
+                if (isFollowing) {
+                    IconButton(
+                        onClick = {
+                            onUnFollowClick()
+                        }, colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Remove, contentDescription = ""
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = {
+                            onFollowClick()
+                        }, colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add, contentDescription = ""
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TextFollowButton(
     firstLoaded: Boolean,
     isLoading: Boolean,
     isFollowing: Boolean,
@@ -52,9 +154,7 @@ fun FollowButton(
                     Button(
                         onClick = {
                             onUnFollowClick()
-                        },
-                        modifier = Modifier.width(120.dp),
-                        colors = ButtonDefaults.buttonColors(
+                        }, modifier = Modifier.width(120.dp), colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         )

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrendingAccountElementViewModel @Inject constructor(
     private val getAccountPosts: GetPostsOfAccountUseCase,
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
     var postsState by mutableStateOf(TrendingAccountPostsState())
 
@@ -44,5 +47,9 @@ class TrendingAccountElementViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun openUrl(context: Context, url: String) {
+        openExternalUrlUseCase(context, url)
     }
 }

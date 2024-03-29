@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,14 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,16 +58,18 @@ fun TrendingHashtagElement(
             Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             if (viewModel.hashtagState.hashtag != null) {
                 Text(
-                    text = "  • " + String.format(Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!) + " " + stringResource(
+                    text = "  • " + String.format(
+                        Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!
+                    ) + " " + stringResource(
                         id = R.string.posts
-                    ),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
                 )
             }
         }
 
-        LazyRow(contentPadding = PaddingValues(horizontal = 10.dp)) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 10.dp), modifier = Modifier.height(150.dp)
+        ) {
             items(viewModel.postsState.posts, key = {
                 it.id
             }) { item ->
@@ -81,21 +80,6 @@ fun TrendingHashtagElement(
                         .padding(horizontal = 2.dp)
                 ) {
                     CustomPost(post = item, navController = navController)
-                }
-            }
-
-            item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .height(150.dp)
-                        .padding(horizontal = 18.dp)
-                ) {
-                    Button(onClick = {
-                        Navigate.navigate("hashtag_timeline_screen/${hashtag.name}", navController)
-                    }) {
-                        Text(text = stringResource(R.string.view_more))
-                    }
                 }
             }
         }

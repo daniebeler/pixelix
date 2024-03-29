@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +36,7 @@ fun TrendingAccountElement(
     navController: NavController,
     viewModel: TrendingAccountElementViewModel = hiltViewModel(key = account.id)
 ) {
-
+    val context = LocalContext.current
     LaunchedEffect(account) {
         viewModel.loadItems(account.id)
     }
@@ -55,7 +56,7 @@ fun TrendingAccountElement(
                 text = account.note,
                 mentions = null,
                 navController = navController,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), openUrl = { url -> viewModel.openUrl(context, url) }
             )
         }
 
@@ -70,21 +71,6 @@ fun TrendingAccountElement(
                         .padding(horizontal = 2.dp)
                 ) {
                     CustomPost(post = item, navController = navController)
-                }
-            }
-
-            item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .height(150.dp)
-                        .padding(horizontal = 18.dp)
-                ) {
-                    Button(onClick = {
-                        Navigate.navigate("profile_screen/" + account.id, navController)
-                    }) {
-                        Text(text = stringResource(R.string.view_more))
-                    }
                 }
             }
         }

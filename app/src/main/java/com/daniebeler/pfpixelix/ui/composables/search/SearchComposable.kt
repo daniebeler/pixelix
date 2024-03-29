@@ -62,8 +62,7 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                 .fillMaxSize()
         ) {
             Box(Modifier.padding(12.dp, 0.dp)) {
-                OutlinedTextField(
-                    value = viewModel.textInput,
+                OutlinedTextField(value = viewModel.textInput,
                     onValueChange = { viewModel.textInputChange(it) },
                     label = { Text(stringResource(R.string.search)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
@@ -83,24 +82,30 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                     ),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            viewModel.onSearch(viewModel.textInput)
-                            viewModel.saveSearch(viewModel.textInput)
-                        }
-                    )
+                    keyboardActions = KeyboardActions(onSearch = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        viewModel.onSearch(viewModel.textInput)
+                        viewModel.saveSearch(viewModel.textInput)
+                    })
                 )
             }
             if (viewModel.textInput.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
                 LazyColumn {
                     items(viewModel.savedSearches.pastSearches.reversed()) {
-                        PastSearchItem(
-                            item = it,
-                            navController,
-                            { text -> viewModel.onSearch(text) },
-                            { viewModel.deleteSavedSearch(it) })
+                        if (it.savedSearchType == SavedSearchType.Account) {
+                            Row {
+                                CustomAccount(account = it.account!!,
+                                    relationship = null,
+                                    navController = navController,
+                                    { viewModel.deleteSavedSearch(it) })
+                            }
+                        } else {
+                            PastSearchItem(item = it,
+                                navController,
+                                { text -> viewModel.onSearch(text) },
+                                { viewModel.deleteSavedSearch(it) })
+                        }
                     }
                 }
             }
@@ -110,7 +115,7 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                         CustomAccount(
                             account = it,
                             relationship = null,
-                            onClick = { viewModel.saveAccount(it.username, it.id, it.avatar) },
+                            onClick = { viewModel.saveAccount(it.username, it) },
                             navController = navController
                         )
                     }
@@ -146,23 +151,21 @@ private fun PastSearchItem(
             .clickable {
                 when (item.savedSearchType) {
                     SavedSearchType.Account -> Navigate.navigate(
-                        "profile_screen/" + item.accountId,
-                        navController
+                        "profile_screen/" + item.account!!.id, navController
                     )
 
                     SavedSearchType.Hashtag -> Navigate.navigate(
-                        "hashtag_timeline_screen/${item.value}",
-                        navController
+                        "hashtag_timeline_screen/${item.value}", navController
                     )
 
                     SavedSearchType.Search -> setSearchText(item.value)
                 }
-            },
-        verticalAlignment = Alignment.CenterVertically
+            }, verticalAlignment = Alignment.CenterVertically
     ) {
         if (item.savedSearchType == SavedSearchType.Account) {
             AsyncImage(
-                model = item.avatar, contentDescription = "",
+                model = item.account!!.avatar,
+                contentDescription = "",
                 modifier = Modifier
                     .height(46.dp)
                     .width(46.dp)
@@ -181,9 +184,7 @@ private fun PastSearchItem(
                         Icons.Outlined.Tag
                     } else {
                         Icons.Outlined.Search
-                    },
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    }, contentDescription = null, tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -193,9 +194,11 @@ private fun PastSearchItem(
             SavedSearchType.Account -> {
                 "@${item.value}"
             }
+
             SavedSearchType.Hashtag -> {
                 "#${item.value}"
             }
+
             else -> {
                 item.value
             }

@@ -25,6 +25,7 @@ fun HashtagsMentionsTextView(
     modifier: Modifier = Modifier,
     mentions: List<Account>?,
     navController: NavController,
+    openUrl: (url: String) -> Unit,
     viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = "hashtags-mentions-tv$text")
 ) {
 
@@ -32,7 +33,7 @@ fun HashtagsMentionsTextView(
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
-    val hashtags = Regex("((?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+)")
+    val hashtags = Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)?(?:\\/\\w+)*|https?:\\/\\/\\S+")
 
     val annotatedStringList = remember {
 
@@ -44,6 +45,7 @@ fun HashtagsMentionsTextView(
 
             val start = match.range.first
             val end = match.range.last + 1
+
             val string = text.substring(start, end)
 
             if (start > lastIndex) {
@@ -55,11 +57,15 @@ fun HashtagsMentionsTextView(
             }
             if (string.startsWith("#")) {
                 annotatedStringList.add(
-                    AnnotatedString.Range(string, start, end, "link")
+                    AnnotatedString.Range(string, start, end, "tag")
+                )
+            } else if (string.startsWith("@")){
+                annotatedStringList.add(
+                    AnnotatedString.Range(string, start, end, "account")
                 )
             } else {
                 annotatedStringList.add(
-                    AnnotatedString.Range(string, start, end, "account")
+                    AnnotatedString.Range(string, start, end, "link")
                 )
             }
 
@@ -80,7 +86,7 @@ fun HashtagsMentionsTextView(
     // Build an annotated string
     val annotatedString = buildAnnotatedString {
         annotatedStringList.forEach {
-            if (it.tag == "link" || it.tag == "account") {
+            if (it.tag == "tag" || it.tag == "account" || it.tag == "link") {
                 pushStringAnnotation(tag = it.tag, annotation = it.item)
                 withStyle(style = primaryStyle) { append(it.item) }
                 pop()
@@ -97,16 +103,19 @@ fun HashtagsMentionsTextView(
             CoroutineScope(Dispatchers.Default).launch {
                 val annotatedStringRange =
                     annotatedStringList.first { it.start <= position && position < it.end }
-                if (annotatedStringRange.tag == "link" || annotatedStringRange.tag == "account") {
+                if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
                     val newItem = annotatedStringRange.item.drop(1)
-                    val route = if (annotatedStringRange.tag == "link") {
+                    val route = if (annotatedStringRange.tag == "tag") {
                         "hashtag_timeline_screen/$newItem"
                     } else {
                         if (mentions == null) {
                             ""
                         } else {
-                            val account =
-                                mentions.find { account: Account -> account.username == newItem }
+                            var account =
+                                mentions.find { account: Account -> account.acct == newItem }
+                            if (account == null) {
+                                account = mentions.find { account: Account -> account.username == newItem }
+                            }
                             if (account != null) {
                                 //get my account id and check if it is mine account
                                 val myAccountId = viewModel.getMyAccountId()
@@ -126,6 +135,8 @@ fun HashtagsMentionsTextView(
                             Navigate.navigate(route, navController)
                         }
                     }
+                } else if (annotatedStringRange.tag == "link") {
+                    openUrl(annotatedStringRange.item)
                 }
             }
         })

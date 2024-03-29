@@ -1,9 +1,13 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,13 +30,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -51,16 +59,23 @@ fun OwnProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Column {
-                Text(text = viewModel.accountState.account?.username ?: "")
-                Text(
-                    text = viewModel.ownDomain,
-                    fontSize = 12.sp,
-                    lineHeight = 6.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(text = viewModel.accountState.account?.username ?: "")
+                    Text(
+                        text = viewModel.ownDomain,
+                        fontSize = 12.sp,
+                        lineHeight = 6.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }, actions = {
+            if (viewModel.domainSoftwareState.domainSoftware != null) {
+                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
+                    { url -> viewModel.openUrl(context, url) })
+            }
+
             IconButton(onClick = {
                 //Navigate.navigate("settings_screen", navController)
                 showBottomSheet = true

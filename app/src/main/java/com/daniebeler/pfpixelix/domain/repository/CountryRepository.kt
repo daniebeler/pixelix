@@ -1,15 +1,19 @@
 package com.daniebeler.pfpixelix.domain.repository
 
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
+import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.NodeInfo
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
+import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
@@ -43,7 +47,7 @@ interface CountryRepository {
     fun getNotifications(maxNotificationId: String = ""): Flow<Resource<List<Notification>>>
 
 
-    fun search(searchText: String): Flow<Resource<Search>>
+    fun search(searchText: String, type: String?): Flow<Resource<Search>>
 
 
     fun createReply(postId: String, content: String): Flow<Resource<Post>>
@@ -55,4 +59,9 @@ interface CountryRepository {
     ): Flow<Resource<AccessToken>>
 
     fun verifyToken(token: String): Flow<Resource<Account>>
+
+    fun getWellKnownDomains(domain: String): Flow<Resource<WellKnownDomains>>
+
+    fun getNodeInfo(domain: String): Flow<Resource<NodeInfo>>
+
 }

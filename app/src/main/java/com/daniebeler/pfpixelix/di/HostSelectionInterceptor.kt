@@ -24,15 +24,18 @@ class HostSelectionInterceptor : HostSelectionInterceptorInterface {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request: Request = chain.request()
         val host = host
-        if (host != null) {
-            val newUrl = request.url.newBuilder().host(host).build()
-            request = request.newBuilder().url(newUrl).build()
+        if (request.url.toString().startsWith("https://err.or")) {
+            if (host != null) {
+                val newUrl = request.url.newBuilder().host(host).build()
+                request = request.newBuilder().url(newUrl).build()
+            }
+
+            val token = token
+            if (token != null) {
+                request = request.newBuilder().addHeader("Authorization", "Bearer $token").build()
+            }
         }
 
-        val token = token
-        if (token != null) {
-            request = request.newBuilder().addHeader("Authorization", "Bearer $token").build()
-        }
         return chain.proceed(request)
     }
 }

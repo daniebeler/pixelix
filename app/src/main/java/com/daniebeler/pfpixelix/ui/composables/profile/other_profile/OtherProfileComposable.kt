@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +44,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePage
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -66,14 +70,18 @@ fun OtherProfileComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Column {
-                Text(text = viewModel.accountState.account?.username ?: "")
-                Text(
-                    text = viewModel.domain,
-                    fontSize = 12.sp,
-                    lineHeight = 6.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Row {
+                Column {
+
+                    Text(text = viewModel.accountState.account?.username ?: "")
+                    Text(
+                        text = viewModel.domain,
+                        fontSize = 12.sp,
+                        lineHeight = 6.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
             }
         }, navigationIcon = {
             IconButton(onClick = {
@@ -84,6 +92,13 @@ fun OtherProfileComposable(
                 )
             }
         }, actions = {
+
+            if (viewModel.domainSoftwareState.domainSoftware != null) {
+                DomainSoftwareComposable(
+                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
+                    { url -> viewModel.openUrl(context, url) })
+            }
+
             IconButton(onClick = {
                 showBottomSheet = true
             }) {
