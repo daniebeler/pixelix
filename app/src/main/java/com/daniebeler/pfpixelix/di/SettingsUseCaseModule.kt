@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.di
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
+import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetBlockedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBookmarkedPostsUseCase
@@ -38,8 +39,8 @@ class SettingsUseCaseModule {
     @Provides
     @Singleton
     fun provideLogoutUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository
-    ): LogoutUseCase = LogoutUseCase(repository, storageRepository)
+        repository: CountryRepository, storageRepository: StorageRepository, savedSearchesRepository: SavedSearchesRepository
+    ): LogoutUseCase = LogoutUseCase(repository, storageRepository, savedSearchesRepository)
 
     @Provides
     @Singleton

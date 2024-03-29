@@ -58,5 +58,12 @@ class SavedSearchesRepositoryImpl @Inject constructor(private val dataStore: Dat
     }
 
     override suspend fun getSavedSearches(): Flow<SavedSearches> = dataStore.data
+    override suspend fun clearSavedSearches() {
+        try {
+            dataStore.updateData { SavedSearches() }
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
 
 }
