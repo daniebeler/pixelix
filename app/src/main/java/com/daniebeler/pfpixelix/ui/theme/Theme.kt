@@ -60,11 +60,13 @@ fun PixelixTheme(
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setSystemBarsColor(
-        color = Color.Transparent
+        color = Color.Transparent,
+        darkIcons = !darkTheme
     )
 
     systemUiController.setNavigationBarColor(
-        color = Color.Transparent
+        color = Color.Transparent,
+        darkIcons = !darkTheme
     )
 
 
