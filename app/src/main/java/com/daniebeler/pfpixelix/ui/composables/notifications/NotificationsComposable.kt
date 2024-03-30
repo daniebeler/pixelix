@@ -71,20 +71,6 @@ fun NotificationsComposable(
                             CustomNotification(notification = it, navController = navController)
                         }
 
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Green)
-                            ) {
-
-
-                                InfiniteListHandler(lazyListState = lazyListState) {
-                                    viewModel.getNotificationsPaginated()
-                                }
-                            }
-                        }
-
                         if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
                             item {
                                 CircularProgressIndicator(
@@ -119,6 +105,11 @@ fun NotificationsComposable(
                 LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             }
             ErrorComposable(message = viewModel.notificationsState.error, pullRefreshState)
+        }
+
+        InfiniteListHandler(lazyListState = lazyListState) {
+            println("fieef")
+            viewModel.getNotificationsPaginated()
         }
     }
 }
