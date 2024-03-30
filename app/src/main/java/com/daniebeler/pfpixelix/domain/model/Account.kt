@@ -15,5 +15,6 @@ data class Account(
     val website: String?,
     val note: String,
     val url: String,
-    val locked: Boolean
+    val locked: Boolean,
+    val createdAt: String
 )
