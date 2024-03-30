@@ -1,14 +1,16 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Reply
@@ -20,10 +22,8 @@ import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material.icons.outlined.Reply
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,14 +42,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
@@ -259,28 +262,67 @@ fun OtherProfileComposable(
 fun MuteAccountAlert(
     onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
 ) {
-    AlertDialog(icon = {
-        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
-    }, title = {
+    AlertDialog(title = {
         Text(text = "Mute User?")
     }, text = {
         Column {
-            Text(text = accountToMute.acct)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            ) {
+                AsyncImage(
+                    model = accountToMute.avatar,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(46.dp)
+                        .width(46.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Column {
+
+                    Column {
+                        if (accountToMute.displayname != null) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = accountToMute.displayname,
+                                    lineHeight = 8.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = accountToMute.username, fontSize = 12.sp)
+                            Text(
+                                text = " • " + (accountToMute.url.substringAfter("https://")
+                                    .substringBefore("/") ?: ""),
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                    }
+                }
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
             Row {
-                Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
-                Text(text = "They won't know they've been muted")
+                //Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
+                Text(text = "• They won't know they've been muted")
             }
             Row {
-                Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
-                Text(text = "They can still see your posts, but you won't see theirs")
+                //Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
+                Text(text = "• They can still see your posts, but you won't see theirs")
             }
             Row {
-                Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
-                Text(text = "You won't see posts that mention them.")
+                //Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
+                Text(text = "• You won't see posts that mention them.")
             }
             Row {
-                Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
-                Text(text = "They can mention and follow you, but you won't see them.")
+                //Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
+                Text(text = "• They can mention and follow you, but you won't see them.")
             }
         }
     }, onDismissRequest = {
