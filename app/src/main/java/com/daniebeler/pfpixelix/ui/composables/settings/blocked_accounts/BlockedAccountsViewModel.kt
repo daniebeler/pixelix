@@ -22,7 +22,7 @@ class BlockedAccountsViewModel @Inject constructor(
 
     var blockedAccountsState by mutableStateOf(BlockedAccountsState())
 
-    var unblockAlert: String by mutableStateOf("")
+    var unblockAccountAlert: String by mutableStateOf("")
 
     init {
         getBlockedAccounts()
@@ -60,11 +60,11 @@ class BlockedAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    BlockedAccountsState(error = result.message ?: "An unexpected error occurred")
+                    blockedAccountsState.copy(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    BlockedAccountsState(isLoading = true)
+                    blockedAccountsState.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

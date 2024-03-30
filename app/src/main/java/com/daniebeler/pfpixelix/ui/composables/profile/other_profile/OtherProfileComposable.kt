@@ -11,12 +11,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.Reply
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
+import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.Reply
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.outlined.VolumeOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -42,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
@@ -59,7 +69,12 @@ fun OtherProfileComposable(
 ) {
 
     val sheetState = rememberModalBottomSheetState()
+
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showMuteAlert by remember { mutableStateOf(false) }
+    var showUnMuteAlert by remember { mutableStateOf(false) }
+    var showBlockAlert by remember { mutableStateOf(false) }
+    var showUnBlockAlert by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -94,8 +109,7 @@ fun OtherProfileComposable(
         }, actions = {
 
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                DomainSoftwareComposable(
-                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
+                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
                     { url -> viewModel.openUrl(context, url) })
             }
 
@@ -167,7 +181,7 @@ fun OtherProfileComposable(
                                 R.string.unmute_this_profile
                             ),
                             onClick = {
-                                viewModel.unMuteAccount(userId)
+                                showUnMuteAlert = true
                             })
                     } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
@@ -175,7 +189,7 @@ fun OtherProfileComposable(
                                 R.string.mute_this_profile
                             ),
                             onClick = {
-                                viewModel.muteAccount(userId)
+                                showMuteAlert = true
                             })
                     }
 
@@ -183,13 +197,13 @@ fun OtherProfileComposable(
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
-                            viewModel.unblockAccount(userId)
+                            showUnBlockAlert = true
                         })
                     } else {
                         CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
-                            viewModel.blockAccount(userId)
+                            showBlockAlert = true
                         })
                     }
                 }
@@ -210,4 +224,178 @@ fun OtherProfileComposable(
             }
         }
     }
+
+    if (showUnMuteAlert) {
+        UnMuteAccountAlert(onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
+            showUnMuteAlert = false
+            viewModel.unMuteAccount(userId)
+        }, accountToMute = viewModel.accountState.account!!
+        )
+    }
+    if (showMuteAlert) {
+        MuteAccountAlert(onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+            showMuteAlert = false
+            viewModel.muteAccount(userId)
+        }, accountToMute = viewModel.accountState.account!!
+        )
+    }
+    if (showBlockAlert) {
+        BlockAccountAlert(onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+            showBlockAlert = false
+            viewModel.blockAccount(userId)
+        }, accountToMute = viewModel.accountState.account!!
+        )
+    }
+    if (showUnBlockAlert) {
+        UnBlockAccountAlert(onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
+            showUnBlockAlert = false
+            viewModel.unblockAccount(userId)
+        }, accountToMute = viewModel.accountState.account!!
+        )
+    }
+}
+
+@Composable
+fun MuteAccountAlert(
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+) {
+    AlertDialog(icon = {
+        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
+    }, title = {
+        Text(text = "Mute User?")
+    }, text = {
+        Column {
+            Text(text = accountToMute.acct)
+            Row {
+                Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
+                Text(text = "They won't know they've been muted")
+            }
+            Row {
+                Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
+                Text(text = "They can still see your posts, but you won't see theirs")
+            }
+            Row {
+                Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
+                Text(text = "You won't see posts that mention them.")
+            }
+            Row {
+                Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
+                Text(text = "They can mention and follow you, but you won't see them.")
+            }
+        }
+    }, onDismissRequest = {
+        onDismissRequest()
+    }, confirmButton = {
+        TextButton(onClick = {
+            onConfirmation()
+        }) {
+            Text("Mute")
+        }
+    }, dismissButton = {
+        TextButton(onClick = {
+            onDismissRequest()
+        }) {
+            Text("Cancel")
+        }
+    })
+}
+
+@Composable
+fun UnMuteAccountAlert(
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+) {
+    AlertDialog(icon = {
+        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
+    }, title = {
+        Text(text = "Unmute User?")
+    }, text = {
+        Text(text = accountToMute.acct)
+    }, onDismissRequest = {
+        onDismissRequest()
+    }, confirmButton = {
+        TextButton(onClick = {
+            onConfirmation()
+        }) {
+            Text("Unmute")
+        }
+    }, dismissButton = {
+        TextButton(onClick = {
+            onDismissRequest()
+        }) {
+            Text("Cancel")
+        }
+    })
+}
+
+@Composable
+fun BlockAccountAlert(
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+) {
+    AlertDialog(icon = {
+        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
+    }, title = {
+        Text(text = "Block User?")
+    }, text = {
+        Column {
+            Text(text = accountToMute.acct)
+            Row {
+                Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
+                Text(text = "They won't know they've been blocked")
+            }
+            Row {
+                Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
+                Text(text = "They can still see your posts, but you won't see theirs")
+            }
+            Row {
+                Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
+                Text(text = "You won't see posts that mention them.")
+            }
+            Row {
+                Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
+                Text(text = "They can mention and follow you, but you won't see them.")
+            }
+        }
+    }, onDismissRequest = {
+        onDismissRequest()
+    }, confirmButton = {
+        TextButton(onClick = {
+            onConfirmation()
+        }) {
+            Text("Block")
+        }
+    }, dismissButton = {
+        TextButton(onClick = {
+            onDismissRequest()
+        }) {
+            Text("Cancel")
+        }
+    })
+
+}
+
+@Composable
+fun UnBlockAccountAlert(
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+) {
+    AlertDialog(icon = {
+        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
+    }, title = {
+        Text(text = "Unblock User?")
+    }, text = {
+        Text(text = accountToMute.acct)
+    }, onDismissRequest = {
+        onDismissRequest()
+    }, confirmButton = {
+        TextButton(onClick = {
+            onConfirmation()
+        }) {
+            Text("Unblock")
+        }
+    }, dismissButton = {
+        TextButton(onClick = {
+            onDismissRequest()
+        }) {
+            Text("Cancel")
+        }
+    })
 }
