@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -70,21 +73,21 @@ fun EditProfileComposable(
     }
 
 
-    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                val cropOptions = CropImageContractOptions(
-                    uri, CropImageOptions(
-                        fixAspectRatio = true,
-                        aspectRatioX = 1,
-                        aspectRatioY = 1,
-                        cropShape = CropImageView.CropShape.OVAL
+    val singlePhotoPickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri ->
+                if (uri != null) {
+                    val cropOptions = CropImageContractOptions(
+                        uri, CropImageOptions(
+                            fixAspectRatio = true,
+                            aspectRatioX = 1,
+                            aspectRatioY = 1,
+                            cropShape = CropImageView.CropShape.OVAL
+                        )
                     )
-                )
-                imageCropLauncher.launch(cropOptions)
-            }
-        })
+                    imageCropLauncher.launch(cropOptions)
+                }
+            })
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -110,6 +113,7 @@ fun EditProfileComposable(
                                 ?: "") && viewModel.note == (viewModel.accountState.account?.note
                                 ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
                                 ?: "") && !viewModel.avatarChanged
+                            && viewModel.privateProfile == viewModel.accountState.account?.locked
                         ) {
                             if (!viewModel.accountState.isLoading) {
                                 Button(
@@ -197,6 +201,16 @@ fun EditProfileComposable(
                         label = {
                             Text(text = "Website")
                         })
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = stringResource(R.string.private_profile))
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(checked = viewModel.privateProfile,
+                            onCheckedChange = { viewModel.privateProfile = it })
+                    }
+
                 }
 
             }

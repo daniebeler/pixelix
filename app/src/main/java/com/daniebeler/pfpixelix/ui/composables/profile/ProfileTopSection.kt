@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -98,9 +99,18 @@ fun ProfileTopSection(
             }
             Spacer(modifier = Modifier.height(12.dp))
             if (account.displayname != null) {
-                Text(text = account.displayname, fontWeight = FontWeight.Bold)
-            }
-            /*Text(text = "@" + account.acct,
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = account.displayname, fontWeight = FontWeight.Bold)
+                    if (account.locked) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = null,
+                            Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }/*Text(text = "@" + account.acct,
                 fontSize = 12.sp,
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(onLongPress = {
@@ -109,9 +119,10 @@ fun ProfileTopSection(
                 })*/
 
             if (account.note.isNotBlank()) {
-                HashtagsMentionsTextView(
-                    text = account.note, mentions = null, navController = navController, openUrl = { url -> openUrl(url) }
-                )
+                HashtagsMentionsTextView(text = account.note,
+                    mentions = null,
+                    navController = navController,
+                    openUrl = { url -> openUrl(url) })
             }
 
 

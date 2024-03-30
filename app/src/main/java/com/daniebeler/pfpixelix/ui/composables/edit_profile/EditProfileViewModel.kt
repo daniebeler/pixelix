@@ -30,7 +30,7 @@ class EditProfileViewModel @Inject constructor(
     var website by mutableStateOf("")
     var avatarUri by mutableStateOf<Uri>(Uri.EMPTY)
     var avatarChanged by mutableStateOf(false)
-
+    var privateProfile by mutableStateOf(false)
     init {
         getAccount()
     }
@@ -44,6 +44,7 @@ class EditProfileViewModel @Inject constructor(
                     note = accountState.account?.note ?: ""
                     website = accountState.account?.website?.replace("https://", "") ?: ""
                     avatarUri = accountState.account?.avatar!!.toUri()
+                    privateProfile = accountState.account?.locked ?: false
                     firstLoaded = true
                 }
 
@@ -67,17 +68,12 @@ class EditProfileViewModel @Inject constructor(
             avatarUri
         }
         updateAccountUseCase(
-            displayname, note, "https://$website", newAvatarUri, context
+            displayname, note, "https://$website", privateProfile, newAvatarUri, context
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
                     avatarChanged = false
-                    println("frpf" + accountState)
-                    println(website)
-                    println(displayname)
-                    println(note)
-                    println(avatarUri)
                 }
 
                 is Resource.Error -> {

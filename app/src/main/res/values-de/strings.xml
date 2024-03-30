@@ -127,4 +127,5 @@
     <string name="what_makes_an_account_trend">Wann ist ein Benutzer im Trend?</string>
     <string name="what_makes_a_hashtag_trend">Wann ist ein Hashtag im Trend?</string>
     <string name="trending_hashtag_description">Hashtags sind im Trend, wenn viele Benutzer sie in letzter Zeit verwendet haben.</string>
+    <string name="private_profile">Privates Profil</string>
 </resources>

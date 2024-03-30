@@ -22,7 +22,7 @@ class UpdateAccountUseCase(
     private val accountRepository: AccountRepository
 ) {
     operator fun invoke(
-        displayName: String, note: String, website: String, avatarUri: Uri?, context: Context
+        displayName: String, note: String, website: String, privateProfile: Boolean, avatarUri: Uri?, context: Context
     ): Flow<Resource<Account>> {
         val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
 
@@ -38,6 +38,7 @@ class UpdateAccountUseCase(
         builder.addFormDataPart("display_name", displayName)
         builder.addFormDataPart("note", note)
         builder.addFormDataPart("website", website)
+        builder.addFormDataPart("locked", privateProfile.toString())
 
         val requestBody: RequestBody = builder.build()
 

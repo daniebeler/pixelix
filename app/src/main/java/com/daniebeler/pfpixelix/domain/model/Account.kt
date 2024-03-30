@@ -14,5 +14,6 @@ data class Account(
     val postsCount: Int,
     val website: String?,
     val note: String,
-    val url: String
+    val url: String,
+    val locked: Boolean
 )

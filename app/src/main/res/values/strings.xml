@@ -127,4 +127,5 @@
     <string name="what_makes_an_account_trend">What makes an account trend?</string>
     <string name="what_makes_a_hashtag_trend">What makes a hashtag trend?</string>
     <string name="trending_hashtag_description">Hashtags trend if many people have used them recently.</string>
+    <string name="private_profile">Private profile</string>
 </resources>
