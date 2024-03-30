@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -95,13 +96,20 @@ fun LoginComposable(
                             viewModel.domainChanged()
                         },
                         modifier = Modifier.weight(1f),
+                        prefix = { Text("https://") },
                         singleLine = true,
                         label = { Text(stringResource(R.string.server_url)) },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            focusedContainerColor = Color(0xFF121318),
+                            unfocusedContainerColor = Color(0xFF121318),
+                            disabledContainerColor = Color(0xFF121318),
                             unfocusedBorderColor = Color.Transparent,
+                            focusedPrefixColor = Color.White,
+                            unfocusedPrefixColor = Color.White,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = Color.White
                         ),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -143,7 +151,13 @@ fun LoginComposable(
                                 .padding(0.dp, 0.dp),
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(12.dp),
-                            enabled = viewModel.isValidUrl
+                            enabled = viewModel.isValidUrl,
+                            colors = ButtonColors(
+                                disabledContainerColor = Color(0xFF121318),
+                                disabledContentColor = Color(0xFF8D8D8D),
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -160,6 +174,7 @@ fun LoginComposable(
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Text(text = stringResource(R.string.i_don_t_have_an_account),
                         textDecoration = TextDecoration.Underline,
+                        color = Color.White,
                         modifier = Modifier
                             .align(Alignment.Center)
                             .clickable {
