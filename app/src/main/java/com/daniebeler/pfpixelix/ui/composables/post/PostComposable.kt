@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.net.Uri
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.compose.animation.core.animateFloatAsState
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -336,8 +339,7 @@ fun PostComposable(
                                 viewModel.reblogPost(viewModel.post!!.id)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Cached,
-                                    contentDescription = ""
+                                    imageVector = Icons.Outlined.Cached, contentDescription = ""
                                 )
                             }
                         }
@@ -399,11 +401,10 @@ fun PostComposable(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 if (viewModel.post!!.content.isNotBlank()) {
-                    HashtagsMentionsTextView(
-                        text = viewModel.post!!.content,
+                    HashtagsMentionsTextView(text = viewModel.post!!.content,
                         mentions = viewModel.post!!.mentions,
-                        navController = navController, openUrl = { url -> viewModel.openUrl(context, url) }
-                    )
+                        navController = navController,
+                        openUrl = { url -> viewModel.openUrl(context, url) })
                 }
 
                 if (viewModel.post!!.replyCount > 0) {
@@ -545,7 +546,7 @@ fun PostImage(
             } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
-                VideoPlayer(uri = Uri.parse(mediaAttachment.url))
+                VideoPlayer(uri = Uri.parse(mediaAttachment.url), mediaAttachment = mediaAttachment)
             }
         }
 
@@ -618,39 +619,42 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-private fun VideoPlayer(uri: Uri) {
+private fun VideoPlayer(uri: Uri, mediaAttachment: MediaAttachment) {
     val context = LocalContext.current
 
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-                context, defaultDataSourceFactory
-            )
-            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri))
+    val exoPlayer = ExoPlayer.Builder(context).build()
 
-            setMediaSource(source)
-            prepare()
+    val mediaSource = remember(uri) {
+        MediaItem.fromUri(uri)
+    }
+
+    // Set MediaSource to ExoPlayer
+    LaunchedEffect(mediaSource) {
+        exoPlayer.setMediaItem(mediaSource)
+        exoPlayer.prepare()
+    }
+
+    // Manage lifecycle events
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
         }
     }
 
-    exoPlayer.playWhenReady = true
-    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-
-    DisposableEffect(
-        AndroidView(factory = {
-            PlayerView(context).apply {
-                hideController()
-                useController = false
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-
+    AndroidView(
+        factory = { ctx ->
+            PlayerView(ctx).apply {
                 player = exoPlayer
-                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             }
-        })
-    ) {
-        onDispose { exoPlayer.release() }
-    }
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(
+                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+            )
+    )
+
+    exoPlayer.playWhenReady = true
+    //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
 }
