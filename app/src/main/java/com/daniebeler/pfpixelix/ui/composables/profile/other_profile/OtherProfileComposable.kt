@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -179,7 +180,7 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
                             text = stringResource(
                                 R.string.unmute_this_profile
                             ),
@@ -187,7 +188,7 @@ fun OtherProfileComposable(
                                 showUnMuteAlert = true
                             })
                     } else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.DoNotDisturbOn,
+                        CustomBottomSheetElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
                             text = stringResource(
                                 R.string.mute_this_profile
                             ),
@@ -232,98 +233,54 @@ fun OtherProfileComposable(
         UnMuteAccountAlert(onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
             showUnMuteAlert = false
             viewModel.unMuteAccount(userId)
-        }, accountToMute = viewModel.accountState.account!!
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showMuteAlert) {
         MuteAccountAlert(onDismissRequest = { showMuteAlert = false }, onConfirmation = {
             showMuteAlert = false
             viewModel.muteAccount(userId)
-        }, accountToMute = viewModel.accountState.account!!
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showBlockAlert) {
         BlockAccountAlert(onDismissRequest = { showBlockAlert = false }, onConfirmation = {
             showBlockAlert = false
             viewModel.blockAccount(userId)
-        }, accountToMute = viewModel.accountState.account!!
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showUnBlockAlert) {
         UnBlockAccountAlert(onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
             showUnBlockAlert = false
             viewModel.unblockAccount(userId)
-        }, accountToMute = viewModel.accountState.account!!
+        }, account = viewModel.accountState.account!!
         )
     }
 }
 
 @Composable
 fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
     AlertDialog(title = {
         Text(text = "Mute User?")
     }, text = {
         Column {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImage(
-                    model = accountToMute.avatar,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(46.dp)
-                        .width(46.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-
-                    Column {
-                        if (accountToMute.displayname != null) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = accountToMute.displayname,
-                                    lineHeight = 8.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = accountToMute.username, fontSize = 12.sp)
-                            Text(
-                                text = " • " + (accountToMute.url.substringAfter("https://")
-                                    .substringBefore("/") ?: ""),
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontSize = 12.sp
-                            )
-                        }
-
-                    }
-                }
-            }
+            AlertTopSection(account = account)
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Row {
-                //Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
-                Text(text = "• They won't know they've been muted")
-            }
-            Row {
-                //Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
-                Text(text = "• They can still see your posts, but you won't see theirs")
-            }
-            Row {
-                //Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
-                Text(text = "• You won't see posts that mention them.")
-            }
-            Row {
-                //Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
-                Text(text = "• They can mention and follow you, but you won't see them.")
-            }
+            Text(text = "• You won’t see the user in your home feed")
+            Text(text = "• You won’t see other people boosting the user")
+            Text(text = "• You won’t see other people mentioning the user")
+            Text(text = "• You won’t see the user in public timelines")
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+            Text(text = "The user has no way of knowing they have been muted.")
+
         }
     }, onDismissRequest = {
         onDismissRequest()
@@ -344,14 +301,14 @@ fun MuteAccountAlert(
 
 @Composable
 fun UnMuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
-    AlertDialog(icon = {
-        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
-    }, title = {
+    AlertDialog(title = {
         Text(text = "Unmute User?")
     }, text = {
-        Text(text = accountToMute.acct)
+        AlertTopSection(account = account)
+
+
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
@@ -371,31 +328,33 @@ fun UnMuteAccountAlert(
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
-    AlertDialog(icon = {
-        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
-    }, title = {
+    AlertDialog(title = {
         Text(text = "Block User?")
     }, text = {
         Column {
-            Text(text = accountToMute.acct)
-            Row {
-                Icon(imageVector = Icons.Outlined.Campaign, contentDescription = null)
-                Text(text = "They won't know they've been blocked")
-            }
-            Row {
-                Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = null)
-                Text(text = "They can still see your posts, but you won't see theirs")
-            }
-            Row {
-                Icon(imageVector = Icons.Outlined.AlternateEmail, contentDescription = null)
-                Text(text = "You won't see posts that mention them.")
-            }
-            Row {
-                Icon(imageVector = Icons.AutoMirrored.Outlined.Reply, contentDescription = null)
-                Text(text = "They can mention and follow you, but you won't see them.")
-            }
+
+            AlertTopSection(account = account)
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+            Text(text = "• You won’t see the user in your home feed")
+            Text(text = "• You won’t see other people boosting the user")
+            Text(text = "• You won’t see other people mentioning the user")
+            Text(text = "• You won’t see the user in public timelines")
+            Text(text = "• You won’t see notifications from that user")
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+            Text(text = "• The user is forced to unfollow you")
+            Text(text = "• The user cannot follow you")
+            Text(text = "• The user won’t see other people’s boosts of you")
+            Text(text = "• The user won’t see you in public timelines")
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+            Text(text = "If you and the blocked user are on the same server, the blocked user will not be able to view your posts on your profile while logged in.")
         }
     }, onDismissRequest = {
         onDismissRequest()
@@ -417,14 +376,12 @@ fun BlockAccountAlert(
 
 @Composable
 fun UnBlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, accountToMute: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
-    AlertDialog(icon = {
-        Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Example Icon")
-    }, title = {
+    AlertDialog(title = {
         Text(text = "Unblock User?")
     }, text = {
-        Text(text = accountToMute.acct)
+        AlertTopSection(account = account)
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
@@ -440,4 +397,46 @@ fun UnBlockAccountAlert(
             Text("Cancel")
         }
     })
+}
+
+@Composable
+fun AlertTopSection(account: Account) {
+    Row(
+        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = account.avatar,
+            contentDescription = "",
+            modifier = Modifier
+                .height(46.dp)
+                .width(46.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+
+            Column {
+                if (account.displayname != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = account.displayname,
+                            lineHeight = 8.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = account.username, fontSize = 12.sp)
+                    Text(
+                        text = " • " + (account.url.substringAfter("https://")
+                            .substringBefore("/") ?: ""),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp
+                    )
+                }
+
+            }
+        }
+    }
 }

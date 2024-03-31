@@ -66,7 +66,7 @@ fun CustomBlockedAccountRow(
             onConfirmation = {
                 viewModel.unblockAccountAlert = ""
                 viewModel.unblockAccount(account.id) },
-            accountToMute = account
+            account = account
         )
     }
 }
