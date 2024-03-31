@@ -36,7 +36,7 @@
     <string name="stats">Stats</string>
     <string name="unblock">unblock</string>
     <string name="unblock_caps">Unblock</string>
-    <string name="unblock_account">Unblock Account</string>
+    <string name="unblock_account">Unblock Account?</string>
     <string name="confirm_to_unblock_this_account">Confirm to unblock this account</string>
     <string name="no_blocked_accounts">no blocked accounts</string>
     <string name="cancel">Cancel</string>
@@ -128,4 +128,24 @@
     <string name="what_makes_a_hashtag_trend">What makes a hashtag trend?</string>
     <string name="trending_hashtag_description">Hashtags trend if many people have used them recently.</string>
     <string name="private_profile">Private profile</string>
+    <string name="mute_consequence_1">• You won’t see the user in your home feed</string>
+    <string name="mute_consequence_2">• You won’t see other people boosting the user</string>
+    <string name="mute_consequence_3">• You won’t see other people mentioning the user</string>
+    <string name="mute_consequence_4">• You won’t see the user in public timelines</string>
+    <string name="mute_consequence_5">The user has no way of knowing they have been muted.</string>
+    <string name="block_consequence_1">• You won’t see the user in your home feed</string>
+    <string name="block_consequence_2">• You won’t see other people boosting the user</string>
+    <string name="block_consequence_3">• You won’t see other people mentioning the user</string>
+    <string name="block_consequence_4">• You won’t see the user in public timelines</string>
+    <string name="block_consequence_5">• You won’t see notifications from that user</string>
+    <string name="block_consequence_6">• The user is forced to unfollow you</string>
+    <string name="block_consequence_7">• The user cannot follow you</string>
+    <string name="block_consequence_8">• The user won’t see other people’s boosts of you</string>
+    <string name="block_consequence_9">• The user won’t see you in public timelines</string>
+    <string name="block_consequence_10">If you and the blocked user are on the same server, the blocked user will not be able to view your posts on your profile while logged in.</string>
+    <string name="block">Block</string>
+    <string name="block_account">Block Account?</string>
+    <string name="unmute_account">Unmute Account?</string>
+    <string name="mute">Mute</string>
+    <string name="mute_account">Mute Account?</string>
 </resources>

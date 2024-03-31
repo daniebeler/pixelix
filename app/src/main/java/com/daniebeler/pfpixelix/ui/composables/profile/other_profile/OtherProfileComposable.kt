@@ -13,18 +13,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.Reply
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
-import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.Campaign
-import androidx.compose.material.icons.outlined.DoNotDisturbOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -264,7 +258,7 @@ fun MuteAccountAlert(
     onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
     AlertDialog(title = {
-        Text(text = "Mute User?")
+        Text(text = stringResource(R.string.mute_account))
     }, text = {
         Column {
 
@@ -272,14 +266,14 @@ fun MuteAccountAlert(
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Text(text = "• You won’t see the user in your home feed")
-            Text(text = "• You won’t see other people boosting the user")
-            Text(text = "• You won’t see other people mentioning the user")
-            Text(text = "• You won’t see the user in public timelines")
+            Text(text = stringResource(R.string.mute_consequence_1))
+            Text(text = stringResource(R.string.mute_consequence_2))
+            Text(text = stringResource(R.string.mute_consequence_3))
+            Text(text = stringResource(R.string.mute_consequence_4))
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Text(text = "The user has no way of knowing they have been muted.")
+            Text(text = stringResource(R.string.mute_consequence_5))
 
         }
     }, onDismissRequest = {
@@ -288,13 +282,13 @@ fun MuteAccountAlert(
         TextButton(onClick = {
             onConfirmation()
         }) {
-            Text("Mute")
+            Text(stringResource(R.string.mute))
         }
     }, dismissButton = {
         TextButton(onClick = {
             onDismissRequest()
         }) {
-            Text("Cancel")
+            Text(stringResource(id = R.string.cancel))
         }
     })
 }
@@ -304,7 +298,7 @@ fun UnMuteAccountAlert(
     onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
     AlertDialog(title = {
-        Text(text = "Unmute User?")
+        Text(text = stringResource(R.string.unmute_account))
     }, text = {
         AlertTopSection(account = account)
 
@@ -315,13 +309,13 @@ fun UnMuteAccountAlert(
         TextButton(onClick = {
             onConfirmation()
         }) {
-            Text("Unmute")
+            Text(stringResource(id = R.string.unmute_caps))
         }
     }, dismissButton = {
         TextButton(onClick = {
             onDismissRequest()
         }) {
-            Text("Cancel")
+            Text(stringResource(id = R.string.cancel))
         }
     })
 }
@@ -331,7 +325,7 @@ fun BlockAccountAlert(
     onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
     AlertDialog(title = {
-        Text(text = "Block User?")
+        Text(text = stringResource(R.string.block_account))
     }, text = {
         Column {
 
@@ -339,22 +333,22 @@ fun BlockAccountAlert(
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Text(text = "• You won’t see the user in your home feed")
-            Text(text = "• You won’t see other people boosting the user")
-            Text(text = "• You won’t see other people mentioning the user")
-            Text(text = "• You won’t see the user in public timelines")
-            Text(text = "• You won’t see notifications from that user")
+            Text(text = stringResource(R.string.block_consequence_1))
+            Text(text = stringResource(R.string.block_consequence_2))
+            Text(text = stringResource(R.string.block_consequence_3))
+            Text(text = stringResource(R.string.block_consequence_4))
+            Text(text = stringResource(R.string.block_consequence_5))
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Text(text = "• The user is forced to unfollow you")
-            Text(text = "• The user cannot follow you")
-            Text(text = "• The user won’t see other people’s boosts of you")
-            Text(text = "• The user won’t see you in public timelines")
+            Text(text = stringResource(R.string.block_consequence_6))
+            Text(text = stringResource(R.string.block_consequence_7))
+            Text(text = stringResource(R.string.block_consequence_8))
+            Text(text = stringResource(R.string.block_consequence_9))
 
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-            Text(text = "If you and the blocked user are on the same server, the blocked user will not be able to view your posts on your profile while logged in.")
+            Text(text = stringResource(R.string.block_consequence_10))
         }
     }, onDismissRequest = {
         onDismissRequest()
@@ -362,13 +356,13 @@ fun BlockAccountAlert(
         TextButton(onClick = {
             onConfirmation()
         }) {
-            Text("Block")
+            Text(stringResource(R.string.block))
         }
     }, dismissButton = {
         TextButton(onClick = {
             onDismissRequest()
         }) {
-            Text("Cancel")
+            Text(stringResource(id = R.string.cancel))
         }
     })
 
@@ -379,7 +373,7 @@ fun UnBlockAccountAlert(
     onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
 ) {
     AlertDialog(title = {
-        Text(text = "Unblock User?")
+        Text(text = stringResource(id = R.string.unblock_account))
     }, text = {
         AlertTopSection(account = account)
     }, onDismissRequest = {
@@ -388,13 +382,13 @@ fun UnBlockAccountAlert(
         TextButton(onClick = {
             onConfirmation()
         }) {
-            Text("Unblock")
+            Text(stringResource(id = R.string.unblock))
         }
     }, dismissButton = {
         TextButton(onClick = {
             onDismissRequest()
         }) {
-            Text("Cancel")
+            Text(stringResource(id = R.string.cancel))
         }
     })
 }
@@ -429,10 +423,8 @@ fun AlertTopSection(account: Account) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = account.username, fontSize = 12.sp)
                     Text(
-                        text = " • " + (account.url.substringAfter("https://")
-                            .substringBefore("/") ?: ""),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp
+                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")
+                            ?: ""), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
                     )
                 }
 

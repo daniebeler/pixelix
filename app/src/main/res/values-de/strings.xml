@@ -128,4 +128,24 @@
     <string name="what_makes_a_hashtag_trend">Wann ist ein Hashtag im Trend?</string>
     <string name="trending_hashtag_description">Hashtags sind im Trend, wenn viele Benutzer sie in letzter Zeit verwendet haben.</string>
     <string name="private_profile">Privates Profil</string>
+    <string name="mute_consequence_1">• Du siehst den Benutzer nicht in deinem Home-Feed</string>
+    <string name="mute_consequence_2">• Du siehts keine Reposts von Beiträgen des Benutzers</string>
+    <string name="mute_consequence_3">• Du siehst keine Beiträge, die den Benutzer erwähnen</string>
+    <string name="mute_consequence_4">• Du sieht den Benutzer nicht in den öffentlichen Timelines</string>
+    <string name="mute_consequence_5">Der Benutzer kann nicht erkennen, dass du ihn stummgeschalten hast.</string>
+    <string name="block_consequence_1">• Du siehts den Benutzer nicht ine deinem Home-Feed</string>
+    <string name="block_consequence_2">• Du siehst keine Reposts von Beiträgen des Benutzers</string>
+    <string name="block_consequence_3">• Du siehts keine Beiträge, die den Benutzer erwähnen</string>
+    <string name="block_consequence_4">• Du siehts den Benutzer nicht in den öffentlichen Timelines</string>
+    <string name="block_consequence_5">• Du bekommst keine Benachrichtigungen von dem Benutzer</string>
+    <string name="block_consequence_6">• Der Benutzer wird gezwungen dir zu entfolgen</string>
+    <string name="block_consequence_7">• Der Benutzer kann dir nicht folgen</string>
+    <string name="block_consequence_8">• Der Benutzer sieht keine Reposts von deinen Beiträgen</string>
+    <string name="block_consequence_9">• Der Benutzer sieht dich nicht in den öffentlichen Timelines</string>
+    <string name="block_consequence_10">Wenn der Benutzer auf der gleichen Instanz ist wie du, kann er keine Beiträge von dir sehen wenn er eingeloggt ist.</string>
+    <string name="block">Blockieren</string>
+    <string name="block_account">Benutzer Blockieren?</string>
+    <string name="unmute_account">Benutzer Entmuten?</string>
+    <string name="mute">Stummschalten</string>
+    <string name="mute_account">Benutzer stummschalten?</string>
 </resources>
