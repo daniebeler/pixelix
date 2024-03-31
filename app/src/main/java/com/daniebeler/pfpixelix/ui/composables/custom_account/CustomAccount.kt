@@ -53,6 +53,13 @@ fun CustomAccount(
 
 @Composable
 fun CustomAccount(
+    account: Account
+) {
+    CustomAccountPrivateNotClickable(account = account)
+}
+
+@Composable
+fun CustomAccount(
     account: Account,
     relationship: Relationship?,
     navController: NavController,
@@ -173,6 +180,56 @@ private fun CustomAccountPrivate(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomAccountPrivateNotClickable(
+    account: Account
+) {
+    Row(modifier = Modifier
+        .padding(horizontal = 12.dp, vertical = 8.dp)
+        .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically) {
+        AsyncImage(
+            model = account.avatar,
+            contentDescription = "",
+            modifier = Modifier
+                .height(46.dp)
+                .width(46.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+
+            Column {
+                if (account.displayname != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = account.displayname, lineHeight = 8.sp, fontWeight = FontWeight.Bold
+                        )
+
+                        Text(
+                            text = " • " + String.format(
+                                Locale.GERMANY, "%,d", account.followersCount
+                            ) + " " + stringResource(id = R.string.followers),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            lineHeight = 8.sp
+                        )
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = account.username, fontSize = 12.sp)
+                    Text(
+                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")
+                            ?: ""), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
+                    )
+                }
+
             }
         }
     }

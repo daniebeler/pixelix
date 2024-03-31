@@ -23,7 +23,7 @@ class MutedAccountsViewModel @Inject constructor(
 
     var mutedAccountsState by mutableStateOf(MutedAccountsState())
 
-    var unmuteAlert: String by mutableStateOf("")
+    var unmuteAccountAlert: String by mutableStateOf("")
 
     init {
         getMutedAccounts()
@@ -61,11 +61,11 @@ class MutedAccountsViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    MutedAccountsState(error = result.message ?: "An unexpected error occurred")
+                    mutedAccountsState.copy(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    MutedAccountsState(isLoading = true)
+                    mutedAccountsState.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

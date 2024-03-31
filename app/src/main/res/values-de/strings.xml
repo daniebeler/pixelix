@@ -10,10 +10,10 @@
     <string name="logout">Ausloggen</string>
     <string name="open_in_browser">Im Browser öffnen</string>
     <string name="share_this_profile">Profil teilen</string>
-    <string name="block_this_profile">Profil blockieren</string>
-    <string name="unblock_this_profile">Profil entblockieren</string>
-    <string name="mute_this_profile">Profil stummschalten</string>
-    <string name="unmute_this_profile">Profil entstummschalten</string>
+    <string name="block_this_profile">Benutzer blockieren</string>
+    <string name="unblock_this_profile">Benutzer entblockieren</string>
+    <string name="mute_this_profile">Benutzer stummschalten</string>
+    <string name="unmute_this_profile">Stummschaltung aufheben</string>
     <string name="load_more">Mehr laden</string>
     <string name="follow">folgen</string>
     <string name="unfollow">entfolgen</string>
@@ -36,7 +36,7 @@
     <string name="stats">Statistiken</string>
     <string name="unblock">entblocken</string>
     <string name="unblock_caps">Entblocken</string>
-    <string name="unblock_account">Nicht mehr blockieren</string>
+    <string name="unblock_account">Nicht mehr blockieren?</string>
     <string name="confirm_to_unblock_this_account">Bestätigen, um diesen Benutzer nicht mehr zu blockieren</string>
     <string name="no_blocked_accounts">Keine blockierten Benutzer</string>
     <string name="cancel">Abbrechen</string>
@@ -68,7 +68,7 @@
     <string name="home">Home</string>
     <string name="likes">%1$s Likes</string>
     <string name="search">Suchen</string>
-    <string name="unmute_caps">Unmute</string>
+    <string name="unmute_caps">Aufheben</string>
     <string name="unmute">unmute</string>
     <string name="media_description">Bildbeschreibung</string>
     <string name="no_posts_yet">Noch keine Beiträge</string>
@@ -128,4 +128,24 @@
     <string name="what_makes_a_hashtag_trend">Wann ist ein Hashtag im Trend?</string>
     <string name="trending_hashtag_description">Hashtags sind im Trend, wenn viele Benutzer sie in letzter Zeit verwendet haben.</string>
     <string name="private_profile">Privates Profil</string>
+    <string name="mute_consequence_1">• Du siehst den Benutzer nicht in deinem Home-Feed</string>
+    <string name="mute_consequence_2">• Du siehst keine Reposts von Beiträgen des Benutzers</string>
+    <string name="mute_consequence_3">• Du siehst keine Beiträge, die den Benutzer erwähnen</string>
+    <string name="mute_consequence_4">• Du sieht den Benutzer nicht in den öffentlichen Timelines</string>
+    <string name="mute_consequence_5">Der Benutzer kann nicht erkennen, dass du ihn stummgeschalten hast.</string>
+    <string name="block_consequence_1">• Du siehst den Benutzer nicht in deinem Home-Feed</string>
+    <string name="block_consequence_2">• Du siehst keine Reposts von Beiträgen des Benutzers</string>
+    <string name="block_consequence_3">• Du siehts keine Beiträge, die den Benutzer erwähnen</string>
+    <string name="block_consequence_4">• Du siehts den Benutzer nicht in den öffentlichen Timelines</string>
+    <string name="block_consequence_5">• Du bekommst keine Benachrichtigungen von dem Benutzer</string>
+    <string name="block_consequence_6">• Der Benutzer wird gezwungen dir zu entfolgen</string>
+    <string name="block_consequence_7">• Der Benutzer kann dir nicht folgen</string>
+    <string name="block_consequence_8">• Der Benutzer sieht keine Reposts von deinen Beiträgen</string>
+    <string name="block_consequence_9">• Der Benutzer sieht dich nicht in den öffentlichen Timelines</string>
+    <string name="block_consequence_10">Wenn der Benutzer auf der gleichen Instanz ist wie du, kann er keine Beiträge von dir sehen wenn er eingeloggt ist.</string>
+    <string name="block">Blockieren</string>
+    <string name="block_account">Benutzer blockieren?</string>
+    <string name="unmute_account">Stummschaltung aufheben?</string>
+    <string name="mute">Stummschalten</string>
+    <string name="mute_account">Benutzer stummschalten?</string>
 </resources>
