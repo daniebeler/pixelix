@@ -382,7 +382,7 @@ fun UnBlockAccountAlert(
         TextButton(onClick = {
             onConfirmation()
         }) {
-            Text(stringResource(id = R.string.unblock))
+            Text(stringResource(id = R.string.unblock_caps))
         }
     }, dismissButton = {
         TextButton(onClick = {
