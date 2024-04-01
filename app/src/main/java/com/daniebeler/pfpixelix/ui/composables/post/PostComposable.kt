@@ -25,6 +25,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.VolumeMute
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
@@ -35,9 +38,12 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.VolumeMute
+import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -114,7 +120,7 @@ fun PostComposable(
 
     LaunchedEffect(Unit) {
         if (viewModel.post == null) {
-            viewModel.post = post
+            viewModel.updatePost(post)
         }
     }
 
@@ -536,7 +542,11 @@ fun PostImage(
             } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
-                VideoPlayer(uri = Uri.parse(mediaAttachment.url), mediaAttachment = mediaAttachment)
+                VideoPlayer(
+                    uri = Uri.parse(mediaAttachment.url),
+                    mediaAttachment = mediaAttachment,
+                    viewModel
+                )
             }
         }
 
@@ -546,9 +556,9 @@ fun PostImage(
                     .align(Alignment.BottomStart)
                     .padding(8.dp), onClick = {
                     altText = mediaAttachment.description
-                }, colors = IconButtonDefaults.filledIconButtonColors()
+                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
             ) {
-                Icon(Icons.Outlined.Description, contentDescription = "Show alt text")
+                Icon(Icons.Outlined.Description, contentDescription = "Show alt text", Modifier.size(18.dp))
             }
         }
 
@@ -609,10 +619,12 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
 
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-private fun VideoPlayer(uri: Uri, mediaAttachment: MediaAttachment) {
+private fun VideoPlayer(
+    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
+) {
     val context = LocalContext.current
-
     val exoPlayer = ExoPlayer.Builder(context).build()
+
 
     val mediaSource = remember(uri) {
         MediaItem.fromUri(uri)
@@ -626,25 +638,54 @@ private fun VideoPlayer(uri: Uri, mediaAttachment: MediaAttachment) {
 
     // Manage lifecycle events
     DisposableEffect(Unit) {
+        exoPlayer.volume = if (viewModel.volume) {
+            1f
+        } else {
+            0f
+        }
         onDispose {
             exoPlayer.release()
         }
     }
 
-    AndroidView(
-        factory = { ctx ->
-            PlayerView(ctx).apply {
-                player = exoPlayer
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                setShowPreviousButton(false)
-                useController = false
+    Box {
+        AndroidView(
+            factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = exoPlayer
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    setShowPreviousButton(false)
+                    useController = false
+                }
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                )
+        )
+
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(8.dp), onClick = {
+                viewModel.toggleVolume(!viewModel.volume)
+                exoPlayer.volume = if (viewModel.volume) {
+                    1f
+                } else {
+                    0f
+                }
+            }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+        ) {
+            if (viewModel.volume) {
+                Icon(Icons.AutoMirrored.Outlined.VolumeUp, contentDescription = "Volume on", Modifier.size(18.dp))
+            } else {
+                Icon(Icons.AutoMirrored.Outlined.VolumeOff, contentDescription = "Volume off", Modifier.size(18.dp))
             }
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(
-                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-            )
-    )
+        }
+    }
+
+
+
 
     exoPlayer.playWhenReady = true
     //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
