@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,8 +44,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -68,6 +73,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -615,6 +621,7 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 private fun VideoPlayer(
@@ -623,9 +630,33 @@ private fun VideoPlayer(
     val context = LocalContext.current
     val exoPlayer = ExoPlayer.Builder(context).build()
 
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+
+    var contentLength = remember {
+        mutableStateOf(1.toLong())
+    }
+
+    var currentPos = remember {
+        mutableStateOf(0.toLong())
+    }
+
+    var currentProgress = remember {
+        mutableStateOf(0.toFloat())
+    }
 
     val mediaSource = remember(uri) {
         MediaItem.fromUri(uri)
+    }
+
+    LaunchedEffect(Unit) {
+        while(true) {
+            contentLength.value = if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
+            currentPos.value = if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
+            currentProgress.value = currentPos.value.toFloat() / contentLength.value
+            delay(10)
+        }
     }
 
     // Set MediaSource to ExoPlayer
@@ -645,49 +676,55 @@ private fun VideoPlayer(
             exoPlayer.release()
         }
     }
-
-    Box {
-        AndroidView(
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    player = exoPlayer
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                    setShowPreviousButton(false)
-                    useController = false
-                }
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                )
-        )
-
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(8.dp), onClick = {
-                viewModel.toggleVolume(!viewModel.volume)
-                exoPlayer.volume = if (viewModel.volume) {
-                    1f
+    Column {
+        Box {
+            AndroidView(
+                factory = { ctx ->
+                    PlayerView(ctx).apply {
+                        player = exoPlayer
+                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                        setShowPreviousButton(false)
+                        //useController = false
+                    }
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(
+                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                    )
+            )
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp), onClick = {
+                    viewModel.toggleVolume(!viewModel.volume)
+                    exoPlayer.volume = if (viewModel.volume) {
+                        1f
+                    } else {
+                        0f
+                    }
+                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+            ) {
+                if (viewModel.volume) {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.VolumeUp,
+                        contentDescription = "Volume on",
+                        Modifier.size(18.dp)
+                    )
                 } else {
-                    0f
+                    Icon(
+                        Icons.AutoMirrored.Outlined.VolumeOff,
+                        contentDescription = "Volume off",
+                        Modifier.size(18.dp)
+                    )
                 }
-            }, colors = IconButtonDefaults.filledTonalIconButtonColors()
-        ) {
-            if (viewModel.volume) {
-                Icon(
-                    Icons.AutoMirrored.Outlined.VolumeUp,
-                    contentDescription = "Volume on",
-                    Modifier.size(18.dp)
-                )
-            } else {
-                Icon(
-                    Icons.AutoMirrored.Outlined.VolumeOff,
-                    contentDescription = "Volume off",
-                    Modifier.size(18.dp)
-                )
             }
         }
+
+        LinearProgressIndicator(
+            progress = { currentProgress.value },
+            modifier = Modifier.fillMaxWidth(),
+            trackColor = MaterialTheme.colorScheme.background
+        )
     }
 
 
