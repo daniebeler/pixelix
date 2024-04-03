@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -7,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,20 +62,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -629,11 +641,12 @@ private fun VideoPlayer(
 ) {
     val context = LocalContext.current
     val exoPlayer = ExoPlayer.Builder(context).build()
-
-    val audioAttributes = AudioAttributes.Builder()
-        .setUsage(C.USAGE_MEDIA)
-        .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
-        .build()
+    var visible by remember {
+        mutableStateOf(false)
+    }
+    val audioAttributes =
+        AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+            .build()
     exoPlayer.setAudioAttributes(audioAttributes, true)
 
     val contentLength = remember {
@@ -652,10 +665,20 @@ private fun VideoPlayer(
         MediaItem.fromUri(uri)
     }
 
+    LifecycleResumeEffect {
+        //exoPlayer.play()
+        onPauseOrDispose {
+            exoPlayer.pause()
+        }
+    }
+
+
     LaunchedEffect(Unit) {
-        while(true) {
-            contentLength.longValue = if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
-            currentPos.longValue = if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
+        while (true) {
+            contentLength.longValue =
+                if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
+            currentPos.longValue =
+                if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
             currentProgress.floatValue = currentPos.longValue.toFloat() / contentLength.longValue
             delay(10)
         }
@@ -679,21 +702,33 @@ private fun VideoPlayer(
         }
     }
     Column {
-        Box {
-            AndroidView(
-                factory = { ctx ->
-                    PlayerView(ctx).apply {
-                        player = exoPlayer
-                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                        setShowPreviousButton(false)
-                        //useController = false
-                    }
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(
-                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                    )
-            )
+        Box(Modifier.isVisible(threshold = 50) {
+            if (visible != it) {
+                visible = it
+                if (visible) {
+                    exoPlayer.play()
+                } else {
+                    exoPlayer.pause()
+                }
+            }
+        }) {
+            DisposableEffect(key1 = AndroidView(factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = exoPlayer
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    setShowPreviousButton(false)
+                    useController = false
+                }
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                )
+                .onGloballyPositioned { }), effect = {
+                onDispose {
+                    exoPlayer.release()
+                }
+            })
             IconButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -723,16 +758,42 @@ private fun VideoPlayer(
         }
 
         LinearProgressIndicator(
-            progress = { currentProgress.value },
+            progress = { currentProgress.floatValue },
             modifier = Modifier.fillMaxWidth(),
             trackColor = MaterialTheme.colorScheme.background
         )
     }
 
 
-
-
-    exoPlayer.playWhenReady = true
+    //exoPlayer.playWhenReady = true
     //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+}
+
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+fun Modifier.isVisible(
+    threshold: Int, onVisibilityChange: (Boolean) -> Unit
+) = composed {
+
+    Modifier.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
+        val layoutHeight = layoutCoordinates.size.height
+        val thresholdHeight = layoutHeight * threshold / 100
+        val layoutTop = layoutCoordinates.positionInRoot().y
+        val layoutBottom = layoutTop + layoutHeight
+
+        // This should be parentLayoutCoordinates not parentCoordinates
+        val parent = layoutCoordinates.parentLayoutCoordinates
+
+        parent?.boundsInRoot()?.let { rect: Rect ->
+            val parentTop = rect.top
+            val parentBottom = rect.bottom
+
+            if (parentBottom - layoutTop > thresholdHeight && (parentTop < layoutBottom - thresholdHeight)) {
+                onVisibilityChange(true)
+            } else {
+                onVisibilityChange(false)
+
+            }
+        }
+    }
 }
