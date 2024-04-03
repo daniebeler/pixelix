@@ -14,9 +14,11 @@ import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ReblogPostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
@@ -45,7 +47,9 @@ class PostViewModel @Inject constructor(
     private val deletePostUseCase: DeletePostUseCase,
     private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
     private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val getVolumeUseCase: GetVolumeUseCase,
+    private val setVolumeUseCase: SetVolumeUseCase
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -64,10 +68,31 @@ class PostViewModel @Inject constructor(
 
     var myAccountId: String? = null
 
+    var volume by mutableStateOf(false)
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
             myAccountId = getOwnAccountIdUseCase().first()
+        }
+    }
+
+    fun toggleVolume(newVolume: Boolean) {
+        volume = newVolume
+        viewModelScope.launch {
+            setVolumeUseCase(newVolume)
+        }
+    }
+
+    fun updatePost(post: Post) {
+        this.post = post
+        getVolume()
+    }
+
+    private fun getVolume() {
+        viewModelScope.launch {
+            getVolumeUseCase().collect { res ->
+                volume = res
+            }
         }
     }
 
@@ -142,12 +167,14 @@ class PostViewModel @Inject constructor(
         deletePostUseCase(postId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    repliesState = repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
+                    repliesState =
+                        repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
                 }
 
                 is Resource.Error -> {
                     println(result.message)
                 }
+
                 is Resource.Loading -> {
                     println("is loading")
                 }
