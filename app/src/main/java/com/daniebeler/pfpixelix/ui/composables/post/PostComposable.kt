@@ -47,9 +47,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderColors
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -57,7 +54,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,11 +72,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -630,20 +630,22 @@ private fun VideoPlayer(
     val context = LocalContext.current
     val exoPlayer = ExoPlayer.Builder(context).build()
 
-    val interactionSource = remember {
-        MutableInteractionSource()
+    val audioAttributes = AudioAttributes.Builder()
+        .setUsage(C.USAGE_MEDIA)
+        .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+        .build()
+    exoPlayer.setAudioAttributes(audioAttributes, true)
+
+    val contentLength = remember {
+        mutableLongStateOf(1.toLong())
     }
 
-    var contentLength = remember {
-        mutableStateOf(1.toLong())
+    val currentPos = remember {
+        mutableLongStateOf(0.toLong())
     }
 
-    var currentPos = remember {
-        mutableStateOf(0.toLong())
-    }
-
-    var currentProgress = remember {
-        mutableStateOf(0.toFloat())
+    val currentProgress = remember {
+        mutableFloatStateOf(0.toFloat())
     }
 
     val mediaSource = remember(uri) {
@@ -652,9 +654,9 @@ private fun VideoPlayer(
 
     LaunchedEffect(Unit) {
         while(true) {
-            contentLength.value = if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
-            currentPos.value = if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
-            currentProgress.value = currentPos.value.toFloat() / contentLength.value
+            contentLength.longValue = if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
+            currentPos.longValue = if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
+            currentProgress.floatValue = currentPos.longValue.toFloat() / contentLength.longValue
             delay(10)
         }
     }
