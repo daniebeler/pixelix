@@ -143,7 +143,7 @@ fun OtherProfileComposable(
                     message = stringResource(R.string.this_user_has_not_postet_anything_yet)
                 ),
                 otherAccountTopSectionAdditions = {
-                    Column(Modifier.padding(12.dp)) {
+                    Column(Modifier.padding(8.dp)) {
 
                         MutualFollowersComposable(viewModel.mutualFollowersState)
 
@@ -157,7 +157,7 @@ fun OtherProfileComposable(
                             onFollowClick = { viewModel.followAccount(userId) },
                             onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 })
         }

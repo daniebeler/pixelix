@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -107,13 +108,7 @@ fun ProfileTopSection(
                         )
                     }
                 }
-            }/*Text(text = "@" + account.acct,
-                fontSize = 12.sp,
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures(onLongPress = {
-                        clipboardManager.setText(AnnotatedString("@" + account.acct))
-                    })
-                })*/
+            }
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(text = account.note,
@@ -121,31 +116,29 @@ fun ProfileTopSection(
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
             }
-            
+
+            account.website?.let {
+                Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Language,
+                        contentDescription = "",
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = account.website.toString().substringAfter("https://"),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = { openUrl(account.website.toString()) })
+                    )
+                }
+            }
+
             if (account.createdAt.isNotBlank()) {
                 val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
                 val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                 val formatted = date.format(formatter)
                 Text(text = "Joined $formatted", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
             }
-
-            account.website?.let {
-                Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                        contentDescription = "",
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = account.website.toString(),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = { openUrl(account.website.toString()) })
-                    )
-                }
-            }
         }
     }
-
-
 }
