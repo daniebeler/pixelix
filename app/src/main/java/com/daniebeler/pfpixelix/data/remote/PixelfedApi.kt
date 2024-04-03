@@ -9,11 +9,14 @@ import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
+import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
+import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
+import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -24,10 +27,12 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface PixelfedApi {
 
@@ -38,10 +43,10 @@ interface PixelfedApi {
     @GET("api/pixelfed/v2/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
-    @GET("api/v1.1/discover/posts/hashtags?range=daily&_pe=1")
+    @GET("api/v1.1/discover/posts/hashtags?_pe=1")
     fun getTrendingHashtags(): Call<List<TagDto>>
 
-    @GET("/api/v1.1/discover/accounts/popular?range=daily")
+    @GET("/api/v1.1/discover/accounts/popular")
     fun getTrendingAccounts(): Call<List<AccountDto>>
 
 
@@ -58,17 +63,17 @@ interface PixelfedApi {
         @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?local&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
     fun getLocalTimeline(): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?local&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
     fun getLocalTimeline(
         @Query("max_id") maxPostId: String): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/public?remote&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(): Call<List<PostDto>>
 
-    @GET("/api/v1/timelines/public?remote&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
+    @GET("/api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(
         @Query("max_id") maxPostId: String): Call<List<PostDto>>
 
@@ -118,12 +123,17 @@ interface PixelfedApi {
         @Path("accountid") accountId: String
     ): Call<AccountDto>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @POST("api/v1/accounts/update_credentials?_pe=1")
+    fun updateAccount(
+        @Body body: RequestBody
+    ): Call<AccountDto>
+
+    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String
     ): Call<List<PostDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("max_id") maxId: String
     ): Call<List<PostDto>>
@@ -204,6 +214,13 @@ interface PixelfedApi {
 
     @POST("api/v1/statuses/{id}/unfavourite")
     fun unlikePost(
+        @Path("id") userId: String): Call<PostDto>
+
+    @POST("api/v1/statuses/{id}/reblog")
+    fun reblogPost(@Path("id") userId: String): Call<PostDto>
+
+    @POST("api/v1/statuses/{id}/unreblog")
+    fun unreblogPost(
         @Path("id") userId: String): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/bookmark")
@@ -292,4 +309,10 @@ interface PixelfedApi {
         @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
         @Field("grant_type") grantType: String? = "authorization_code"
     ): Call<AccessTokenDto>
+
+    @GET
+    fun getWellKnownDomains(@Url domain: String): Call<WellKnownDomainsDto>
+
+    @GET
+    fun getNodeInfo(@Url domain: String): Call<NodeInfoDto>
 }

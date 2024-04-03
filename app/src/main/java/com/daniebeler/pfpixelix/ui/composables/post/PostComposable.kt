@@ -1,8 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
+import android.annotation.SuppressLint
 import android.net.Uri
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -27,9 +26,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
@@ -42,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -51,34 +54,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
@@ -119,7 +134,7 @@ fun PostComposable(
 
     LaunchedEffect(Unit) {
         if (viewModel.post == null) {
-            viewModel.post = post
+            viewModel.updatePost(post)
         }
     }
 
@@ -317,6 +332,27 @@ fun PostComposable(
                                 contentDescription = ""
                             )
                         }
+
+
+                        if (viewModel.post!!.reblogged) {
+                            IconButton(onClick = {
+                                viewModel.unreblogPost(viewModel.post!!.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Cached,
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                viewModel.reblogPost(viewModel.post!!.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Cached, contentDescription = ""
+                                )
+                            }
+                        }
                     }
 
                     Row {
@@ -375,11 +411,10 @@ fun PostComposable(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 if (viewModel.post!!.content.isNotBlank()) {
-                    HashtagsMentionsTextView(
-                        text = viewModel.post!!.content,
+                    HashtagsMentionsTextView(text = viewModel.post!!.content,
                         mentions = viewModel.post!!.mentions,
-                        navController = navController
-                    )
+                        navController = navController,
+                        openUrl = { url -> viewModel.openUrl(context, url) })
                 }
 
                 if (viewModel.post!!.replyCount > 0) {
@@ -521,7 +556,11 @@ fun PostImage(
             } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
-                VideoPlayer(uri = Uri.parse(mediaAttachment.url))
+                VideoPlayer(
+                    uri = Uri.parse(mediaAttachment.url),
+                    mediaAttachment = mediaAttachment,
+                    viewModel
+                )
             }
         }
 
@@ -531,9 +570,13 @@ fun PostImage(
                     .align(Alignment.BottomStart)
                     .padding(8.dp), onClick = {
                     altText = mediaAttachment.description
-                }, colors = IconButtonDefaults.filledIconButtonColors()
+                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
             ) {
-                Icon(Icons.Outlined.Description, contentDescription = "Show alt text")
+                Icon(
+                    Icons.Outlined.Description,
+                    contentDescription = "Show alt text",
+                    Modifier.size(18.dp)
+                )
             }
         }
 
@@ -569,12 +612,10 @@ fun PostImage(
 @Composable
 private fun ImageWrapper(mediaAttachment: MediaAttachment) {
     AsyncImage(
-        model = mediaAttachment.url, contentDescription = "",
-        Modifier
-            .fillMaxWidth()
-            .aspectRatio(
-                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
-            ), contentScale = ContentScale.FillWidth
+        model = mediaAttachment.url,
+        contentDescription = "",
+        Modifier.fillMaxWidth(),
+        contentScale = ContentScale.FillWidth
     )
 }
 
@@ -592,41 +633,167 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-private fun VideoPlayer(uri: Uri) {
+private fun VideoPlayer(
+    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
+) {
     val context = LocalContext.current
+    val exoPlayer = ExoPlayer.Builder(context).build()
+    var visible by remember {
+        mutableStateOf(false)
+    }
+    val audioAttributes =
+        AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+            .build()
+    exoPlayer.setAudioAttributes(audioAttributes, true)
 
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-                context, defaultDataSourceFactory
-            )
-            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri))
+    val contentLength = remember {
+        mutableLongStateOf(1.toLong())
+    }
 
-            setMediaSource(source)
-            prepare()
+    val currentPos = remember {
+        mutableLongStateOf(0.toLong())
+    }
+
+    val currentProgress = remember {
+        mutableFloatStateOf(0.toFloat())
+    }
+
+    val mediaSource = remember(uri) {
+        MediaItem.fromUri(uri)
+    }
+
+    LifecycleResumeEffect {
+        //exoPlayer.play()
+        onPauseOrDispose {
+            exoPlayer.pause()
         }
     }
 
-    exoPlayer.playWhenReady = true
-    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
 
-    DisposableEffect(
-        AndroidView(factory = {
-            PlayerView(context).apply {
-                hideController()
-                useController = false
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+    LaunchedEffect(Unit) {
+        while (true) {
+            contentLength.longValue =
+                if (exoPlayer.contentDuration > 0) exoPlayer.contentDuration else 1
+            currentPos.longValue =
+                if (exoPlayer.currentPosition > 0) exoPlayer.currentPosition else 0
+            currentProgress.floatValue = currentPos.longValue.toFloat() / contentLength.longValue
+            delay(10)
+        }
+    }
 
-                player = exoPlayer
-                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+    // Set MediaSource to ExoPlayer
+    LaunchedEffect(mediaSource) {
+        exoPlayer.setMediaItem(mediaSource)
+        exoPlayer.prepare()
+    }
+
+    // Manage lifecycle events
+    DisposableEffect(Unit) {
+        exoPlayer.volume = if (viewModel.volume) {
+            1f
+        } else {
+            0f
+        }
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+    Column {
+        Box(Modifier.isVisible(threshold = 50) {
+            if (visible != it) {
+                visible = it
+                if (visible) {
+                    exoPlayer.play()
+                } else {
+                    exoPlayer.pause()
+                }
             }
-        })
-    ) {
-        onDispose { exoPlayer.release() }
+        }) {
+            DisposableEffect(key1 = AndroidView(factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = exoPlayer
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    setShowPreviousButton(false)
+                    useController = false
+                }
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
+                )
+                .onGloballyPositioned { }), effect = {
+                onDispose {
+                    exoPlayer.release()
+                }
+            })
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp), onClick = {
+                    viewModel.toggleVolume(!viewModel.volume)
+                    exoPlayer.volume = if (viewModel.volume) {
+                        1f
+                    } else {
+                        0f
+                    }
+                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+            ) {
+                if (viewModel.volume) {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.VolumeUp,
+                        contentDescription = "Volume on",
+                        Modifier.size(18.dp)
+                    )
+                } else {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.VolumeOff,
+                        contentDescription = "Volume off",
+                        Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+
+        LinearProgressIndicator(
+            progress = { currentProgress.floatValue },
+            modifier = Modifier.fillMaxWidth(),
+            trackColor = MaterialTheme.colorScheme.background
+        )
+    }
+
+
+    //exoPlayer.playWhenReady = true
+    //exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+}
+
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+fun Modifier.isVisible(
+    threshold: Int, onVisibilityChange: (Boolean) -> Unit
+) = composed {
+
+    Modifier.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
+        val layoutHeight = layoutCoordinates.size.height
+        val thresholdHeight = layoutHeight * threshold / 100
+        val layoutTop = layoutCoordinates.positionInRoot().y
+        val layoutBottom = layoutTop + layoutHeight
+
+        // This should be parentLayoutCoordinates not parentCoordinates
+        val parent = layoutCoordinates.parentLayoutCoordinates
+
+        parent?.boundsInRoot()?.let { rect: Rect ->
+            val parentTop = rect.top
+            val parentBottom = rect.bottom
+
+            if (parentBottom - layoutTop > thresholdHeight && (parentTop < layoutBottom - thresholdHeight)) {
+                onVisibilityChange(true)
+            } else {
+                onVisibilityChange(false)
+
+            }
+        }
     }
 }

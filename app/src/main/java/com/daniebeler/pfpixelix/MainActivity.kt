@@ -34,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
@@ -121,6 +122,10 @@ sealed class Destinations(
         route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite
     )
 
+    object EditProfile : Destinations(
+        route = "edit_profile_screen", icon = Icons.Outlined.Settings
+    )
+
     object Preferences : Destinations(
         route = "preferences_screen", icon = Icons.Outlined.Settings
     )
@@ -201,6 +206,10 @@ fun NavigationGraph(navController: NavHostController) {
             uId?.let { id ->
                 HashtagTimelineComposable(navController, id)
             }
+        }
+
+        composable(Destinations.EditProfile.route) {
+            EditProfileComposable(navController)
         }
 
         composable(Destinations.Preferences.route) {

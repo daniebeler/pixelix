@@ -95,27 +95,4 @@ fun BlockedAccountsComposable(
             )
         }
     }
-
-    if (viewModel.unblockAlert.isNotEmpty()) {
-        AlertDialog(title = {
-            Text(text = stringResource(R.string.unblock_account))
-        }, text = {
-            Text(text = stringResource(R.string.confirm_to_unblock_this_account))
-        }, onDismissRequest = {
-            viewModel.unblockAlert = ""
-        }, confirmButton = {
-            TextButton(onClick = {
-                viewModel.unblockAccount(viewModel.unblockAlert)
-                viewModel.unblockAlert = ""
-            }) {
-                Text(stringResource(R.string.unblock_caps))
-            }
-        }, dismissButton = {
-            TextButton(onClick = {
-                viewModel.unblockAlert = ""
-            }) {
-                Text(stringResource(R.string.cancel))
-            }
-        })
-    }
 }

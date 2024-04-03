@@ -1,9 +1,11 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
+import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
@@ -11,6 +13,7 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
@@ -20,6 +23,7 @@ import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
@@ -40,8 +44,10 @@ class OtherProfileViewModel @Inject constructor(
     private val unblockAccountUseCase: UnblockAccountUseCase,
     private val getMutualFollowersUseCase: GetMutualFollowersUseCase,
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
-) : ViewModel() {
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
+    application: Application
+    ) : AndroidViewModel(application) {
 
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
@@ -49,7 +55,8 @@ class OtherProfileViewModel @Inject constructor(
     var postsState by mutableStateOf(PostsState())
 
     var domain by mutableStateOf("")
-
+    var domainSoftwareState by mutableStateOf(DomainSoftwareState())
+    var context = application
 
     fun loadData(userId: String) {
         getAccount(userId)
@@ -127,6 +134,7 @@ class OtherProfileViewModel @Inject constructor(
             if (accountState.account != null) {
                 domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
                     ?: ""
+                getDomainSoftware(domain)
             }
         }.launchIn(viewModelScope)
     }
@@ -283,6 +291,24 @@ class OtherProfileViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getDomainSoftware(domain: String) {
+        getDomainSoftwareUseCase(domain, context).onEach { result ->
+            domainSoftwareState = when (result) {
+                is Resource.Success -> {
+                    DomainSoftwareState(domainSoftware = result.data)
+                }
+
+                is Resource.Error -> {
+                    DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    DomainSoftwareState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

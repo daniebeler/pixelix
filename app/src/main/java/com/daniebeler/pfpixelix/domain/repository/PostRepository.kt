@@ -11,6 +11,8 @@ interface PostRepository {
     fun getPostById(postId: String): Flow<Resource<Post>>
     fun likePost(postId: String): Flow<Resource<Post>>
     fun unlikePost(postId: String): Flow<Resource<Post>>
+    fun reblogPost(postId: String): Flow<Resource<Post>>
+    fun unreblogPost(postId: String): Flow<Resource<Post>>
     fun bookmarkPost(postId: String): Flow<Resource<Post>>
     fun unBookmarkPost(postId: String): Flow<Resource<Post>>
     fun getLikedPosts(maxId: String = ""): Flow<Resource<LikedPostsWithNext>>

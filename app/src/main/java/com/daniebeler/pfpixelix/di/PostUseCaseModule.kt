@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
+import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreatePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
@@ -12,9 +13,13 @@ import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetLikedPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.ReblogPostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
 import dagger.Module
@@ -60,6 +65,16 @@ class PostUseCaseModule {
 
     @Provides
     @Singleton
+    fun provideReblogPostUseCase(postRepository: PostRepository): ReblogPostUseCase =
+        ReblogPostUseCase(postRepository)
+
+    @Provides
+    @Singleton
+    fun provideUnreblogPostUseCase(postRepository: PostRepository): UnreblogPostUseCase =
+        UnreblogPostUseCase(postRepository)
+
+    @Provides
+    @Singleton
     fun provideGetAccountsWhoLikedPostUseCase(accountRepository: AccountRepository): GetAccountsWhoLikedPostUseCase =
         GetAccountsWhoLikedPostUseCase(accountRepository)
 
@@ -92,4 +107,14 @@ class PostUseCaseModule {
     @Singleton
     fun provideUpdateMediaUseCase(postEditorRepository: PostEditorRepository): UpdateMediaUseCase =
         UpdateMediaUseCase(postEditorRepository)
+
+    @Provides
+    @Singleton
+    fun provideSetVolumeUseCase(storageRepository: StorageRepository): SetVolumeUseCase =
+        SetVolumeUseCase(storageRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetVolumeUseCase(storageRepository: StorageRepository): GetVolumeUseCase =
+        GetVolumeUseCase(storageRepository)
 }

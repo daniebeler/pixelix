@@ -136,7 +136,13 @@ class HashtagTimelineViewModel @Inject constructor(
         followHashtagUseCase(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
-                    HashtagState(hashtag = result.data)
+                    val newHashtag = hashtagState.hashtag
+                    if (newHashtag != null) {
+                        newHashtag.following = true
+                        HashtagState(hashtag = newHashtag)
+                    } else {
+                        HashtagState(hashtag = result.data)
+                    }
                 }
 
                 is Resource.Error -> {
@@ -154,7 +160,13 @@ class HashtagTimelineViewModel @Inject constructor(
         unfollowHashtagUseCase(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
-                    HashtagState(hashtag = result.data)
+                    val newHashtag = hashtagState.hashtag
+                    if (newHashtag != null) {
+                        newHashtag.following = false
+                        HashtagState(hashtag = newHashtag)
+                    } else {
+                        HashtagState(hashtag = result.data)
+                    }
                 }
 
                 is Resource.Error -> {

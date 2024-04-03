@@ -28,7 +28,7 @@ class NotificationsViewModel @Inject constructor(
         getNotificationsUseCase().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT
+                    val endReached = (result.data?.size ?: 0) == 0
                     NotificationsState(notifications = result.data ?: emptyList(), endReached = endReached)
                 }
 
@@ -52,7 +52,7 @@ class NotificationsViewModel @Inject constructor(
             getNotificationsUseCase(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < Constants.NOTIFICATIONS_LIMIT
+                        val endReached = result.data?.size == 0
                         NotificationsState(
                             notifications = notificationsState.notifications + (result.data
                                 ?: emptyList()),

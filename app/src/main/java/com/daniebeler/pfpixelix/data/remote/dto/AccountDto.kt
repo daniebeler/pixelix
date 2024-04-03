@@ -60,7 +60,9 @@ data class AccountDto(
             postsCount = statusesCount,
             website = website,
             note = noteText ?: "",
-            url = url
+            url = url,
+            locked = locked,
+            createdAt = createdAt
         )
     }
 }

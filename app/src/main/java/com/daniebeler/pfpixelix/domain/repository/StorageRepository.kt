@@ -22,4 +22,6 @@ interface StorageRepository {
     suspend fun storeAccountId(accountId: String)
     fun getClientIdFromStorage(): Flow<String>
 
+    suspend fun storeVolume(volume: Boolean)
+    fun getStoreVolume(): Flow<Boolean>
 }

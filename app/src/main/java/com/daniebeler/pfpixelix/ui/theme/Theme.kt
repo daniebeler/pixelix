@@ -15,7 +15,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -37,7 +37,6 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun PixelixTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -60,11 +59,13 @@ fun PixelixTheme(
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setSystemBarsColor(
-        color = Color.Transparent
+        color = Color.Transparent,
+        darkIcons = !darkTheme
     )
 
     systemUiController.setNavigationBarColor(
-        color = Color.Transparent
+        color = Color.Transparent,
+        darkIcons = !darkTheme
     )
 
 

@@ -65,6 +65,18 @@ class StorageRepositoryImpl @Inject constructor(
             preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
         }
 
+    override suspend fun storeVolume(volume: Boolean) {
+        storage.edit { preferences ->
+            preferences[booleanPreferencesKey(Constants.VOLUME_DATASTORE_KEY)] = volume
+        }
+    }
+
+    override fun getStoreVolume(): Flow<Boolean> =
+        storage.data.map { preferences ->
+            preferences[booleanPreferencesKey(Constants.VOLUME_DATASTORE_KEY)] ?: true
+        }
+
+
     override suspend fun storeClientSecret(clientSecret: String) {
         storage.edit { preferences ->
             preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] = clientSecret

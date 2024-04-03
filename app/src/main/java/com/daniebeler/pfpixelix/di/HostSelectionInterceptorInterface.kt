@@ -4,6 +4,5 @@ import okhttp3.Interceptor
 
 interface HostSelectionInterceptorInterface: Interceptor {
 
-    fun setHost(host: String?)
-    fun setToken(token: String?)
+    fun setHost(host: String?)fun setToken(token: String?)
 }

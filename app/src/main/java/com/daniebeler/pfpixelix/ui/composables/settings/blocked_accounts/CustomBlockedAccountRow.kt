@@ -21,6 +21,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnBlockAccountAlert
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnMuteAccountAlert
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
@@ -52,10 +54,19 @@ fun CustomBlockedAccountRow(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(onClick = {
-                viewModel.unblockAlert = account.id
+                viewModel.unblockAccountAlert = account.id
             }) {
                 Text(text = stringResource(R.string.unblock))
             }
         }
+    }
+    if (account.id == viewModel.unblockAccountAlert) {
+        UnBlockAccountAlert(
+            onDismissRequest = { viewModel.unblockAccountAlert = "" },
+            onConfirmation = {
+                viewModel.unblockAccountAlert = ""
+                viewModel.unblockAccount(account.id) },
+            account = account
+        )
     }
 }

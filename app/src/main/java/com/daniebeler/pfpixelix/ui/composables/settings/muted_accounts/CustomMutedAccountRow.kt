@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnMuteAccountAlert
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
@@ -54,10 +55,20 @@ fun CustomMutedAccountRow(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(onClick = {
-                viewModel.unmuteAlert = account.id
+                viewModel.unmuteAccountAlert = account.id
             }) {
                 Text(text = stringResource(R.string.unmute))
             }
         }
+    }
+
+    if (viewModel.unmuteAccountAlert == account.id) {
+        UnMuteAccountAlert(
+            onDismissRequest = { viewModel.unmuteAccountAlert = "" },
+            onConfirmation = {
+                viewModel.unmuteAccountAlert = ""
+                viewModel.unmuteAccount(account.id) },
+            account = account
+        )
     }
 }

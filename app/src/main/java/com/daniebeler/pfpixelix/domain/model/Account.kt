@@ -1,5 +1,8 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Account(
     val id: String,
     val username: String,
@@ -11,5 +14,7 @@ data class Account(
     val postsCount: Int,
     val website: String?,
     val note: String,
-    val url: String
+    val url: String,
+    val locked: Boolean,
+    val createdAt: String
 )

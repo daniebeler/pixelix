@@ -101,7 +101,6 @@ fun HomeComposable(navController: NavController) {
                         }
                     })
             }
-            Spacer(modifier = Modifier.height(8.dp))
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -160,7 +159,7 @@ fun HomeComposable(navController: NavController) {
 }
 
 @Composable
-private fun SheetItem(header: String, description: String) {
+fun SheetItem(header: String, description: String) {
     Column {
         Text(text = header, fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))

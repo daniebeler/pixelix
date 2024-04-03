@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnMuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
@@ -96,28 +97,5 @@ fun MutedAccountsComposable(
             )
         }
 
-    }
-
-    if (viewModel.unmuteAlert.isNotEmpty()) {
-        AlertDialog(title = {
-            Text(text = "Unmute Account")
-        }, text = {
-            Text(text = "Confirm to unmute this account")
-        }, onDismissRequest = {
-            viewModel.unmuteAlert = ""
-        }, confirmButton = {
-            TextButton(onClick = {
-                viewModel.unmuteAccount(viewModel.unmuteAlert)
-                viewModel.unmuteAlert = ""
-            }) {
-                Text(stringResource(R.string.unmute_caps))
-            }
-        }, dismissButton = {
-            TextButton(onClick = {
-                viewModel.unmuteAlert = ""
-            }) {
-                Text(stringResource(id = R.string.cancel))
-            }
-        })
     }
 }
