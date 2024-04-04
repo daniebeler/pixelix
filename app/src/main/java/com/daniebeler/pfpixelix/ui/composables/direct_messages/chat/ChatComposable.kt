@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.direct_messages.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,17 +33,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,11 +58,11 @@ fun ChatComposable(
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             if (viewModel.chatState.chat != null) {
-                Row(modifier = Modifier
-                    .clickable {
+                Row(
+                    modifier = Modifier.clickable {
                         Navigate.navigate("profile_screen/$accountId", navController)
-                    },
-                    verticalAlignment = Alignment.CenterVertically) {
+                    }, verticalAlignment = Alignment.CenterVertically
+                ) {
                     AsyncImage(
                         model = viewModel.chatState.chat!!.avatar,
                         contentDescription = "",
@@ -78,7 +77,8 @@ fun ChatComposable(
 
                         Text(text = viewModel.chatState.chat!!.username ?: "")
                         Text(
-                            text = viewModel.chatState.chat!!.url.substringAfter("https://").substringBefore("/"),
+                            text = viewModel.chatState.chat!!.url.substringAfter("https://")
+                                .substringBefore("/"),
                             fontSize = 12.sp,
                             lineHeight = 6.sp,
                             color = MaterialTheme.colorScheme.primary
@@ -113,12 +113,32 @@ fun ChatComposable(
                             )
                         }
                     }
+
+                    if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages?.isEmpty() == true) {
+                        item {
+                            Spacer(modifier = Modifier.height(56.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "This is the beginning of your chat with this user. Don't forget to be respectful.",
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
                 })
 
 
                 Row {
-                    TextField(
-                        value = viewModel.newMessage,
+                    TextField(value = viewModel.newMessage,
                         onValueChange = { viewModel.newMessage = it })
                     Button(onClick = { viewModel.sendMessage(accountId) }) {
                         Text(text = "send")

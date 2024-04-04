@@ -17,13 +17,14 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.QuestionMark
+import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -79,7 +80,11 @@ fun ConversationsComposable(
             }
         }, actions = {
             IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Outlined.ReportProblem,
+                    tint = MaterialTheme.colorScheme.error,
+                    contentDescription = null
+                )
             }
         })
     }) { paddingValues ->
