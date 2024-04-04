@@ -6,7 +6,7 @@ data class Chat (
     val avatar: String,
     val id: String,
     val isLocal: Boolean,
-    val messages: List<Message>,
+    var messages: List<Message>,
     val muted: Boolean,
     val name: String,
     val timeAgo: String,

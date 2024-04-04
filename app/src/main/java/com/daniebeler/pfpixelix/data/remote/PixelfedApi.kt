@@ -17,6 +17,8 @@ import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
+import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
+import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -266,8 +268,10 @@ interface PixelfedApi {
 
     @GET("api/v1.1/direct/thread")
     fun getChat(@Query("pid")accountId: String): Call<ChatDto>
-    // Other
 
+    @POST("api/v1.1/direct/thread/send")
+    fun sendMessage(@Body createMessageDto: CreateMessageDto): Call<MessageDto>
+    // Other
 
     @GET("api/v1/bookmarks?limit=12")
     fun getBookmarkedPosts(): Call<List<PostDto>>

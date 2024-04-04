@@ -2,6 +2,9 @@ package com.daniebeler.pfpixelix.ui.composables.direct_messages.chat
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,11 +15,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +48,9 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatComposable(
-    navController: NavController, accountId: String, viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
+    navController: NavController,
+    accountId: String,
+    viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -65,23 +72,31 @@ fun ChatComposable(
             }
         })
     }) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(state = lazyListState,
-                modifier = Modifier
-                    .fillMaxSize(),
-                content = {
-                    if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages!!.isNotEmpty()) {
-                        items(viewModel.chatState.chat!!.messages, key = {
-                            it.id
-                        }) {
-                            ConversationElementComposable(message = it, navController = navController)
+            LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
+                if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages!!.isNotEmpty()) {
+                    items(viewModel.chatState.chat!!.messages, key = {
+                        it.id
+                    }) {
+                        ConversationElementComposable(
+                            message = it, navController = navController
+                        )
+                    }
+
+                    item {
+                        Row {
+                            TextField(value = viewModel.newMessage, onValueChange = { viewModel.newMessage = it })
+                            Button(onClick = { viewModel.sendMessage(accountId) }) {
+                                Text(text = "send")
+                            }
                         }
                     }
-                })
+                }
+            })
             ErrorComposable(message = viewModel.chatState.error)
         }
     }

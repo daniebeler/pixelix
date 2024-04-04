@@ -4,9 +4,12 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
+import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
+import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Conversation
+import com.daniebeler.pfpixelix.domain.model.Message
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
 import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
@@ -24,5 +27,9 @@ class DirectMessagesRepositoryImpl @Inject constructor(
 
     override fun getChat(accountId: String): Flow<Resource<Chat>> {
         return NetworkCall<Chat, ChatDto>().makeCall(pixelfedApi.getChat(accountId))
+    }
+
+    override fun sendMessage(createMessageDto: CreateMessageDto): Flow<Resource<Message>> {
+        return NetworkCall<Message, MessageDto>().makeCall(pixelfedApi.sendMessage(createMessageDto))
     }
 }
