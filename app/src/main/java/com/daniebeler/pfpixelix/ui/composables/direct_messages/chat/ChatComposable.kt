@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations
+package com.daniebeler.pfpixelix.ui.composables.direct_messages.chat
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -34,29 +34,23 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.notifications.CustomNotification
-import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsViewModel
+import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
-import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun ConversationsComposable(
-    navController: NavController, viewModel: ConversationsViewModel = hiltViewModel()
+fun ChatComposable(
+    navController: NavController, viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.conversationsState.isRefreshing,
-            onRefresh = { viewModel.refresh() })
-
     val lazyListState = rememberLazyListState()
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text("Messages")
+            Text("Chat")
 
         }, navigationIcon = {
             IconButton(onClick = {
@@ -75,20 +69,19 @@ fun ConversationsComposable(
         ) {
             LazyColumn(state = lazyListState,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState),
+                    .fillMaxSize(),
                 content = {
-                    if (viewModel.conversationsState.conversations.isNotEmpty()) {
-                        items(viewModel.conversationsState.conversations, key = {
+                    if (viewModel.chatState.conversations.isNotEmpty()) {
+                        items(viewModel.chatState.conversations, key = {
                             it.id
                         }) {
-                            Box(modifier = Modifier.clickable { Navigate.navigate("chat", navController) }) {
+                            Box(modifier = Modifier.clickable {  }) {
                                 //CustomNotification(notification = it, navController = navController)
                                 Text(text = it.id.toString())
                             }
                         }
 
-                        if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
+                        if (viewModel.chatState.isLoading && !viewModel.chatState.isRefreshing) {
                             item {
                                 CircularProgressIndicator(
                                     modifier = Modifier
@@ -99,7 +92,7 @@ fun ConversationsComposable(
                             }
                         }
 
-                        if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
+                        if (viewModel.chatState.endReached && viewModel.chatState.conversations.size > 10) {
                             item {
                                 EndOfListComposable()
                             }
@@ -107,7 +100,7 @@ fun ConversationsComposable(
                     }
                 })
 
-            if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
+            if (!viewModel.chatState.isLoading && viewModel.chatState.error.isEmpty() && viewModel.chatState.conversations.isEmpty()) {
                 FullscreenEmptyStateComposable(
                     EmptyState(
                         icon = Icons.Outlined.Email, heading = stringResource(
@@ -117,14 +110,10 @@ fun ConversationsComposable(
                 )
             }
 
-            CustomPullRefreshIndicator(
-                viewModel.conversationsState.isRefreshing, pullRefreshState
-            )
-
-            if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
-                LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
+            if (!viewModel.chatState.isRefreshing && viewModel.chatState.conversations.isEmpty()) {
+                LoadingComposable(isLoading = viewModel.chatState.isLoading)
             }
-            ErrorComposable(message = viewModel.conversationsState.error, pullRefreshState)
+            ErrorComposable(message = viewModel.chatState.error)
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {

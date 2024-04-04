@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Mail
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -34,6 +35,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
+import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -111,7 +114,7 @@ sealed class Destinations(
     )
 
     object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.Mail
+        route = "notifications_screen", icon = Icons.Outlined.Notifications
     )
 
     object OwnProfile : Destinations(
@@ -172,6 +175,14 @@ sealed class Destinations(
 
     object Search : Destinations(
         route = "search_screen", icon = Icons.Outlined.Search
+    )
+
+    object Conversation : Destinations(
+        route = "conversations", icon = Icons.Outlined.Home
+    )
+
+    object Chat : Destinations(
+        route = "chat", icon = Icons.Outlined.Home
     )
 }
 
@@ -265,6 +276,14 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.Search.route) {
             SearchComposable(navController)
+        }
+
+        composable(Destinations.Conversation.route) {
+            ConversationsComposable(navController = navController)
+        }
+
+        composable(Destinations.Chat.route) {
+            ChatComposable(navController = navController)
         }
     }
 }
