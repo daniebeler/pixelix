@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.di
 
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
+import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetConversationsUseCase
 import dagger.Module
 import dagger.Provides
@@ -17,4 +18,9 @@ class DirectMessagesUseCaseModule {
     @Singleton
     fun provideGetConversationsUseCase(repository: DirectMessagesRepository): GetConversationsUseCase =
         GetConversationsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetChatUseCase(repository: DirectMessagesRepository): GetChatUseCase =
+        GetChatUseCase(repository)
 }

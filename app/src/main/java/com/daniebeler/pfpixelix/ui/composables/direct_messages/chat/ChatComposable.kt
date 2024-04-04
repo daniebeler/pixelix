@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,21 +33,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatComposable(
-    navController: NavController, accountId: String, viewModel: ChatViewModel = hiltViewModel()
+    navController: NavController, accountId: String, viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
 ) {
     val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getChat(accountId)
+    }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
@@ -71,53 +74,15 @@ fun ChatComposable(
                 modifier = Modifier
                     .fillMaxSize(),
                 content = {
-                    if (viewModel.chatState.conversations.isNotEmpty()) {
-                        items(viewModel.chatState.conversations, key = {
+                    if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages!!.isNotEmpty()) {
+                        items(viewModel.chatState.chat!!.messages, key = {
                             it.id
                         }) {
-                            Box(modifier = Modifier.clickable {  }) {
-                                //CustomNotification(notification = it, navController = navController)
-                                Text(text = it.id.toString())
-                            }
-                        }
-
-                        if (viewModel.chatState.isLoading && !viewModel.chatState.isRefreshing) {
-                            item {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(80.dp)
-                                        .wrapContentSize(Alignment.Center)
-                                )
-                            }
-                        }
-
-                        if (viewModel.chatState.endReached && viewModel.chatState.conversations.size > 10) {
-                            item {
-                                EndOfListComposable()
-                            }
+                            ConversationElementComposable(message = it, navController = navController)
                         }
                     }
                 })
-
-            if (!viewModel.chatState.isLoading && viewModel.chatState.error.isEmpty() && viewModel.chatState.conversations.isEmpty()) {
-                FullscreenEmptyStateComposable(
-                    EmptyState(
-                        icon = Icons.Outlined.Email, heading = stringResource(
-                            R.string.you_don_t_have_any_notifications
-                        )
-                    )
-                )
-            }
-
-            if (!viewModel.chatState.isRefreshing && viewModel.chatState.conversations.isEmpty()) {
-                LoadingComposable(isLoading = viewModel.chatState.isLoading)
-            }
             ErrorComposable(message = viewModel.chatState.error)
-        }
-
-        InfiniteListHandler(lazyListState = lazyListState) {
-            //viewModel.getNotificationsPaginated()
         }
     }
 }
