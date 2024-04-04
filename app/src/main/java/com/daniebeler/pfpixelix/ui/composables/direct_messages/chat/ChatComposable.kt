@@ -44,7 +44,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ChatComposable(
-    navController: NavController, viewModel: ChatViewModel = hiltViewModel()
+    navController: NavController, accountId: String, viewModel: ChatViewModel = hiltViewModel()
 ) {
     val lazyListState = rememberLazyListState()
 

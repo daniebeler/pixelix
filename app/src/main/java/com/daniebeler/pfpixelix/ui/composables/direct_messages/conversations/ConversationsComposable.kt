@@ -82,10 +82,7 @@ fun ConversationsComposable(
                         items(viewModel.conversationsState.conversations, key = {
                             it.id
                         }) {
-                            Box(modifier = Modifier.clickable { Navigate.navigate("chat", navController) }) {
-                                //CustomNotification(notification = it, navController = navController)
-                                Text(text = it.id.toString())
-                            }
+                            ConversationElementComposable(conversation = it, navController = navController)
                         }
 
                         if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {

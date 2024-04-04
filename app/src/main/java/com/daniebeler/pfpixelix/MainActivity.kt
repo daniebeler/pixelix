@@ -182,7 +182,7 @@ sealed class Destinations(
     )
 
     object Chat : Destinations(
-        route = "chat", icon = Icons.Outlined.Home
+        route = "chat/{userid}", icon = Icons.Outlined.Home
     )
 }
 
@@ -282,8 +282,11 @@ fun NavigationGraph(navController: NavHostController) {
             ConversationsComposable(navController = navController)
         }
 
-        composable(Destinations.Chat.route) {
-            ChatComposable(navController = navController)
+        composable(Destinations.Chat.route) {navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("userid")
+            uId?.let {id ->
+                ChatComposable(navController = navController, accountId = id)
+            }
         }
     }
 }
