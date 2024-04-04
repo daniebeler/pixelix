@@ -69,6 +69,7 @@ fun ConversationsComposable(
                             it.id
                         }) {
                             //CustomNotification(notification = it, navController = navController)
+                            Text(text = it.id.toString())
                         }
 
                         if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
