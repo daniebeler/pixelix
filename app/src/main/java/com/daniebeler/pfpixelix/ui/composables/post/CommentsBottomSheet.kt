@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,18 +16,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -47,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +68,7 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.TimeAgo
 
@@ -69,6 +76,7 @@ import com.daniebeler.pfpixelix.utils.TimeAgo
 fun CommentsBottomSheet(
     post: Post, navController: NavController, viewModel: PostViewModel
 ) {
+    var replyText by remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
     Box(
         modifier = Modifier
@@ -92,20 +100,51 @@ fun CommentsBottomSheet(
                         post.replyCount,
                         post.likedBy
                     )
-                    ReplyElement(
-                        reply = ownDescription,
+                    ReplyElement(reply = ownDescription,
                         true,
                         navController = navController,
                         {},
-                        viewModel.myAccountId, { url -> viewModel.openUrl(context, url) }
-                    )
+                        viewModel.myAccountId,
+                        { url -> viewModel.openUrl(context, url) })
                 }
 
-                CreateComment(
-                    { replyText -> viewModel.createReply(post.id, replyText) },
-                    post.id,
-                    viewModel.ownReplyState
-                )
+                TextFieldMentionsComposable(submit = { text ->
+                    viewModel.createReply(
+                        post.id, text
+                    )
+                }, replyText, changeText = { newText -> replyText = newText }, submitButton = {
+                    Button(
+                        onClick = {
+                            if (viewModel.ownReplyState.isLoading) {
+                                viewModel.createReply(post.id, replyText.text)
+                                replyText = replyText.copy(text = "")
+                            }
+                        },
+                        Modifier
+                            .height(56.dp)
+                            .width(56.dp)
+                            .padding(0.dp, 0.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(12.dp),
+                        enabled = replyText.text.isNotBlank()
+                    ) {
+                        if (viewModel.ownReplyState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "submit",
+                                Modifier
+                                    .fillMaxSize()
+                                    .fillMaxWidth()
+                            )
+                        }
+
+                    }
+                })
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }
@@ -113,13 +152,12 @@ fun CommentsBottomSheet(
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
-                ReplyElement(
-                    reply = reply,
+                ReplyElement(reply = reply,
                     false,
                     navController = navController,
                     { viewModel.deleteReply(reply.id) },
-                    viewModel.myAccountId, { url -> viewModel.openUrl(context, url) }
-                )
+                    viewModel.myAccountId,
+                    { url -> viewModel.openUrl(context, url) })
             }
 
             if (viewModel.repliesState.isLoading) {
@@ -219,12 +257,10 @@ private fun ReplyElement(
                 }
 
 
-                HashtagsMentionsTextView(
-                    text = reply.content,
+                HashtagsMentionsTextView(text = reply.content,
                     mentions = reply.mentions,
                     navController = navController,
-                    openUrl = { url -> openUrl(url) }
-                )
+                    openUrl = { url -> openUrl(url) })
             }
         }
 
@@ -350,19 +386,30 @@ fun AddReplyDialog(
     replyId: String,
     replyState: OwnReplyState
 ) {
+    var replyText by remember { mutableStateOf(TextFieldValue("")) }
 
     AlertDialog(icon = {
         Icon(Icons.Outlined.Edit, contentDescription = "Edit")
     }, title = {
         Text(text = stringResource(R.string.reply))
     }, text = {
-        CreateComment(
-            createNewComment = { onConfirmation(it) }, postId = replyId, newReplyState = replyState
+        TextFieldMentionsComposable(submit = { text ->
+            onConfirmation(
+                text
+            )
+        },
+            text = replyText,
+            changeText = { newText -> replyText = newText },
+            submitButton = null
         )
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
-
+        TextButton(onClick = {
+            onConfirmation(replyText.text)
+        }) {
+            Text("Send")
+        }
     }, dismissButton = {
         TextButton(onClick = {
             onDismissRequest()

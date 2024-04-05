@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 
 @Composable
 fun CreateComment(
@@ -43,92 +44,44 @@ fun CreateComment(
     newReplyState: OwnReplyState,
     viewModel: CreateCommentViewModel = hiltViewModel(key = postId)
 ) {
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
     Column {
         Row(verticalAlignment = Alignment.Bottom) {
-            OutlinedTextField(
-                value = viewModel.replyText,
-                onValueChange = {
-                    viewModel.changeText(it)
-                },
-                label = { Text(stringResource(R.string.reply)) },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(0.dp, 0.dp),
-                singleLine = false,
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                    createNewComment(viewModel.replyText.text)
-                    viewModel.replyText = viewModel.replyText.copy(text = "")
-                    viewModel.mentionsDropdownOpen = false
-                })
-            )
-
-            Spacer(Modifier.width(12.dp))
-
-            Button(
-                onClick = {
-                    if (!newReplyState.isLoading) {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        createNewComment(viewModel.replyText.text)
-                        viewModel.replyText = viewModel.replyText.copy(text = "")
-                        viewModel.mentionsDropdownOpen = false
-                    }
-                },
-                Modifier
-                    .height(56.dp)
-                    .width(56.dp)
-                    .padding(0.dp, 0.dp),
-                shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(12.dp),
-                enabled = viewModel.replyText.text.isNotBlank()
-            ) {
-                if (newReplyState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "submit",
-                    Modifier
-                        .fillMaxSize()
-                        .fillMaxWidth()
-                )
-                }
-
-            }
-        }
-        if (viewModel.mentionsDropdownOpen) {
-            Box(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                if (viewModel.mentionSuggestions.mentions.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier.padding(12.dp)
-                    ) {
-                        viewModel.mentionSuggestions.mentions.map {
-                            TextButton(onClick = { viewModel.clickMention(it.acct) }) {
-                                Text(
-                                    text = "@${it.acct}",
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
+            TextFieldMentionsComposable(submit = { text -> createNewComment(text) },
+                viewModel.replyText,
+                changeText = { newText -> viewModel.replyText = newText },
+                submitButton = {
+                    Button(
+                        onClick = {
+                            if (!newReplyState.isLoading) {
+                                createNewComment(viewModel.replyText.text)
+                                viewModel.replyText = viewModel.replyText.copy(text = "")
                             }
+                        },
+                        Modifier
+                            .height(56.dp)
+                            .width(56.dp)
+                            .padding(0.dp, 0.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(12.dp),
+                        enabled = viewModel.replyText.text.isNotBlank()
+                    ) {
+                        if (newReplyState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "submit",
+                                Modifier
+                                    .fillMaxSize()
+                                    .fillMaxWidth()
+                            )
                         }
+
                     }
-                }
-            }
+                })
         }
     }
 }
