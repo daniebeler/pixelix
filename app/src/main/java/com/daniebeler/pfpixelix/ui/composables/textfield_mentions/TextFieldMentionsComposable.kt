@@ -32,7 +32,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pfpixelix.R
 
 @Composable
-fun TextFieldMentionsComposable(submit: (text: String) -> Unit, text: TextFieldValue, changeText: (newText: TextFieldValue) -> Unit, submitButton: (@Composable () -> Unit)?, viewModel: TextFieldMentionsViewModel = hiltViewModel()) {
+fun TextFieldMentionsComposable(
+    submit: (text: String) -> Unit,
+    text: TextFieldValue,
+    changeText: (newText: TextFieldValue) -> Unit,
+    labelStringId: Int,
+    submitButton: (@Composable () -> Unit)?,
+    modifier: Modifier?,
+    viewModel: TextFieldMentionsViewModel = hiltViewModel()
+) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -44,9 +52,8 @@ fun TextFieldMentionsComposable(submit: (text: String) -> Unit, text: TextFieldV
                     viewModel.changeText(it)
                     changeText(it)
                 },
-                label = { Text(stringResource(R.string.reply)) },
-                modifier = Modifier
-                    .padding(0.dp, 0.dp),
+                label = { Text(stringResource(labelStringId)) },
+                modifier = modifier ?: Modifier,
                 singleLine = false,
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -54,7 +61,6 @@ fun TextFieldMentionsComposable(submit: (text: String) -> Unit, text: TextFieldV
                     keyboardController?.hide()
                     focusManager.clearFocus()
                     submit(text.text)
-                    changeText(TextFieldValue())
                     viewModel.mentionsDropdownOpen = false
                 })
             )
@@ -78,8 +84,12 @@ fun TextFieldMentionsComposable(submit: (text: String) -> Unit, text: TextFieldV
                             TextButton(onClick = {
                                 viewModel.mentionsDropdownOpen = false
                                 val index = text.text.lastIndexOf("@") + 1
-                                val newText = text.text.substring(0,index) + it.acct
-                                changeText(text.copy(text = newText, selection = TextRange(newText.length)))
+                                val newText = text.text.substring(0, index) + it.acct
+                                changeText(
+                                    text.copy(
+                                        text = newText, selection = TextRange(newText.length)
+                                    )
+                                )
                             }) {
                                 Text(
                                     text = "@${it.acct}",
@@ -91,6 +101,5 @@ fun TextFieldMentionsComposable(submit: (text: String) -> Unit, text: TextFieldV
                 }
             }
         }
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
     }
 }

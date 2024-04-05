@@ -63,7 +63,6 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
-import com.daniebeler.pfpixelix.ui.composables.post.reply.CreateComment
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -109,42 +108,48 @@ fun CommentsBottomSheet(
                 }
 
                 TextFieldMentionsComposable(submit = { text ->
+                    replyText = TextFieldValue()
                     viewModel.createReply(
                         post.id, text
                     )
-                }, replyText, changeText = { newText -> replyText = newText }, submitButton = {
-                    Button(
-                        onClick = {
+                },
+                    replyText,
+                    changeText = { newText -> replyText = newText },
+                    labelStringId = R.string.reply,
+                    modifier = null,
+                    submitButton = {
+                        Button(
+                            onClick = {
+                                if (!viewModel.ownReplyState.isLoading) {
+                                    viewModel.createReply(post.id, replyText.text)
+                                    replyText = replyText.copy(text = "")
+                                }
+                            },
+                            Modifier
+                                .height(56.dp)
+                                .width(56.dp)
+                                .padding(0.dp, 0.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(12.dp),
+                            enabled = replyText.text.isNotBlank()
+                        ) {
                             if (viewModel.ownReplyState.isLoading) {
-                                viewModel.createReply(post.id, replyText.text)
-                                replyText = replyText.copy(text = "")
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    contentDescription = "submit",
+                                    Modifier
+                                        .fillMaxSize()
+                                        .fillMaxWidth()
+                                )
                             }
-                        },
-                        Modifier
-                            .height(56.dp)
-                            .width(56.dp)
-                            .padding(0.dp, 0.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(12.dp),
-                        enabled = replyText.text.isNotBlank()
-                    ) {
-                        if (viewModel.ownReplyState.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "submit",
-                                Modifier
-                                    .fillMaxSize()
-                                    .fillMaxWidth()
-                            )
-                        }
 
-                    }
-                })
+                        }
+                    })
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }
@@ -347,7 +352,7 @@ private fun ReplyElement(
             if (myAccountId != null) {
                 viewModel.createReply(reply.id, it, myAccountId)
             }
-        }, reply.id, viewModel.newReplyState)
+        })
     }
 
     if (showDeleteReplyDialog.value) {
@@ -382,9 +387,7 @@ private fun ReplyElement(
 @Composable
 fun AddReplyDialog(
     onDismissRequest: () -> Unit,
-    onConfirmation: (replyText: String) -> Unit,
-    replyId: String,
-    replyState: OwnReplyState
+    onConfirmation: (replyText: String) -> Unit
 ) {
     var replyText by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -393,13 +396,17 @@ fun AddReplyDialog(
     }, title = {
         Text(text = stringResource(R.string.reply))
     }, text = {
-        TextFieldMentionsComposable(submit = { text ->
-            onConfirmation(
-                text
-            )
-        },
+        TextFieldMentionsComposable(
+            submit = { text ->
+                replyText = TextFieldValue()
+                onConfirmation(
+                    text
+                )
+            },
             text = replyText,
             changeText = { newText -> replyText = newText },
+            R.string.reply,
+            modifier = null,
             submitButton = null
         )
     }, onDismissRequest = {
