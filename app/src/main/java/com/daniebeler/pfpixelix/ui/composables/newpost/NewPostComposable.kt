@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,8 +49,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -118,6 +122,7 @@ fun NewPostComposable(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+
                 viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
@@ -170,6 +175,7 @@ fun NewPostComposable(
                             shape = RoundedCornerShape(12.dp)
                         )
                     }
+
                 }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Icon(
@@ -186,11 +192,15 @@ fun NewPostComposable(
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                TextFieldMentionsComposable(submit = {},
+                TextFieldMentionsComposable(
+                    submit = {},
                     text = viewModel.caption,
-                    changeText = { text -> viewModel.caption = text }, labelStringId = R.string.caption,
+                    changeText = { text -> viewModel.caption = text },
+                    labelStringId = R.string.caption,
                     modifier = Modifier.fillMaxWidth(),
-                    submitButton = null)
+                    imeAction = ImeAction.Default,
+                    submitButton = null
+                )
                 /*OutlinedTextField(
                     value = viewModel.caption,
                     onValueChange = { viewModel.caption = it },

@@ -39,6 +39,7 @@ fun TextFieldMentionsComposable(
     labelStringId: Int,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,
+    imeAction: ImeAction,
     viewModel: TextFieldMentionsViewModel = hiltViewModel()
 ) {
 
@@ -56,7 +57,7 @@ fun TextFieldMentionsComposable(
                 modifier = modifier ?: Modifier,
                 singleLine = false,
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardOptions = KeyboardOptions(imeAction = imeAction),
                 keyboardActions = KeyboardActions(onSend = {
                     keyboardController?.hide()
                     focusManager.clearFocus()
