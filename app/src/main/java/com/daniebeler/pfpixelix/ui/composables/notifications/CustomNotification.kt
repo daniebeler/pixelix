@@ -42,6 +42,10 @@ fun CustomNotification(notification: Notification, navController: NavController)
             text = " " + stringResource(R.string.mentioned_you_in_a_post)
         }
 
+        "direct" -> {
+            text = " " + stringResource(R.string.sent_a_dm)
+        }
+
         "favourite" -> {
             text = " " + stringResource(R.string.liked_your_post)
             showImage = true

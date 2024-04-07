@@ -15,7 +15,6 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,6 +36,7 @@ fun ConversationElementComposable(
     message: Message, deleteMessage: () -> Unit, navController: NavController
 ) {
     var arrangement = Arrangement.Start
+    var alignment = Alignment.Start
     var contentAlignment = Alignment.TopStart
     var backgroundColor = MaterialTheme.colorScheme.surfaceContainer
     var textColor = MaterialTheme.colorScheme.onSurface
@@ -46,6 +46,7 @@ fun ConversationElementComposable(
 
     if (message.isAuthor) {
         arrangement = Arrangement.End
+        alignment = Alignment.End
         contentAlignment = Alignment.TopEnd
         backgroundColor = MaterialTheme.colorScheme.primary
         textColor = MaterialTheme.colorScheme.onPrimary
@@ -69,7 +70,10 @@ fun ConversationElementComposable(
                 ) {
                     Text(text = message.text, color = textColor)
 
-                    Row {
+                    Row(
+                        modifier = Modifier.align(alignment),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = message.timeAgo, color = textColor, fontSize = 10.sp)
                         if (message.seen) {
                             Icon(
@@ -77,11 +81,13 @@ fun ConversationElementComposable(
                             )
                         }
                         if (message.isAuthor) {
-                            Box(modifier = Modifier.clickable{ showDeleteReplyDialog.value = true }) {
+                            Box(modifier = Modifier.clickable {
+                                showDeleteReplyDialog.value = true
+                            }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Delete,
                                     contentDescription = "delete message",
-                                    Modifier.size(22.dp),
+                                    Modifier.size(20.dp),
                                     tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
