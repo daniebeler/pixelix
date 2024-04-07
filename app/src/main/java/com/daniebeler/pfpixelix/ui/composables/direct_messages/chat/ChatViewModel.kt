@@ -31,7 +31,6 @@ class ChatViewModel @Inject constructor(
                 is Resource.Success -> {
                     ChatState(
                         chat = result.data,
-                        firstLoad = true
                     )
                 }
 
@@ -49,38 +48,40 @@ class ChatViewModel @Inject constructor(
     }
 
     fun getChatPaginated(accountId: String) {
-        if (chatState.chat != null) {
-            getChatUseCase(accountId, chatState.chat!!.messages.last().id).onEach { result ->
-                chatState = when (result) {
-                    is Resource.Success -> {
-                        val endReached = result.data?.messages!!.isEmpty()
+        if (chatState.chat != null && !chatState.isLoading && !chatState.endReached) {
+            if (chatState.chat!!.messages.isNotEmpty()) {
+                getChatUseCase(accountId, chatState.chat!!.messages.last().id).onEach { result ->
+                    chatState = when (result) {
+                        is Resource.Success -> {
+                            val endReached = result.data?.messages!!.isEmpty()
 
-                        val messages = (chatState.chat?.messages ?: emptyList()) + result.data.messages
-                        val chat = chatState.chat?.copy()
-                        if (chat != null) {
-                            chat.messages = messages
+                            val messages = (chatState.chat?.messages ?: emptyList()) + result.data.messages
+                            val chat = chatState.chat?.copy()
+                            if (chat != null) {
+                                chat.messages = messages
+                                ChatState(
+                                    chat = chat,
+                                    endReached = endReached
+                                )
+                            } else {
+                                ChatState(
+                                    chat = result.data
+                                )
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            ChatState(error = result.message ?: "An unexpected error occurred")
+                        }
+
+                        is Resource.Loading -> {
                             ChatState(
-                                chat = chat,
-                                endReached = endReached
-                            )
-                        } else {
-                            ChatState(
-                                chat = result.data
+                                isLoading = true, chat = chatState.chat
                             )
                         }
                     }
-
-                    is Resource.Error -> {
-                        ChatState(error = result.message ?: "An unexpected error occurred")
-                    }
-
-                    is Resource.Loading -> {
-                        ChatState(
-                            isLoading = true, chat = chatState.chat
-                        )
-                    }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
+            }
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -51,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
@@ -139,11 +142,21 @@ fun ChatComposable(
                                     message = it, navController = navController
                                 )
                             }
-                            if (!viewModel.chatState.endReached) {
+
+                            if (viewModel.chatState.isLoading) {
                                 item {
-                                    Button(onClick = { viewModel.getChatPaginated(accountId) }) {
-                                        Text(text = "load more")
-                                    }
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(80.dp)
+                                            .wrapContentSize(Alignment.Center)
+                                    )
+                                }
+                            }
+
+                            if (viewModel.chatState.endReached) {
+                                item {
+                                    EndOfListComposable()
                                 }
                             }
                         }
@@ -228,6 +241,8 @@ fun ChatComposable(
                 ErrorComposable(message = viewModel.chatState.error)
             }
         }
-
+        InfiniteListHandler(lazyListState = lazyListState) {
+            viewModel.getChatPaginated(accountId)
+        }
     }
 }
