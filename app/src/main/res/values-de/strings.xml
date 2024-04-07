@@ -148,4 +148,5 @@
     <string name="unmute_account">Stummschaltung aufheben?</string>
     <string name="mute">Stummschalten</string>
     <string name="mute_account">Benutzer stummschalten?</string>
+    <string name="sent_a_dm">hat eine Nachricht gesendet</string>
 </resources>

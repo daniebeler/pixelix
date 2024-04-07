@@ -56,6 +56,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePage
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,6 +206,16 @@ fun OtherProfileComposable(
                         })
                     }
                 }
+
+                HorizontalDivider(Modifier.padding(12.dp))
+
+                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
+                    text = "Send message",
+                    onClick = {
+                        Navigate.navigate(
+                            "chat/" + viewModel.accountState.account!!.id, navController
+                        )
+                    })
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
