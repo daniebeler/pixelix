@@ -11,6 +11,6 @@ import kotlinx.coroutines.flow.Flow
 interface DirectMessagesRepository {
 
     fun getConversations(): Flow<Resource<List<Conversation>>>
-    fun getChat(accountId: String): Flow<Resource<Chat>>
+    fun getChat(accountId: String, maxId: String = ""): Flow<Resource<Chat>>
     fun sendMessage(createMessageDto: CreateMessageDto): Flow<Resource<Message>>
 }

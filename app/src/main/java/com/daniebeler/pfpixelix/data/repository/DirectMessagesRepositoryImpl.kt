@@ -25,8 +25,12 @@ class DirectMessagesRepositoryImpl @Inject constructor(
         return NetworkCall<Conversation, ConversationDto>().makeCallList(pixelfedApi.getConversations())
     }
 
-    override fun getChat(accountId: String): Flow<Resource<Chat>> {
-        return NetworkCall<Chat, ChatDto>().makeCall(pixelfedApi.getChat(accountId))
+    override fun getChat(accountId: String, maxId: String): Flow<Resource<Chat>> {
+        return if (maxId.isEmpty()) {
+            NetworkCall<Chat, ChatDto>().makeCall(pixelfedApi.getChat(accountId))
+        } else {
+            NetworkCall<Chat, ChatDto>().makeCall(pixelfedApi.getChat(accountId, maxId))
+        }
     }
 
     override fun sendMessage(createMessageDto: CreateMessageDto): Flow<Resource<Message>> {

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 class GetChatUseCase(
     private val directMessagesRepository: DirectMessagesRepository
 ) {
-    operator fun invoke(accountId: String): Flow<Resource<Chat>> {
-        return directMessagesRepository.getChat(accountId)
+    operator fun invoke(accountId: String, maxChatId: String = ""): Flow<Resource<Chat>> {
+        return directMessagesRepository.getChat(accountId, maxChatId)
     }
 }

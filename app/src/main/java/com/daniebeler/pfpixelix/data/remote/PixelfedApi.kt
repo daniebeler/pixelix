@@ -269,6 +269,9 @@ interface PixelfedApi {
     @GET("api/v1.1/direct/thread")
     fun getChat(@Query("pid")accountId: String): Call<ChatDto>
 
+    @GET("api/v1.1/direct/thread")
+    fun getChat(@Query("pid")accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
+
     @POST("api/v1.1/direct/thread/send")
     fun sendMessage(@Body createMessageDto: CreateMessageDto): Call<MessageDto>
     // Other

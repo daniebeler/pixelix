@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val getChatUseCase: GetChatUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val getChatUseCase: GetChatUseCase, private val sendMessageUseCase: SendMessageUseCase
 ) : ViewModel() {
 
     var chatState by mutableStateOf(ChatState())
@@ -31,7 +30,8 @@ class ChatViewModel @Inject constructor(
             chatState = when (result) {
                 is Resource.Success -> {
                     ChatState(
-                        chat = result.data
+                        chat = result.data,
+                        firstLoad = true
                     )
                 }
 
@@ -48,11 +48,45 @@ class ChatViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun getChatPaginated(accountId: String) {
+        if (chatState.chat != null) {
+            getChatUseCase(accountId, chatState.chat!!.messages.last().id).onEach { result ->
+                chatState = when (result) {
+                    is Resource.Success -> {
+                        val endReached = result.data?.messages!!.isEmpty()
+
+                        val messages = (chatState.chat?.messages ?: emptyList()) + result.data.messages
+                        val chat = chatState.chat?.copy()
+                        if (chat != null) {
+                            chat.messages = messages
+                            ChatState(
+                                chat = chat,
+                                endReached = endReached
+                            )
+                        } else {
+                            ChatState(
+                                chat = result.data
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        ChatState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        ChatState(
+                            isLoading = true, chat = chatState.chat
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun sendMessage(accountId: String) {
         val createMessageDto = CreateMessageDto(
-            to_id =accountId,
-            message = newMessage,
-            type = "text"
+            to_id = accountId, message = newMessage, type = "text"
         )
         newMessage = ""
         sendMessageUseCase(createMessageDto).onEach { result ->

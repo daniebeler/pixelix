@@ -19,7 +19,7 @@ data class ChatDto(
             avatar = avatar,
             id = id,
             isLocal = isLocal,
-            messages = messages.map { it.toModel() }.reversed(),
+            messages = messages.map { it.toModel() },
             muted = muted,
             name = name,
             timeAgo = timeAgo,

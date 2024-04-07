@@ -6,5 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.Conversation
 data class ChatState(
     val isLoading: Boolean = false,
     val chat: Chat? = null,
+    val firstLoad: Boolean = false,
+    val endReached: Boolean = false,
     val error: String = ""
 )
