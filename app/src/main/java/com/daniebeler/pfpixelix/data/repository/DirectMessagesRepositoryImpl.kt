@@ -15,6 +15,8 @@ import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
 import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class DirectMessagesRepositoryImpl @Inject constructor(
@@ -35,5 +37,20 @@ class DirectMessagesRepositoryImpl @Inject constructor(
 
     override fun sendMessage(createMessageDto: CreateMessageDto): Flow<Resource<Message>> {
         return NetworkCall<Message, MessageDto>().makeCall(pixelfedApi.sendMessage(createMessageDto))
+    }
+
+    override fun deleteMessage(id: String): Flow<Resource<List<Int>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.deleteMessage(id).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()
+                emit(Resource.Success(res!!))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
     }
 }

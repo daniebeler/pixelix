@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.di
 
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
+import com.daniebeler.pfpixelix.domain.usecase.DeleteMessageUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetConversationsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SendMessageUseCase
@@ -29,4 +30,9 @@ class DirectMessagesUseCaseModule {
     @Singleton
     fun provideSendMessageUseCase(repository: DirectMessagesRepository): SendMessageUseCase =
         SendMessageUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideDeleteMessageUseCase(repository: DirectMessagesRepository): DeleteMessageUseCase =
+        DeleteMessageUseCase(repository)
 }

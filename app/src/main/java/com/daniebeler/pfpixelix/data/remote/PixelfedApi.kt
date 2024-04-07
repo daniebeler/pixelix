@@ -60,8 +60,7 @@ interface PixelfedApi {
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
-        @Path("tag") tag: String,
-        @Query("max_id") maxPostId: String
+        @Path("tag") tag: String, @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
@@ -193,8 +192,7 @@ interface PixelfedApi {
 
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
-        @Path("id") userId: String,
-        @Query("max_id") maxId: String
+        @Path("id") userId: String, @Query("max_id") maxId: String
     ): Call<List<AccountDto>>
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
@@ -267,13 +265,16 @@ interface PixelfedApi {
     fun getConversations(): Call<List<ConversationDto>>
 
     @GET("api/v1.1/direct/thread")
-    fun getChat(@Query("pid")accountId: String): Call<ChatDto>
+    fun getChat(@Query("pid") accountId: String): Call<ChatDto>
 
     @GET("api/v1.1/direct/thread")
-    fun getChat(@Query("pid")accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
+    fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
 
     @POST("api/v1.1/direct/thread/send")
     fun sendMessage(@Body createMessageDto: CreateMessageDto): Call<MessageDto>
+
+    @DELETE("api/v1.1/direct/thread/message")
+    fun deleteMessage(@Query("id") id: String): Call<List<Int>>
     // Other
 
     @GET("api/v1/bookmarks?limit=12")

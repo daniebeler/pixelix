@@ -57,8 +57,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -68,7 +66,6 @@ fun ChatComposable(
     accountId: String,
     viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
 
@@ -139,7 +136,7 @@ fun ChatComposable(
                                 it.id
                             }) {
                                 ConversationElementComposable(
-                                    message = it, navController = navController
+                                    message = it, { viewModel.deleteMessage(it.reportId) }, navController = navController
                                 )
                             }
 

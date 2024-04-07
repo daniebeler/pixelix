@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
+import com.daniebeler.pfpixelix.domain.model.Message
+import com.daniebeler.pfpixelix.domain.usecase.DeleteMessageUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetConversationsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SendMessageUseCase
@@ -19,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val getChatUseCase: GetChatUseCase, private val sendMessageUseCase: SendMessageUseCase
+    private val getChatUseCase: GetChatUseCase, private val sendMessageUseCase: SendMessageUseCase, private val deleteMessageUseCase: DeleteMessageUseCase
 ) : ViewModel() {
 
     var chatState by mutableStateOf(ChatState())
@@ -94,12 +96,12 @@ class ChatViewModel @Inject constructor(
             newMessageState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
-                        val messages = (chatState.chat?.messages ?: emptyList()) + result.data
+                        val messages = emptyList<Message>() + result.data + chatState.chat!!.messages
                         val chat = chatState.chat?.copy()
                         if (chat != null) {
                             chat.messages = messages
+                            chatState = ChatState(chat = chat)
                         }
-                        chatState = ChatState(chat = chat)
                     }
                     NewMessageState(message = result.data)
                 }
@@ -116,5 +118,30 @@ class ChatViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
+    }
+
+    fun deleteMessage(id: String) {
+        deleteMessageUseCase(id).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    if (result.data != null) {
+                        val messages = chatState.chat!!.messages.filter { it.reportId != id }
+                        val chat = chatState.chat?.copy()
+                        if (chat != null) {
+                            chat.messages = messages
+                            chatState = ChatState(chat = chat)
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    println(result.message)
+                }
+
+                is Resource.Loading -> {
+                    println("is loading")
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 }
