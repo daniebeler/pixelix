@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,9 +34,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,9 +52,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -69,9 +78,15 @@ import com.daniebeler.pfpixelix.ui.composables.search.SearchState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 fun Int.pxToDp(context: Context): Float =
-    (this / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT))@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+    (this / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT))
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 
 @Composable
 fun ChatComposable(
@@ -79,6 +94,7 @@ fun ChatComposable(
     accountId: String,
     viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -180,11 +196,11 @@ fun ChatComposable(
                 })
 
 
-                Row {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                     OutlinedTextField(value = viewModel.newMessage,
                         onValueChange = { viewModel.newMessage = it },
                         label = { Text("Message") },
-                        singleLine = true,
+                        singleLine = false,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -192,15 +208,55 @@ fun ChatComposable(
                             unfocusedBorderColor = MaterialTheme.colorScheme.background
                         ),
                         shape = RoundedCornerShape(12.dp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        keyboardActions = KeyboardActions(onSearch = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            viewModel.sendMessage(accountId)
-                        }),
-                    )
-                    Button(onClick = { viewModel.sendMessage(accountId) }) {
-                        Text(text = "send")
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                        modifier = Modifier
+                            .onFocusChanged { focusState ->
+                                if (focusState.isFocused) {
+                                    coroutineScope.launch {
+                                        delay(700)
+                                        lazyListState.animateScrollToItem(
+                                            viewModel.chatState.chat?.messages?.size ?: 0
+                                        )
+                                    }
+                                }
+                            }
+                            .weight(1f))
+                    Spacer(Modifier.width(12.dp))
+                    if (viewModel.newMessageState.isLoading) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .height(56.dp)
+                                .width(56.dp)
+                                .padding(0.dp, 0.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.primary)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                viewModel.sendMessage(accountId)
+                            },
+                            Modifier
+                                .height(56.dp)
+                                .width(56.dp)
+                                .padding(0.dp, 0.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "send",
+                                Modifier
+                                    .fillMaxSize()
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
                 }
 

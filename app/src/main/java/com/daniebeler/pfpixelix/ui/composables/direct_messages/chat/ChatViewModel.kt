@@ -54,6 +54,7 @@ class ChatViewModel @Inject constructor(
             message = newMessage,
             type = "text"
         )
+        newMessage = ""
         sendMessageUseCase(createMessageDto).onEach { result ->
             newMessageState = when (result) {
                 is Resource.Success -> {
