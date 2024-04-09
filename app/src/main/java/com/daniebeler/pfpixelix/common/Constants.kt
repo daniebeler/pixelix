@@ -11,6 +11,7 @@ object Constants {
     const val SHOW_SENSITIVE_CONTENT_DATASTORE_KEY = "show_sensitive_content"
     const val USE_IN_APP_BROWSER_DATASTORE_KEY = "use_in_app_browser"
     const val VOLUME_DATASTORE_KEY = "volume"
+    const val THEME_DATASTORE_KEY = "theme"
 
     const val HASHTAG_TIMELINE_POSTS_LIMIT = 20
     const val HOME_TIMELINE_POSTS_LIMIT = 20
