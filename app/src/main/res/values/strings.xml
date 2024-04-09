@@ -159,4 +159,5 @@
     <string name="warning">Warning</string>
     <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
     <string name="confirm">confirm</string>
+    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don\'t forget to be respectful.</string>
 </resources>

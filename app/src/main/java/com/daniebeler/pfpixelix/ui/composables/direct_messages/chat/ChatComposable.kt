@@ -179,7 +179,7 @@ fun ChatComposable(
                                         .padding(8.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.this_is_the_beginning_of_your_chat_with_this_user_don_t_forget_to_be_respectful),
+                                        text = stringResource(R.string.beginning_of_chat_note),
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )
