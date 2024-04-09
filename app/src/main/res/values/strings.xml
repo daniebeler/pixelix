@@ -149,4 +149,14 @@
     <string name="mute">Mute</string>
     <string name="mute_account">Mute Account?</string>
     <string name="sent_a_dm">sent a dm</string>
+    <string name="theme_system">system</string>
+    <string name="theme_dark">dark</string>
+    <string name="theme_light">light</string>
+    <string name="app_theme">App theme</string>
+    <string name="send_message">Send message</string>
+    <string name="select_recipient">Select recipient</string>
+    <string name="new_direct_message">New Direct Message</string>
+    <string name="warning">Warning</string>
+    <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
+    <string name="confirm">confirm</string>
 </resources>
