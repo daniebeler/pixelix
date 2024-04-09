@@ -10,6 +10,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
@@ -37,13 +39,20 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun PixelixTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: ThemeViewModel = hiltViewModel(key = "Theme"),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (viewModel.currentTheme.theme == "dark") {
+                dynamicDarkColorScheme(context)
+            } else if (viewModel.currentTheme.theme == "light") {
+                dynamicLightColorScheme(context)
+            } else {
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
         }
 
         darkTheme -> DarkColorScheme

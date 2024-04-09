@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,17 +13,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -51,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,7 +70,7 @@ import java.text.StringCharacterIterator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
-    navController: NavController, viewModel: PreferencesViewModel = hiltViewModel()
+    navController: NavController, themeViewModel: ThemeViewModel = hiltViewModel(key = "Theme"), viewModel: PreferencesViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -109,6 +119,10 @@ fun PreferencesComposable(
                 stringResource(R.string.use_in_app_browser),
                 viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
+
+            DropDownPreferencesItem(
+                Icons.Outlined.LightMode, "Theme", themeViewModel.currentTheme.theme
+            ) { theme -> themeViewModel.storeTheme(theme) }
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
@@ -167,6 +181,56 @@ fun PreferencesComposable(
                     Text(stringResource(id = R.string.cancel))
                 }
             })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DropDownPreferencesItem(
+    icon: ImageVector, text: String, currentElement: String, onChange: (current: String) -> Unit
+) {
+    var expanded = remember { mutableStateOf(false) }
+    var items = arrayOf("system", "dark", "light")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
+            Icon(imageVector = icon, contentDescription = null)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(text = text)
+        }
+        ExposedDropdownMenuBox(
+            expanded = expanded.value,
+            onExpandedChange = { expanded.value = it },
+        ) {
+            TextField(
+                value = currentElement,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded.value
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .widthIn(max = 150.dp)
+            )
+            ExposedDropdownMenu(expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }) {
+                items.map {
+                    DropdownMenuItem(text = { Text(text = it) }, onClick = {
+                        expanded.value = false
+                        onChange(it)
+                    })
+                }
+            }
         }
     }
 }

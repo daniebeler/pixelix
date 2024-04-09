@@ -24,4 +24,7 @@ interface StorageRepository {
 
     suspend fun storeVolume(volume: Boolean)
     fun getStoreVolume(): Flow<Boolean>
+
+    suspend fun storeTheme(theme: String)
+    fun getStoreTheme(): Flow<String>
 }
