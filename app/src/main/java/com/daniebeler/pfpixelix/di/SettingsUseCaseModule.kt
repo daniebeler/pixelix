@@ -11,10 +11,12 @@ import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
+import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.Module
 import dagger.Provides
@@ -81,4 +83,14 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideGetUseInAppBrowserUseCase(repository: StorageRepository): GetUseInAppBrowserUseCase =
         GetUseInAppBrowserUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideStoreThemeUseCase(repository: StorageRepository): StoreThemeUseCase =
+        StoreThemeUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetThemeUseCase(repository: StorageRepository): GetThemeUseCase =
+        GetThemeUseCase(repository)
 }
