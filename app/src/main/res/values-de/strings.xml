@@ -149,4 +149,8 @@
     <string name="mute">Stummschalten</string>
     <string name="mute_account">Benutzer stummschalten?</string>
     <string name="sent_a_dm">hat eine Nachricht gesendet</string>
+    <string name="theme_system">System</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_light">Hell</string>
+    <string name="app_theme">App-Design</string>
 </resources>

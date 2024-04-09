@@ -4,42 +4,38 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -53,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,13 +67,16 @@ import java.text.StringCharacterIterator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
-    navController: NavController, themeViewModel: ThemeViewModel = hiltViewModel(key = "Theme"), viewModel: PreferencesViewModel = hiltViewModel()
+    navController: NavController,
+    themeViewModel: ThemeViewModel = hiltViewModel(key = "Theme"),
+    viewModel: PreferencesViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val context = LocalContext.current
 
     val showLogoutDialog = remember { mutableStateOf(false) }
+    val showThemeDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         getCacheSize(context, viewModel)
@@ -120,9 +120,10 @@ fun PreferencesComposable(
                 viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
 
-            DropDownPreferencesItem(
-                Icons.Outlined.LightMode, "Theme", themeViewModel.currentTheme.theme
-            ) { theme -> themeViewModel.storeTheme(theme) }
+            ButtonPreferencesItem(icon = Icons.Outlined.Palette,
+                text = stringResource(R.string.app_theme),
+                smallText = getThemeString(themeViewModel.currentTheme.theme),
+                onClick = { showThemeDialog.value = true })
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
@@ -182,56 +183,61 @@ fun PreferencesComposable(
                 }
             })
         }
+
+        if (showThemeDialog.value) {
+            val themeOptions = listOf("system", "dark", "light")
+            AlertDialog(title = {
+                Text(text = stringResource(R.string.app_theme))
+            }, text = {
+                Column(Modifier.selectableGroup()) {
+                    themeOptions.forEach { text ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .selectable(
+                                    selected = (text == themeViewModel.currentTheme.theme),
+                                    onClick = {
+                                        showThemeDialog.value = false
+                                        themeViewModel.storeTheme(text)
+                                    },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (text == themeViewModel.currentTheme.theme),
+                                onClick = null
+                            )
+                            Text(
+                                text = getThemeString(text),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                }
+            }, onDismissRequest = {
+                showThemeDialog.value = false
+            }, confirmButton = {}, dismissButton = {
+                TextButton(onClick = {
+                    showThemeDialog.value = false
+                }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            })
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DropDownPreferencesItem(
-    icon: ImageVector, text: String, currentElement: String, onChange: (current: String) -> Unit
-) {
-    var expanded = remember { mutableStateOf(false) }
-    var items = arrayOf("system", "dark", "light")
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row {
-            Icon(imageVector = icon, contentDescription = null)
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(text = text)
-        }
-        ExposedDropdownMenuBox(
-            expanded = expanded.value,
-            onExpandedChange = { expanded.value = it },
-        ) {
-            TextField(
-                value = currentElement,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(
-                        expanded = expanded.value
-                    )
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier
-                    .menuAnchor()
-                    .widthIn(max = 150.dp)
-            )
-            ExposedDropdownMenu(expanded = expanded.value,
-                onDismissRequest = { expanded.value = false }) {
-                items.map {
-                    DropdownMenuItem(text = { Text(text = it) }, onClick = {
-                        expanded.value = false
-                        onChange(it)
-                    })
-                }
-            }
-        }
+private fun getThemeString(theme: String): String {
+    return when (theme) {
+        "system" -> stringResource(R.string.theme_system)
+        "dark" -> stringResource(R.string.theme_dark)
+        "light" -> stringResource(R.string.theme_light)
+        else -> ""
     }
 }
 

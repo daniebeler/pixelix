@@ -149,4 +149,8 @@
     <string name="mute">Mute</string>
     <string name="mute_account">Mute Account?</string>
     <string name="sent_a_dm">sent a dm</string>
+    <string name="theme_system">system</string>
+    <string name="theme_dark">dark</string>
+    <string name="theme_light">light</string>
+    <string name="app_theme">App theme</string>
 </resources>
