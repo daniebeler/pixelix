@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
@@ -18,6 +16,7 @@ import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -39,6 +38,8 @@ class OwnProfileViewModel @Inject constructor(
     var ownDomain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
+    var view by mutableStateOf(ViewEnum.Timeline)
+
     init {
         loadData()
 

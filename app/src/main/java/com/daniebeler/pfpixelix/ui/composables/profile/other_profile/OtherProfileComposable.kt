@@ -54,7 +54,9 @@ import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePage
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
+import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePageGrid
+import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePageTimeline
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
@@ -127,40 +129,77 @@ fun OtherProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            if (viewModel.view == ViewEnum.Timeline) {
+                CustomProfilePageTimeline(accountState = viewModel.accountState,
+                    postsState = viewModel.postsState,
+                    navController = navController,
+                    refresh = {
+                        viewModel.loadData(userId)
+                    },
+                    getPostsPaginated = {
+                        viewModel.getPostsPaginated(userId)
+                    },
+                    openUrl = { viewModel.openUrl(context, it) },
+                    emptyState = EmptyState(
+                        icon = Icons.Outlined.Photo,
+                        heading = stringResource(R.string.no_posts_yet),
+                        message = stringResource(R.string.this_user_has_not_postet_anything_yet)
+                    ),
+                    otherAccountTopSectionAdditions = {
+                        Column(Modifier.padding(8.dp)) {
 
-            CustomProfilePage(accountState = viewModel.accountState,
-                postsState = viewModel.postsState,
-                navController = navController,
-                refresh = {
-                    viewModel.loadData(userId)
-                },
-                getPostsPaginated = {
-                    viewModel.getPostsPaginated(userId)
-                },
-                openUrl = { viewModel.openUrl(context, it) },
-                emptyState = EmptyState(
-                    icon = Icons.Outlined.Photo,
-                    heading = stringResource(R.string.no_posts_yet),
-                    message = stringResource(R.string.this_user_has_not_postet_anything_yet)
-                ),
-                otherAccountTopSectionAdditions = {
-                    Column(Modifier.padding(8.dp)) {
+                            MutualFollowersComposable(viewModel.mutualFollowersState)
 
-                        MutualFollowersComposable(viewModel.mutualFollowersState)
+                            if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                                isLoading = viewModel.relationshipState.isLoading,
+                                isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                    ?: false,
+                                onFollowClick = { viewModel.followAccount(userId) },
+                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
-                        if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
-                        FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                            isLoading = viewModel.relationshipState.isLoading,
-                            isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                ?: false,
-                            onFollowClick = { viewModel.followAccount(userId) },
-                            onUnFollowClick = { viewModel.unfollowAccount(userId) })
+                    },
+                    changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)
+            } else {
+                CustomProfilePageGrid(accountState = viewModel.accountState,
+                    postsState = viewModel.postsState,
+                    navController = navController,
+                    refresh = {
+                        viewModel.loadData(userId)
+                    },
+                    getPostsPaginated = {
+                        viewModel.getPostsPaginated(userId)
+                    },
+                    openUrl = { viewModel.openUrl(context, it) },
+                    emptyState = EmptyState(
+                        icon = Icons.Outlined.Photo,
+                        heading = stringResource(R.string.no_posts_yet),
+                        message = stringResource(R.string.this_user_has_not_postet_anything_yet)
+                    ),
+                    otherAccountTopSectionAdditions = {
+                        Column(Modifier.padding(8.dp)) {
 
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                })
+                            MutualFollowersComposable(viewModel.mutualFollowersState)
+
+                            if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                                isLoading = viewModel.relationshipState.isLoading,
+                                isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                    ?: false,
+                                onFollowClick = { viewModel.followAccount(userId) },
+                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    },
+                    changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)
+            }
         }
     }
 
