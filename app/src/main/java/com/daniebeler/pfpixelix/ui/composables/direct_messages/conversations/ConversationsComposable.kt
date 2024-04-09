@@ -16,18 +16,23 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -50,6 +55,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -59,6 +65,7 @@ fun ConversationsComposable(
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showNewChatDialog = remember { mutableStateOf(false) }
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = viewModel.conversationsState.isRefreshing,
@@ -66,7 +73,14 @@ fun ConversationsComposable(
 
     val lazyListState = rememberLazyListState()
 
-    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
+    Scaffold(contentWindowInsets = WindowInsets(0.dp), floatingActionButton = {
+        FloatingActionButton(onClick = {
+            showNewChatDialog.value = true
+        }) {
+            Icon(Icons.Default.Add, contentDescription = "Add")
+        }
+
+    }, topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text("Messages")
 
@@ -171,6 +185,28 @@ fun ConversationsComposable(
                     }
                 }
             }
+        }
+
+        if (showNewChatDialog.value) {
+            AlertDialog(title = {
+                Text(text = "New Direct Message")
+            }, text = {
+                TextField(value = "", onValueChange = {})
+            }, onDismissRequest = {
+                showNewChatDialog.value = false
+            }, confirmButton = {
+                TextButton(onClick = {
+                    showNewChatDialog.value = false
+                }) {
+                    Text("Confirm")
+                }
+            }, dismissButton = {
+                TextButton(onClick = {
+                    showNewChatDialog.value = false
+                }) {
+                    Text("Dismiss")
+                }
+            })
         }
     }
 }
