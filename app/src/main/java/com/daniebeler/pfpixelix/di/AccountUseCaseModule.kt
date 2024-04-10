@@ -15,7 +15,9 @@ import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
@@ -113,4 +115,14 @@ class AccountUseCaseModule {
     @Singleton
     fun provideUpdateAccountUseCase(repository: AccountRepository): UpdateAccountUseCase =
         UpdateAccountUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetViewUseCase(repository: StorageRepository): GetViewUseCase =
+        GetViewUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideSetViewUseCase(repository: StorageRepository): SetViewUseCase =
+        SetViewUseCase(repository)
 }

@@ -41,6 +41,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,49 +98,55 @@ fun OwnProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.view == ViewEnum.Timeline) {
-                CustomProfilePageTimeline(accountState = viewModel.accountState,
-                    postsState = viewModel.postsState,
-                    navController = navController,
-                    refresh = {
-                        viewModel.loadData()
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated()
-                    },
-                    openUrl = { viewModel.openUrl(context, it) },
-                    emptyState = EmptyState(icon = Icons.Outlined.Photo,
-                        heading = stringResource(R.string.no_posts_yet),
-                        message = stringResource(R.string.upload_your_first_post),
-                        buttonText = stringResource(id = R.string.new_post),
-                        onClick = {
-                            Navigate.navigate("new_post_screen", navController)
-                        }),
-                    otherAccountTopSectionAdditions = {},
-                    changeView = { view -> viewModel.view = view }, view = viewModel.view)
-            } else {
-                CustomProfilePageGrid(
-                    accountState = viewModel.accountState,
-                    postsState = viewModel.postsState,
-                    navController = navController,
-                    refresh = {
-                        viewModel.loadData()
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated()
-                    },
-                    openUrl = { viewModel.openUrl(context, it) },
-                    emptyState = EmptyState(icon = Icons.Outlined.Photo,
-                        heading = stringResource(R.string.no_posts_yet),
-                        message = stringResource(R.string.upload_your_first_post),
-                        buttonText = stringResource(id = R.string.new_post),
-                        onClick = {
-                            Navigate.navigate("new_post_screen", navController)
-                        }),
-                    otherAccountTopSectionAdditions = {},
-                    changeView = { view -> viewModel.view = view },
-                    view = viewModel.view
-                )
+            when (viewModel.view) {
+                ViewEnum.Timeline -> {
+                    CustomProfilePageTimeline(accountState = viewModel.accountState,
+                        postsState = viewModel.postsState,
+                        navController = navController,
+                        refresh = {
+                            viewModel.loadData()
+                        },
+                        getPostsPaginated = {
+                            viewModel.getPostsPaginated()
+                        },
+                        openUrl = { viewModel.openUrl(context, it) },
+                        emptyState = EmptyState(icon = Icons.Outlined.Photo,
+                            heading = stringResource(R.string.no_posts_yet),
+                            message = stringResource(R.string.upload_your_first_post),
+                            buttonText = stringResource(id = R.string.new_post),
+                            onClick = {
+                                Navigate.navigate("new_post_screen", navController)
+                            }),
+                        otherAccountTopSectionAdditions = {},
+                        changeView = { view -> viewModel.changeView(view) }, view = viewModel.view)
+                }
+                ViewEnum.Grid -> {
+                    CustomProfilePageGrid(
+                        accountState = viewModel.accountState,
+                        postsState = viewModel.postsState,
+                        navController = navController,
+                        refresh = {
+                            viewModel.loadData()
+                        },
+                        getPostsPaginated = {
+                            viewModel.getPostsPaginated()
+                        },
+                        openUrl = { viewModel.openUrl(context, it) },
+                        emptyState = EmptyState(icon = Icons.Outlined.Photo,
+                            heading = stringResource(R.string.no_posts_yet),
+                            message = stringResource(R.string.upload_your_first_post),
+                            buttonText = stringResource(id = R.string.new_post),
+                            onClick = {
+                                Navigate.navigate("new_post_screen", navController)
+                            }),
+                        otherAccountTopSectionAdditions = {},
+                        changeView = { view -> viewModel.changeView(view) },
+                        view = viewModel.view
+                    )
+                }
+                else -> {
+                    LoadingComposable(isLoading = true)
+                }
             }
         }
 
