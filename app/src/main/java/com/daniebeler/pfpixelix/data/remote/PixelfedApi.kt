@@ -5,20 +5,20 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
+import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
+import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
+import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
-import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
-import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
-import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -130,12 +130,12 @@ interface PixelfedApi {
         @Body body: RequestBody
     ): Call<AccountDto>
 
-    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("max_id") maxId: String
     ): Call<List<PostDto>>
