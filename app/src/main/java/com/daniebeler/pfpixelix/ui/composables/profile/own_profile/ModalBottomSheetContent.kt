@@ -97,6 +97,13 @@ fun ModalBottomSheetContent(navController: NavController, instanceDomain: String
                 Navigate.navigate("about_instance_screen", navController)
             })
 
+        CustomBottomSheetElement(icon = Icons.Outlined.Dns,
+            text = "About Pixelix",
+            onClick = {
+                closeBottomSheet()
+                Navigate.navigate("about_pixelix_screen", navController)
+            })
+
     }
 }
 
