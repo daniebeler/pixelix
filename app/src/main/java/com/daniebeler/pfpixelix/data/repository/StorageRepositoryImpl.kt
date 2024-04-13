@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -84,6 +85,16 @@ class StorageRepositoryImpl @Inject constructor(
         preferences[stringPreferencesKey(Constants.THEME_DATASTORE_KEY)] ?: "system"
     }
 
+    override suspend fun storeView(view: ViewEnum) {
+        storage.edit { preferences ->
+            preferences[stringPreferencesKey(Constants.VIEW_DATASTORE_KEY)] = view.toString()
+        }
+    }
+
+    override fun getStoredView(): Flow<ViewEnum> =
+        storage.data.map { preferences ->
+            ViewEnum.valueOf(preferences[stringPreferencesKey(Constants.VIEW_DATASTORE_KEY)] ?: "Grid")
+        }
 
     override suspend fun storeClientSecret(clientSecret: String) {
         storage.edit { preferences ->

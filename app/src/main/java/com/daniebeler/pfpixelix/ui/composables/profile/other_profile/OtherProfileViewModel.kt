@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
@@ -27,6 +26,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,6 +57,7 @@ class OtherProfileViewModel @Inject constructor(
     var domain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
+    var view by mutableStateOf(ViewEnum.Timeline)
 
     fun loadData(userId: String) {
         getAccount(userId)
