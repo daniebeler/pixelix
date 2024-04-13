@@ -61,10 +61,9 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getClientIdFromStorage(): Flow<String> =
-        storage.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
-        }
+    override fun getClientIdFromStorage(): Flow<String> = storage.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.CLIENT_ID_DATASTORE_KEY)] ?: ""
+    }
 
     override suspend fun storeVolume(volume: Boolean) {
         storage.edit { preferences ->
@@ -72,10 +71,19 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStoreVolume(): Flow<Boolean> =
-        storage.data.map { preferences ->
-            preferences[booleanPreferencesKey(Constants.VOLUME_DATASTORE_KEY)] ?: true
+    override fun getStoreVolume(): Flow<Boolean> = storage.data.map { preferences ->
+        preferences[booleanPreferencesKey(Constants.VOLUME_DATASTORE_KEY)] ?: true
+    }
+
+    override suspend fun storeTheme(theme: String) {
+        storage.edit { preferences ->
+            preferences[stringPreferencesKey(Constants.THEME_DATASTORE_KEY)] = theme
         }
+    }
+
+    override fun getStoreTheme(): Flow<String> = storage.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.THEME_DATASTORE_KEY)] ?: "system"
+    }
 
     override suspend fun storeView(view: ViewEnum) {
         storage.edit { preferences ->
@@ -94,8 +102,7 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getClientSecretFromStorage(): Flow<String> =
-        storage.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
-        }
+    override fun getClientSecretFromStorage(): Flow<String> = storage.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.CLIENT_SECRET_DATASTORE_KEY)] ?: ""
+    }
 }

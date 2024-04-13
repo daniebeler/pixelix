@@ -10,15 +10,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
@@ -27,6 +31,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -44,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,13 +67,16 @@ import java.text.StringCharacterIterator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
-    navController: NavController, viewModel: PreferencesViewModel = hiltViewModel()
+    navController: NavController,
+    themeViewModel: ThemeViewModel = hiltViewModel(key = "Theme"),
+    viewModel: PreferencesViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val context = LocalContext.current
 
     val showLogoutDialog = remember { mutableStateOf(false) }
+    val showThemeDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         getCacheSize(context, viewModel)
@@ -109,6 +119,11 @@ fun PreferencesComposable(
                 stringResource(R.string.use_in_app_browser),
                 viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
+
+            ButtonPreferencesItem(icon = Icons.Outlined.Palette,
+                text = stringResource(R.string.app_theme),
+                smallText = getThemeString(themeViewModel.currentTheme.theme),
+                onClick = { showThemeDialog.value = true })
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
@@ -168,6 +183,61 @@ fun PreferencesComposable(
                 }
             })
         }
+
+        if (showThemeDialog.value) {
+            val themeOptions = listOf("system", "dark", "light")
+            AlertDialog(title = {
+                Text(text = stringResource(R.string.app_theme))
+            }, text = {
+                Column(Modifier.selectableGroup()) {
+                    themeOptions.forEach { text ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .selectable(
+                                    selected = (text == themeViewModel.currentTheme.theme),
+                                    onClick = {
+                                        showThemeDialog.value = false
+                                        themeViewModel.storeTheme(text)
+                                    },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (text == themeViewModel.currentTheme.theme),
+                                onClick = null
+                            )
+                            Text(
+                                text = getThemeString(text),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                }
+            }, onDismissRequest = {
+                showThemeDialog.value = false
+            }, confirmButton = {}, dismissButton = {
+                TextButton(onClick = {
+                    showThemeDialog.value = false
+                }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            })
+        }
+    }
+}
+
+@Composable
+private fun getThemeString(theme: String): String {
+    return when (theme) {
+        "system" -> stringResource(R.string.theme_system)
+        "dark" -> stringResource(R.string.theme_dark)
+        "light" -> stringResource(R.string.theme_light)
+        else -> ""
     }
 }
 
