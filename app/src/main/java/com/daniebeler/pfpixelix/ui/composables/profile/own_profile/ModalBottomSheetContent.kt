@@ -45,8 +45,9 @@ fun ModalBottomSheetContent(
 ) {
     Column(
         Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .verticalScroll(state = rememberScrollState())
+            .padding(bottom = 12.dp)
     ) {
 
         CustomBottomSheetElement(icon = Icons.Outlined.Settings,

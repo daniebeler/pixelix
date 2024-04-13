@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.notifications
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +23,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -43,15 +42,15 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 fun NotificationsComposable(
     navController: NavController, viewModel: NotificationsViewModel = hiltViewModel()
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.notificationsState.isRefreshing,
-        onRefresh = { viewModel.refresh() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(stringResource(R.string.notifications))
+            Text(stringResource(R.string.notifications), fontWeight = FontWeight.Bold)
         })
     }) { paddingValues ->
         Box(
@@ -91,10 +90,13 @@ fun NotificationsComposable(
                 })
 
             if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                FullscreenEmptyStateComposable(EmptyState(icon = Icons.Outlined.Email, heading = stringResource(
-                    R.string.you_don_t_have_any_notifications
+                FullscreenEmptyStateComposable(
+                    EmptyState(
+                        icon = Icons.Outlined.Email, heading = stringResource(
+                            R.string.you_don_t_have_any_notifications
+                        )
+                    )
                 )
-                ))
             }
 
             CustomPullRefreshIndicator(

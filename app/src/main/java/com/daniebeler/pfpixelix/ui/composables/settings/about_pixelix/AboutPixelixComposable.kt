@@ -63,7 +63,7 @@ fun AboutPixelixComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(text = stringResource(R.string.about_pixelix))
+            Text(text = stringResource(R.string.about_pixelix), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

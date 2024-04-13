@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -48,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -88,7 +90,7 @@ fun ConversationsComposable(
 
     }, topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text("Messages")
+            Text(stringResource(R.string.conversations), fontWeight = FontWeight.Bold)
 
         }, navigationIcon = {
             IconButton(onClick = {
@@ -101,7 +103,7 @@ fun ConversationsComposable(
         }, actions = {
             IconButton(onClick = { showBottomSheet = true }) {
                 Icon(
-                    imageVector = Icons.Outlined.ReportProblem,
+                    imageVector = Icons.Outlined.QuestionMark,
                     tint = MaterialTheme.colorScheme.error,
                     contentDescription = null
                 )

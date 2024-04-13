@@ -50,7 +50,7 @@ fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -100,7 +100,8 @@ fun OwnProfileComposable(
         ) {
             when (viewModel.view) {
                 ViewEnum.Timeline -> {
-                    CustomProfilePageTimeline(accountState = viewModel.accountState,
+                    CustomProfilePageTimeline(
+                        accountState = viewModel.accountState,
                         postsState = viewModel.postsState,
                         navController = navController,
                         refresh = {
@@ -118,8 +119,11 @@ fun OwnProfileComposable(
                                 Navigate.navigate("new_post_screen", navController)
                             }),
                         otherAccountTopSectionAdditions = {},
-                        changeView = { view -> viewModel.changeView(view) }, view = viewModel.view)
+                        changeView = { view -> viewModel.changeView(view) },
+                        view = viewModel.view
+                    )
                 }
+
                 ViewEnum.Grid -> {
                     CustomProfilePageGrid(
                         accountState = viewModel.accountState,
@@ -144,6 +148,7 @@ fun OwnProfileComposable(
                         view = viewModel.view
                     )
                 }
+
                 else -> {
                     LoadingComposable(isLoading = true)
                 }
