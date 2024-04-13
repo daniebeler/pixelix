@@ -6,11 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AboutPixelixViewModel @Inject constructor(): ViewModel() {
+class AboutPixelixViewModel @Inject constructor(
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+) : ViewModel() {
 
     var versionName by mutableStateOf("")
 
@@ -20,5 +23,17 @@ class AboutPixelixViewModel @Inject constructor(): ViewModel() {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+    }
+
+    fun rateApp(context: Context) {
+        openExternalUrlUseCase(
+            context, "https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"
+        )
+    }
+
+    fun openUrl(context: Context, url: String) {
+        openExternalUrlUseCase(
+            context, url
+        )
     }
 }
