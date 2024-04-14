@@ -6,5 +6,7 @@ data class Collection(
     val title: String,
     val description: String,
     val thumbnail: String,
-    val postCount: Int
+    val postCount: Int,
+    val username: String,
+    val url: String
 )

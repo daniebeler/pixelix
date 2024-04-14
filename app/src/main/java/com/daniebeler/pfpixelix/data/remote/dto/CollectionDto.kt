@@ -24,7 +24,9 @@ data class CollectionDto(
             title = title,
             description = description,
             thumbnail = thumb,
-            postCount = postCount
+            postCount = postCount,
+            username = username,
+            url = url
         )
     }
 }
