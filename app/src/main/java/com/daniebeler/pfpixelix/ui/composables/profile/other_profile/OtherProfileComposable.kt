@@ -52,6 +52,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
@@ -196,6 +197,8 @@ fun OtherProfileComposable(
                                 onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
                             Spacer(modifier = Modifier.height(8.dp))
+                            
+                            CollectionsComposable(collectionsState = viewModel.collectionsState)
                         }
                     },
                     changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)

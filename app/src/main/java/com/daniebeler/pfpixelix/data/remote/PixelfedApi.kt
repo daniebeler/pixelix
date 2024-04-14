@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
+import com.daniebeler.pfpixelix.data.remote.dto.CollectionDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
@@ -237,6 +238,14 @@ interface PixelfedApi {
     fun unbookmarkPost(
         @Path("id") userId: String
     ): Call<PostDto>
+
+
+    // Collections
+
+    @GET("api/v1.1/collections/accounts/{userId}")
+    fun getCollectionsByUserId(
+        @Path("userId") userId: String
+    ): Call<List<CollectionDto>>
 
 
     // Tags
