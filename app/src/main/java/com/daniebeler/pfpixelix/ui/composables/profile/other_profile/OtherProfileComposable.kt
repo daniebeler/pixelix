@@ -198,7 +198,7 @@ fun OtherProfileComposable(
 
                             Spacer(modifier = Modifier.height(8.dp))
                             
-                            CollectionsComposable(collectionsState = viewModel.collectionsState)
+                            CollectionsComposable(collectionsState = viewModel.collectionsState, navController)
                         }
                     },
                     changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)

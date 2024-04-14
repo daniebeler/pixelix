@@ -247,6 +247,16 @@ interface PixelfedApi {
         @Path("userId") userId: String
     ): Call<List<CollectionDto>>
 
+    @GET("api/v1.1/collections/view/{collectionid}")
+    fun getCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<CollectionDto>
+
+    @GET("api/v1.1/collections/items/{collectionid}")
+    fun getPostsOfCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<List<PostDto>>
+
 
     // Tags
 
