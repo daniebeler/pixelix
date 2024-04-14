@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,6 +65,8 @@ fun ModalBottomSheetContent(
                 Navigate.navigate("edit_profile_screen", navController)
             })
 
+        HorizontalDivider(Modifier.padding(12.dp))
+
         CustomBottomSheetElement(icon = Icons.Outlined.FavoriteBorder,
             text = stringResource(R.string.liked_posts),
             onClick = {
@@ -98,6 +101,8 @@ fun ModalBottomSheetContent(
                 closeBottomSheet()
                 Navigate.navigate("blocked_accounts_screen", navController)
             })
+
+        HorizontalDivider(Modifier.padding(12.dp))
 
         CustomBottomSheetElement(icon = R.drawable.pixelfed_logo,
             text = stringResource(R.string.about_x, instanceDomain),
