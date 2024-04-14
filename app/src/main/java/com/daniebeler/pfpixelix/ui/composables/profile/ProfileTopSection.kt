@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.TableRows
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,7 +43,11 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?, navController: NavController, openUrl: (url: String) -> Unit, changeView: (ViewEnum) -> Unit, view: ViewEnum
+    account: Account?,
+    navController: NavController,
+    openUrl: (url: String) -> Unit,
+    changeView: (ViewEnum) -> Unit,
+    view: ViewEnum
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -135,28 +140,51 @@ fun ProfileTopSection(
                     )
                 }
             }
+
+            if (account.createdAt.isNotBlank()) {
+                val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
+                val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                val formatted = date.format(formatter)
+                Text(
+                    text = "Joined $formatted",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 10.sp
+                )
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                if (account.createdAt.isNotBlank()) {
-                    val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
-                    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                    val formatted = date.format(formatter)
-                    Text(
-                        text = "Joined $formatted",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 10.sp
-                    )
-                } else {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+                Text(text = "50 posts")
                 Row {
-                    Box(modifier = Modifier.padding(4.dp).clickable{ changeView(ViewEnum.Grid) }.alpha(if (view == ViewEnum.Timeline) {0.5f} else {1f})) {
+                    Box(modifier = Modifier
+                        .padding(4.dp)
+                        .clickable { changeView(ViewEnum.Grid) }
+                        .alpha(
+                            if (view == ViewEnum.Timeline) {
+                                0.5f
+                            } else {
+                                1f
+                            }
+                        )) {
                         Icon(
                             imageVector = Icons.Outlined.GridView, contentDescription = "grid view"
                         )
                     }
-                    Box(modifier = Modifier.padding(4.dp).clickable{ changeView(ViewEnum.Timeline) }.alpha(if (view == ViewEnum.Grid) {0.5f} else {1f})) {
+                    Box(modifier = Modifier
+                        .padding(4.dp)
+                        .clickable { changeView(ViewEnum.Timeline) }
+                        .alpha(
+                            if (view == ViewEnum.Grid) {
+                                0.5f
+                            } else {
+                                1f
+                            }
+                        )) {
                         Icon(
                             imageVector = Icons.Outlined.TableRows,
                             contentDescription = "timeline view"
