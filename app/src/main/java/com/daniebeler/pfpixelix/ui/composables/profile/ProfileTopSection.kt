@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,18 +12,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.TableRows
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,11 +38,7 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?,
-    navController: NavController,
-    openUrl: (url: String) -> Unit,
-    changeView: (ViewEnum) -> Unit,
-    view: ViewEnum
+    account: Account?, navController: NavController, openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -159,37 +150,17 @@ fun ProfileTopSection(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "50 posts")
-                Row {
-                    Box(modifier = Modifier
-                        .padding(4.dp)
-                        .clickable { changeView(ViewEnum.Grid) }
-                        .alpha(
-                            if (view == ViewEnum.Timeline) {
-                                0.5f
-                            } else {
-                                1f
-                            }
-                        )) {
-                        Icon(
-                            imageVector = Icons.Outlined.GridView, contentDescription = "grid view"
-                        )
-                    }
-                    Box(modifier = Modifier
-                        .padding(4.dp)
-                        .clickable { changeView(ViewEnum.Timeline) }
-                        .alpha(
-                            if (view == ViewEnum.Grid) {
-                                0.5f
-                            } else {
-                                1f
-                            }
-                        )) {
-                        Icon(
-                            imageVector = Icons.Outlined.TableRows,
-                            contentDescription = "timeline view"
-                        )
-                    }
+                if (account.createdAt.isNotBlank()) {
+                    val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
+                    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                    val formatted = date.format(formatter)
+                    Text(
+                        text = "Joined $formatted",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 10.sp
+                    )
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }

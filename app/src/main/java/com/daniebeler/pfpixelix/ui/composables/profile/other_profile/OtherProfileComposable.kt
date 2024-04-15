@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
@@ -19,6 +25,8 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -50,19 +58,21 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
+import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePageGrid
-import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.CustomProfilePageTimeline
+import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
+import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun OtherProfileComposable(
     navController: NavController,
@@ -71,6 +81,11 @@ fun OtherProfileComposable(
 ) {
 
     val sheetState = rememberModalBottomSheetState()
+
+    val lazyGridState = rememberLazyGridState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.accountState.isLoading,
+        onRefresh = { viewModel.loadData(userId) })
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -130,8 +145,44 @@ fun OtherProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (viewModel.view == ViewEnum.Timeline) {
-                CustomProfilePageTimeline(accountState = viewModel.accountState,
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.pullRefresh(pullRefreshState)
+            ) {
+                item(span = { GridItemSpan(3) }) {
+                    Column {
+                        if (viewModel.accountState.account != null) {
+                            ProfileTopSection(account = viewModel.accountState.account,
+                                navController,
+                                openUrl = { url ->
+                                    viewModel.openUrl(context, url)
+                                })
+                        }
+                        
+                        
+                        MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState)
+
+                        FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                            isLoading = viewModel.relationshipState.isLoading,
+                            isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                ?: false,
+                            onFollowClick = { viewModel.followAccount(userId) },
+                            onUnFollowClick = { viewModel.unfollowAccount(userId) })
+
+                        SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
+                            ?: 0,
+                            viewType = viewModel.view,
+                            onViewChange = {
+                                viewModel.changeView(it)
+                            })
+                    }
+                }
+
+                PostsWrapperComposable(
+                    accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
@@ -140,71 +191,25 @@ fun OtherProfileComposable(
                     getPostsPaginated = {
                         viewModel.getPostsPaginated(userId)
                     },
-                    openUrl = { viewModel.openUrl(context, it) },
                     emptyState = EmptyState(
-                        icon = Icons.Outlined.Photo,
-                        heading = stringResource(R.string.no_posts_yet),
-                        message = stringResource(R.string.this_user_has_not_postet_anything_yet)
+                        icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
                     ),
-                    otherAccountTopSectionAdditions = {
-                        Column(Modifier.padding(8.dp)) {
-
-                            MutualFollowersComposable(viewModel.mutualFollowersState)
-
-                            if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(12.dp))
-                            }
-                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                                isLoading = viewModel.relationshipState.isLoading,
-                                isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                    ?: false,
-                                onFollowClick = { viewModel.followAccount(userId) },
-                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
-
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    },
-                    changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)
-            } else {
-                CustomProfilePageGrid(accountState = viewModel.accountState,
-                    postsState = viewModel.postsState,
-                    navController = navController,
-                    refresh = {
-                        viewModel.loadData(userId)
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated(userId)
-                    },
-                    openUrl = { viewModel.openUrl(context, it) },
-                    emptyState = EmptyState(
-                        icon = Icons.Outlined.Photo,
-                        heading = stringResource(R.string.no_posts_yet),
-                        message = stringResource(R.string.this_user_has_not_postet_anything_yet)
-                    ),
-                    otherAccountTopSectionAdditions = {
-                        Column(Modifier.padding(8.dp)) {
-
-                            MutualFollowersComposable(viewModel.mutualFollowersState)
-
-                            if (viewModel.mutualFollowersState.mutualFollowers.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(12.dp))
-                            }
-                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                                isLoading = viewModel.relationshipState.isLoading,
-                                isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                    ?: false,
-                                onFollowClick = { viewModel.followAccount(userId) },
-                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
-
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            CollectionsComposable(collectionsState = viewModel.collectionsState, navController)
-                        }
-                    },
-                    changeView = { viewEnum -> viewModel.view = viewEnum }, view = viewModel.view)
+                    view = viewModel.view
+                )
             }
+
+
         }
     }
+
+    InfiniteGridHandler(lazyGridState = lazyGridState) {
+        viewModel.getPostsPaginated(userId)
+    }
+
+    CustomPullRefreshIndicator(
+        viewModel.postsState.isLoading,
+        pullRefreshState,
+    )
 
     if (showBottomSheet) {
         ModalBottomSheet(

@@ -19,6 +19,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
@@ -32,6 +33,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,7 +50,7 @@ class OtherProfileViewModel @Inject constructor(
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
-    private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val setViewUseCase: SetViewUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -343,5 +345,12 @@ class OtherProfileViewModel @Inject constructor(
 
     fun openUrl(context: Context, url: String) {
         openExternalUrlUseCase(context, url)
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        viewModelScope.launch {
+            setViewUseCase(newView)
+        }
     }
 }
