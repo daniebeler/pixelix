@@ -42,7 +42,7 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?, navController: NavController, openUrl: (url: String) -> Unit, changeView: (ViewEnum) -> Unit, view: ViewEnum
+    account: Account?, navController: NavController, openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -150,7 +150,7 @@ fun ProfileTopSection(
                 } else {
                     Spacer(modifier = Modifier.weight(1f))
                 }
-                Row {
+                /*Row {
                     Box(modifier = Modifier.padding(4.dp).clickable{ changeView(ViewEnum.Grid) }.alpha(if (view == ViewEnum.Timeline) {0.5f} else {1f})) {
                         Icon(
                             imageVector = Icons.Outlined.GridView, contentDescription = "grid view"
@@ -162,7 +162,7 @@ fun ProfileTopSection(
                             contentDescription = "timeline view"
                         )
                     }
-                }
+                }*/
             }
         }
     }
