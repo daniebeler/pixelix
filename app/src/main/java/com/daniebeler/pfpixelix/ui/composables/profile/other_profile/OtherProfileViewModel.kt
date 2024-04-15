@@ -17,6 +17,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
@@ -52,6 +53,7 @@ class OtherProfileViewModel @Inject constructor(
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val getViewUseCase: GetViewUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -76,6 +78,12 @@ class OtherProfileViewModel @Inject constructor(
 
         getMutualFollowers(userId)
         getCollections(userId)
+
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
     }
 
     private fun getRelationship(userId: String) {
