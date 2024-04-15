@@ -66,7 +66,7 @@ fun LazyGridScope.PostsWrapperComposable(
     }
 }
 
-fun LazyGridScope.PostsGridInScope(
+private fun LazyGridScope.PostsGridInScope(
     items: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
@@ -115,7 +115,7 @@ fun LazyGridScope.PostsGridInScope(
     }
 }
 
-fun LazyGridScope.PostsListInScope(
+private fun LazyGridScope.PostsListInScope(
     items: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
