@@ -131,8 +131,24 @@ fun ProfileTopSection(
                     )
                 }
             }
+
+            if (account.createdAt.isNotBlank()) {
+                val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
+                val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                val formatted = date.format(formatter)
+                Text(
+                    text = "Joined $formatted",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 10.sp
+                )
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 if (account.createdAt.isNotBlank()) {
                     val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))

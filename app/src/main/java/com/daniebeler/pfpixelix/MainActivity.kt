@@ -34,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
@@ -173,6 +174,10 @@ sealed class Destinations(
         route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
     )
 
+    object Collection : Destinations(
+        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite
+    )
+
     object Followers : Destinations(
         route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite
     )
@@ -278,6 +283,13 @@ fun NavigationGraph(navController: NavHostController) {
             val uId = navBackStackEntry.arguments?.getString("postid")
             uId?.let { id ->
                 SinglePostComposable(navController, postId = id)
+            }
+        }
+
+        composable(Destinations.Collection.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("collectionid")
+            uId?.let { id ->
+                CollectionComposable(navController, collectionId = id)
             }
         }
 

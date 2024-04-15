@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
@@ -23,6 +24,7 @@ import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
@@ -57,6 +59,8 @@ class OtherProfileViewModel @Inject constructor(
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
     var postsState by mutableStateOf(PostsState())
 
+    var collectionsState by mutableStateOf(CollectionsState())
+
     var domain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
@@ -70,6 +74,7 @@ class OtherProfileViewModel @Inject constructor(
         getRelationship(userId)
 
         getMutualFollowers(userId)
+        getCollections(userId)
     }
 
     private fun getRelationship(userId: String) {
@@ -139,6 +144,26 @@ class OtherProfileViewModel @Inject constructor(
                 domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
                     ?: ""
                 getDomainSoftware(domain)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getCollections(userId: String) {
+        getCollectionsUseCase(userId).onEach { result ->
+            collectionsState = when (result) {
+                is Resource.Success -> {
+                    CollectionsState(collections = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    CollectionsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    CollectionsState(
+                        isLoading = true, collections = collectionsState.collections
+                    )
+                }
             }
         }.launchIn(viewModelScope)
     }
