@@ -31,13 +31,7 @@ fun LazyGridScope.PostsWrapperComposable(
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
-            emptyMessage = EmptyState(icon = Icons.Outlined.Photo,
-                heading = "feif",
-                message = "feif",
-                buttonText = "feif",
-                onClick = {
-                    Navigate.navigate("new_post_screen", navController)
-                }),
+            emptyMessage = emptyState,
             endReached = postsState.endReached,
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },
@@ -51,13 +45,7 @@ fun LazyGridScope.PostsWrapperComposable(
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
-            emptyMessage = EmptyState(icon = Icons.Outlined.Photo,
-                heading = "feif",
-                message = "feif",
-                buttonText = "feif",
-                onClick = {
-                    Navigate.navigate("new_post_screen", navController)
-                }),
+            emptyMessage = emptyState,
             endReached = postsState.endReached,
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },

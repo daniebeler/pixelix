@@ -65,7 +65,7 @@ fun CollectionComposable(
                         viewModel.collectionState.collection!!.title, fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "By " + viewModel.collectionState.collection!!.username, fontSize = 12.sp
+                        stringResource(R.string.by, viewModel.collectionState.collection!!.username), fontSize = 12.sp
                     )
                 }
             }

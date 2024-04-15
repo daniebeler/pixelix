@@ -165,4 +165,5 @@
     <string name="developed_by">Entwickelt von</string>
     <string name="conversations">Unterhaltungen</string>
     <string name="share_this_collection">Sammlung teilen</string>
+    <string name="by">Von %1$s</string>
 </resources>
