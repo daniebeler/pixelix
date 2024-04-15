@@ -51,6 +51,7 @@ class OtherProfileViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
     private val setViewUseCase: SetViewUseCase,
+    private val getCollectionsUseCase: GetCollectionsUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 

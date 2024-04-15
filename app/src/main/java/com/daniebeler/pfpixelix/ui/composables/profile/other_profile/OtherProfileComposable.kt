@@ -172,6 +172,8 @@ fun OtherProfileComposable(
                             onFollowClick = { viewModel.followAccount(userId) },
                             onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
+                        CollectionsComposable(collectionsState = viewModel.collectionsState, navController = navController)
+
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
                             viewType = viewModel.view,

@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -141,27 +142,6 @@ fun ProfileTopSection(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp
                 )
-            }
-
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (account.createdAt.isNotBlank()) {
-                    val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
-                    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                    val formatted = date.format(formatter)
-                    Text(
-                        text = "Joined $formatted",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 10.sp
-                    )
-                } else {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
             }
         }
     }
