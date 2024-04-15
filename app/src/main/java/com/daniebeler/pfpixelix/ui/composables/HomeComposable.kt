@@ -61,7 +61,7 @@ fun HomeComposable(navController: NavController) {
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(stringResource(id = R.string.app_name))
+            Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         }, actions = {
             Row {
                 IconButton(onClick = { showBottomSheet = true }) {

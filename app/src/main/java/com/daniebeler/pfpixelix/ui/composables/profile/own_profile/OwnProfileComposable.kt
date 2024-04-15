@@ -1,13 +1,11 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -30,20 +28,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +50,7 @@ fun OwnProfileComposable(
     navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -100,25 +98,61 @@ fun OwnProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            when (viewModel.view) {
+                ViewEnum.Timeline -> {
+                    CustomProfilePageTimeline(
+                        accountState = viewModel.accountState,
+                        postsState = viewModel.postsState,
+                        navController = navController,
+                        refresh = {
+                            viewModel.loadData()
+                        },
+                        getPostsPaginated = {
+                            viewModel.getPostsPaginated()
+                        },
+                        openUrl = { viewModel.openUrl(context, it) },
+                        emptyState = EmptyState(icon = Icons.Outlined.Photo,
+                            heading = stringResource(R.string.no_posts_yet),
+                            message = stringResource(R.string.upload_your_first_post),
+                            buttonText = stringResource(id = R.string.new_post),
+                            onClick = {
+                                Navigate.navigate("new_post_screen", navController)
+                            }),
+                        otherAccountTopSectionAdditions = {},
+                        changeView = { view -> viewModel.changeView(view) },
+                        view = viewModel.view
+                    )
+                }
 
-            CustomProfilePage(accountState = viewModel.accountState,
-                postsState = viewModel.postsState,
-                navController = navController,
-                refresh = {
-                    viewModel.loadData()
-                },
-                getPostsPaginated = {
-                    viewModel.getPostsPaginated()
-                },
-                openUrl = { viewModel.openUrl(context, it) },
-                emptyState = EmptyState(icon = Icons.Outlined.Photo,
-                    heading = stringResource(R.string.no_posts_yet),
-                    message = stringResource(R.string.upload_your_first_post),
-                    buttonText = stringResource(id = R.string.new_post),
-                    onClick = {
-                        Navigate.navigate("new_post_screen", navController)
-                    }),
-                otherAccountTopSectionAdditions = {})
+                ViewEnum.Grid -> {
+                    CustomProfilePageGrid(
+                        accountState = viewModel.accountState,
+                        postsState = viewModel.postsState,
+                        navController = navController,
+                        refresh = {
+                            viewModel.loadData()
+                        },
+                        getPostsPaginated = {
+                            viewModel.getPostsPaginated()
+                        },
+                        openUrl = { viewModel.openUrl(context, it) },
+                        emptyState = EmptyState(icon = Icons.Outlined.Photo,
+                            heading = stringResource(R.string.no_posts_yet),
+                            message = stringResource(R.string.upload_your_first_post),
+                            buttonText = stringResource(id = R.string.new_post),
+                            onClick = {
+                                Navigate.navigate("new_post_screen", navController)
+                            }),
+                        otherAccountTopSectionAdditions = {},
+                        changeView = { view -> viewModel.changeView(view) },
+                        view = viewModel.view
+                    )
+                }
+
+                else -> {
+                    LoadingComposable(isLoading = true)
+                }
+            }
         }
 
 
@@ -139,7 +173,7 @@ fun OwnProfileComposable(
 }
 
 @Composable
-fun CustomProfilePage(
+fun CustomProfilePageGrid(
     accountState: AccountState,
     postsState: PostsState,
     navController: NavController,
@@ -147,7 +181,9 @@ fun CustomProfilePage(
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit,
     openUrl: (url: String) -> Unit,
-    otherAccountTopSectionAdditions: @Composable () -> Unit
+    otherAccountTopSectionAdditions: @Composable () -> Unit,
+    changeView: (ViewEnum) -> Unit,
+    view: ViewEnum
 ) {
     Box {
         InfinitePostsGrid(items = postsState.posts,
@@ -160,15 +196,56 @@ fun CustomProfilePage(
             getItemsPaginated = { getPostsPaginated() },
             before = {
                 Column {
-                    ProfileTopSection(account = accountState.account,
-                        navController,
-                        openUrl = { url ->
+                    ProfileTopSection(
+                        account = accountState.account, navController, openUrl = { url ->
                             openUrl(url)
-                        })
+                        }, changeView, view = view
+                    )
 
                     otherAccountTopSectionAdditions()
                 }
 
             }) { refresh() }
+    }
+}
+
+@Composable
+fun CustomProfilePageTimeline(
+    accountState: AccountState,
+    postsState: PostsState,
+    navController: NavController,
+    emptyState: EmptyState,
+    refresh: () -> Unit,
+    getPostsPaginated: () -> Unit,
+    openUrl: (url: String) -> Unit,
+    otherAccountTopSectionAdditions: @Composable () -> Unit,
+    changeView: (ViewEnum) -> Unit,
+    view: ViewEnum
+
+) {
+
+    Box {
+        InfinitePostsList(items = postsState.posts,
+            isLoading = postsState.isLoading,
+            isRefreshing = accountState.isLoading && accountState.account != null,
+            error = postsState.error,
+            emptyMessage = emptyState,
+            endReached = postsState.endReached,
+            navController = navController,
+            getItemsPaginated = { getPostsPaginated() },
+            onRefresh = { refresh() },
+            itemGetsDeleted = {},
+            before = {
+                Column {
+                    ProfileTopSection(
+                        account = accountState.account, navController,
+                        openUrl = { url ->
+                            openUrl(url)
+                        },
+                        changeView, view,
+                    )
+                    otherAccountTopSectionAdditions()
+                }
+            })
     }
 }

@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
@@ -14,10 +12,13 @@ import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,6 +32,8 @@ class OwnProfileViewModel @Inject constructor(
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
+    private val getViewUseCase: GetViewUseCase,
+    private val setViewUseCase: SetViewUseCase,
     application: android.app.Application
 ) : AndroidViewModel(application) {
 
@@ -39,8 +42,16 @@ class OwnProfileViewModel @Inject constructor(
     var ownDomain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
+    var view by mutableStateOf(ViewEnum.Loading)
+
     init {
         loadData()
+
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
 
         viewModelScope.launch {
             getInstanceDomain()
@@ -142,5 +153,12 @@ class OwnProfileViewModel @Inject constructor(
 
     fun openUrl(context: Context, url: String) {
         openExternalUrlUseCase(context, url)
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        viewModelScope.launch {
+            setViewUseCase(newView)
+        }
     }
 }
