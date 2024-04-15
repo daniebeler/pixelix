@@ -8,7 +8,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
@@ -16,10 +18,12 @@ import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -34,6 +38,8 @@ class OwnProfileViewModel @Inject constructor(
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
     private val getViewUseCase: GetViewUseCase,
     private val setViewUseCase: SetViewUseCase,
+    private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
     application: android.app.Application
 ) : AndroidViewModel(application) {
 
@@ -43,6 +49,8 @@ class OwnProfileViewModel @Inject constructor(
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
     var view by mutableStateOf(ViewEnum.Loading)
+
+    var collectionsState by mutableStateOf(CollectionsState())
 
     init {
         loadData()
@@ -67,6 +75,11 @@ class OwnProfileViewModel @Inject constructor(
     fun loadData() {
         getAccount()
         getPostsFirstLoad()
+
+        viewModelScope.launch {
+            getCollections(getOwnAccountIdUseCase().first())
+
+        }
     }
 
     private fun getAccount() {
@@ -131,6 +144,26 @@ class OwnProfileViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun getCollections(userId: String) {
+        getCollectionsUseCase(userId).onEach { result ->
+            collectionsState = when (result) {
+                is Resource.Success -> {
+                    CollectionsState(collections = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    CollectionsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    CollectionsState(
+                        isLoading = true, collections = collectionsState.collections
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getDomainSoftware(domain: String) {

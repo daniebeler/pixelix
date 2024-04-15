@@ -49,6 +49,7 @@ import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
@@ -135,6 +136,8 @@ fun OwnProfileComposable(
                                     viewModel.openUrl(context, url)
                                 })
                         }
+
+                        CollectionsComposable(collectionsState = viewModel.collectionsState, navController = navController)
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,

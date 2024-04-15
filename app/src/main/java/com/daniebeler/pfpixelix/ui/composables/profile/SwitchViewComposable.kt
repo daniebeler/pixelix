@@ -17,12 +17,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.R
 
 @Composable
-fun SwitchViewComposable(postsCount: Int, viewType: ViewEnum, onViewChange: (type: ViewEnum) -> Unit) {
+fun SwitchViewComposable(
+    postsCount: Int, viewType: ViewEnum, onViewChange: (type: ViewEnum) -> Unit
+) {
 
-    Column(Modifier.fillMaxWidth().padding(12.dp)) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+    ) {
         HorizontalDivider(Modifier.padding(bottom = 12.dp))
 
         Row(
@@ -30,7 +40,10 @@ fun SwitchViewComposable(postsCount: Int, viewType: ViewEnum, onViewChange: (typ
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "$postsCount posts")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = " " + stringResource(id = R.string.posts), fontSize = 12.sp)
+            }
 
             Row {
                 Box(modifier = Modifier

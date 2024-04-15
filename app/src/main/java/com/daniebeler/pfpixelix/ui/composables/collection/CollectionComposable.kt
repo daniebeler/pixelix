@@ -134,7 +134,7 @@ fun CollectionComposable(
                         })
 
                     CustomBottomSheetElement(icon = Icons.Outlined.Share,
-                        text = stringResource(R.string.share_this_post),
+                        text = stringResource(R.string.share_this_collection),
                         onClick = {
                             if (viewModel.collectionState.collection != null) {
                                 Share.shareText(context, viewModel.collectionState.collection!!.url)
