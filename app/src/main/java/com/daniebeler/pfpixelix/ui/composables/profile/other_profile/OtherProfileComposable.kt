@@ -149,7 +149,8 @@ fun OtherProfileComposable(
                 columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.pullRefresh(pullRefreshState)
+                modifier = Modifier.pullRefresh(pullRefreshState),
+                state = lazyGridState
             ) {
                 item(span = { GridItemSpan(3) }) {
                     Column {
