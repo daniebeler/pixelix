@@ -104,13 +104,11 @@ fun OtherProfileComposable(
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row {
                 Column {
-
-                    Text(text = viewModel.accountState.account?.username ?: "")
+                    Text(text = viewModel.accountState.account?.username ?: "", fontWeight = FontWeight.Bold)
                     Text(
                         text = viewModel.domain,
                         fontSize = 12.sp,
-                        lineHeight = 6.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        lineHeight = 6.sp
                     )
                 }
 

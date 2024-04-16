@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,12 +74,12 @@ fun OwnProfileComposable(
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(text = viewModel.accountState.account?.username ?: "")
                     Text(
-                        text = viewModel.ownDomain,
-                        fontSize = 12.sp,
-                        lineHeight = 6.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        text = viewModel.accountState.account?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
             }
@@ -129,7 +129,10 @@ fun OwnProfileComposable(
                                 })
                         }
 
-                        CollectionsComposable(collectionsState = viewModel.collectionsState, navController = navController)
+                        CollectionsComposable(
+                            collectionsState = viewModel.collectionsState,
+                            navController = navController
+                        )
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
