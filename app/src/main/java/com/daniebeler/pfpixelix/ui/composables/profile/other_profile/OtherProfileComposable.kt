@@ -84,7 +84,7 @@ fun OtherProfileComposable(
 
     val lazyGridState = rememberLazyGridState()
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.accountState.isLoading,
+        refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
         onRefresh = { viewModel.loadData(userId) })
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -208,7 +208,7 @@ fun OtherProfileComposable(
     }
 
     CustomPullRefreshIndicator(
-        viewModel.postsState.isLoading,
+        viewModel.postsState.isLoading || viewModel.accountState.isLoading,
         pullRefreshState,
     )
 

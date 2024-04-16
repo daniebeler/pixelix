@@ -65,7 +65,7 @@ fun OwnProfileComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val lazyGridState = rememberLazyGridState()
-    val pullRefreshState = rememberPullRefreshState(refreshing = viewModel.accountState.isLoading,
+    val pullRefreshState = rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
         onRefresh = { viewModel.loadData() })
 
     val context = LocalContext.current
@@ -180,7 +180,7 @@ fun OwnProfileComposable(
         }
 
         CustomPullRefreshIndicator(
-            viewModel.postsState.isLoading,
+            viewModel.postsState.isLoading || viewModel.accountState.isLoading,
             pullRefreshState,
         )
 
