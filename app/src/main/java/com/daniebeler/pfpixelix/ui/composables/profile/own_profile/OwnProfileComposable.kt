@@ -131,8 +131,9 @@ fun OwnProfileComposable(
 
                         CollectionsComposable(
                             collectionsState = viewModel.collectionsState,
-                            navController = navController
-                        )
+                            navController = navController,
+                            addNewButton = true
+                        ) { url -> viewModel.openUrl(context, url) }
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
