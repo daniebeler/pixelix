@@ -44,9 +44,6 @@ class NotificationsViewModel @Inject constructor(
                     )
                 }
             }
-
-            println("sox")
-            println(notificationsState)
         }.launchIn(viewModelScope)
     }
 

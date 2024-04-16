@@ -155,7 +155,7 @@ fun OwnProfileComposable(
                         viewModel.getPostsPaginated()
                     },
                     emptyState = EmptyState(
-                        icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
+                        icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
                     postGetsDeleted = { viewModel.postGetsDeleted(it) })

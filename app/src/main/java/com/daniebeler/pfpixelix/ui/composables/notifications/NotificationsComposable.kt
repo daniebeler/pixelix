@@ -110,7 +110,6 @@ fun NotificationsComposable(
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {
-            println("fieef")
             viewModel.getNotificationsPaginated()
         }
     }

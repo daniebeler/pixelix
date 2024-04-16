@@ -165,12 +165,15 @@ fun OtherProfileComposable(
 
                         MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState)
 
-                        FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                            isLoading = viewModel.relationshipState.isLoading,
-                            isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                ?: false,
-                            onFollowClick = { viewModel.followAccount(userId) },
-                            onUnFollowClick = { viewModel.unfollowAccount(userId) })
+                        Row {
+                            Spacer(modifier = Modifier.width(12.dp))
+                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
+                                isLoading = viewModel.relationshipState.isLoading,
+                                isFollowing = viewModel.relationshipState.accountRelationship?.following
+                                    ?: false,
+                                onFollowClick = { viewModel.followAccount(userId) },
+                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
+                        }
 
                         CollectionsComposable(collectionsState = viewModel.collectionsState,
                             navController = navController,
@@ -196,13 +199,11 @@ fun OtherProfileComposable(
                         viewModel.getPostsPaginated(userId)
                     },
                     emptyState = EmptyState(
-                        icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
+                        icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
                     postGetsDeleted = { viewModel.postGetsDeleted(it) })
             }
-
-
         }
     }
 

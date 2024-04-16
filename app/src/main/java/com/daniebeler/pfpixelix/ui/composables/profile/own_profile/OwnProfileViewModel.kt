@@ -150,17 +150,14 @@ class OwnProfileViewModel @Inject constructor(
         getCollectionsUseCase(userId).onEach { result ->
             collectionsState = when (result) {
                 is Resource.Success -> {
-                    println("fief: " + result.data)
                     CollectionsState(collections = result.data ?: emptyList())
                 }
 
                 is Resource.Error -> {
-                    println("fief: error" + result.message)
                     CollectionsState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    println("fief: loading" + result.data)
                     CollectionsState(
                         isLoading = true, collections = collectionsState.collections
                     )
