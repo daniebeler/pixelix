@@ -53,7 +53,7 @@ class OwnProfileViewModel @Inject constructor(
     var collectionsState by mutableStateOf(CollectionsState())
 
     init {
-        loadData()
+        loadData(false)
 
         viewModelScope.launch {
             getViewUseCase().collect { res ->
@@ -72,9 +72,9 @@ class OwnProfileViewModel @Inject constructor(
         }
     }
 
-    fun loadData() {
-        getAccount()
-        getPostsFirstLoad()
+    fun loadData(refreshing: Boolean) {
+        getAccount(refreshing)
+        getPostsFirstLoad(refreshing)
 
         viewModelScope.launch {
             getCollections(getOwnAccountIdUseCase().first())
@@ -82,7 +82,7 @@ class OwnProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getAccount() {
+    private fun getAccount(refreshing: Boolean) {
         getOwnAccountUseCase().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -97,13 +97,13 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true, account = accountState.account)
+                    AccountState(isLoading = true, account = accountState.account, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostsFirstLoad() {
+    private fun getPostsFirstLoad(refreshing: Boolean) {
         getOwnPostsUseCase().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
@@ -116,7 +116,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts)
+                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)

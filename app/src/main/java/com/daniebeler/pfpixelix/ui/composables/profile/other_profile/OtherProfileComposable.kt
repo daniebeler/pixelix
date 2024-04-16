@@ -84,8 +84,8 @@ fun OtherProfileComposable(
 
     val lazyGridState = rememberLazyGridState()
     val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-            onRefresh = { viewModel.loadData(userId) })
+        rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+            onRefresh = { viewModel.loadData(userId, true) })
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -96,7 +96,7 @@ fun OtherProfileComposable(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(userId)
+        viewModel.loadData(userId, false)
     }
 
 
@@ -190,7 +190,7 @@ fun OtherProfileComposable(
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
-                        viewModel.loadData(userId)
+                        viewModel.loadData(userId, true)
                     },
                     getPostsPaginated = {
                         viewModel.getPostsPaginated(userId)
@@ -211,7 +211,7 @@ fun OtherProfileComposable(
     }
 
     CustomPullRefreshIndicator(
-        viewModel.postsState.isLoading || viewModel.accountState.isLoading,
+        viewModel.postsState.refreshing || viewModel.accountState.refreshing,
         pullRefreshState,
     )
 

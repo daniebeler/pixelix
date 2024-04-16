@@ -69,10 +69,10 @@ class OtherProfileViewModel @Inject constructor(
     var context = application
     var view by mutableStateOf(ViewEnum.Timeline)
 
-    fun loadData(userId: String) {
-        getAccount(userId)
+    fun loadData(userId: String, refreshing: Boolean) {
+        getAccount(userId, refreshing)
 
-        getPostsFirstLoad(userId)
+        getPostsFirstLoad(userId, refreshing)
 
         getRelationship(userId)
 
@@ -133,7 +133,7 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAccount(userId: String) {
+    private fun getAccount(userId: String, refreshing: Boolean) {
         getAccountUseCase(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -145,7 +145,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true, account = accountState.account)
+                    AccountState(isLoading = true, account = accountState.account, refreshing = refreshing)
                 }
             }
 
@@ -177,7 +177,7 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostsFirstLoad(userId: String) {
+    private fun getPostsFirstLoad(userId: String, refreshing: Boolean) {
         getPostsOfAccountUseCase(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
@@ -190,7 +190,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts)
+                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)

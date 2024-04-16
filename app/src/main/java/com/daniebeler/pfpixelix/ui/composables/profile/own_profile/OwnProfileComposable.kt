@@ -66,8 +66,8 @@ fun OwnProfileComposable(
 
     val lazyGridState = rememberLazyGridState()
     val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-            onRefresh = { viewModel.loadData() })
+        rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+            onRefresh = { viewModel.loadData(true) })
 
     val context = LocalContext.current
 
@@ -149,7 +149,7 @@ fun OwnProfileComposable(
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
-                        viewModel.loadData()
+                        viewModel.loadData(true)
                     },
                     getPostsPaginated = {
                         viewModel.getPostsPaginated()
@@ -182,7 +182,7 @@ fun OwnProfileComposable(
         }
 
         CustomPullRefreshIndicator(
-            viewModel.postsState.isLoading || viewModel.accountState.isLoading,
+            viewModel.postsState.refreshing || viewModel.accountState.refreshing,
             pullRefreshState,
         )
 
