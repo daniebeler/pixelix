@@ -166,4 +166,8 @@
     <string name="conversations">Unterhaltungen</string>
     <string name="share_this_collection">Sammlung teilen</string>
     <string name="by">Von %1$s</string>
+    <string name="new_collection">Neue Sammlung</string>
+    <string name="collection_create_not_supported_explanation">Sammlungen zu erstellen wird von der Pixelfed API noch nicht unterstützt, aber Sammlungen können auf der Web-Oberfläche von Pixelfed erstellt werden:</string>
+    <string name="new_">Neu</string>
+    <string name="collections">Sammlungen</string>
 </resources>

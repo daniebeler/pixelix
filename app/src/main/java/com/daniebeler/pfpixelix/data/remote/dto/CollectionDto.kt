@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 
 data class CollectionDto(
     @SerializedName("avatar") val avatar: String,
-    @SerializedName("description") val description: String,
+    @SerializedName("description") val description: String?,
     @SerializedName("id") val id: String,
     @SerializedName("pid") val pid: String,
     @SerializedName("post_count") val postCount: Int,
     @SerializedName("published_at") val publishedAt: String,
     @SerializedName("thumb") val thumb: String,
-    @SerializedName("title") val title: String,
+    @SerializedName("title") val title: String?,
     @SerializedName("updated_at") val updatedAt: String,
     @SerializedName("url") val url: String,
     @SerializedName("username") val username: String,
@@ -21,8 +21,8 @@ data class CollectionDto(
         return Collection(
             id = id,
             visibility = visibility,
-            title = title,
-            description = description,
+            title = title ?: "",
+            description = description ?:"",
             thumbnail = thumb,
             postCount = postCount,
             username = username,

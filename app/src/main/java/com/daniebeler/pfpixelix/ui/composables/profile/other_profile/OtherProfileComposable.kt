@@ -83,9 +83,9 @@ fun OtherProfileComposable(
     val sheetState = rememberModalBottomSheetState()
 
     val lazyGridState = rememberLazyGridState()
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-        onRefresh = { viewModel.loadData(userId) })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
+            onRefresh = { viewModel.loadData(userId) })
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -104,11 +104,12 @@ fun OtherProfileComposable(
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row {
                 Column {
-                    Text(text = viewModel.accountState.account?.username ?: "", fontWeight = FontWeight.Bold)
                     Text(
-                        text = viewModel.domain,
-                        fontSize = 12.sp,
-                        lineHeight = 6.sp
+                        text = viewModel.accountState.account?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = viewModel.domain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
 
@@ -159,8 +160,8 @@ fun OtherProfileComposable(
                                     viewModel.openUrl(context, url)
                                 })
                         }
-                        
-                        
+
+
                         MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState)
 
                         FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
@@ -170,7 +171,10 @@ fun OtherProfileComposable(
                             onFollowClick = { viewModel.followAccount(userId) },
                             onUnFollowClick = { viewModel.unfollowAccount(userId) })
 
-                        CollectionsComposable(collectionsState = viewModel.collectionsState, navController = navController, openUrl = {url -> viewModel.openUrl(context, url)})
+                        CollectionsComposable(collectionsState = viewModel.collectionsState,
+                            navController = navController,
+                            instanceDomain = viewModel.domain,
+                            openUrl = { url -> viewModel.openUrl(context, url) })
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
@@ -181,8 +185,7 @@ fun OtherProfileComposable(
                     }
                 }
 
-                PostsWrapperComposable(
-                    accountState = viewModel.accountState,
+                PostsWrapperComposable(accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
@@ -195,8 +198,7 @@ fun OtherProfileComposable(
                         icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it)}
-                )
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
             }
 
 

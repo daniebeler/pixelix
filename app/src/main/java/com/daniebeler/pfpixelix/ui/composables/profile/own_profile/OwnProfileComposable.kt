@@ -65,8 +65,9 @@ fun OwnProfileComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val lazyGridState = rememberLazyGridState()
-    val pullRefreshState = rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
-        onRefresh = { viewModel.loadData() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.accountState.isLoading || viewModel.postsState.isLoading,
+            onRefresh = { viewModel.loadData() })
 
     val context = LocalContext.current
 
@@ -132,7 +133,8 @@ fun OwnProfileComposable(
                         CollectionsComposable(
                             collectionsState = viewModel.collectionsState,
                             navController = navController,
-                            addNewButton = true
+                            addNewButton = true,
+                            instanceDomain = viewModel.ownDomain,
                         ) { url -> viewModel.openUrl(context, url) }
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
@@ -142,8 +144,7 @@ fun OwnProfileComposable(
                     }
                 }
 
-                PostsWrapperComposable(
-                    accountState = viewModel.accountState,
+                PostsWrapperComposable(accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
@@ -156,8 +157,7 @@ fun OwnProfileComposable(
                         icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) }
-                )
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
 
             }
 
