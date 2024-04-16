@@ -41,9 +41,7 @@ fun CollectionsComposable(
         mutableStateOf(false)
     }
     Column {
-        if (collectionsState.collections.isNotEmpty()) {
-            HorizontalDivider(Modifier.padding(12.dp))
-        }
+        HorizontalDivider(Modifier.padding(12.dp))
 
         LazyRow {
             items(collectionsState.collections) {
