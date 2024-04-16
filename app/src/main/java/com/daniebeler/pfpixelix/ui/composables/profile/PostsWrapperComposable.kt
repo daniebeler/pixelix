@@ -3,8 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -14,7 +12,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.utils.Navigate
 
 fun LazyGridScope.PostsWrapperComposable(
     accountState: AccountState,
@@ -23,7 +20,8 @@ fun LazyGridScope.PostsWrapperComposable(
     emptyState: EmptyState,
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit,
-    view: ViewEnum
+    view: ViewEnum,
+    postGetsDeleted: (postId: String) -> Unit
 ) {
 
     if (view == ViewEnum.Grid) {
@@ -50,7 +48,8 @@ fun LazyGridScope.PostsWrapperComposable(
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },
             onRefresh = { refresh() },
-            itemGetsDeleted = {})
+            itemGetsDeleted = {},
+            postGetsDeleted = { postGetsDeleted(it) })
     }
 }
 
@@ -115,6 +114,7 @@ private fun LazyGridScope.PostsListInScope(
     onRefresh: () -> Unit,
     itemGetsDeleted: (postId: String) -> Unit,
     before: @Composable (() -> Unit)? = null,
+    postGetsDeleted: (postId: String) -> Unit
 ) {
 
     if (before != null) {
@@ -127,7 +127,9 @@ private fun LazyGridScope.PostsListInScope(
             it.id
         }) { item ->
             PostComposable(
-                post = item, postGetsDeleted = { }, navController = navController
+                post = item,
+                postGetsDeleted = { postGetsDeleted(it) },
+                navController = navController
             )
         }
 

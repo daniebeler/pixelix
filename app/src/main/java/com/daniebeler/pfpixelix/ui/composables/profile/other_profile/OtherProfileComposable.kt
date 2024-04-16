@@ -196,7 +196,8 @@ fun OtherProfileComposable(
                     emptyState = EmptyState(
                         icon = Icons.Outlined.Photo, heading = "fief", message = "fief"
                     ),
-                    view = viewModel.view
+                    view = viewModel.view,
+                    postGetsDeleted = { viewModel.postGetsDeleted(it)}
                 )
             }
 

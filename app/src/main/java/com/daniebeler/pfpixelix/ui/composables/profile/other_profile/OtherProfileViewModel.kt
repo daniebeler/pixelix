@@ -362,4 +362,8 @@ class OtherProfileViewModel @Inject constructor(
             setViewUseCase(newView)
         }
     }
+
+    fun postGetsDeleted(postId: String) {
+        postsState = postsState.copy(posts = postsState.posts.filter { post -> post.id != postId })
+    }
 }
