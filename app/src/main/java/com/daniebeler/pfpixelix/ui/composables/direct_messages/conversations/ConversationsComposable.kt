@@ -71,7 +71,7 @@ fun ConversationsComposable(
     navController: NavController, viewModel: ConversationsViewModel = hiltViewModel()
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var showNewChatDialog = remember { mutableStateOf(false) }
 
@@ -180,7 +180,7 @@ fun ConversationsComposable(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(horizontal = 12.dp)
                 ) {
                     Column {
@@ -190,6 +190,8 @@ fun ConversationsComposable(
                             header = stringResource(R.string.warning),
                             description = stringResource(R.string.direct_messages_encryption_description)
                         )
+
+                        Spacer(modifier = Modifier.height(18.dp))
                     }
                 }
             }
