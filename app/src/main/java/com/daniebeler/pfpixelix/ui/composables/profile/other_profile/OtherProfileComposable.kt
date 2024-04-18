@@ -156,6 +156,7 @@ fun OtherProfileComposable(
                     Column {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(account = viewModel.accountState.account,
+                                relationship = viewModel.relationshipState.accountRelationship,
                                 navController,
                                 openUrl = { url ->
                                     viewModel.openUrl(context, url)

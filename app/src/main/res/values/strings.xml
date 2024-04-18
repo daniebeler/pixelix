@@ -170,4 +170,7 @@
     <string name="collection_create_not_supported_explanation">Creating collections is not yet supported in the pixelfed api, but a new collection can be created in the pixelfed web app:</string>
     <string name="new_">New</string>
     <string name="collections">Collections</string>
+    <string name="follows_you">Follows you</string>
+    <string name="muted">muted</string>
+    <string name="blocked">blocked</string>
 </resources>

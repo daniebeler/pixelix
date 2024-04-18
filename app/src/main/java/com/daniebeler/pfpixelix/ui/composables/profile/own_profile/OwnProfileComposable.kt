@@ -41,16 +41,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
-import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -124,7 +119,7 @@ fun OwnProfileComposable(
                 item(span = { GridItemSpan(3) }) {
                     Column {
                         if (viewModel.accountState.account != null) {
-                            ProfileTopSection(account = viewModel.accountState.account,
+                            ProfileTopSection(account = viewModel.accountState.account, relationship = null,
                                 navController,
                                 openUrl = { url ->
                                     viewModel.openUrl(context, url)
@@ -200,81 +195,5 @@ fun OwnProfileComposable(
                     })
             }
         }
-    }
-}
-
-@Composable
-fun CustomProfilePageGrid(
-    accountState: AccountState,
-    postsState: PostsState,
-    navController: NavController,
-    emptyState: EmptyState,
-    refresh: () -> Unit,
-    getPostsPaginated: () -> Unit,
-    openUrl: (url: String) -> Unit,
-    otherAccountTopSectionAdditions: @Composable () -> Unit,
-    changeView: (ViewEnum) -> Unit,
-    view: ViewEnum
-) {
-    Box {
-        InfinitePostsGrid(items = postsState.posts,
-            isLoading = postsState.isLoading,
-            isRefreshing = accountState.isLoading && accountState.account != null,
-            error = postsState.error,
-            emptyMessage = emptyState,
-            endReached = postsState.endReached,
-            navController = navController,
-            getItemsPaginated = { getPostsPaginated() },
-            before = {
-                Column {
-                    /*ProfileTopSection(
-                        account = accountState.account, navController, openUrl = { url ->
-                            openUrl(url)
-                        }, changeView, view = view
-                    )*/
-
-                    otherAccountTopSectionAdditions()
-                }
-
-            }) { refresh() }
-    }
-}
-
-@Composable
-fun CustomProfilePageTimeline(
-    accountState: AccountState,
-    postsState: PostsState,
-    navController: NavController,
-    emptyState: EmptyState,
-    refresh: () -> Unit,
-    getPostsPaginated: () -> Unit,
-    openUrl: (url: String) -> Unit,
-    otherAccountTopSectionAdditions: @Composable () -> Unit,
-    changeView: (ViewEnum) -> Unit,
-    view: ViewEnum
-
-) {
-
-    Box {
-        InfinitePostsList(items = postsState.posts,
-            isLoading = postsState.isLoading,
-            isRefreshing = accountState.isLoading && accountState.account != null,
-            error = postsState.error,
-            emptyMessage = emptyState,
-            endReached = postsState.endReached,
-            navController = navController,
-            getItemsPaginated = { getPostsPaginated() },
-            onRefresh = { refresh() },
-            itemGetsDeleted = {},
-            before = {
-                Column {
-                    ProfileTopSection(account = accountState.account,
-                        navController,
-                        openUrl = { url ->
-                            openUrl(url)
-                        })
-                    otherAccountTopSectionAdditions()
-                }
-            })
     }
 }

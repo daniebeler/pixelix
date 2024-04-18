@@ -170,4 +170,7 @@
     <string name="collection_create_not_supported_explanation">Sammlungen zu erstellen wird von der Pixelfed API noch nicht unterstützt, aber Sammlungen können auf der Web-Oberfläche von Pixelfed erstellt werden:</string>
     <string name="new_">Neu</string>
     <string name="collections">Sammlungen</string>
+    <string name="follows_you">folgt dir</string>
+    <string name="muted">stummgeschalten</string>
+    <string name="blocked">blockiert</string>
 </resources>

@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +34,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
 import java.time.LocalDate
@@ -39,7 +44,7 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?, navController: NavController, openUrl: (url: String) -> Unit
+    account: Account?, relationship: Relationship?, navController: NavController, openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -98,7 +103,7 @@ fun ProfileTopSection(
             Spacer(modifier = Modifier.height(12.dp))
             if (account.displayname != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.displayname, fontWeight = FontWeight.Bold)
+                    Text(text = account.displayname, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     if (account.locked) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
@@ -107,7 +112,29 @@ fun ProfileTopSection(
                             Modifier.size(16.dp)
                         )
                     }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (account.isAdmin) {
+                            ProfileBadge(text = stringResource(id = R.string.admin))
+                        }
+                        if (relationship != null && relationship.followedBy) {
+                            ProfileBadge(text = stringResource(R.string.follows_you))
+                        }
+
+                        if (relationship != null && relationship.muting) {
+                            ProfileBadge(text = stringResource(R.string.muted), color = MaterialTheme.colorScheme.error)
+                        }
+
+                        if (relationship != null && relationship.blocking) {
+                            ProfileBadge(text = stringResource(R.string.blocked), color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
             if (account.note.isNotBlank()) {
@@ -144,5 +171,18 @@ fun ProfileTopSection(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant) {
+    Box(
+        Modifier
+            .border(
+                BorderStroke(1.dp, color),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 6.dp)) {
+        Text(text = text, fontSize = 9.sp, color = color)
     }
 }
