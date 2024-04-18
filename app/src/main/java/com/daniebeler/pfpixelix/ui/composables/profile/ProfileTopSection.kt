@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +33,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
 import java.time.LocalDate
@@ -39,7 +43,7 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?, navController: NavController, openUrl: (url: String) -> Unit
+    account: Account?, relationship: Relationship?, navController: NavController, openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -107,6 +111,16 @@ fun ProfileTopSection(
                             Modifier.size(16.dp)
                         )
                     }
+                    if ((relationship != null && relationship.followedBy) || account.isAdmin)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (account.isAdmin) {
+                            ProfileBadge(text = "Admin")
+                        }
+                        if (relationship != null && relationship.followedBy) {
+                            ProfileBadge(text = "Follows you")
+                        }
+                    }
                 }
             }
 
@@ -144,5 +158,18 @@ fun ProfileTopSection(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ProfileBadge(text: String) {
+    Box(
+        Modifier
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 6.dp)) {
+        Text(text = text, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

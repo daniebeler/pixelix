@@ -16,5 +16,6 @@ data class Account(
     val note: String,
     val url: String,
     val locked: Boolean,
-    val createdAt: String
+    val createdAt: String,
+    val isAdmin: Boolean
 )
