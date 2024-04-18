@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -102,7 +103,7 @@ fun ProfileTopSection(
             Spacer(modifier = Modifier.height(12.dp))
             if (account.displayname != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.displayname, fontWeight = FontWeight.Bold)
+                    Text(text = account.displayname, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     if (account.locked) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
@@ -111,8 +112,9 @@ fun ProfileTopSection(
                             Modifier.size(16.dp)
                         )
                     }
-                    if ((relationship != null && relationship.followedBy) || account.isAdmin)
+
                     Spacer(modifier = Modifier.width(12.dp))
+
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (account.isAdmin) {
                             ProfileBadge(text = "Admin")
@@ -120,8 +122,19 @@ fun ProfileTopSection(
                         if (relationship != null && relationship.followedBy) {
                             ProfileBadge(text = "Follows you")
                         }
+
+                        if (relationship != null && relationship.muting) {
+                            ProfileBadge(text = "muted", color = MaterialTheme.colorScheme.error)
+                        }
+
+                        if (relationship != null && relationship.blocking) {
+                            ProfileBadge(text = "blocked", color = MaterialTheme.colorScheme.error)
+                        }
                     }
+
                 }
+
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
             if (account.note.isNotBlank()) {
@@ -162,14 +175,14 @@ fun ProfileTopSection(
 }
 
 @Composable
-fun ProfileBadge(text: String) {
+private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant) {
     Box(
         Modifier
             .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
+                BorderStroke(1.dp, color),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 6.dp)) {
-        Text(text = text, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(text = text, fontSize = 9.sp, color = color)
     }
 }
