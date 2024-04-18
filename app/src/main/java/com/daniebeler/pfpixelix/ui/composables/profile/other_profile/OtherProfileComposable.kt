@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,6 +31,9 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -48,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +66,6 @@ import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
 import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
@@ -125,8 +131,9 @@ fun OtherProfileComposable(
         }, actions = {
 
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
-                    { url -> viewModel.openUrl(context, url) })
+                DomainSoftwareComposable(
+                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
+                ) { url -> viewModel.openUrl(context, url) }
             }
 
             IconButton(onClick = {
@@ -166,14 +173,75 @@ fun OtherProfileComposable(
 
                         MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState)
 
-                        Row {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp)
+                        ) {
+                            var containerColor by remember {
+                                mutableStateOf(Color(0xFFFFFFFF))
+                            }
+
+                            var contentColor by remember {
+                                mutableStateOf(Color(0xFFFFFFFF))
+                            }
+
+                            if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            } else {
+                                containerColor = MaterialTheme.colorScheme.primary
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            }
+
+                            Button(
+                                onClick = {
+                                    if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
+                                        if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                            viewModel.unfollowAccount(userId)
+                                        } else {
+                                            viewModel.followAccount(userId)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = containerColor, contentColor = contentColor
+                                )
+                            ) {
+                                if (viewModel.relationshipState.isLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp), color = contentColor
+                                    )
+                                } else {
+                                    if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                        Text(text = stringResource(R.string.unfollow))
+                                    } else {
+                                        Text(text = stringResource(R.string.follow))
+                                    }
+                                }
+                            }
+
                             Spacer(modifier = Modifier.width(12.dp))
-                            FollowButton(firstLoaded = viewModel.relationshipState.accountRelationship != null,
-                                isLoading = viewModel.relationshipState.isLoading,
-                                isFollowing = viewModel.relationshipState.accountRelationship?.following
-                                    ?: false,
-                                onFollowClick = { viewModel.followAccount(userId) },
-                                onUnFollowClick = { viewModel.unfollowAccount(userId) })
+
+                            Button(
+                                onClick = {
+                                    Navigate.navigate(
+                                        "chat/" + viewModel.accountState.account!!.id, navController
+                                    )
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            ) {
+                                Text(text = stringResource(R.string.message))
+                            }
                         }
 
                         CollectionsComposable(collectionsState = viewModel.collectionsState,

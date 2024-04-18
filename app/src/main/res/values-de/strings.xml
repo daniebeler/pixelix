@@ -173,4 +173,5 @@
     <string name="follows_you">folgt dir</string>
     <string name="muted">stummgeschalten</string>
     <string name="blocked">blockiert</string>
+    <string name="message">Nachricht</string>
 </resources>

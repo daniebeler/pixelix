@@ -146,15 +146,11 @@ fun ProfileTopSection(
 
             account.website?.let {
                 Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.Language,
-                        contentDescription = "",
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+
                     Text(
                         text = account.website.toString().substringAfter("https://"),
                         color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable(onClick = { openUrl(account.website.toString()) })
                     )
                 }
