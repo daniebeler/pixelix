@@ -117,18 +117,18 @@ fun ProfileTopSection(
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (account.isAdmin) {
-                            ProfileBadge(text = "Admin")
+                            ProfileBadge(text = stringResource(id = R.string.admin))
                         }
                         if (relationship != null && relationship.followedBy) {
-                            ProfileBadge(text = "Follows you")
+                            ProfileBadge(text = stringResource(R.string.follows_you))
                         }
 
                         if (relationship != null && relationship.muting) {
-                            ProfileBadge(text = "muted", color = MaterialTheme.colorScheme.error)
+                            ProfileBadge(text = stringResource(R.string.muted), color = MaterialTheme.colorScheme.error)
                         }
 
                         if (relationship != null && relationship.blocking) {
-                            ProfileBadge(text = "blocked", color = MaterialTheme.colorScheme.error)
+                            ProfileBadge(text = stringResource(R.string.blocked), color = MaterialTheme.colorScheme.error)
                         }
                     }
 
