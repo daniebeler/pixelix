@@ -58,13 +58,6 @@ fun ModalBottomSheetContent(
                 Navigate.navigate("preferences_screen", navController)
             })
 
-        CustomBottomSheetElement(icon = Icons.Outlined.Edit,
-            text = stringResource(R.string.edit_profile),
-            onClick = {
-                closeBottomSheet()
-                Navigate.navigate("edit_profile_screen", navController)
-            })
-
         HorizontalDivider(Modifier.padding(12.dp))
 
         CustomBottomSheetElement(icon = Icons.Outlined.FavoriteBorder,

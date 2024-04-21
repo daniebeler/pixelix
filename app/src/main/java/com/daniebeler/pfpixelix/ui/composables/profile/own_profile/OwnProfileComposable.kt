@@ -94,7 +94,6 @@ fun OwnProfileComposable(
             }
 
             IconButton(onClick = {
-                //Navigate.navigate("settings_screen", navController)
                 showBottomSheet = true
             }) {
                 Icon(
@@ -203,29 +202,28 @@ fun OwnProfileComposable(
                 }
             }*/
         }
+    }
 
-        InfiniteGridHandler(lazyGridState = lazyGridState) {
-            viewModel.getPostsPaginated()
-        }
+    InfiniteGridHandler(lazyGridState = lazyGridState) {
+        viewModel.getPostsPaginated()
+    }
 
-        CustomPullRefreshIndicator(
-            viewModel.postsState.refreshing || viewModel.accountState.refreshing,
-            pullRefreshState,
-        )
+    CustomPullRefreshIndicator(
+        viewModel.postsState.refreshing || viewModel.accountState.refreshing,
+        pullRefreshState,
+    )
 
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            }, sheetState = sheetState
+        ) {
+            ModalBottomSheetContent(navController = navController,
+                instanceDomain = viewModel.ownDomain,
+                closeBottomSheet = {
                     showBottomSheet = false
-                }, sheetState = sheetState
-            ) {
-                ModalBottomSheetContent(navController = navController,
-                    instanceDomain = viewModel.ownDomain,
-                    closeBottomSheet = {
-                        showBottomSheet = false
-                    })
-            }
+                })
         }
     }
 }

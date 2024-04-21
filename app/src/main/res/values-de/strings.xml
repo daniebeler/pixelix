@@ -15,8 +15,8 @@
     <string name="mute_this_profile">Benutzer stummschalten</string>
     <string name="unmute_this_profile">Stummschaltung aufheben</string>
     <string name="load_more">Mehr laden</string>
-    <string name="follow">folgen</string>
-    <string name="unfollow">entfolgen</string>
+    <string name="follow">Folgen</string>
+    <string name="unfollow">Entfolgen</string>
     <string name="followers">Follower</string>
     <string name="following">Gefolgt</string>
     <string name="posts">Beiträge</string>
