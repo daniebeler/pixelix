@@ -174,4 +174,7 @@
     <string name="muted">muted</string>
     <string name="blocked">blocked</string>
     <string name="message">Message</string>
+    <string name="all">All</string>
+    <string name="likes_">Likes</string>
+    <string name="reposts">Reposts</string>
 </resources>

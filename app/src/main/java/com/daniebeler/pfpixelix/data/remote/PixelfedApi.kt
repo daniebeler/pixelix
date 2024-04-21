@@ -17,6 +17,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
+import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
@@ -276,6 +277,9 @@ interface PixelfedApi {
 
     @GET("api/v1/tags/{tag}?_pe=1")
     fun getHashtag(@Path("tag") tag: String): Call<TagDto>
+
+    @GET("api/v1/tags/{tag}/related")
+    fun getRelatedHashtags(@Path("tag") tag: String): Call<List<RelatedHashtagDto>>
 
 
     // Direct Messages

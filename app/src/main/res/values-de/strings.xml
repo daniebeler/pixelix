@@ -174,4 +174,7 @@
     <string name="muted">stummgeschalten</string>
     <string name="blocked">blockiert</string>
     <string name="message">Nachricht</string>
+    <string name="all">Alle</string>
+    <string name="likes_">Likes</string>
+    <string name="reposts">Reposts</string>
 </resources>

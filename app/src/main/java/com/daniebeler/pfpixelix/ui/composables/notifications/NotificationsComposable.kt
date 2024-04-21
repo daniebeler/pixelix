@@ -52,9 +52,9 @@ fun NotificationsComposable(
     navController: NavController,
     viewModel: NotificationsViewModel = hiltViewModel(key = "notifications-viewmodel-key")
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.notificationsState.isRefreshing,
-        onRefresh = { viewModel.refresh() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
 
@@ -74,9 +74,9 @@ fun NotificationsComposable(
                 Row(modifier = Modifier.horizontalScroll(scrollState)) {
                     Spacer(modifier = Modifier.width(12.dp))
                     if (viewModel.filter == NotificationsFilterEnum.All) {
-                        ActiveFilterButton(text = "All")
+                        ActiveFilterButton(text = stringResource(R.string.all))
                     } else {
-                        InactiveFilterButton(text = "All", onClick = {
+                        InactiveFilterButton(text = stringResource(R.string.all), onClick = {
                             viewModel.changeFilter(NotificationsFilterEnum.All)
                         })
                     }
@@ -84,19 +84,20 @@ fun NotificationsComposable(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     if (viewModel.filter == NotificationsFilterEnum.Followers) {
-                        ActiveFilterButton(text = "Followers")
+                        ActiveFilterButton(text = stringResource(id = R.string.followers))
                     } else {
-                        InactiveFilterButton(text = "Followers", onClick = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Followers)
-                        })
+                        InactiveFilterButton(text = stringResource(id = R.string.followers),
+                            onClick = {
+                                viewModel.changeFilter(NotificationsFilterEnum.Followers)
+                            })
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     if (viewModel.filter == NotificationsFilterEnum.Likes) {
-                        ActiveFilterButton(text = "Likes")
+                        ActiveFilterButton(text = stringResource(R.string.likes_))
                     } else {
-                        InactiveFilterButton(text = "Likes", onClick = {
+                        InactiveFilterButton(text = stringResource(R.string.likes_), onClick = {
                             viewModel.changeFilter(NotificationsFilterEnum.Likes)
                         })
                     }
@@ -104,9 +105,9 @@ fun NotificationsComposable(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     if (viewModel.filter == NotificationsFilterEnum.Reposts) {
-                        ActiveFilterButton(text = "Reposts")
+                        ActiveFilterButton(text = stringResource(R.string.reposts))
                     } else {
-                        InactiveFilterButton(text = "Reposts", onClick = {
+                        InactiveFilterButton(text = stringResource(R.string.reposts), onClick = {
                             viewModel.changeFilter(NotificationsFilterEnum.Reposts)
                         })
                     }

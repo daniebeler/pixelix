@@ -7,9 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
+import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetRelatedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowHashtagUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -21,11 +24,14 @@ class HashtagTimelineViewModel @Inject constructor(
     private val getHashtagUseCase: GetHashtagUseCase,
     private val followHashtagUseCase: FollowHashtagUseCase,
     private val unfollowHashtagUseCase: UnfollowHashtagUseCase,
-    private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase
+    private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
+    private val getRelatedHashtagsUseCase: GetRelatedHashtagsUseCase
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
+
+    var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
         getHashtagTimelineUseCase(hashtag).onEach { result ->
@@ -66,7 +72,9 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated(hashtag: String) {
         if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getHashtagTimelineUseCase(hashtag, postsState.hashtagTimeline.last().id).onEach { result ->
+            getHashtagTimelineUseCase(
+                hashtag, postsState.hashtagTimeline.last().id
+            ).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) == 0
@@ -100,6 +108,17 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun getRelatedHashtags(hashtag: String) {
+        getRelatedHashtagsUseCase(hashtag).onEach { result ->
+            if (result is Resource.Success) {
+                relatedHashtags = result.data ?: emptyList()
+                println("juhuu" + result.data)
+            } else {
+                println("fief" + result.message)
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun refresh() {
