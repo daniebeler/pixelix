@@ -26,7 +26,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LikedPostsComposable(
-    navController: NavController, viewModel: LikedPostsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: LikedPostsViewModel = hiltViewModel(key = "likey-posts-key")
 ) {
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {

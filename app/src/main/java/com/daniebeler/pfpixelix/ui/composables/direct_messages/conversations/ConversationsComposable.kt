@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.QuestionMark
-import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
@@ -68,16 +67,17 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ConversationsComposable(
-    navController: NavController, viewModel: ConversationsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: ConversationsViewModel = hiltViewModel(key = "conversations-viewmodel-key")
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var showNewChatDialog = remember { mutableStateOf(false) }
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.conversationsState.isRefreshing,
-        onRefresh = { viewModel.refresh() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.conversationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
 
@@ -241,11 +241,9 @@ private fun CreateNewConversation(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .clickable {
-                                    viewModel.newConversationUsername =
-                                        TextFieldValue(
-                                            it.acct,
-                                            selection = TextRange(it.acct.length)
-                                        )
+                                    viewModel.newConversationUsername = TextFieldValue(
+                                        it.acct, selection = TextRange(it.acct.length)
+                                    )
                                     viewModel.newConversationSelectedAccount = it
                                     viewModel.newConversationState = NewConversationState()
                                 }) {

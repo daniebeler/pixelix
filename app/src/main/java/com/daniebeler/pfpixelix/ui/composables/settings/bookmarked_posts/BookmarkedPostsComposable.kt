@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,10 +22,11 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarkedPostsComposable(
-    navController: NavController, viewModel: BookmarkedPostsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: BookmarkedPostsViewModel = hiltViewModel(key = "bookmarksviewmodel")
 ) {
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {

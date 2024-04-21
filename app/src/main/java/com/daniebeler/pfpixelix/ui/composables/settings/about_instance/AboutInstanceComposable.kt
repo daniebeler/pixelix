@@ -44,7 +44,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutInstanceComposable(
-    navController: NavController, viewModel: AboutInstanceViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: AboutInstanceViewModel = hiltViewModel(key = "about-instance-key")
 ) {
 
     val lazyListState = rememberLazyListState()

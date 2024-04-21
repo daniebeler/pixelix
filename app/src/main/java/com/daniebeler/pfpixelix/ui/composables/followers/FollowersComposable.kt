@@ -21,7 +21,6 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -31,7 +30,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FollowersComposable(
-    navController: NavController, viewModel: FollowersViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
 ) {
 
     val pullRefreshState =
@@ -68,7 +68,9 @@ fun FollowersComposable(
     if (!viewModel.followersState.isLoading && viewModel.followersState.error.isEmpty() && viewModel.followersState.followers.isEmpty()) {
         FullscreenEmptyStateComposable(
             emptyState = EmptyState(
-                icon = Icons.Outlined.Groups, heading = stringResource(R.string.empty), message = stringResource(R.string.nobody_follows_you_yet)
+                icon = Icons.Outlined.Groups,
+                heading = stringResource(R.string.empty),
+                message = stringResource(R.string.nobody_follows_you_yet)
             )
         )
     }

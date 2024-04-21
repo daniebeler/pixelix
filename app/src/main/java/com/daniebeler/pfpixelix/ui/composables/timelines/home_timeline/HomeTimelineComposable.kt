@@ -16,7 +16,8 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun HomeTimelineComposable(
-    navController: NavController, viewModel: HomeTimelineViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: HomeTimelineViewModel = hiltViewModel(key = "home-timeline-key")
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,
@@ -25,15 +26,13 @@ fun HomeTimelineComposable(
             error = viewModel.homeTimelineState.error,
             endReached = false,
             navController = navController,
-            emptyMessage = EmptyState(
-                icon = Icons.Outlined.PhotoLibrary,
+            emptyMessage = EmptyState(icon = Icons.Outlined.PhotoLibrary,
                 heading = stringResource(R.string.no_posts),
                 message = stringResource(R.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
                 buttonText = stringResource(id = R.string.explore_trending_profiles),
                 onClick = {
                     Navigate.navigate("trending_screen/accounts", navController)
-                }
-            ),
+                }),
             getItemsPaginated = {
                 viewModel.getItemsPaginated()
             },

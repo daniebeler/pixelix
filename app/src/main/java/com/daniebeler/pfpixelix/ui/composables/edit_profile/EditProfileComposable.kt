@@ -53,7 +53,8 @@ import com.daniebeler.pfpixelix.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileComposable(
-    navController: NavController, viewModel: EditProfileViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: EditProfileViewModel = hiltViewModel(key = "edit-profile-viewmodel-key")
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

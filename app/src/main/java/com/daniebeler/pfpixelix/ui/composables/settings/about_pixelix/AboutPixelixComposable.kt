@@ -49,7 +49,8 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutPixelixComposable(
-    navController: NavController, viewModel: AboutPixelixViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: AboutPixelixViewModel = hiltViewModel(key = "about-pixelix-viewmodel-key")
 ) {
 
     val context = LocalContext.current

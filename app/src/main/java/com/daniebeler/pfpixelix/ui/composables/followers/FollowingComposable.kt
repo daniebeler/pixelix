@@ -21,7 +21,6 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -32,7 +31,8 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FollowingComposable(
-    navController: NavController, viewModel: FollowersViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: FollowersViewModel = hiltViewModel(key = "following-composable-key")
 ) {
 
     val pullRefreshState =

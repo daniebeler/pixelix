@@ -70,7 +70,7 @@ import java.text.StringCharacterIterator
 fun PreferencesComposable(
     navController: NavController,
     themeViewModel: ThemeViewModel = hiltViewModel(key = "Theme"),
-    viewModel: PreferencesViewModel = hiltViewModel()
+    viewModel: PreferencesViewModel = hiltViewModel(key = "preferences-viewmodel-key")
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 

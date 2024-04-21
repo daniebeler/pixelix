@@ -61,7 +61,8 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun OwnProfileComposable(
-    navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: OwnProfileViewModel = hiltViewModel(key = "own-profile-key")
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

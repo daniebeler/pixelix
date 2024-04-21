@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.trending.trending_posts
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
@@ -17,7 +16,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 fun TrendingPostsComposable(
     range: String,
     navController: NavController,
-    viewModel: TrendingPostsViewModel = hiltViewModel()
+    viewModel: TrendingPostsViewModel = hiltViewModel(key = "trending-posts")
 ) {
 
     DisposableEffect(range) {

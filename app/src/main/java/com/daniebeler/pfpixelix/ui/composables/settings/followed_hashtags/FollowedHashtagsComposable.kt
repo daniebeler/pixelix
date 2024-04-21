@@ -38,7 +38,8 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FollowedHashtagsComposable(
-    navController: NavController, viewModel: FollowedHashtagsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: FollowedHashtagsViewModel = hiltViewModel(key = "followed-hashtags-key")
 ) {
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.followedHashtagsState.isRefreshing,
@@ -83,15 +84,13 @@ fun FollowedHashtagsComposable(
 
                 if (!viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
                     FullscreenEmptyStateComposable(
-                        EmptyState(
-                            icon = Icons.Outlined.Tag,
+                        EmptyState(icon = Icons.Outlined.Tag,
                             heading = stringResource(R.string.no_followed_hashtags),
                             message = "Followed hashtags will appear here",
                             buttonText = "Explore trending hashtags",
                             onClick = {
                                 Navigate.navigate("trending_screen/hashtags", navController)
-                            }
-                        )
+                            })
                     )
                 }
             }

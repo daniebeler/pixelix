@@ -43,7 +43,7 @@ fun FollowersMainComposable(
     navController: NavController,
     accountId: String,
     page: String,
-    viewModel: FollowersViewModel = hiltViewModel()
+    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
 ) {
 
     LaunchedEffect(Unit) {

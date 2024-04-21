@@ -71,19 +71,20 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(
-    navController: NavController, viewModel: NewPostViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: NewPostViewModel = hiltViewModel(key = "new-post-viewmodel-key")
 ) {
     val context = LocalContext.current
 
-    val singlePhotoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickMultipleVisualMedia(),
-            onResult = { uris ->
-                Navigate.navigate("new_post_screen", navController)
-                uris.forEach {
-                    viewModel.addImage(it, context)
-                    //viewModel.images += NewPostViewModel.ImageItem(it, "")
-                }
-            })
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { uris ->
+            Navigate.navigate("new_post_screen", navController)
+            uris.forEach {
+                viewModel.addImage(it, context)
+                //viewModel.images += NewPostViewModel.ImageItem(it, "")
+            }
+        })
 
     var expanded by remember { mutableStateOf(false) }
     var showReleaseAlert by remember {
@@ -121,8 +122,7 @@ fun NewPostComposable(
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
 
-                            val type =
-                                MimeType.getMimeType(image.imageUri, context.contentResolver)
+                            val type = MimeType.getMimeType(image.imageUri, context.contentResolver)
                             if (type != null && type.take(5) == "video") {
                                 val model = ImageRequest.Builder(context).data(image.imageUri)
                                     .decoderFactory { result, options, _ ->

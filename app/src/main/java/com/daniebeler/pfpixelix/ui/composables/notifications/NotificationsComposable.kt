@@ -40,7 +40,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun NotificationsComposable(
-    navController: NavController, viewModel: NotificationsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: NotificationsViewModel = hiltViewModel(key = "notifications-viewmodel-key")
 ) {
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,

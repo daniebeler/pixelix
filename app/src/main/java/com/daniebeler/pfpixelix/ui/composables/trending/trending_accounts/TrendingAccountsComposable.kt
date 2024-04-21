@@ -23,7 +23,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposabl
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrendingAccountsComposable(
-    navController: NavController, viewModel: TrendingAccountsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: TrendingAccountsViewModel = hiltViewModel(key = "trending-accounts-key")
 ) {
 
     val pullRefreshState =
@@ -32,19 +33,21 @@ fun TrendingAccountsComposable(
 
     LazyColumn(modifier = Modifier
         .pullRefresh(pullRefreshState)
-        .fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp), content = {
-        items(viewModel.trendingAccountsState.trendingAccounts, key = {
-            it.id
-        }) {
-            TrendingAccountElement(
-                account = it,
-                relationship = viewModel.accountRelationShipsState.accountRelationships.find { relationship ->
-                    relationship.id == it.id
-                },
-                navController = navController
-            )
-        }
-    })
+        .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        content = {
+            items(viewModel.trendingAccountsState.trendingAccounts, key = {
+                it.id
+            }) {
+                TrendingAccountElement(
+                    account = it,
+                    relationship = viewModel.accountRelationShipsState.accountRelationships.find { relationship ->
+                        relationship.id == it.id
+                    },
+                    navController = navController
+                )
+            }
+        })
 
     if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
         if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {

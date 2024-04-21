@@ -45,7 +45,7 @@ import com.daniebeler.pfpixelix.utils.Share
 fun CollectionComposable(
     navController: NavController,
     collectionId: String,
-    viewModel: CollectionViewModel = hiltViewModel()
+    viewModel: CollectionViewModel = hiltViewModel(key = "collection-viewmodel-key")
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -65,7 +65,9 @@ fun CollectionComposable(
                         viewModel.collectionState.collection!!.title, fontWeight = FontWeight.Bold
                     )
                     Text(
-                        stringResource(R.string.by, viewModel.collectionState.collection!!.username), fontSize = 12.sp, lineHeight = 6.sp
+                        stringResource(
+                            R.string.by, viewModel.collectionState.collection!!.username
+                        ), fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
             }
