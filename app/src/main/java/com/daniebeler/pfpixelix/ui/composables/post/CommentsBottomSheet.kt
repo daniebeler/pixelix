@@ -64,7 +64,6 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
-import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
@@ -119,6 +118,7 @@ fun CommentsBottomSheet(
                     labelStringId = R.string.reply,
                     modifier = null,
                     imeAction = ImeAction.Send,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surface,
                     submitButton = {
                         Button(
                             onClick = {
@@ -410,8 +410,9 @@ fun AddReplyDialog(
             R.string.reply,
             modifier = null,
             imeAction = ImeAction.Send,
-            submitButton = null
-        )
+            submitButton = null,
+            suggestionsBoxColor = MaterialTheme.colorScheme.surface
+            )
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {

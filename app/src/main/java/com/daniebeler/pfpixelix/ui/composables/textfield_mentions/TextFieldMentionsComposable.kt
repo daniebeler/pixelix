@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -29,7 +27,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.daniebeler.pfpixelix.R
 
 @Composable
 fun TextFieldMentionsComposable(
@@ -40,6 +37,7 @@ fun TextFieldMentionsComposable(
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,
     imeAction: ImeAction,
+    suggestionsBoxColor: Color,
     viewModel: TextFieldMentionsViewModel = hiltViewModel()
 ) {
 
@@ -75,7 +73,7 @@ fun TextFieldMentionsComposable(
                 modifier = Modifier
                     .padding(top = 4.dp)
                     .clip(shape = RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(suggestionsBoxColor)
             ) {
                 if (viewModel.mentionSuggestions.mentions.isNotEmpty()) {
                     Column(
