@@ -32,7 +32,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun FollowingComposable(
     navController: NavController,
-    viewModel: FollowersViewModel = hiltViewModel(key = "following-composable-key")
+    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
 ) {
 
     val pullRefreshState =
@@ -79,7 +79,7 @@ fun FollowingComposable(
     }
 
     InfiniteListHandler(lazyListState = lazyListState) {
-        //viewModel.getFollowingPaginated()
+        viewModel.getFollowingPaginated()
     }
 
     CustomPullRefreshIndicator(
