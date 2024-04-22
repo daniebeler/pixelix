@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +66,7 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -118,6 +120,7 @@ fun NewPostComposable(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+
                 viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
@@ -170,6 +173,7 @@ fun NewPostComposable(
                             shape = RoundedCornerShape(12.dp)
                         )
                     }
+
                 }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Icon(
@@ -186,7 +190,17 @@ fun NewPostComposable(
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                OutlinedTextField(
+                TextFieldMentionsComposable(
+                    submit = {},
+                    text = viewModel.caption,
+                    changeText = { text -> viewModel.caption = text },
+                    labelStringId = R.string.caption,
+                    modifier = Modifier.fillMaxWidth(),
+                    imeAction = ImeAction.Default,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                    submitButton = null
+                )
+                /*OutlinedTextField(
                     value = viewModel.caption,
                     onValueChange = { viewModel.caption = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -198,7 +212,7 @@ fun NewPostComposable(
                         unfocusedBorderColor = Color.Transparent,
                     ),
                     shape = RoundedCornerShape(12.dp),
-                )
+                )*/
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth(),
