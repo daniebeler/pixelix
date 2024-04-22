@@ -5,17 +5,22 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
+import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
+import com.daniebeler.pfpixelix.data.remote.dto.CollectionDto
+import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
+import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
+import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
+import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
-import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -25,9 +30,6 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -55,12 +57,12 @@ interface PixelfedApi {
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
-        @Path("tag") tag: String): Call<List<PostDto>>
+        @Path("tag") tag: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
     fun getHashtagTimeline(
-        @Path("tag") tag: String,
-        @Query("max_id") maxPostId: String
+        @Path("tag") tag: String, @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
@@ -68,14 +70,16 @@ interface PixelfedApi {
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
     fun getLocalTimeline(
-        @Query("max_id") maxPostId: String): Call<List<PostDto>>
+        @Query("max_id") maxPostId: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(): Call<List<PostDto>>
 
     @GET("/api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(
-        @Query("max_id") maxPostId: String): Call<List<PostDto>>
+        @Query("max_id") maxPostId: String
+    ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(): Call<List<PostDto>>
@@ -128,12 +132,12 @@ interface PixelfedApi {
         @Body body: RequestBody
     ): Call<AccountDto>
 
-    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String
     ): Call<List<PostDto>>
 
-    @GET("api/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
     fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("max_id") maxId: String
     ): Call<List<PostDto>>
@@ -185,12 +189,12 @@ interface PixelfedApi {
 
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
-        @Path("id") userId: String): Call<List<AccountDto>>
+        @Path("id") userId: String
+    ): Call<List<AccountDto>>
 
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
-        @Path("id") userId: String,
-        @Query("max_id") maxId: String
+        @Path("id") userId: String, @Query("max_id") maxId: String
     ): Call<List<AccountDto>>
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
@@ -207,29 +211,52 @@ interface PixelfedApi {
 
     @GET("api/v1/statuses/{postid}?_pe=1")
     fun getPostById(
-        @Path("postid") postId: String): Call<PostDto>
+        @Path("postid") postId: String
+    ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/favourite")
     fun likePost(@Path("id") userId: String): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/unfavourite")
     fun unlikePost(
-        @Path("id") userId: String): Call<PostDto>
+        @Path("id") userId: String
+    ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/reblog")
     fun reblogPost(@Path("id") userId: String): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/unreblog")
     fun unreblogPost(
-        @Path("id") userId: String): Call<PostDto>
+        @Path("id") userId: String
+    ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/bookmark")
     fun bookmarkPost(
-        @Path("id") userId: String): Call<PostDto>
+        @Path("id") userId: String
+    ): Call<PostDto>
 
     @POST("api/v1/statuses/{id}/unbookmark")
     fun unbookmarkPost(
-        @Path("id") userId: String): Call<PostDto>
+        @Path("id") userId: String
+    ): Call<PostDto>
+
+
+    // Collections
+
+    @GET("api/v1.1/collections/accounts/{userId}")
+    fun getCollectionsByUserId(
+        @Path("userId") userId: String
+    ): Call<List<CollectionDto>>
+
+    @GET("api/v1.1/collections/view/{collectionid}")
+    fun getCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<CollectionDto>
+
+    @GET("api/v1.1/collections/items/{collectionid}")
+    fun getPostsOfCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<List<PostDto>>
 
 
     // Tags
@@ -237,11 +264,13 @@ interface PixelfedApi {
 
     @POST("api/v1/tags/{id}/follow")
     fun followHashtag(
-        @Path("id") tagId: String): Call<TagDto>
+        @Path("id") tagId: String
+    ): Call<TagDto>
 
     @POST("api/v1/tags/{id}/unfollow")
     fun unfollowHashtag(
-        @Path("id") tagId: String): Call<TagDto>
+        @Path("id") tagId: String
+    ): Call<TagDto>
 
     @GET("api/v1/followed_tags?_pe=1")
     fun getFollowedHashtags(): Call<List<TagDto>>
@@ -249,9 +278,27 @@ interface PixelfedApi {
     @GET("api/v1/tags/{tag}?_pe=1")
     fun getHashtag(@Path("tag") tag: String): Call<TagDto>
 
+    @GET("api/v1/tags/{tag}/related")
+    fun getRelatedHashtags(@Path("tag") tag: String): Call<List<RelatedHashtagDto>>
 
+
+    // Direct Messages
+
+    @GET("api/v1/conversations")
+    fun getConversations(): Call<List<ConversationDto>>
+
+    @GET("api/v1.1/direct/thread")
+    fun getChat(@Query("pid") accountId: String): Call<ChatDto>
+
+    @GET("api/v1.1/direct/thread")
+    fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
+
+    @POST("api/v1.1/direct/thread/send")
+    fun sendMessage(@Body createMessageDto: CreateMessageDto): Call<MessageDto>
+
+    @DELETE("api/v1.1/direct/thread/message")
+    fun deleteMessage(@Query("id") id: String): Call<List<Int>>
     // Other
-
 
     @GET("api/v1/bookmarks?limit=12")
     fun getBookmarkedPosts(): Call<List<PostDto>>
@@ -271,11 +318,13 @@ interface PixelfedApi {
     fun getBlockedAccounts(): Call<List<AccountDto>>
 
     @GET("/api/v2/search?limit=5&_pe=1")
-    fun getSearch(@Query("q") searchText: String, @Query("type") type: String?
+    fun getSearch(
+        @Query("q") searchText: String, @Query("type") type: String?
     ): Call<SearchDto>
 
     @POST("/api/v2/media")
-    fun uploadMedia(@Body body: RequestBody
+    fun uploadMedia(
+        @Body body: RequestBody
     ): Call<MediaAttachmentDto>
 
     @FormUrlEncoded
@@ -286,15 +335,18 @@ interface PixelfedApi {
     ): Call<MediaAttachmentDto>
 
     @POST("/api/v1/statuses")
-    suspend fun createPost(@Body createPostDto: CreatePostDto
+    suspend fun createPost(
+        @Body createPostDto: CreatePostDto
     ): Response<PostDto>
 
     @POST("/api/v1/statuses")
-    fun createReply(@Body createReplyDto: CreateReplyDto
+    fun createReply(
+        @Body createReplyDto: CreateReplyDto
     ): Call<PostDto>
 
     @DELETE("/api/v1/statuses/{id}")
-    fun deletePost(@Path("id") postid: String
+    fun deletePost(
+        @Path("id") postid: String
     ): Call<PostDto>
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")

@@ -1,7 +1,5 @@
 package com.daniebeler.pfpixelix.common
 
-import android.graphics.Color
-
 object Constants {
     const val CLIENT_ID_DATASTORE_KEY = "client_id"
     const val CLIENT_SECRET_DATASTORE_KEY = "client_secret"
@@ -11,12 +9,14 @@ object Constants {
     const val SHOW_SENSITIVE_CONTENT_DATASTORE_KEY = "show_sensitive_content"
     const val USE_IN_APP_BROWSER_DATASTORE_KEY = "use_in_app_browser"
     const val VOLUME_DATASTORE_KEY = "volume"
+    const val VIEW_DATASTORE_KEY = "view"
+    const val THEME_DATASTORE_KEY = "theme"
 
     const val HASHTAG_TIMELINE_POSTS_LIMIT = 20
     const val HOME_TIMELINE_POSTS_LIMIT = 20
     const val LOCAL_TIMELINE_POSTS_LIMIT = 20
     const val GLOBAL_TIMELINE_POSTS_LIMIT = 20
-    const val NOTIFICATIONS_LIMIT = 30
+    const val NOTIFICATIONS_LIMIT = 40
     const val LIKED_POSTS_LIMIT = 40
     const val PROFILE_POSTS_LIMIT = 18
     const val LIKED_BY_LIMIT = 40

@@ -15,7 +15,7 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Mail
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -34,6 +34,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
+import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
+import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -42,6 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfil
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.search.SearchComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
@@ -111,7 +115,7 @@ sealed class Destinations(
     )
 
     object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.Mail
+        route = "notifications_screen", icon = Icons.Outlined.Notifications
     )
 
     object OwnProfile : Destinations(
@@ -154,6 +158,10 @@ sealed class Destinations(
         route = "about_instance_screen", icon = Icons.Outlined.Settings
     )
 
+    object AboutPixelix : Destinations(
+        route = "about_pixelix_screen", icon = Icons.Outlined.Settings
+    )
+
     object NewPost : Destinations(
         route = "new_post_screen", icon = Icons.Outlined.Settings
     )
@@ -166,6 +174,10 @@ sealed class Destinations(
         route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
     )
 
+    object Collection : Destinations(
+        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite
+    )
+
     object Followers : Destinations(
         route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite
     )
@@ -173,12 +185,19 @@ sealed class Destinations(
     object Search : Destinations(
         route = "search_screen", icon = Icons.Outlined.Search
     )
+
+    object Conversation : Destinations(
+        route = "conversations", icon = Icons.Outlined.Home
+    )
+
+    object Chat : Destinations(
+        route = "chat/{userid}", icon = Icons.Outlined.Home
+    )
 }
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(
-        navController,
+    NavHost(navController,
         startDestination = Destinations.HomeScreen.route,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }) {
@@ -244,6 +263,10 @@ fun NavigationGraph(navController: NavHostController) {
             AboutInstanceComposable(navController)
         }
 
+        composable(Destinations.AboutPixelix.route) {
+            AboutPixelixComposable(navController)
+        }
+
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(navController)
         }
@@ -263,8 +286,26 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
+        composable(Destinations.Collection.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("collectionid")
+            uId?.let { id ->
+                CollectionComposable(navController, collectionId = id)
+            }
+        }
+
         composable(Destinations.Search.route) {
             SearchComposable(navController)
+        }
+
+        composable(Destinations.Conversation.route) {
+            ConversationsComposable(navController = navController)
+        }
+
+        composable(Destinations.Chat.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("userid")
+            uId?.let { id ->
+                ChatComposable(navController = navController, accountId = id)
+            }
         }
     }
 }
@@ -279,7 +320,7 @@ fun BottomBar(navController: NavHostController) {
         Destinations.OwnProfile
     )
 
-    NavigationBar {
+    NavigationBar() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

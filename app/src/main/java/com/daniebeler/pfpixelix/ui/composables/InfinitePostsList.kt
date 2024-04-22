@@ -9,9 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,7 +34,8 @@ fun InfinitePostsList(
     navController: NavController,
     getItemsPaginated: () -> Unit,
     onRefresh: () -> Unit,
-    itemGetsDeleted: (postId: String) -> Unit
+    itemGetsDeleted: (postId: String) -> Unit,
+    before: @Composable (() -> Unit)? = null,
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -58,6 +57,11 @@ fun InfinitePostsList(
                 .pullRefresh(pullRefreshState),
             state = lazyListState
         ) {
+            if (before != null) {
+                item {
+                    before()
+                }
+            }
             if (items.isNotEmpty()) {
                 items(items, key = {
                     it.id

@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -53,7 +53,8 @@ import com.daniebeler.pfpixelix.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileComposable(
-    navController: NavController, viewModel: EditProfileViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: EditProfileViewModel = hiltViewModel(key = "edit-profile-viewmodel-key")
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -73,21 +74,21 @@ fun EditProfileComposable(
     }
 
 
-    val singlePhotoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    val cropOptions = CropImageContractOptions(
-                        uri, CropImageOptions(
-                            fixAspectRatio = true,
-                            aspectRatioX = 1,
-                            aspectRatioY = 1,
-                            cropShape = CropImageView.CropShape.OVAL
-                        )
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                val cropOptions = CropImageContractOptions(
+                    uri, CropImageOptions(
+                        fixAspectRatio = true,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        cropShape = CropImageView.CropShape.OVAL
                     )
-                    imageCropLauncher.launch(cropOptions)
-                }
-            })
+                )
+                imageCropLauncher.launch(cropOptions)
+            }
+        })
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -95,7 +96,7 @@ fun EditProfileComposable(
             TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text(text = stringResource(R.string.edit_profile))
+                    Text(text = stringResource(R.string.edit_profile), fontWeight = FontWeight.Bold)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -112,8 +113,7 @@ fun EditProfileComposable(
                         if (viewModel.displayname == (viewModel.accountState.account?.displayname
                                 ?: "") && viewModel.note == (viewModel.accountState.account?.note
                                 ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
-                                ?: "") && !viewModel.avatarChanged
-                            && viewModel.privateProfile == viewModel.accountState.account?.locked
+                                ?: "") && !viewModel.avatarChanged && viewModel.privateProfile == viewModel.accountState.account?.locked
                         ) {
                             if (!viewModel.accountState.isLoading) {
                                 Button(

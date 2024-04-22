@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetFollowedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetRelatedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowHashtagUseCase
 import dagger.Module
 import dagger.Provides
@@ -24,6 +25,11 @@ class HashtagModule {
     @Singleton
     fun provideFollowHashtagUseCase(hashtagRepository: HashtagRepository): FollowHashtagUseCase =
         FollowHashtagUseCase(hashtagRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetRelatedHashtagsUseCase(hashtagRepository: HashtagRepository): GetRelatedHashtagsUseCase =
+        GetRelatedHashtagsUseCase(hashtagRepository)
 
     @Provides
     @Singleton

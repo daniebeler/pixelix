@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Send
+import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.QuestionMark
+import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +45,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
+import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -56,10 +61,15 @@ fun HomeComposable(navController: NavController) {
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(stringResource(id = R.string.app_name))
+            Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         }, actions = {
-            IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+            Row {
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+                }
+                IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
+                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = null)
+                }
             }
         })
 

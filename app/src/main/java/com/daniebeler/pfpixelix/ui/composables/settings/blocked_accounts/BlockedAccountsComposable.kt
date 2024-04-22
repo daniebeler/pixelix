@@ -12,17 +12,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
@@ -35,7 +34,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposabl
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun BlockedAccountsComposable(
-    navController: NavController, viewModel: BlockedAccountsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: BlockedAccountsViewModel = hiltViewModel(key = "blocked-accounts-key")
 ) {
 
     val pullRefreshState =
@@ -44,7 +44,9 @@ fun BlockedAccountsComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(text = stringResource(id = R.string.blocked_accounts))
+            Text(
+                text = stringResource(id = R.string.blocked_accounts), fontWeight = FontWeight.Bold
+            )
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

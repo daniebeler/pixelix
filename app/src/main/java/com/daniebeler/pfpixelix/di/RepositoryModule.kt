@@ -7,7 +7,9 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.Preferences
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.repository.AccountRepositoryImpl
+import com.daniebeler.pfpixelix.data.repository.CollectionRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
+import com.daniebeler.pfpixelix.data.repository.DirectMessagesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.HashtagRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.PostEditorRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.PostRepositoryImpl
@@ -16,7 +18,9 @@ import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
+import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
+import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
 import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
@@ -29,9 +33,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -66,6 +67,18 @@ class RepositoryModule {
     fun provideAccountRepository(
         pixelfedApi: PixelfedApi
     ): AccountRepository = AccountRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun provideCollectionRepository(
+        pixelfedApi: PixelfedApi
+    ): CollectionRepository = CollectionRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun provideDirectMessagesRepository(
+        pixelfedApi: PixelfedApi
+    ): DirectMessagesRepository = DirectMessagesRepositoryImpl(pixelfedApi)
 
     @Provides
     @Singleton

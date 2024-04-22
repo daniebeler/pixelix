@@ -74,19 +74,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -285,7 +280,7 @@ fun PostComposable(
                             )
                         }
                     }
-                } else {
+                } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
                     PostImage(
                         mediaAttachment = viewModel.post!!.mediaAttachments[0],
                         viewModel.post!!.id,
@@ -309,7 +304,7 @@ fun PostComposable(
                                 Icon(
                                     imageVector = Icons.Filled.Favorite,
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = Color(0xFFDD2E44)
                                 )
                             }
                         } else {
@@ -583,7 +578,7 @@ fun PostImage(
         Icon(
             imageVector = Icons.Filled.Favorite,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = Color(0xFFDD2E44),
             modifier = Modifier
                 .size(80.dp)
                 .align(Alignment.Center)

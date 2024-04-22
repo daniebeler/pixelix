@@ -9,10 +9,9 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 @Composable
 fun LocalTimelineComposable(
     navController: NavController,
-    viewModel: LocalTimelineViewModel = hiltViewModel()
+    viewModel: LocalTimelineViewModel = hiltViewModel(key = "local-timeline-key")
 ) {
-    InfinitePostsList(
-        items = viewModel.localTimelineState.localTimeline,
+    InfinitePostsList(items = viewModel.localTimelineState.localTimeline,
         isLoading = viewModel.localTimelineState.isLoading,
         isRefreshing = viewModel.localTimelineState.refreshing,
         error = viewModel.localTimelineState.error,
@@ -25,6 +24,5 @@ fun LocalTimelineComposable(
         onRefresh = {
             viewModel.refresh()
         },
-        itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
-    )
+        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
 }

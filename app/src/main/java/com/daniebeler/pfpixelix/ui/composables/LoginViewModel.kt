@@ -18,7 +18,7 @@ class LoginViewModel @Inject constructor(
     private val storageRepository: StorageRepository
 ) : ViewModel() {
 
-    private val domainRegex: Regex = "^(https:\\/\\/www\\.|https:\\/\\/)?[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})(\\.[a-zA-Z0-9]{2,})?$".toRegex()
+    private val domainRegex: Regex = "^(https?:\\/\\/(?:www\\.)?)?([a-zA-Z0-9]{2,}(?:\\.[a-zA-Z0-9]{2,})+|\\d{1,3}(?:\\.\\d{1,3}){3})(:\\d{1,5})?(\\/\\S*)?\$".toRegex()
 
     private var _authApplication: Application? = null
     var customUrl: String by mutableStateOf("")

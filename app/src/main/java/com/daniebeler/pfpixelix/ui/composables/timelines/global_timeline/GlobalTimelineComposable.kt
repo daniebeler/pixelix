@@ -9,10 +9,9 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 @Composable
 fun GlobalTimelineComposable(
     navController: NavController,
-    viewModel: GlobalTimelineViewModel = hiltViewModel()
+    viewModel: GlobalTimelineViewModel = hiltViewModel(key = "global-timeline-key")
 ) {
-    InfinitePostsList(
-        items = viewModel.globalTimelineState.globalTimeline,
+    InfinitePostsList(items = viewModel.globalTimelineState.globalTimeline,
         isLoading = viewModel.globalTimelineState.isLoading,
         isRefreshing = viewModel.globalTimelineState.refreshing,
         error = viewModel.globalTimelineState.error,
@@ -23,6 +22,5 @@ fun GlobalTimelineComposable(
         onRefresh = {
             viewModel.refresh()
         },
-        itemGetsDeleted = {postId ->  viewModel.postGetsDeleted(postId)}
-    )
+        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
 }

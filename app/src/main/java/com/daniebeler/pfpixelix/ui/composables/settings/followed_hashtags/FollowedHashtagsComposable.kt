@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -37,14 +38,15 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FollowedHashtagsComposable(
-    navController: NavController, viewModel: FollowedHashtagsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: FollowedHashtagsViewModel = hiltViewModel(key = "followed-hashtags-key")
 ) {
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.followedHashtagsState.isRefreshing,
             onRefresh = { viewModel.getFollowedHashtags(true) })
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(stringResource(id = R.string.followed_hashtags))
+            Text(stringResource(id = R.string.followed_hashtags), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -82,15 +84,13 @@ fun FollowedHashtagsComposable(
 
                 if (!viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
                     FullscreenEmptyStateComposable(
-                        EmptyState(
-                            icon = Icons.Outlined.Tag,
+                        EmptyState(icon = Icons.Outlined.Tag,
                             heading = stringResource(R.string.no_followed_hashtags),
                             message = "Followed hashtags will appear here",
                             buttonText = "Explore trending hashtags",
                             onClick = {
                                 Navigate.navigate("trending_screen/hashtags", navController)
-                            }
-                        )
+                            })
                     )
                 }
             }

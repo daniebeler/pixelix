@@ -1,18 +1,28 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,30 +40,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
-import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
+import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
+import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
+import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun OwnProfileComposable(
-    navController: NavController, viewModel: OwnProfileViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: OwnProfileViewModel = hiltViewModel(key = "own-profile-key")
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val lazyGridState = rememberLazyGridState()
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+            onRefresh = { viewModel.loadData(true) })
 
     val context = LocalContext.current
 
@@ -61,12 +79,12 @@ fun OwnProfileComposable(
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(text = viewModel.accountState.account?.username ?: "")
                     Text(
-                        text = viewModel.ownDomain,
-                        fontSize = 12.sp,
-                        lineHeight = 6.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        text = viewModel.accountState.account?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
             }
@@ -77,7 +95,6 @@ fun OwnProfileComposable(
             }
 
             IconButton(onClick = {
-                //Navigate.navigate("settings_screen", navController)
                 showBottomSheet = true
             }) {
                 Icon(
@@ -100,75 +117,114 @@ fun OwnProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
-            CustomProfilePage(accountState = viewModel.accountState,
-                postsState = viewModel.postsState,
-                navController = navController,
-                refresh = {
-                    viewModel.loadData()
-                },
-                getPostsPaginated = {
-                    viewModel.getPostsPaginated()
-                },
-                openUrl = { viewModel.openUrl(context, it) },
-                emptyState = EmptyState(icon = Icons.Outlined.Photo,
-                    heading = stringResource(R.string.no_posts_yet),
-                    message = stringResource(R.string.upload_your_first_post),
-                    buttonText = stringResource(id = R.string.new_post),
-                    onClick = {
-                        Navigate.navigate("new_post_screen", navController)
-                    }),
-                otherAccountTopSectionAdditions = {})
-        }
-
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                }, sheetState = sheetState
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.pullRefresh(pullRefreshState),
+                state = lazyGridState
             ) {
-                ModalBottomSheetContent(navController = navController,
-                    instanceDomain = viewModel.ownDomain,
-                    closeBottomSheet = {
-                        showBottomSheet = false
-                    })
-            }
-        }
-    }
-}
+                item(span = { GridItemSpan(3) }) {
+                    Column {
+                        if (viewModel.accountState.account != null) {
+                            ProfileTopSection(account = viewModel.accountState.account,
+                                relationship = null,
+                                navController,
+                                openUrl = { url ->
+                                    viewModel.openUrl(context, url)
+                                })
 
-@Composable
-fun CustomProfilePage(
-    accountState: AccountState,
-    postsState: PostsState,
-    navController: NavController,
-    emptyState: EmptyState,
-    refresh: () -> Unit,
-    getPostsPaginated: () -> Unit,
-    openUrl: (url: String) -> Unit,
-    otherAccountTopSectionAdditions: @Composable () -> Unit
-) {
-    Box {
-        InfinitePostsGrid(items = postsState.posts,
-            isLoading = postsState.isLoading,
-            isRefreshing = accountState.isLoading && accountState.account != null,
-            error = postsState.error,
-            emptyMessage = emptyState,
-            endReached = postsState.endReached,
-            navController = navController,
-            getItemsPaginated = { getPostsPaginated() },
-            before = {
-                Column {
-                    ProfileTopSection(account = accountState.account,
-                        navController,
-                        openUrl = { url ->
-                            openUrl(url)
-                        })
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        Navigate.navigate(
+                                            "edit_profile_screen", navController
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                ) {
+                                    Text(text = stringResource(id = R.string.edit_profile))
+                                }
+                            }
+                        }
 
-                    otherAccountTopSectionAdditions()
+                        CollectionsComposable(
+                            collectionsState = viewModel.collectionsState,
+                            navController = navController,
+                            addNewButton = true,
+                            instanceDomain = viewModel.ownDomain,
+                        ) { url -> viewModel.openUrl(context, url) }
+
+                        SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
+                            ?: 0,
+                            viewType = viewModel.view,
+                            onViewChange = { viewModel.changeView(it) })
+                    }
                 }
 
-            }) { refresh() }
+                PostsWrapperComposable(accountState = viewModel.accountState,
+                    postsState = viewModel.postsState,
+                    navController = navController,
+                    refresh = {
+                        viewModel.loadData(true)
+                    },
+                    getPostsPaginated = {
+                        viewModel.getPostsPaginated()
+                    },
+                    emptyState = EmptyState(
+                        icon = Icons.Outlined.Photo, heading = "No Posts"
+                    ),
+                    view = viewModel.view,
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
+
+            }
+
+            if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
+                FullscreenErrorComposable(message = viewModel.postsState.error)
+            }
+
+            /*if (before == null && items.isEmpty()) {
+                if (isLoading && !isRefreshing) {
+                    FullscreenLoadingComposable()
+                }
+
+                if (!isLoading && error.isEmpty()) {
+                    FullscreenEmptyStateComposable(emptyMessage)
+                }
+            }*/
+        }
+    }
+
+    InfiniteGridHandler(lazyGridState = lazyGridState) {
+        viewModel.getPostsPaginated()
+    }
+
+    CustomPullRefreshIndicator(
+        viewModel.postsState.refreshing || viewModel.accountState.refreshing,
+        pullRefreshState,
+    )
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            }, sheetState = sheetState
+        ) {
+            ModalBottomSheetContent(navController = navController,
+                instanceDomain = viewModel.ownDomain,
+                closeBottomSheet = {
+                    showBottomSheet = false
+                })
+        }
     }
 }

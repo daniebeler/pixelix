@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
@@ -68,7 +69,7 @@ fun TrendingComposable(navController: NavController, page: String) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-                Text(stringResource(R.string.trending))
+                Text(stringResource(R.string.trending), fontWeight = FontWeight.Bold)
             }, actions = {
                 if (pagerState.currentPage == 0) {
                     IconButton(onClick = { expanded = !expanded }) {

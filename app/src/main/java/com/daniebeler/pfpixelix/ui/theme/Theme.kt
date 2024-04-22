@@ -10,6 +10,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
@@ -19,9 +21,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Purple40, secondary = PurpleGrey40, tertiary = Pink40
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -36,10 +36,22 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun PixelixTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkThemeSystem: Boolean = isSystemInDarkTheme(),
+    viewModel: ThemeViewModel = hiltViewModel(key = "Theme"),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val darkTheme: Boolean = when (viewModel.currentTheme.theme) {
+        "dark" -> {
+            true
+        }
+        "light" -> {
+            false
+        }
+        else -> {
+            darkThemeSystem
+        }
+    }
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -51,23 +63,18 @@ fun PixelixTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+        colorScheme = colorScheme, typography = Typography, content = content
     )
 
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setSystemBarsColor(
-        color = Color.Transparent,
-        darkIcons = !darkTheme
+        color = Color.Transparent, darkIcons = !darkTheme
     )
 
     systemUiController.setNavigationBarColor(
-        color = Color.Transparent,
-        darkIcons = !darkTheme
+        color = Color.Transparent, darkIcons = !darkTheme
     )
-
 
 
 }

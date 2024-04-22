@@ -19,7 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
@@ -43,9 +44,16 @@ fun SinglePostComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(
-                text = stringResource(R.string.post), overflow = TextOverflow.Ellipsis, maxLines = 1
-            )
+            Column {
+                Text(
+                    text = stringResource(id = R.string.post), fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(
+                        id = R.string.by, (viewModel.postState.post?.account?.username ?: "")
+                    ), fontSize = 12.sp, lineHeight = 6.sp
+                )
+            }
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

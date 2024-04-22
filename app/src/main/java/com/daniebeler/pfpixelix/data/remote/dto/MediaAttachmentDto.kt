@@ -16,7 +16,7 @@ data class MediaAttachmentDto(
     @SerializedName("id")
     val id: String,
     @SerializedName("is_nsfw")
-    val isNsfw: Int,
+    val isNsfw: Any,
     @SerializedName("license")
     val license: LicenseDto,
     @SerializedName("meta")
