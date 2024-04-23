@@ -31,10 +31,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -61,8 +57,9 @@ fun EditPostComposable(
     postId: String, navController: NavController, viewModel: EditPostViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    var expanded by remember { mutableStateOf(false) }
-    var context = LocalContext.current
+
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         viewModel.loadData(postId)
     }
@@ -134,8 +131,7 @@ fun EditPostComposable(
 
                     viewModel.mediaAttachments.forEachIndexed { index, mediaAttachment ->
                         Row(
-                            Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(contentAlignment = Alignment.Center) {
 
@@ -155,12 +151,13 @@ fun EditPostComposable(
                                         modifier = Modifier.width(100.dp)
                                     )
                                 } else {
-                                    val model = ImageRequest.Builder(context).data(mediaAttachment.url)
-                                        .decoderFactory { result, options, _ ->
-                                            VideoFrameDecoder(
-                                                result.source, options
-                                            )
-                                        }.build()
+                                    val model =
+                                        ImageRequest.Builder(context).data(mediaAttachment.url)
+                                            .decoderFactory { result, options, _ ->
+                                                VideoFrameDecoder(
+                                                    result.source, options
+                                                )
+                                            }.build()
 
                                     AsyncImage(
                                         model = model,
@@ -171,31 +168,40 @@ fun EditPostComposable(
 
                             }
 
-                    Spacer(Modifier.width(10.dp))
+                            Spacer(Modifier.width(10.dp))
 
-                    OutlinedTextField(
-                        value = mediaAttachment.description!!,
-                        onValueChange = {  },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(stringResource(R.string.alt_text)) },
-                    )
-                            Column {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = "move Imageupwards")
-                                }
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(imageVector = Icons.Outlined.ArrowDownward, contentDescription = "move Imageupwards")
+                            OutlinedTextField(
+                                value = mediaAttachment.description ?: "",
+                                onValueChange = { },
+                                modifier = Modifier.weight(1f),
+                                label = { Text(stringResource(R.string.alt_text)) },
+                            )
+
+                            if (viewModel.mediaAttachments.size > 1) {
+                                Column {
+                                    IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.ArrowUpward,
+                                            contentDescription = "move Imageupwards"
+                                        )
+                                    }
+                                    IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.ArrowDownward,
+                                            contentDescription = "move Imageupwards"
+                                        )
+                                    }
                                 }
                             }
+                        }
+
+                    }
                 }
 
+                LoadingComposable(isLoading = viewModel.editPostState.isLoading)
+                ErrorComposable(message = viewModel.editPostState.error)
+                Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
             }
         }
-
-        LoadingComposable(isLoading = viewModel.editPostState.isLoading)
-        ErrorComposable(message = viewModel.editPostState.error)
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
     }
-}
-}
 }

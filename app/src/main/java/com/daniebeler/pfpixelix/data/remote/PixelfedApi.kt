@@ -349,7 +349,7 @@ interface PixelfedApi {
     suspend fun updatePost(
         @Path("id") postId: String,
         @Body updatePostDto: UpdatePostDto
-    ): Response<PostDto?>
+    ): Response<Unit>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deletePost(

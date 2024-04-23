@@ -124,8 +124,9 @@ class PostEditorRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             if (exception.message != null) {
                 emit(Resource.Error(exception.message!!))
+            } else {
+                emit(Resource.Error("Unknown Error"))
             }
-            emit(Resource.Error("Unknown Error"))
         }
     }
 
@@ -133,10 +134,7 @@ class PostEditorRepositoryImpl @Inject constructor(
         try {
             emit(Resource.Loading())
             val response = pixelfedApi.updatePost(postId, updatePostDto)
-            if (response.body() != null) {
-                val res = response.body()!!.toModel()
-                emit(Resource.Success(res))
-            } else if (response.code() == 200) {
+            if (response.code() == 200) {
                 emit(Resource.Success(null))
             } else {
                 emit(Resource.Error("Unknown Error"))
@@ -144,8 +142,9 @@ class PostEditorRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             if (exception.message != null) {
                 emit(Resource.Error(exception.message!!))
+            } else {
+                emit(Resource.Error("Unknown Error"))
             }
-            emit(Resource.Error("Unknown Error"))
         }
     }
 
