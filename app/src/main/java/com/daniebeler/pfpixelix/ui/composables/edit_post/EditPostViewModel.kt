@@ -11,21 +11,32 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdatePostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditPostViewModel @Inject constructor(
-    private val getPostUseCase: GetPostUseCase, private val updatePostUseCase: UpdatePostUseCase
+    private val getPostUseCase: GetPostUseCase,
+    private val updatePostUseCase: UpdatePostUseCase,
+    private val updateMediaUseCase: UpdateMediaUseCase
 ) : ViewModel() {
+    data class MediaDescriptionItem(
+        val imageId: String, var description: String, var changed: Boolean
+    )
+
     var editPostState by mutableStateOf(EditPostState())
     var caption by mutableStateOf(TextFieldValue())
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var mediaAttachments = mutableStateListOf<MediaAttachment>()
+    var mediaDescriptionItems = mutableStateListOf<MediaDescriptionItem>()
 
     fun loadData(postId: String) {
         loadPost(postId)
@@ -40,6 +51,11 @@ class EditPostViewModel @Inject constructor(
                         sensitive = result.data.sensitive
                         sensitiveText = result.data.spoilerText
                         mediaAttachments.addAll(result.data.mediaAttachments)
+                        mediaDescriptionItems.addAll(result.data.mediaAttachments.map {
+                            MediaDescriptionItem(
+                                it.id, it.description ?: "", false
+                            )
+                        })
                     }
                     EditPostState(post = result.data)
                 }
@@ -56,24 +72,53 @@ class EditPostViewModel @Inject constructor(
     }
 
     fun updatePost(postId: String) {
-        val updatePostDto = UpdatePostDto(_status = caption.text,
-            _sensitive = sensitive,
-            _spoilerText = sensitiveText,
-            _media_ids = mediaAttachments.map { it.id })
-        updatePostUseCase(
-            postId, updatePostDto
+        CoroutineScope(Dispatchers.Default).launch {
+
+            mediaDescriptionItems.onEach { mediaDescriptionItem ->
+                updateMedia(mediaDescriptionItem)
+            }
+
+            val updatePostDto = UpdatePostDto(_status = caption.text,
+                _sensitive = sensitive,
+                _spoilerText = sensitiveText,
+                _media_ids = mediaAttachments.map { it.id })
+            updatePostUseCase(
+                postId, updatePostDto
+            ).onEach { result ->
+                editPostState = when (result) {
+                    is Resource.Success -> {
+                        EditPostState(post = editPostState.post)
+                    }
+
+                    is Resource.Error -> {
+                        EditPostState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        EditPostState(isLoading = true, post = editPostState.post)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    private fun updateMedia(mediaDescriptionItem: MediaDescriptionItem) {
+        updateMediaUseCase(
+            mediaDescriptionItem.imageId, mediaDescriptionItem.description
         ).onEach { result ->
-            editPostState = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    EditPostState(post = editPostState.post)
+                    println("success")
                 }
 
                 is Resource.Error -> {
-                    EditPostState(error = result.message ?: "An unexpected error occurred")
+                    editPostState =
+                        EditPostState(error = (result.message ?: "An unexpected error occurred"))
                 }
 
                 is Resource.Loading -> {
-                    EditPostState(isLoading = true, post = editPostState.post)
+                    editPostState = EditPostState(isLoading = true, post = editPostState.post)
+
                 }
             }
         }.launchIn(viewModelScope)

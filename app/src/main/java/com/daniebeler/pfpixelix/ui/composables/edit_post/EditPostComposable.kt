@@ -165,14 +165,21 @@ fun EditPostComposable(
                                         modifier = Modifier.width(100.dp)
                                     )
                                 }
-
                             }
 
                             Spacer(Modifier.width(10.dp))
 
+                            val mediaDescriptionItem =
+                                viewModel.mediaDescriptionItems.find { mediaDescriptionItem -> mediaDescriptionItem.imageId == mediaAttachment.id }
+                                    ?: EditPostViewModel.MediaDescriptionItem(
+                                        mediaAttachment.id, "", false
+                                    )
+                            val indexOfDescriptionItem = viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
                             OutlinedTextField(
-                                value = mediaAttachment.description ?: "",
-                                onValueChange = { },
+                                value = mediaDescriptionItem.description,
+                                onValueChange = {
+                                    viewModel.mediaDescriptionItems[indexOfDescriptionItem] = viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(description = it, changed = true)
+                                },
                                 modifier = Modifier.weight(1f),
                                 label = { Text(stringResource(R.string.alt_text)) },
                             )
