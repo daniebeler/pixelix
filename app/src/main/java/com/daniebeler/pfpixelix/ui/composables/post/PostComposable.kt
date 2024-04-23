@@ -438,9 +438,9 @@ fun PostComposable(
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(context, post.url, true, viewModel, post)
+                    ShareBottomSheet(context, post.url, true, navController, viewModel, post)
                 } else {
-                    ShareBottomSheet(context, post.url, false, viewModel, post)
+                    ShareBottomSheet(context, post.url, false, navController, viewModel, post)
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)

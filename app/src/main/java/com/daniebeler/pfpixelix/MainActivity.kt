@@ -37,6 +37,7 @@ import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
+import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -166,6 +167,10 @@ sealed class Destinations(
         route = "new_post_screen", icon = Icons.Outlined.Settings
     )
 
+    object EditPost : Destinations(
+        route = "edit_post_screen/{postId}", icon = Icons.Outlined.Settings
+    )
+
     object Hashtag : Destinations(
         route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings
     )
@@ -237,6 +242,13 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.NewPost.route) {
             NewPostComposable(navController)
+        }
+
+        composable(Destinations.EditPost.route) {navBackStackEntry ->
+            val postId = navBackStackEntry.arguments?.getString("postId")
+            postId?.let { id ->
+                EditPostComposable(postId, navController)
+            }
         }
 
         composable(Destinations.MutedAccounts.route) {
