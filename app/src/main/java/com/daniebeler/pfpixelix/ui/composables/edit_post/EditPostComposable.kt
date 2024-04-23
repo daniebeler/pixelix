@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,11 +88,33 @@ fun EditPostComposable(
                     }
                 },
                 actions = {
-                    Button(
-                        onClick = { viewModel.updatePost(postId) },
-                        modifier = Modifier.width(120.dp)
-                    ) {
-                        Text(text = stringResource(R.string.save))
+                    if (viewModel.editPostState.post != null) {
+                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || (viewModel.sensitive == viewModel.editPostState.post!!.sensitive && viewModel.sensitiveText != viewModel.editPostState.post!!.spoilerText)) {
+                            if (viewModel.editPostState.isLoading) {
+                                Button(
+                                    onClick = { viewModel.updatePost(postId) },
+                                    modifier = Modifier.width(120.dp)
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            } else {
+                                Button(
+                                    onClick = { viewModel.updatePost(postId) },
+                                    modifier = Modifier.width(120.dp)
+                                ) {
+                                    Text(text = stringResource(R.string.save))
+                                }
+                            }
+                        } else {
+                            Button(
+                                onClick = { }, enabled = false, modifier = Modifier.width(120.dp)
+                            ) {
+                                Text(text = stringResource(R.string.save))
+                            }
+                        }
                     }
                 })
         }) { paddingValues ->
@@ -181,9 +205,12 @@ fun EditPostComposable(
                             OutlinedTextField(
                                 value = mediaDescriptionItem.description,
                                 onValueChange = {
+                                    val oldMediaAttachment =
+                                        viewModel.editPostState.post!!.mediaAttachments.find { it.id == mediaDescriptionItem.imageId }
+                                    val changed = it != (oldMediaAttachment!!.description ?: "")
                                     viewModel.mediaDescriptionItems[indexOfDescriptionItem] =
                                         viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(
-                                            description = it, changed = true
+                                            description = it, changed = changed
                                         )
                                 },
                                 modifier = Modifier.weight(1f),
