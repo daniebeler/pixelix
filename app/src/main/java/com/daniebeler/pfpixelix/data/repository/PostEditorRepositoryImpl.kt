@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
+import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -117,6 +118,26 @@ class PostEditorRepositoryImpl @Inject constructor(
             if (response != null) {
                 val res = response.body()!!.toModel()
                 emit(Resource.Success(res))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            if (exception.message != null) {
+                emit(Resource.Error(exception.message!!))
+            }
+            emit(Resource.Error("Unknown Error"))
+        }
+    }
+
+    override fun updatePost(postId: String, updatePostDto: UpdatePostDto): Flow<Resource<Post?>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.updatePost(postId, updatePostDto)
+            if (response.body() != null) {
+                val res = response.body()!!.toModel()
+                emit(Resource.Success(res))
+            } else if (response.code() == 200) {
+                emit(Resource.Success(null))
             } else {
                 emit(Resource.Error("Unknown Error"))
             }
