@@ -37,6 +37,7 @@ class EditPostViewModel @Inject constructor(
     var sensitiveText: String by mutableStateOf("")
     var mediaAttachments = mutableStateListOf<MediaAttachment>()
     var mediaDescriptionItems = mutableStateListOf<MediaDescriptionItem>()
+    var deleteMediaDialog by mutableStateOf<String?>(null)
 
     fun loadData(postId: String) {
         loadPost(postId)
@@ -122,6 +123,12 @@ class EditPostViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun deleteMedia(mediaId: String) {
+        mediaAttachments.remove(mediaAttachments.find { it.id == mediaId })
+        mediaDescriptionItems.remove(mediaDescriptionItems.find { it.imageId == mediaId })
+        deleteMediaDialog = null
     }
 
     fun moveMediaAttachmentUp(index: Int) {

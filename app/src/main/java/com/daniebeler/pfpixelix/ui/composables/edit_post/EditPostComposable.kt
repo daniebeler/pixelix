@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -100,8 +103,7 @@ fun EditPostComposable(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (!viewModel.editPostState.isLoading && viewModel.editPostState.post != null) {
-                    TextFieldMentionsComposable(
-                        submit = {},
+                    TextFieldMentionsComposable(submit = {},
                         text = viewModel.caption,
                         changeText = { text -> viewModel.caption = text },
                         labelStringId = R.string.caption,
@@ -174,11 +176,15 @@ fun EditPostComposable(
                                     ?: EditPostViewModel.MediaDescriptionItem(
                                         mediaAttachment.id, "", false
                                     )
-                            val indexOfDescriptionItem = viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
+                            val indexOfDescriptionItem =
+                                viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
                             OutlinedTextField(
                                 value = mediaDescriptionItem.description,
                                 onValueChange = {
-                                    viewModel.mediaDescriptionItems[indexOfDescriptionItem] = viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(description = it, changed = true)
+                                    viewModel.mediaDescriptionItems[indexOfDescriptionItem] =
+                                        viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(
+                                            description = it, changed = true
+                                        )
                                 },
                                 modifier = Modifier.weight(1f),
                                 label = { Text(stringResource(R.string.alt_text)) },
@@ -200,6 +206,16 @@ fun EditPostComposable(
                                     }
                                 }
                             }
+
+                            IconButton(onClick = {
+                                viewModel.deleteMediaDialog = mediaAttachment.id
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = "delete Image",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
 
                     }
@@ -210,5 +226,29 @@ fun EditPostComposable(
                 Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
             }
         }
+    }
+
+    if (viewModel.deleteMediaDialog != null) {
+        AlertDialog(icon = {
+            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+        }, title = {
+            Text(text = "Remove Media")
+        }, text = {
+            Text(text = "Are you sure you want to delete this media")
+        }, onDismissRequest = {
+            viewModel.deleteMediaDialog = null
+        }, confirmButton = {
+            TextButton(onClick = {
+                viewModel.deleteMedia(viewModel.deleteMediaDialog!!)
+            }) {
+                Text(stringResource(R.string.delete))
+            }
+        }, dismissButton = {
+            TextButton(onClick = {
+                viewModel.deleteMediaDialog = null
+            }) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        })
     }
 }
