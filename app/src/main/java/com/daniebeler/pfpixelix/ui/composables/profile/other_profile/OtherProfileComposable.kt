@@ -330,16 +330,6 @@ fun OtherProfileComposable(
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
-                    text = stringResource(R.string.send_message),
-                    onClick = {
-                        Navigate.navigate(
-                            "chat/" + viewModel.accountState.account!!.id, navController
-                        )
-                    })
-
-                HorizontalDivider(Modifier.padding(12.dp))
-
                 CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
