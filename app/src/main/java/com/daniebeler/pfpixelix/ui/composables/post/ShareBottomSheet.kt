@@ -88,9 +88,11 @@ fun ShareBottomSheet(
             })
 
         if (minePost) {
+            HorizontalDivider(Modifier.padding(12.dp))
+
             CustomBottomSheetElement(
                 icon = Icons.Outlined.Edit,
-                text = "Edit this post",
+                text = stringResource(R.string.edit_post),
                 onClick = {
                     Navigate.navigate("edit_post_screen/${post.id}", navController = navController)
                 }

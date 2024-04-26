@@ -109,7 +109,7 @@ class EditPostViewModel @Inject constructor(
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    println("success")
+                    EditPostState(post = editPostState.post)
                 }
 
                 is Resource.Error -> {

@@ -36,6 +36,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -63,6 +67,10 @@ fun EditPostComposable(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    var showSaveAlert by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -75,7 +83,9 @@ fun EditPostComposable(
             TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text(text = "Edit Post", fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(id = R.string.edit_post), fontWeight = FontWeight.Bold
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -92,8 +102,7 @@ fun EditPostComposable(
                         if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || (viewModel.sensitive == viewModel.editPostState.post!!.sensitive && viewModel.sensitiveText != viewModel.editPostState.post!!.spoilerText)) {
                             if (viewModel.editPostState.isLoading) {
                                 Button(
-                                    onClick = { viewModel.updatePost(postId) },
-                                    modifier = Modifier.width(120.dp)
+                                    onClick = { }, modifier = Modifier.width(120.dp)
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(20.dp),
@@ -102,7 +111,7 @@ fun EditPostComposable(
                                 }
                             } else {
                                 Button(
-                                    onClick = { viewModel.updatePost(postId) },
+                                    onClick = { showSaveAlert = true },
                                     modifier = Modifier.width(120.dp)
                                 ) {
                                     Text(text = stringResource(R.string.save))
@@ -251,6 +260,27 @@ fun EditPostComposable(
                 LoadingComposable(isLoading = viewModel.editPostState.isLoading)
                 ErrorComposable(message = viewModel.editPostState.error)
                 Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
+            }
+
+            if (showSaveAlert) {
+                AlertDialog(title = {
+                    Text(text = stringResource(id = R.string.are_you_sure_you_want_to_log_out))
+                }, onDismissRequest = {
+                    showSaveAlert = false
+                }, dismissButton = {
+                    TextButton(onClick = {
+                        showSaveAlert = false
+                    }) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
+                }, confirmButton = {
+                    TextButton(onClick = {
+                        showSaveAlert = false
+                        viewModel.updatePost(postId)
+                    }) {
+                        Text(stringResource(id = R.string.save))
+                    }
+                })
             }
         }
     }

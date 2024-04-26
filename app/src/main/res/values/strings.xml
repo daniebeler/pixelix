@@ -177,4 +177,5 @@
     <string name="all">All</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="edit_post">Edit this post</string>
 </resources>
