@@ -19,6 +19,7 @@ class NotificationsViewModel @Inject constructor(
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
+    var filter by mutableStateOf(NotificationsFilterEnum.All)
 
     init {
         getNotificationsFirstLoad(false)
@@ -44,9 +45,6 @@ class NotificationsViewModel @Inject constructor(
                     )
                 }
             }
-
-            println("sox")
-            println(notificationsState)
         }.launchIn(viewModelScope)
     }
 
@@ -78,6 +76,10 @@ class NotificationsViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
 
+    }
+
+    fun changeFilter(selectedFilter: NotificationsFilterEnum) {
+        filter = selectedFilter
     }
 
     fun refresh() {

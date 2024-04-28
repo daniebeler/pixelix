@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -39,7 +40,7 @@ class NewPostViewModel @Inject constructor(
     )
 
     var images by mutableStateOf(emptyList<ImageItem>())
-    var caption: String by mutableStateOf("")
+    var caption: TextFieldValue by mutableStateOf(TextFieldValue())
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var audience: String by mutableStateOf(AUDIENCE_PUBLIC)
@@ -235,7 +236,7 @@ class NewPostViewModel @Inject constructor(
 
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
-        val createPostDto = CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText)
+        val createPostDto = CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText)
         createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

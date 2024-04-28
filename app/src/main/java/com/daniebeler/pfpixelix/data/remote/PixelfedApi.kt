@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
+import com.daniebeler.pfpixelix.data.remote.dto.CollectionDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
@@ -16,6 +17,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
+import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
@@ -239,6 +241,24 @@ interface PixelfedApi {
     ): Call<PostDto>
 
 
+    // Collections
+
+    @GET("api/v1.1/collections/accounts/{userId}")
+    fun getCollectionsByUserId(
+        @Path("userId") userId: String
+    ): Call<List<CollectionDto>>
+
+    @GET("api/v1.1/collections/view/{collectionid}")
+    fun getCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<CollectionDto>
+
+    @GET("api/v1.1/collections/items/{collectionid}")
+    fun getPostsOfCollection(
+        @Path("collectionid") collectionId: String
+    ): Call<List<PostDto>>
+
+
     // Tags
 
 
@@ -257,6 +277,9 @@ interface PixelfedApi {
 
     @GET("api/v1/tags/{tag}?_pe=1")
     fun getHashtag(@Path("tag") tag: String): Call<TagDto>
+
+    @GET("api/v1/tags/{tag}/related")
+    fun getRelatedHashtags(@Path("tag") tag: String): Call<List<RelatedHashtagDto>>
 
 
     // Direct Messages

@@ -304,7 +304,7 @@ fun PostComposable(
                                 Icon(
                                     imageVector = Icons.Filled.Favorite,
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = Color(0xFFDD2E44)
                                 )
                             }
                         } else {
@@ -578,7 +578,7 @@ fun PostImage(
         Icon(
             imageVector = Icons.Filled.Favorite,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = Color(0xFFDD2E44),
             modifier = Modifier
                 .size(80.dp)
                 .align(Alignment.Center)

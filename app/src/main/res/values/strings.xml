@@ -160,4 +160,21 @@
     <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
     <string name="confirm">confirm</string>
     <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don\'t forget to be respectful.</string>
+    <string name="rate_us">Rate us</string>
+    <string name="about_pixelix">About Pixelix</string>
+    <string name="developed_by">Developed by</string>
+    <string name="conversations">Conversations</string>
+    <string name="share_this_collection">Share this collection</string>
+    <string name="by">By %1$s</string>
+    <string name="new_collection">New Collection</string>
+    <string name="collection_create_not_supported_explanation">Creating collections is not yet supported in the pixelfed api, but a new collection can be created in the pixelfed web app:</string>
+    <string name="new_">New</string>
+    <string name="collections">Collections</string>
+    <string name="follows_you">Follows you</string>
+    <string name="muted">muted</string>
+    <string name="blocked">blocked</string>
+    <string name="message">Message</string>
+    <string name="all">All</string>
+    <string name="likes_">Likes</string>
+    <string name="reposts">Reposts</string>
 </resources>

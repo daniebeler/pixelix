@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
@@ -22,7 +21,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposabl
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrendingHashtagsComposable(
-    navController: NavController, viewModel: TrendingHashtagsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: TrendingHashtagsViewModel = hiltViewModel(key = "trending-hashtags-key")
 ) {
 
     val pullRefreshState =

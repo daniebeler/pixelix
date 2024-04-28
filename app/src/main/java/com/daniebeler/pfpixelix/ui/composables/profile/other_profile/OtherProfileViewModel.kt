@@ -12,16 +12,20 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
+import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
@@ -30,6 +34,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,27 +51,39 @@ class OtherProfileViewModel @Inject constructor(
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
+    private val setViewUseCase: SetViewUseCase,
+    private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val getViewUseCase: GetViewUseCase,
     application: Application
-    ) : AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
     var postsState by mutableStateOf(PostsState())
 
+    var collectionsState by mutableStateOf(CollectionsState())
+
     var domain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
     var view by mutableStateOf(ViewEnum.Timeline)
 
-    fun loadData(userId: String) {
-        getAccount(userId)
+    fun loadData(userId: String, refreshing: Boolean) {
+        getAccount(userId, refreshing)
 
-        getPostsFirstLoad(userId)
+        getPostsFirstLoad(userId, refreshing)
 
         getRelationship(userId)
 
         getMutualFollowers(userId)
+        getCollections(userId)
+
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
     }
 
     private fun getRelationship(userId: String) {
@@ -116,7 +133,7 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAccount(userId: String) {
+    private fun getAccount(userId: String, refreshing: Boolean) {
         getAccountUseCase(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -128,7 +145,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true, account = accountState.account)
+                    AccountState(isLoading = true, account = accountState.account, refreshing = refreshing)
                 }
             }
 
@@ -140,7 +157,27 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostsFirstLoad(userId: String) {
+    private fun getCollections(userId: String) {
+        getCollectionsUseCase(userId).onEach { result ->
+            collectionsState = when (result) {
+                is Resource.Success -> {
+                    CollectionsState(collections = result.data ?: emptyList())
+                }
+
+                is Resource.Error -> {
+                    CollectionsState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    CollectionsState(
+                        isLoading = true, collections = collectionsState.collections
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getPostsFirstLoad(userId: String, refreshing: Boolean) {
         getPostsOfAccountUseCase(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
@@ -153,7 +190,7 @@ class OtherProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts)
+                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
@@ -317,5 +354,16 @@ class OtherProfileViewModel @Inject constructor(
 
     fun openUrl(context: Context, url: String) {
         openExternalUrlUseCase(context, url)
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        viewModelScope.launch {
+            setViewUseCase(newView)
+        }
+    }
+
+    fun postGetsDeleted(postId: String) {
+        postsState = postsState.copy(posts = postsState.posts.filter { post -> post.id != postId })
     }
 }

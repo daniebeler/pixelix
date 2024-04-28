@@ -21,7 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.ReportProblem
+import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,16 +67,17 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ConversationsComposable(
-    navController: NavController, viewModel: ConversationsViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: ConversationsViewModel = hiltViewModel(key = "conversations-viewmodel-key")
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var showNewChatDialog = remember { mutableStateOf(false) }
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.conversationsState.isRefreshing,
-        onRefresh = { viewModel.refresh() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.conversationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
 
@@ -88,7 +90,7 @@ fun ConversationsComposable(
 
     }, topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text("Messages")
+            Text(stringResource(R.string.conversations), fontWeight = FontWeight.Bold)
 
         }, navigationIcon = {
             IconButton(onClick = {
@@ -101,7 +103,7 @@ fun ConversationsComposable(
         }, actions = {
             IconButton(onClick = { showBottomSheet = true }) {
                 Icon(
-                    imageVector = Icons.Outlined.ReportProblem,
+                    imageVector = Icons.Outlined.QuestionMark,
                     tint = MaterialTheme.colorScheme.error,
                     contentDescription = null
                 )
@@ -178,7 +180,7 @@ fun ConversationsComposable(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(horizontal = 12.dp)
                 ) {
                     Column {
@@ -188,6 +190,8 @@ fun ConversationsComposable(
                             header = stringResource(R.string.warning),
                             description = stringResource(R.string.direct_messages_encryption_description)
                         )
+
+                        Spacer(modifier = Modifier.height(18.dp))
                     }
                 }
             }
@@ -237,11 +241,9 @@ private fun CreateNewConversation(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .clickable {
-                                    viewModel.newConversationUsername =
-                                        TextFieldValue(
-                                            it.acct,
-                                            selection = TextRange(it.acct.length)
-                                        )
+                                    viewModel.newConversationUsername = TextFieldValue(
+                                        it.acct, selection = TextRange(it.acct.length)
+                                    )
                                     viewModel.newConversationSelectedAccount = it
                                     viewModel.newConversationState = NewConversationState()
                                 }) {

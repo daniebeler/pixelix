@@ -62,7 +62,8 @@ data class AccountDto(
             note = noteText ?: "",
             url = url,
             locked = locked,
-            createdAt = createdAt
+            createdAt = createdAt,
+            isAdmin = isAdmin
         )
     }
 }

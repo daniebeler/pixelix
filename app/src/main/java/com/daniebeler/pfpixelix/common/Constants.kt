@@ -16,7 +16,7 @@ object Constants {
     const val HOME_TIMELINE_POSTS_LIMIT = 20
     const val LOCAL_TIMELINE_POSTS_LIMIT = 20
     const val GLOBAL_TIMELINE_POSTS_LIMIT = 20
-    const val NOTIFICATIONS_LIMIT = 30
+    const val NOTIFICATIONS_LIMIT = 40
     const val LIKED_POSTS_LIMIT = 40
     const val PROFILE_POSTS_LIMIT = 18
     const val LIKED_BY_LIMIT = 40

@@ -27,9 +27,14 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CustomPost(post: Post, navController: NavController) {
+
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
-        post.mediaAttachments[0].blurHash,
+        if (post.mediaAttachments.isNotEmpty()) {
+            post.mediaAttachments[0].blurHash ?: "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
+        } else {
+            "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
+        },
     )
 
     if (blurHashAsDrawable.bitmap != null) {
@@ -40,7 +45,7 @@ fun CustomPost(post: Post, navController: NavController) {
             modifier = Modifier.aspectRatio(1f)
         )
     }
-    
+
     if (post.sensitive) {
         Box(
             contentAlignment = Alignment.Center,
@@ -79,8 +84,7 @@ fun CustomPost(post: Post, navController: NavController) {
                     model = post.mediaAttachments[0].previewUrl,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(1f)
+                    modifier = Modifier.aspectRatio(1f)
                 )
             }
         }

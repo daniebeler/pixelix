@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,7 +43,7 @@ fun FollowersMainComposable(
     navController: NavController,
     accountId: String,
     page: String,
-    viewModel: FollowersViewModel = hiltViewModel()
+    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
 ) {
 
     LaunchedEffect(Unit) {
@@ -65,14 +66,13 @@ fun FollowersMainComposable(
         topBar = {
             TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
                 Column {
-                    Text(viewModel.accountState.account?.username ?: "")
-
+                    Text(
+                        text = viewModel.accountState.account?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
                     Text(
                         text = viewModel.accountState.account?.url?.substringAfter("https://")
-                            ?.substringBefore("/") ?: "",
-                        fontSize = 12.sp,
-                        lineHeight = 6.sp,
-                        color = MaterialTheme.colorScheme.primary
+                            ?.substringBefore("/") ?: "", fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
             }, navigationIcon = {

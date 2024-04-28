@@ -44,7 +44,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutInstanceComposable(
-    navController: NavController, viewModel: AboutInstanceViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: AboutInstanceViewModel = hiltViewModel(key = "about-instance-key")
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -53,7 +54,7 @@ fun AboutInstanceComposable(
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Text(text = viewModel.ownInstanceDomain)
+            Text(text = viewModel.ownInstanceDomain, fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

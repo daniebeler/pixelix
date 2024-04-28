@@ -46,13 +46,16 @@ import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
-import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
+import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
-fun SearchComposable(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
+fun SearchComposable(
+    navController: NavController,
+    viewModel: SearchViewModel = hiltViewModel(key = "search-viewmodel-key")
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Scaffold(contentWindowInsets = WindowInsets(0.dp)) { paddingValues ->
@@ -62,7 +65,8 @@ fun SearchComposable(navController: NavController, viewModel: SearchViewModel = 
                 .fillMaxSize()
         ) {
             Box(Modifier.padding(12.dp, 0.dp)) {
-                OutlinedTextField(value = viewModel.textInput,
+                OutlinedTextField(
+                    value = viewModel.textInput,
                     onValueChange = { viewModel.textInputChange(it) },
                     label = { Text(stringResource(R.string.search)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },

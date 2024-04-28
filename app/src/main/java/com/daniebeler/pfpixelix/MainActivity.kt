@@ -9,14 +9,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
@@ -36,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
@@ -46,6 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfil
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.search.SearchComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
@@ -158,6 +158,10 @@ sealed class Destinations(
         route = "about_instance_screen", icon = Icons.Outlined.Settings
     )
 
+    object AboutPixelix : Destinations(
+        route = "about_pixelix_screen", icon = Icons.Outlined.Settings
+    )
+
     object NewPost : Destinations(
         route = "new_post_screen", icon = Icons.Outlined.Settings
     )
@@ -168,6 +172,10 @@ sealed class Destinations(
 
     object SinglePost : Destinations(
         route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
+    )
+
+    object Collection : Destinations(
+        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite
     )
 
     object Followers : Destinations(
@@ -189,8 +197,7 @@ sealed class Destinations(
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(
-        navController,
+    NavHost(navController,
         startDestination = Destinations.HomeScreen.route,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }) {
@@ -256,6 +263,10 @@ fun NavigationGraph(navController: NavHostController) {
             AboutInstanceComposable(navController)
         }
 
+        composable(Destinations.AboutPixelix.route) {
+            AboutPixelixComposable(navController)
+        }
+
         composable(Destinations.OwnProfile.route) {
             OwnProfileComposable(navController)
         }
@@ -275,6 +286,13 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
+        composable(Destinations.Collection.route) { navBackStackEntry ->
+            val uId = navBackStackEntry.arguments?.getString("collectionid")
+            uId?.let { id ->
+                CollectionComposable(navController, collectionId = id)
+            }
+        }
+
         composable(Destinations.Search.route) {
             SearchComposable(navController)
         }
@@ -283,9 +301,9 @@ fun NavigationGraph(navController: NavHostController) {
             ConversationsComposable(navController = navController)
         }
 
-        composable(Destinations.Chat.route) {navBackStackEntry ->
+        composable(Destinations.Chat.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
-            uId?.let {id ->
+            uId?.let { id ->
                 ChatComposable(navController = navController, accountId = id)
             }
         }

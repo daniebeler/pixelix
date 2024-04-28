@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.post.reply
+package com.daniebeler.pfpixelix.ui.composables.textfield_mentions
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,14 +16,15 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateCommentViewModel @Inject constructor(
+class TextFieldMentionsViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase
 ): ViewModel() {
-    var replyText by mutableStateOf(TextFieldValue(""))
+    var text by mutableStateOf(TextFieldValue(""))
     var mentionsDropdownOpen by mutableStateOf(false)
     var mentionSuggestions by mutableStateOf(MentionSuggestionsState())
+
     fun changeText(newText: TextFieldValue) {
-        replyText = newText
+        text = newText
         val regex = Regex("\\B@\\w+\$")
 
         val result = regex.find(newText.text)
@@ -35,11 +36,11 @@ class CreateCommentViewModel @Inject constructor(
         searchMentions(result.value)
     }
 
-    private fun searchMentions(text: String?) {
-        if (text == null) {
+    private fun searchMentions(mention: String?) {
+        if (mention == null) {
             return
         }
-        val searchUsername = text.substring(1)
+        val searchUsername = mention.substring(1)
         searchUseCase(searchUsername, "accounts").onEach {result ->
             mentionSuggestions = when(result) {
                 is Resource.Success -> {
@@ -63,10 +64,9 @@ class CreateCommentViewModel @Inject constructor(
     }
 
     fun clickMention(acct: String) {
-        val index = replyText.text.lastIndexOf("@") + 1
-        val newText = replyText.text.substring(0,index) + acct
-        replyText = replyText.copy(text = newText, selection = TextRange(newText.length))
+        val index = text.text.lastIndexOf("@") + 1
+        val newText = text.text.substring(0,index) + acct
+        text = text.copy(text = newText, selection = TextRange(newText.length))
 
     }
-
 }
