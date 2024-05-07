@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.Adjust
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Palette
@@ -59,6 +60,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
+import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -125,6 +127,10 @@ fun PreferencesComposable(
                 text = stringResource(R.string.app_theme),
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
+
+            ButtonPreferencesItem(icon = Icons.Outlined.Adjust, text = "App Icon", onClick = {
+                Navigate.navigate("icon_selection_screen", navController)
+            })
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
