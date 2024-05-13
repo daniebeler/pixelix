@@ -27,26 +27,58 @@ class IconSelectionViewModel @Inject constructor(
 
     fun fillList(context: Context) {
 
+        val packageManager = context.packageManager
+
         val launcherDrawable = ResourcesCompat.getDrawableForDensity(
             context.resources,
             R.mipmap.ic_launcher_new,
             DisplayMetrics.DENSITY_XXXHIGH,
             context.theme
-        );
+        )
+
         var bm = launcherDrawable!!.toBitmap(
             launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
         ).asImageBitmap()
 
+        val bmEnabled = packageManager.getComponentEnabledSetting(
+            ComponentName(
+                context, "com.daniebeler.pfpixelix.MainActivity"
+            )
+        )
+
         val launcherDrawableFief = ResourcesCompat.getDrawableForDensity(
             context.resources, R.mipmap.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, context.theme
-        );
+        )
+
         var bmFief = launcherDrawableFief!!.toBitmap(
             launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
         ).asImageBitmap()
 
+        val bmFiefEnabled = packageManager.getComponentEnabledSetting(
+            ComponentName(
+                context, "com.daniebeler.pfpixelix.Fief"
+            )
+        )
+
+
+        val launcherDrawable01 = ResourcesCompat.getDrawableForDensity(
+            context.resources, R.mipmap.ic_launcher_01, DisplayMetrics.DENSITY_XXXHIGH, context.theme
+        )
+
+        var bm01 = launcherDrawable01!!.toBitmap(
+            launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
+        ).asImageBitmap()
+
+        val bm01Enabled = packageManager.getComponentEnabledSetting(
+            ComponentName(
+                context, "com.daniebeler.pfpixelix.Icon01"
+            )
+        )
+
         icons = listOf(
-            IconWithName("com.daniebeler.pfpixelix.MainActivity", bm),
-            IconWithName("com.daniebeler.pfpixelix.Fief", bmFief)
+            IconWithName("com.daniebeler.pfpixelix.MainActivity", bm, bmEnabled == 1),
+            IconWithName("com.daniebeler.pfpixelix.Icon01", bm01, bm01Enabled == 1),
+            IconWithName("com.daniebeler.pfpixelix.Fief", bmFief, bmFiefEnabled == 1)
         )
     }
 
@@ -55,8 +87,9 @@ class IconSelectionViewModel @Inject constructor(
             // Get the package manager instance
             val packageManager = context.packageManager
 
-            // Enable the main activity component
             val mainActivityComponent = ComponentName(context, name)
+            println("ffffief: " + packageManager.getComponentEnabledSetting(mainActivityComponent))
+            // Enable the main activity component
             packageManager.setComponentEnabledSetting(
                 mainActivityComponent,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
@@ -85,5 +118,5 @@ class IconSelectionViewModel @Inject constructor(
 }
 
 data class IconWithName(
-    val name: String, val icon: ImageBitmap
+    val name: String, val icon: ImageBitmap, val enabled: Boolean = false
 )
