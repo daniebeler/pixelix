@@ -6,9 +6,7 @@ import android.content.pm.PackageManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.res.ResourcesCompat
@@ -23,63 +21,42 @@ class IconSelectionViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    var icons by mutableStateOf<List<IconWithName>>(emptyList())
+    var icons = mutableListOf<IconWithName>()
 
     fun fillList(context: Context) {
+        if (icons.isEmpty()) {
+            val packageManager = context.packageManager
 
-        val packageManager = context.packageManager
 
-        val launcherDrawable = ResourcesCompat.getDrawableForDensity(
-            context.resources,
-            R.mipmap.ic_launcher_new,
-            DisplayMetrics.DENSITY_XXXHIGH,
-            context.theme
-        )
-
-        var bm = launcherDrawable!!.toBitmap(
-            launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
-        ).asImageBitmap()
-
-        val bmEnabled = packageManager.getComponentEnabledSetting(
-            ComponentName(
-                context, "com.daniebeler.pfpixelix.MainActivity"
+            val list = listOf(
+                IconAndName("com.daniebeler.pfpixelix.MainActivity", R.mipmap.ic_launcher_02),
+                IconAndName("com.daniebeler.pfpixelix.Icon03", R.mipmap.ic_launcher_03),
+                IconAndName("com.daniebeler.pfpixelix.Icon01", R.mipmap.ic_launcher_01),
+                IconAndName("com.daniebeler.pfpixelix.Icon05", R.mipmap.ic_launcher_05),
+                IconAndName("com.daniebeler.pfpixelix.Icon04", R.mipmap.ic_launcher)
             )
-        )
 
-        val launcherDrawableFief = ResourcesCompat.getDrawableForDensity(
-            context.resources, R.mipmap.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH, context.theme
-        )
+            list.forEach {
+                val launcherDrawable02 = ResourcesCompat.getDrawableForDensity(
+                    context.resources,
+                    it.iconResourceId,
+                    DisplayMetrics.DENSITY_XXXHIGH,
+                    context.theme
+                )
 
-        var bmFief = launcherDrawableFief!!.toBitmap(
-            launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
-        ).asImageBitmap()
+                var bm02 = launcherDrawable02!!.toBitmap(
+                    launcherDrawable02.minimumWidth, launcherDrawable02.minimumHeight
+                ).asImageBitmap()
 
-        val bmFiefEnabled = packageManager.getComponentEnabledSetting(
-            ComponentName(
-                context, "com.daniebeler.pfpixelix.Fief"
-            )
-        )
+                val bm02Enabled = packageManager.getComponentEnabledSetting(
+                    ComponentName(
+                        context, it.name
+                    )
+                )
 
-
-        val launcherDrawable01 = ResourcesCompat.getDrawableForDensity(
-            context.resources, R.mipmap.ic_launcher_01, DisplayMetrics.DENSITY_XXXHIGH, context.theme
-        )
-
-        var bm01 = launcherDrawable01!!.toBitmap(
-            launcherDrawable.minimumWidth, launcherDrawable.minimumHeight
-        ).asImageBitmap()
-
-        val bm01Enabled = packageManager.getComponentEnabledSetting(
-            ComponentName(
-                context, "com.daniebeler.pfpixelix.Icon01"
-            )
-        )
-
-        icons = listOf(
-            IconWithName("com.daniebeler.pfpixelix.MainActivity", bm, bmEnabled == 1),
-            IconWithName("com.daniebeler.pfpixelix.Icon01", bm01, bm01Enabled == 1),
-            IconWithName("com.daniebeler.pfpixelix.Fief", bmFief, bmFiefEnabled == 1)
-        )
+                icons.add(IconWithName(it.name, bm02, bm02Enabled == 1))
+            }
+        }
     }
 
     fun changeIcon(context: Context, name: String) {
@@ -107,14 +84,15 @@ class IconSelectionViewModel @Inject constructor(
                 }
             }
 
-
-            // Log and display a toast message indicating that the main logo is enabled
-            Log.e("MainLogo", "Main Logo Enabled")
-            Toast.makeText(context, "Main Logo Enabled.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Changed Logo", Toast.LENGTH_SHORT).show()
         } catch (e: java.lang.Exception) {
             Log.e("Exceptionn", e.toString())
         }
     }
+
+    data class IconAndName(
+        val name: String, @DrawableRes val iconResourceId: Int
+    )
 }
 
 data class IconWithName(
