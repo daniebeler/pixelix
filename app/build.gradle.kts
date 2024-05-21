@@ -138,6 +138,14 @@ dependencies {
     // Annotation processor
     annotationProcessor("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
 
+    // widget
+    implementation("androidx.glance:glance-appwidget:1.1.0-rc01")
+
+    // work Manager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+
 }
 
 kapt {
