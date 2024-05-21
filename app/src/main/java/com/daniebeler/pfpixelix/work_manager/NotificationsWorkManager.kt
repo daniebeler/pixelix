@@ -19,7 +19,7 @@ class NotificationsWorkManager(private val context: Context) {
             // KEEP documentation:
             // If there is existing pending (uncompleted) work with the same unique name, do nothing.
             // Otherwise, insert the newly-specified work.
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             buildRequest()
         )
     }

@@ -20,7 +20,7 @@ class NotificationsStoreSerializer: Serializer<NotificationsStore> {
                 string = input.readBytes().decodeToString()
             )
         } catch (e: SerializationException) {
-            e.printStackTrace();
+            e.printStackTrace()
             defaultValue
         }
     }
