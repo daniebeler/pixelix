@@ -2,28 +2,20 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences
 
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.Adjust
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Palette
@@ -37,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -48,12 +39,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +51,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.SwitchRowItem
 import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
@@ -116,13 +105,13 @@ fun PreferencesComposable(
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
-            SwitchPreferencesItem(
+            SwitchRowItem(
                 Icons.Outlined.NoAdultContent,
                 stringResource(R.string.hide_sensitive_content),
                 viewModel.isSensitiveContentHidden
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
-            SwitchPreferencesItem(
+            SwitchRowItem(
                 Icons.Outlined.OpenInBrowser,
                 stringResource(R.string.use_in_app_browser),
                 viewModel.isUsingInAppBrowser
@@ -130,31 +119,31 @@ fun PreferencesComposable(
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
-            ButtonPreferencesItem(icon = Icons.Outlined.Palette,
+            ButtonRowElement(icon = Icons.Outlined.Palette,
                 text = stringResource(R.string.app_theme),
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
-            ButtonPreferencesItem(icon = R.drawable.pixelix_logo, text = stringResource(R.string.customize_app_icon), onClick = {
+            ButtonRowElement(icon = R.drawable.pixelix_logo, text = stringResource(R.string.customize_app_icon), onClick = {
                 Navigate.navigate("icon_selection_screen", navController)
             })
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
-            ButtonPreferencesItem(icon = Icons.Outlined.Save,
+            ButtonRowElement(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
                 smallText = viewModel.cacheSize,
                 onClick = {
                     deleteCache(context, viewModel = viewModel)
                 })
 
-            ButtonPreferencesItem(icon = Icons.Outlined.Settings,
+            ButtonRowElement(icon = Icons.Outlined.Settings,
                 text = stringResource(R.string.more_settings),
                 onClick = {
                     viewModel.openMoreSettingsPage(context)
                 })
 
-            ButtonPreferencesItem(
+            ButtonRowElement(
                 icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
                     R.string.logout
                 ), onClick = {
@@ -257,94 +246,11 @@ private fun getThemeString(theme: String): String {
     }
 }
 
-@Composable
-private fun SwitchPreferencesItem(
-    icon: ImageVector, text: String, isChecked: Boolean, onCheckedChange: (checked: Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row {
-            Icon(imageVector = icon, contentDescription = null)
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(text = text)
-        }
-        Switch(checked = isChecked, onCheckedChange = { onCheckedChange(it) })
-    }
-}
 
-@Composable
-private fun ButtonPreferencesItem(
-    icon: ImageVector,
-    text: String,
-    smallText: String = "",
-    onClick: () -> Unit,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "",
-            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
-            tint = color
-        )
 
-        Spacer(modifier = Modifier.width(12.dp))
 
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text, color = color)
-            if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
-            }
-        }
-    }
-}
 
-@Composable
-private fun ButtonPreferencesItem(
-    @DrawableRes icon: Int,
-    text: String,
-    smallText: String = "",
-    onClick: () -> Unit,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Image(
-            painter = painterResource(id = icon),
-            contentDescription = "",
-            Modifier
-                .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-                .height(24.dp)
-                .width(24.dp)
-                .clip(
-                    CircleShape
-                )
-        )
 
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text, color = color)
-            if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
-            }
-        }
-    }
-}
 
 private fun getCacheSize(context: Context, settingsViewModel: PreferencesViewModel) {
     val cacheInbytes: Long =

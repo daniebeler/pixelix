@@ -3,12 +3,14 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -64,7 +66,9 @@ fun DomainSoftwareComposable(domainSoftware: DomainSoftware, openUrl: (url: Stri
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
-                    onClick = { openUrl(domainSoftware.link) }, modifier = Modifier.fillMaxWidth()
+                    onClick = { openUrl(domainSoftware.link) }, modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(12.dp),
                 ) {
                     Text(text = stringResource(R.string.more_information))
                 }

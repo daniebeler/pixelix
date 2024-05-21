@@ -192,16 +192,6 @@ fun OwnProfileComposable(
             if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
                 FullscreenErrorComposable(message = viewModel.postsState.error)
             }
-
-            /*if (before == null && items.isEmpty()) {
-                if (isLoading && !isRefreshing) {
-                    FullscreenLoadingComposable()
-                }
-
-                if (!isLoading && error.isEmpty()) {
-                    FullscreenEmptyStateComposable(emptyMessage)
-                }
-            }*/
         }
     }
 

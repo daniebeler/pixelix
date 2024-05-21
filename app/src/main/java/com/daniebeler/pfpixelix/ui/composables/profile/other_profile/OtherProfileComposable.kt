@@ -65,9 +65,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
-import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
@@ -296,7 +296,7 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        CustomBottomSheetElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
+                        ButtonRowElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
                             text = stringResource(
                                 R.string.unmute_this_profile
                             ),
@@ -304,7 +304,7 @@ fun OtherProfileComposable(
                                 showUnMuteAlert = true
                             })
                     } else {
-                        CustomBottomSheetElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
+                        ButtonRowElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
                             text = stringResource(
                                 R.string.mute_this_profile
                             ),
@@ -314,13 +314,13 @@ fun OtherProfileComposable(
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                        ButtonRowElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
                             showUnBlockAlert = true
                         })
                     } else {
-                        CustomBottomSheetElement(icon = Icons.Outlined.Block, text = stringResource(
+                        ButtonRowElement(icon = Icons.Outlined.Block, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
                             showBlockAlert = true
@@ -330,13 +330,13 @@ fun OtherProfileComposable(
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
                     viewModel.openUrl(context, viewModel.accountState.account!!.url)
                 })
 
-                CustomBottomSheetElement(icon = Icons.Outlined.Share,
+                ButtonRowElement(icon = Icons.Outlined.Share,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
                         Share.shareText(context, viewModel.accountState.account!!.url)

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Share
 
 @Composable
@@ -75,20 +76,20 @@ fun ShareBottomSheet(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+        ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
             viewModel.openUrl(context, url)
         })
 
-        CustomBottomSheetElement(icon = Icons.Outlined.Share,
+        ButtonRowElement(icon = Icons.Outlined.Share,
             text = stringResource(R.string.share_this_post),
             onClick = {
                 Share.shareText(context, url)
             })
 
         if (minePost) {
-            CustomBottomSheetElement(
+            ButtonRowElement(
                 icon = Icons.Outlined.Delete,
                 text = stringResource(R.string.delete_this_post),
                 onClick = {

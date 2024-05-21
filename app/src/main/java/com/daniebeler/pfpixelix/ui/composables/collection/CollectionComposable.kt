@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
-import com.daniebeler.pfpixelix.ui.composables.post.CustomBottomSheetElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Share
 
@@ -123,7 +123,7 @@ fun CollectionComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser,
+                    ButtonRowElement(icon = Icons.Outlined.OpenInBrowser,
                         text = stringResource(
                             R.string.open_in_browser
                         ),
@@ -135,7 +135,7 @@ fun CollectionComposable(
                             }
                         })
 
-                    CustomBottomSheetElement(icon = Icons.Outlined.Share,
+                    ButtonRowElement(icon = Icons.Outlined.Share,
                         text = stringResource(R.string.share_this_collection),
                         onClick = {
                             if (viewModel.collectionState.collection != null) {

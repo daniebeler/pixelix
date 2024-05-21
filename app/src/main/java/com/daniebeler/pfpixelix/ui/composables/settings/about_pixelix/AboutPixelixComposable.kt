@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,24 +113,11 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        viewModel.rateApp(context)
-                    }) {
-                Icon(
-                    imageVector = Icons.Outlined.StarRate,
-                    contentDescription = "",
-                    Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-                )
+            ButtonRowElement(
+                icon = Icons.Outlined.StarRate,
+                text = stringResource(id = R.string.rate_us),
+                onClick = { viewModel.rateApp(context) })
 
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(verticalArrangement = Arrangement.Center) {
-                    Text(text = stringResource(R.string.rate_us))
-                }
-            }
 
             HorizontalDivider(Modifier.padding(12.dp))
 
