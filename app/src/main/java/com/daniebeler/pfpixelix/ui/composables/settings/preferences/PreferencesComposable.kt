@@ -123,14 +123,18 @@ fun PreferencesComposable(
                 viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
 
+            HorizontalDivider(modifier = Modifier.padding(12.dp))
+
             ButtonPreferencesItem(icon = Icons.Outlined.Palette,
                 text = stringResource(R.string.app_theme),
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
-            ButtonPreferencesItem(icon = Icons.Outlined.Adjust, text = "App Icon", onClick = {
+            ButtonPreferencesItem(icon = Icons.Outlined.Adjust, text = stringResource(R.string.customize_app_icon), onClick = {
                 Navigate.navigate("icon_selection_screen", navController)
             })
+
+            HorizontalDivider(modifier = Modifier.padding(12.dp))
 
             ButtonPreferencesItem(icon = Icons.Outlined.Save,
                 text = stringResource(R.string.clear_cache),
