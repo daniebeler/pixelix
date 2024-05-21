@@ -15,8 +15,10 @@ import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
@@ -24,7 +26,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun ModalBottomSheetContent(
-    navController: NavController, instanceDomain: String, closeBottomSheet: () -> Unit
+    navController: NavController, instanceDomain: String, appIcon: ImageBitmap?, closeBottomSheet: () -> Unit
 ) {
     Column(
         Modifier
@@ -87,12 +89,14 @@ fun ModalBottomSheetContent(
                 Navigate.navigate("about_instance_screen", navController)
             })
 
-        ButtonRowElement(icon = R.drawable.pixelix_logo,
-            text = stringResource(id = R.string.about_pixelix),
-            onClick = {
-                closeBottomSheet()
-                Navigate.navigate("about_pixelix_screen", navController)
-            })
+        if (appIcon != null) {
+            ButtonRowElement(icon = appIcon,
+                text = stringResource(id = R.string.about_pixelix),
+                onClick = {
+                    closeBottomSheet()
+                    Navigate.navigate("about_pixelix_screen", navController)
+                })
+        }
 
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,43 @@ fun ButtonRowElement(
             }) {
         Image(
             painter = painterResource(id = icon),
+            contentDescription = "",
+            Modifier
+                .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+                .height(24.dp)
+                .width(24.dp)
+                .clip(
+                    CircleShape
+                )
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(text = text, color = color)
+            if (smallText.isNotBlank()) {
+                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
+            }
+        }
+    }
+}
+
+@Composable
+fun ButtonRowElement(
+    icon: ImageBitmap,
+    text: String,
+    smallText: String = "",
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.onBackground
+) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }) {
+        Image(
+            icon,
             contentDescription = "",
             Modifier
                 .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)

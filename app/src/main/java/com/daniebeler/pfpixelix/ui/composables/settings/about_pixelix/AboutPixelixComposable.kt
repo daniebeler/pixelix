@@ -61,6 +61,7 @@ fun AboutPixelixComposable(
 
     LaunchedEffect(Unit) {
         viewModel.getVersionName(context)
+        viewModel.getAppIcon(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
@@ -88,14 +89,16 @@ fun AboutPixelixComposable(
                     .padding(vertical = 56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.pixelix_logo),
-                    contentDescription = null,
-                    Modifier
-                        .width(84.dp)
-                        .height(84.dp)
-                        .clip(CircleShape)
-                )
+                viewModel.appIcon?.let {
+                    Image(
+                        it,
+                        contentDescription = null,
+                        Modifier
+                            .width(84.dp)
+                            .height(84.dp)
+                            .clip(CircleShape)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -113,8 +116,7 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(
-                icon = Icons.Outlined.StarRate,
+            ButtonRowElement(icon = Icons.Outlined.StarRate,
                 text = stringResource(id = R.string.rate_us),
                 onClick = { viewModel.rateApp(context) })
 

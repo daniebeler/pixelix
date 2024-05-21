@@ -78,6 +78,7 @@ fun PreferencesComposable(
     LaunchedEffect(Unit) {
         getCacheSize(context, viewModel)
         viewModel.getVersionName(context)
+        viewModel.getAppIcon(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
@@ -124,9 +125,14 @@ fun PreferencesComposable(
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
-            ButtonRowElement(icon = R.drawable.pixelix_logo, text = stringResource(R.string.customize_app_icon), onClick = {
-                Navigate.navigate("icon_selection_screen", navController)
-            })
+            viewModel.appIcon?.let {
+                ButtonRowElement(
+                    icon = it,
+                    text = stringResource(R.string.customize_app_icon),
+                    onClick = {
+                        Navigate.navigate("icon_selection_screen", navController)
+                    })
+            }
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
@@ -245,11 +251,6 @@ private fun getThemeString(theme: String): String {
         else -> ""
     }
 }
-
-
-
-
-
 
 
 private fun getCacheSize(context: Context, settingsViewModel: PreferencesViewModel) {
