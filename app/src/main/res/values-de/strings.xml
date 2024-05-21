@@ -178,4 +178,7 @@
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
     <string name="customize_app_icon">App Icon ändern</string>
+    <string name="change_app_icon">App Icon ändern?</string>
+    <string name="change_app_icon_dialog_content">Pixelix wird geschlossen, um die Änderung zu übernehmen.</string>
+    <string name="change">Ändern</string>
 </resources>

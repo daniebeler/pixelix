@@ -2,6 +2,8 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences
 
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -45,10 +48,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -130,7 +135,7 @@ fun PreferencesComposable(
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
-            ButtonPreferencesItem(icon = Icons.Outlined.Adjust, text = stringResource(R.string.customize_app_icon), onClick = {
+            ButtonPreferencesItem(icon = R.drawable.pixelix_logo, text = stringResource(R.string.customize_app_icon), onClick = {
                 Navigate.navigate("icon_selection_screen", navController)
             })
 
@@ -291,6 +296,43 @@ private fun ButtonPreferencesItem(
             contentDescription = "",
             Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
             tint = color
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(text = text, color = color)
+            if (smallText.isNotBlank()) {
+                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ButtonPreferencesItem(
+    @DrawableRes icon: Int,
+    text: String,
+    smallText: String = "",
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.onBackground
+) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = "",
+            Modifier
+                .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+                .height(24.dp)
+                .width(24.dp)
+                .clip(
+                    CircleShape
+                )
         )
 
         Spacer(modifier = Modifier.width(12.dp))
