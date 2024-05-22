@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,6 +24,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -65,10 +67,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var repository: CountryRepository
 
+    companion object {
+        val KEY_DESTINATION: String = "destination"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (!repository.doesAccessTokenExist()) {
             gotoLoginActivity(this@MainActivity)
@@ -76,6 +81,9 @@ class MainActivity : ComponentActivity() {
             setContent {
                 PixelixTheme {
                     val navController: NavHostController = rememberNavController()
+                    val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+
+                    Log.i("params", destination)
 
                     Scaffold(bottomBar = {
                         BottomBar(navController = navController)
@@ -86,12 +94,20 @@ class MainActivity : ComponentActivity() {
                             NavigationGraph(
                                 navController = navController
                             )
+
+                            if (destination.isNotBlank()) {
+                                // Delay the navigation action to ensure the graph is set
+                                LaunchedEffect(Unit) {
+                                    when (destination) {
+                                        "notification" -> Navigate.navigate("notifications_screen", navController)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-
 
     }
 }

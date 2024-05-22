@@ -6,12 +6,16 @@ import android.provider.MediaStore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
@@ -32,8 +36,13 @@ import androidx.glance.layout.width
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.widget.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.models.NotificationsStore
+
+private val destinationKey = ActionParameters.Key<String>(
+    MainActivity.KEY_DESTINATION
+)
 
 class NotificationsWidget : GlanceAppWidget() {
     override var stateDefinition: GlanceStateDefinition<*> = CustomNotificationsStateDefinition
@@ -51,6 +60,7 @@ class NotificationsWidget : GlanceAppWidget() {
 
     @Composable
     fun Content() {
+
         val state = currentState<NotificationsStore>()
         val notifications = state.notifications
         val context = LocalContext.current
@@ -68,6 +78,10 @@ class NotificationsWidget : GlanceAppWidget() {
                         item {
                             Row {
                                 Text(text = "Notifications", style = TextStyle(color = GlanceTheme.colors.onBackground))
+                                Button(text = "test", onClick =  actionStartActivity<MainActivity>(
+                                    actionParametersOf(destinationKey to "notification")
+                                )
+                                )
                             }
                         }
                         items(notifications) {
