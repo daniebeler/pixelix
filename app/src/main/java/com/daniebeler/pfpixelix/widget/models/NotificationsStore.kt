@@ -10,6 +10,7 @@ data class NotificationsStore(
 @Serializable
 data class NotificationStoreItem(
     val id: String,
-    val accountImageUrl: String,
+    val accountAvatarUrl: String,
+    val accountAvatarUri: String,
     val type: String
 )
