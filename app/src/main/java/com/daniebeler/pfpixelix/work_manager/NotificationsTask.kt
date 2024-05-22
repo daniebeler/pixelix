@@ -31,7 +31,7 @@ class NotificationsTask @AssistedInject constructor(
         // Do the work here--in this case, upload the images.
         val res = repository.getNotifications()
         if (res is Resource.Success && res.data != null) {
-            val notifications = res.data.take(3)
+            val notifications = res.data.take(10)
             val notificationStoreItems = notifications.map{notification ->
                 val accountAvatarUri = getImageUri(notification.account.avatar)
                 NotificationStoreItem(notification.id, notification.account.avatar, accountAvatarUri, notification.type)

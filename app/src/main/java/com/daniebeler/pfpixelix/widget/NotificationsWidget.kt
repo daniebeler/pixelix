@@ -1,8 +1,10 @@
 package com.daniebeler.pfpixelix.widget
 
 import android.content.Context
+import android.os.Build
 import android.provider.MediaStore
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -12,15 +14,24 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.layout.width
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
-import com.daniebeler.pfpixelix.R
+import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.widget.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.models.NotificationsStore
 
@@ -43,17 +54,26 @@ class NotificationsWidget : GlanceAppWidget() {
         val state = currentState<NotificationsStore>()
         val notifications = state.notifications
         val context = LocalContext.current
-        GlanceTheme {
-            if (notifications.isEmpty()) {
-                CircularProgressIndicator()
-            } else {
-                Column(
-                    modifier = GlanceModifier.fillMaxSize().background(R.color.teal_700),
-                ) {
-                    notifications.forEach{
-                        NotificationItem(notification = it, context = context)
+        GlanceTheme(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) GlanceTheme.colors
+            else WidgetColors.colors
+        ) {
+            Box(GlanceModifier.background(GlanceTheme.colors.background).fillMaxSize().padding(12.dp), contentAlignment = Alignment.Center) {
+                if (notifications.isEmpty()) {
+                    CircularProgressIndicator()
+                } else {
+                    LazyColumn(
+                        modifier = GlanceModifier.fillMaxSize()
+                    ) {
+                        item {
+                            Row {
+                                Text(text = "Notifications", style = TextStyle(color = GlanceTheme.colors.onBackground))
+                            }
+                        }
+                        items(notifications) {
+                            NotificationItem(notification = it, context = context)
+                        }
                     }
-
                 }
             }
         }
@@ -61,14 +81,19 @@ class NotificationsWidget : GlanceAppWidget() {
 
     @Composable
     private fun NotificationItem(notification: NotificationStoreItem, context: Context) {
-        Row {
-            if (notification.accountAvatarUri.isNotBlank()) {
-                Image(
-                    provider = getImageProvider(notification.accountAvatarUri, context),
-                    contentDescription = ""
+        Column {
+            Spacer(GlanceModifier.height(12.dp))
+            Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
+                    Image(
+                        provider = getImageProvider(notification.accountAvatarUri, context),
+                        contentDescription = "",
+                        modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
+                    )
+                Spacer(GlanceModifier.width(6.dp))
+                Text(
+                    text = notification.type, style = TextStyle(color = GlanceTheme.colors.onBackground)
                 )
             }
-            Text(text = notification.type)
         }
 
     }
