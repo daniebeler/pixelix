@@ -13,6 +13,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.common.IconsHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,15 +29,7 @@ class IconSelectionViewModel @Inject constructor(
             val packageManager = context.packageManager
 
 
-            val list = listOf(
-                IconAndName("com.daniebeler.pfpixelix.MainActivity", R.mipmap.ic_launcher_02),
-                IconAndName("com.daniebeler.pfpixelix.Icon03", R.mipmap.ic_launcher_03),
-                IconAndName("com.daniebeler.pfpixelix.Icon01", R.mipmap.ic_launcher_01),
-                IconAndName("com.daniebeler.pfpixelix.Icon05", R.mipmap.ic_launcher_05),
-                IconAndName("com.daniebeler.pfpixelix.Icon06", R.mipmap.ic_launcher_06),
-                IconAndName("com.daniebeler.pfpixelix.Icon07", R.mipmap.ic_launcher_07),
-                IconAndName("com.daniebeler.pfpixelix.Icon04", R.mipmap.ic_launcher)
-            )
+            val list = IconsHolder.list
 
             list.forEach {
                 val launcherDrawable02 = ResourcesCompat.getDrawableForDensity(
