@@ -33,6 +33,8 @@ class IconSelectionViewModel @Inject constructor(
                 IconAndName("com.daniebeler.pfpixelix.Icon03", R.mipmap.ic_launcher_03),
                 IconAndName("com.daniebeler.pfpixelix.Icon01", R.mipmap.ic_launcher_01),
                 IconAndName("com.daniebeler.pfpixelix.Icon05", R.mipmap.ic_launcher_05),
+                IconAndName("com.daniebeler.pfpixelix.Icon06", R.mipmap.ic_launcher_06),
+                IconAndName("com.daniebeler.pfpixelix.Icon07", R.mipmap.ic_launcher_07),
                 IconAndName("com.daniebeler.pfpixelix.Icon04", R.mipmap.ic_launcher)
             )
 

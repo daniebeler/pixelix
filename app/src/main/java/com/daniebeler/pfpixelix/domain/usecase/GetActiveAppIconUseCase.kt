@@ -37,6 +37,14 @@ class GetActiveAppIconUseCase()
                 R.mipmap.ic_launcher_05
             ),
             IconSelectionViewModel.IconAndName(
+                "com.daniebeler.pfpixelix.Icon06",
+                R.mipmap.ic_launcher_06
+            ),
+            IconSelectionViewModel.IconAndName(
+                "com.daniebeler.pfpixelix.Icon07",
+                R.mipmap.ic_launcher_07
+            ),
+            IconSelectionViewModel.IconAndName(
                 "com.daniebeler.pfpixelix.Icon04",
                 R.mipmap.ic_launcher
             )
