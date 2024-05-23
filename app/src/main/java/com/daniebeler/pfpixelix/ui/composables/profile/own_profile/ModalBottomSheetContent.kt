@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.DoNotDisturbOn
+import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Tag
@@ -89,7 +90,14 @@ fun ModalBottomSheetContent(
                 Navigate.navigate("about_instance_screen", navController)
             })
 
-        if (appIcon != null) {
+        if (appIcon == null) {
+            ButtonRowElement(icon = R.drawable.pixelix_logo,
+                text = stringResource(id = R.string.about_pixelix),
+                onClick = {
+                    closeBottomSheet()
+                    Navigate.navigate("about_pixelix_screen", navController)
+                })
+        } else {
             ButtonRowElement(icon = appIcon,
                 text = stringResource(id = R.string.about_pixelix),
                 onClick = {

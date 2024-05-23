@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Palette
@@ -125,9 +126,16 @@ fun PreferencesComposable(
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
-            viewModel.appIcon?.let {
+            if (viewModel.appIcon == null) {
                 ButtonRowElement(
-                    icon = it,
+                    icon = R.drawable.pixelix_logo,
+                    text = stringResource(R.string.customize_app_icon),
+                    onClick = {
+                        Navigate.navigate("icon_selection_screen", navController)
+                    })
+            } else {
+                ButtonRowElement(
+                    icon = viewModel.appIcon!!,
                     text = stringResource(R.string.customize_app_icon),
                     onClick = {
                         Navigate.navigate("icon_selection_screen", navController)

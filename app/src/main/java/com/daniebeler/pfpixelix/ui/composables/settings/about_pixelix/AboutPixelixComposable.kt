@@ -89,9 +89,18 @@ fun AboutPixelixComposable(
                     .padding(vertical = 56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                viewModel.appIcon?.let {
+                if (viewModel.appIcon == null) {
                     Image(
-                        it,
+                        painter = painterResource(id = R.drawable.pixelix_logo),
+                        contentDescription = null,
+                        Modifier
+                            .width(84.dp)
+                            .height(84.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Image(
+                        viewModel.appIcon!!,
                         contentDescription = null,
                         Modifier
                             .width(84.dp)

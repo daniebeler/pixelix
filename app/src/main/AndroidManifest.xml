@@ -21,6 +21,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:icon="@mipmap/ic_launcher_02"
+            android:roundIcon="@mipmap/ic_launcher_02_round"
             android:theme="@style/Theme.Pixelix"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
