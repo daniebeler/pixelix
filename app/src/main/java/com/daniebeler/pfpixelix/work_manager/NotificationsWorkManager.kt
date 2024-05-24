@@ -4,14 +4,22 @@ import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
 
 
 class NotificationsWorkManager(private val context: Context) {
     fun execute() = enqueueWorker()
+    fun executeOnce() = startWorkerOnce()
+
+    private fun startWorkerOnce() {
+        val uploadWorkerRequest: WorkRequest = OneTimeWorkRequestBuilder<NotificationsTask>().build()
+        WorkManager.getInstance(context).enqueue(uploadWorkerRequest)
+    }
 
     private fun enqueueWorker() {
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(

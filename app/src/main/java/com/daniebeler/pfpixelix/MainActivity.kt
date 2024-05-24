@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -68,7 +67,12 @@ class MainActivity : ComponentActivity() {
     lateinit var repository: CountryRepository
 
     companion object {
-        val KEY_DESTINATION: String = "destination"
+        const val KEY_DESTINATION: String = "destination"
+        const val KEY_DESTINATION_PARAM: String = "destination_parameter"
+
+        enum class StartNavigation{
+            Notifications, Profile
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,9 +85,6 @@ class MainActivity : ComponentActivity() {
             setContent {
                 PixelixTheme {
                     val navController: NavHostController = rememberNavController()
-                    val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
-
-                    Log.i("params", destination)
 
                     Scaffold(bottomBar = {
                         BottomBar(navController = navController)
@@ -94,12 +95,24 @@ class MainActivity : ComponentActivity() {
                             NavigationGraph(
                                 navController = navController
                             )
+                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
 
                             if (destination.isNotBlank()) {
                                 // Delay the navigation action to ensure the graph is set
                                 LaunchedEffect(Unit) {
                                     when (destination) {
-                                        "notification" -> Navigate.navigate("notifications_screen", navController)
+                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                            "notifications_screen", navController
+                                        )
+
+                                        StartNavigation.Profile.toString() -> {
+                                            val accountId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (accountId.isNotBlank()) {
+                                                Navigate.navigate("profile_screen/$accountId", navController)
+                                            }
+                                        }
                                     }
                                 }
                             }
