@@ -108,27 +108,39 @@ class NotificationsWidget : GlanceAppWidget() {
                         modifier = GlanceModifier.fillMaxSize()
                     ) {
                         item {
-                            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                                if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
-                                    Image(
-                                        provider = ImageProvider(R.drawable.pixelix_logo),
-                                        contentDescription = null,
-                                        modifier = GlanceModifier.width(50.dp).height(50.dp)
-                                            .cornerRadius(50.dp)
-                                    )
-                                    Spacer(GlanceModifier.width(6.dp))
-                                    Text(
-                                        text = "Notifications", style = TextStyle(
-                                            color = GlanceTheme.colors.onBackground,
-                                            fontSize = 20.sp
+                            Row(
+                                modifier = GlanceModifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(modifier = GlanceModifier.clickable(
+                                        actionStartActivity<MainActivity>(
+                                            actionParametersOf(
+                                                destinationKey to MainActivity.Companion.StartNavigation.Notifications.toString(),
+                                            )
                                         )
-                                    )
+                                    ), verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
+                                        Image(
+                                            provider = ImageProvider(R.drawable.pixelix_logo),
+                                            contentDescription = null,
+                                            modifier = GlanceModifier.width(50.dp).height(50.dp)
+                                                .cornerRadius(50.dp)
+                                        )
+                                        Spacer(GlanceModifier.width(6.dp))
+                                        Text(
+                                            text = "Notifications", style = TextStyle(
+                                                color = GlanceTheme.colors.onBackground,
+                                                fontSize = 20.sp
+                                            )
+                                        )
 
-                                } else if (size.height <= BIG_SQUARE.height && size.width <= BIG_SQUARE.width) {
-                                    Text(
-                                        text = "Notifications",
-                                        style = TextStyle(color = GlanceTheme.colors.onBackground)
-                                    )
+                                    } else if (size.height <= BIG_SQUARE.height && size.width <= BIG_SQUARE.width) {
+                                        Text(
+                                            text = "Notifications",
+                                            style = TextStyle(color = GlanceTheme.colors.onBackground)
+                                        )
+                                    }
                                 }
                                 Spacer(GlanceModifier.defaultWeight())
                                 Box(
@@ -178,20 +190,26 @@ class NotificationsWidget : GlanceAppWidget() {
                         modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
                     )
                     Spacer(GlanceModifier.width(6.dp))
-                    Row {
-                        if (size.width >= BIG_SQUARE.width) {
-                            Text(
-                                text = notification.accountUsername, style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    color = GlanceTheme.colors.onBackground
+                    Column {
+                        Row {
+                            if (size.width >= BIG_SQUARE.width) {
+                                Text(
+                                    text = notification.accountUsername, style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        color = GlanceTheme.colors.onBackground
+                                    )
                                 )
+                                Spacer(GlanceModifier.width(3.dp))
+                            }
+                            Text(
+                                text = getNotificationText(
+                                    notification.type, notification.accountUsername, size.width
+                                ), style = TextStyle(color = GlanceTheme.colors.onBackground)
                             )
-                            Spacer(GlanceModifier.width(3.dp))
                         }
                         Text(
-                            text = getNotificationText(
-                                notification.type, notification.accountUsername, size.width
-                            ), style = TextStyle(color = GlanceTheme.colors.onBackground)
+                            text = notification.timeAgo,
+                            style = TextStyle(color = GlanceTheme.colors.primary, fontSize = 12.sp)
                         )
                     }
                 }
