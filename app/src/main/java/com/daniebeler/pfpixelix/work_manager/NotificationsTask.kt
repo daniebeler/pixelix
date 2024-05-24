@@ -43,6 +43,7 @@ class NotificationsTask @AssistedInject constructor(
                         notification.account.avatar,
                         accountAvatarUri,
                         notification.account.id,
+                        notification.account.username,
                         notification.type
                     )
                 }

@@ -13,5 +13,6 @@ data class NotificationStoreItem(
     val accountAvatarUrl: String,
     val accountAvatarUri: String,
     val accountId: String,
+    val accountUsername: String,
     val type: String
 )
