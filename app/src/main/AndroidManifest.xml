@@ -54,6 +54,7 @@
 
         <receiver
             android:name=".widget.NotificationWidgetReceiver"
+            android:label="Notifications"
             android:exported="false">
 
             <intent-filter>

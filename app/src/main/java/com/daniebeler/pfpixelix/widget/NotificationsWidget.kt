@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,14 +72,8 @@ class NotificationsWidget : GlanceAppWidget() {
         )
     )
 
-
     override var stateDefinition: GlanceStateDefinition<*> = CustomNotificationsStateDefinition
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-
-        // In this method, load data needed to render the AppWidget.
-        // Use `withContext` to switch to another thread for long running
-        // operations.
-
         provideContent {
             // create your AppWidget here
             Content()
@@ -101,69 +94,76 @@ class NotificationsWidget : GlanceAppWidget() {
                 GlanceModifier.background(GlanceTheme.colors.background).fillMaxSize()
                     .padding(12.dp), contentAlignment = Alignment.Center
             ) {
-                if (notifications.isEmpty()) {
-                    CircularProgressIndicator()
-                } else {
-                    LazyColumn(
-                        modifier = GlanceModifier.fillMaxSize()
-                    ) {
-                        item {
+
+                LazyColumn(
+                    modifier = GlanceModifier.fillMaxSize()
+                ) {
+                    item {
+                        Row(
+                            modifier = GlanceModifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Row(
-                                modifier = GlanceModifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = GlanceModifier.clickable(
+                                    actionStartActivity<MainActivity>(
+                                        actionParametersOf(
+                                            destinationKey to MainActivity.Companion.StartNavigation.Notifications.toString(),
+                                        )
+                                    )
+                                ), verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(modifier = GlanceModifier.clickable(
-                                        actionStartActivity<MainActivity>(
-                                            actionParametersOf(
-                                                destinationKey to MainActivity.Companion.StartNavigation.Notifications.toString(),
-                                            )
-                                        )
-                                    ), verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
-                                        Image(
-                                            provider = ImageProvider(R.drawable.pixelix_logo),
-                                            contentDescription = null,
-                                            modifier = GlanceModifier.width(50.dp).height(50.dp)
-                                                .cornerRadius(50.dp)
-                                        )
-                                        Spacer(GlanceModifier.width(6.dp))
-                                        Text(
-                                            text = "Notifications", style = TextStyle(
-                                                color = GlanceTheme.colors.onBackground,
-                                                fontSize = 20.sp
-                                            )
-                                        )
-
-                                    } else if (size.height <= BIG_SQUARE.height && size.width <= BIG_SQUARE.width) {
-                                        Text(
-                                            text = "Notifications",
-                                            style = TextStyle(color = GlanceTheme.colors.onBackground)
-                                        )
-                                    }
-                                }
-                                Spacer(GlanceModifier.defaultWeight())
-                                Box(
-                                    modifier = GlanceModifier.clickable(
-                                        onClick = actionRunCallback<RefreshAction>()
-                                    )
-                                ) {
+                                if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
                                     Image(
-                                        provider = ImageProvider(R.drawable.refresh_icon),
-                                        contentDescription = "refresh"
+                                        provider = ImageProvider(R.drawable.pixelix_logo),
+                                        contentDescription = null,
+                                        modifier = GlanceModifier.width(50.dp).height(50.dp)
+                                            .cornerRadius(50.dp)
+                                    )
+                                    Spacer(GlanceModifier.width(6.dp))
+                                    Text(
+                                        text = "Notifications", style = TextStyle(
+                                            color = GlanceTheme.colors.onBackground,
+                                            fontSize = 20.sp
+                                        )
+                                    )
+
+                                } else if (size.height <= BIG_SQUARE.height && size.width <= BIG_SQUARE.width) {
+                                    Text(
+                                        text = "Notifications",
+                                        style = TextStyle(color = GlanceTheme.colors.onBackground)
                                     )
                                 }
                             }
-                            if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
-                                Spacer(GlanceModifier.height(12.dp))
+                            Spacer(GlanceModifier.defaultWeight())
+                            Box(
+                                modifier = GlanceModifier.clickable(
+                                    onClick = actionRunCallback<RefreshAction>()
+                                )
+                            ) {
+                                Image(
+                                    provider = ImageProvider(R.drawable.refresh_icon),
+                                    contentDescription = "refresh"
+                                )
                             }
-
                         }
+                        if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
+                            Spacer(GlanceModifier.height(12.dp))
+                        }
+
+                    }
+                    if (notifications.isEmpty()) {
+                        item {
+                            Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = GlanceTheme.colors.primary)
+                            }
+                        }
+                    } else {
                         items(notifications) {
                             NotificationItem(notification = it, context = context)
                         }
                     }
                 }
+
             }
         }
     }
@@ -203,7 +203,7 @@ class NotificationsWidget : GlanceAppWidget() {
                             }
                             Text(
                                 text = getNotificationText(
-                                    notification.type, notification.accountUsername, size.width
+                                    notification.type
                                 ), style = TextStyle(color = GlanceTheme.colors.onBackground)
                             )
                         }
@@ -217,15 +217,7 @@ class NotificationsWidget : GlanceAppWidget() {
         }
     }
 
-    private fun getNotificationText(type: String, accountUsername: String, width: Dp): String {
-        return if (width <= SMALL_SQUARE.width) {
-            smallNotificationText(type)
-        } else {
-            bigNotificationText(type, accountUsername)
-        }
-    }
-
-    private fun smallNotificationText(type: String): String {
+    private fun getNotificationText(type: String): String {
         return when (type) {
             "favourite" -> "liked your post"
             "mention" -> "mentioned you"
@@ -233,18 +225,6 @@ class NotificationsWidget : GlanceAppWidget() {
 
             else -> {
                 ""
-            }
-        }
-    }
-
-    private fun bigNotificationText(type: String, accountUsername: String): String {
-        return when (type) {
-            "favourite" -> "liked your post"
-            "mention" -> "mentioned you"
-            "follow" -> "followed you"
-
-            else -> {
-                accountUsername
             }
         }
     }

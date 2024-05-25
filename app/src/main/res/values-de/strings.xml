@@ -177,4 +177,5 @@
     <string name="all">Alle</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="notification_widget_description">Bleiben Sie mit Ihren neuesten Benachrichtigungen von Pixelfed direkt auf Ihrem Startbildschirm auf dem Laufenden.</string>
 </resources>

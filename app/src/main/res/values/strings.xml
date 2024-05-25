@@ -177,4 +177,5 @@
     <string name="all">All</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="notification_widget_description">Stay updated with your latest notifications from Pixelfed right on your home screen</string>
 </resources>

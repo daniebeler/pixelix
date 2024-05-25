@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 
 class NotificationsWorkManager(private val context: Context) {
-    fun execute() = enqueueWorker()
+    fun executePeriodic() = enqueuePeriodicWorker()
     fun executeOnce() = startWorkerOnce()
 
     private fun startWorkerOnce() {
@@ -21,7 +21,7 @@ class NotificationsWorkManager(private val context: Context) {
         WorkManager.getInstance(context).enqueue(uploadWorkerRequest)
     }
 
-    private fun enqueueWorker() {
+    private fun enqueuePeriodicWorker() {
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             "daily_read_worker_tag",
             // KEEP documentation:

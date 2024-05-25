@@ -9,7 +9,7 @@ class NotificationWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = NotificationsWidget()
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        NotificationsWorkManager(context).execute()
+        NotificationsWorkManager(context).executePeriodic()
     }
 
     override fun onDisabled(context: Context) {
