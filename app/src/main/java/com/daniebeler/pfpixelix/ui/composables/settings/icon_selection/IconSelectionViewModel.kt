@@ -31,6 +31,8 @@ class IconSelectionViewModel @Inject constructor(
 
             val list = IconsHolder.list
 
+            var foundItem = false
+
             list.forEach {
                 val launcherDrawable02 = ResourcesCompat.getDrawableForDensity(
                     context.resources,
@@ -49,7 +51,15 @@ class IconSelectionViewModel @Inject constructor(
                     )
                 )
 
+                foundItem = bm02Enabled == 1 || foundItem
+
                 icons.add(IconWithName(it.name, bm02, bm02Enabled == 1))
+            }
+
+            if (!foundItem) {
+                if (icons.size > 0) {
+                    icons[0] = IconWithName(icons[0].name, icons[0].icon, true)
+                }
             }
         }
     }
