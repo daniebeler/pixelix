@@ -90,7 +90,7 @@
     <string name="visibility_x">Visibility: %1$s</string>
     <string name="clear_cache">Clear cache</string>
     <string name="preferences">Preferences</string>
-    <string name="hide_sensitive_content">Hide sensitive Content</string>
+    <string name="hide_sensitive_content">Hide sensitive content</string>
     <string name="about_x">About %1$s</string>
     <string name="more_settings">More settings</string>
     <string name="use_in_app_browser">Use in-app-browser</string>
@@ -177,4 +177,8 @@
     <string name="all">All</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="customize_app_icon">Customize app icon</string>
+    <string name="change_app_icon">Change app icon?</string>
+    <string name="change_app_icon_dialog_content">Pixelix will be closed in order to change the app icon.</string>
+    <string name="change">Change</string>
 </resources>

@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +76,10 @@ fun OwnProfileComposable(
 
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        viewModel.getAppIcon(context)
+    }
+
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -90,8 +95,8 @@ fun OwnProfileComposable(
             }
         }, actions = {
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!,
-                    { url -> viewModel.openUrl(context, url) })
+                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
+                ) { url -> viewModel.openUrl(context, url) }
             }
 
             IconButton(onClick = {
@@ -192,16 +197,6 @@ fun OwnProfileComposable(
             if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
                 FullscreenErrorComposable(message = viewModel.postsState.error)
             }
-
-            /*if (before == null && items.isEmpty()) {
-                if (isLoading && !isRefreshing) {
-                    FullscreenLoadingComposable()
-                }
-
-                if (!isLoading && error.isEmpty()) {
-                    FullscreenEmptyStateComposable(emptyMessage)
-                }
-            }*/
         }
     }
 
@@ -222,6 +217,7 @@ fun OwnProfileComposable(
         ) {
             ModalBottomSheetContent(navController = navController,
                 instanceDomain = viewModel.ownDomain,
+                appIcon = viewModel.appIcon,
                 closeBottomSheet = {
                     showBottomSheet = false
                 })

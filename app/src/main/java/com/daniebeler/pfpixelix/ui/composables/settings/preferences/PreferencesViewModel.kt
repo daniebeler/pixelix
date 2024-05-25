@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
@@ -31,11 +33,13 @@ class PreferencesViewModel @Inject constructor(
     private val storeUseInAppBrowserUseCase: StoreUseInAppBrowserUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
 ) : ViewModel() {
 
     var isSensitiveContentHidden by mutableStateOf(true)
     var isUsingInAppBrowser by mutableStateOf(true)
+    var appIcon by mutableStateOf<ImageBitmap?>(null)
 
     var cacheSize by mutableStateOf("")
 
@@ -53,8 +57,13 @@ class PreferencesViewModel @Inject constructor(
                 isUsingInAppBrowser = res
             }
         }
+
+
     }
 
+    fun getAppIcon(context: Context){
+        appIcon = getActiveAppIconUseCase(context)
+    }
 
     fun getVersionName(context: Context) {
         try {
