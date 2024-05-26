@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
+import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBlockedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBookmarkedPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
@@ -93,4 +94,9 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideGetThemeUseCase(repository: StorageRepository): GetThemeUseCase =
         GetThemeUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetAppIconUseCase(): GetActiveAppIconUseCase =
+        GetActiveAppIconUseCase()
 }

@@ -50,6 +50,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixel
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
@@ -163,6 +164,10 @@ sealed class Destinations(
         route = "preferences_screen", icon = Icons.Outlined.Settings
     )
 
+    object IconSelection : Destinations(
+        route = "icon_selection_screen", icon = Icons.Outlined.Settings
+    )
+
     object MutedAccounts : Destinations(
         route = "muted_accounts_screen", icon = Icons.Outlined.Settings
     )
@@ -262,6 +267,10 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.Preferences.route) {
             PreferencesComposable(navController)
+        }
+
+        composable(Destinations.IconSelection.route) {
+            IconSelectionComposable(navController)
         }
 
         composable(Destinations.NewPost.route) {
