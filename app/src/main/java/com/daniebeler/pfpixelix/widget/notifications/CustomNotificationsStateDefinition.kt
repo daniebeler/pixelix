@@ -18,7 +18,7 @@ object CustomNotificationsStateDefinition : GlanceStateDefinition<NotificationsS
         return File(context.applicationContext.filesDir, "datastore/$fileName")
     }
 
-    private const val fileName = "widget_store"
+    private const val fileName = "notifications_widget_store"
     private val Context.dataStore: DataStore<NotificationsStore> by dataStore(fileName, NotificationsStoreSerializer())
 }
 

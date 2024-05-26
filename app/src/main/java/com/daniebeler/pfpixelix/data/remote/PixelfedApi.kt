@@ -89,7 +89,10 @@ interface PixelfedApi {
         @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
 
-
+    @GET("api/v1/timelines/home?_pe=1")
+    fun getHomeTimelineWithLimit(
+        @Query("limit") limit: Int
+    ): Call<List<PostDto>>
     // Favourites
 
 
