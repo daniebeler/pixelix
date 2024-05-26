@@ -23,6 +23,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,10 +67,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var repository: CountryRepository
 
+    companion object {
+        const val KEY_DESTINATION: String = "destination"
+        const val KEY_DESTINATION_PARAM: String = "destination_parameter"
+
+        enum class StartNavigation{
+            Notifications, Profile
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (!repository.doesAccessTokenExist()) {
             gotoLoginActivity(this@MainActivity)
@@ -87,12 +96,32 @@ class MainActivity : ComponentActivity() {
                             NavigationGraph(
                                 navController = navController
                             )
+                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+
+                            if (destination.isNotBlank()) {
+                                // Delay the navigation action to ensure the graph is set
+                                LaunchedEffect(Unit) {
+                                    when (destination) {
+                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                            "notifications_screen", navController
+                                        )
+
+                                        StartNavigation.Profile.toString() -> {
+                                            val accountId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (accountId.isNotBlank()) {
+                                                Navigate.navigate("profile_screen/$accountId", navController)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-
 
     }
 }

@@ -62,5 +62,4 @@ class Module {
     @Singleton
     fun providePixelfedApi(retrofit: Retrofit): PixelfedApi =
         retrofit.create(PixelfedApi::class.java)
-
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="100dp"
+    android:minHeight="100dp"
+    android:minResizeWidth="100dp"
+    android:minResizeHeight="50dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:description="@string/notification_widget_description"
+    android:resizeMode="horizontal|vertical"
+    android:previewLayout="@layout/notification_widget_preview"
+    android:initialLayout="@layout/notification_widget_preview"/>
