@@ -28,6 +28,8 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
@@ -86,6 +88,7 @@ class NotificationsWidget : GlanceAppWidget() {
         val notifications = state.notifications
         val context = LocalContext.current
         val size = LocalSize.current
+
         GlanceTheme(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) GlanceTheme.colors
             else WidgetColors.colors
@@ -94,7 +97,6 @@ class NotificationsWidget : GlanceAppWidget() {
                 GlanceModifier.background(GlanceTheme.colors.background).fillMaxSize()
                     .padding(12.dp), contentAlignment = Alignment.Center
             ) {
-
                 LazyColumn(
                     modifier = GlanceModifier.fillMaxSize()
                 ) {
@@ -151,7 +153,7 @@ class NotificationsWidget : GlanceAppWidget() {
                         }
 
                     }
-                    if (notifications.isEmpty()) {
+                    if (notifications.isEmpty() || state.refreshing) {
                         item {
                             Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(color = GlanceTheme.colors.primary)
@@ -240,6 +242,13 @@ class RefreshAction : ActionCallback {
     override suspend fun onAction(
         context: Context, glanceId: GlanceId, parameters: ActionParameters
     ) {
+        updateAppWidgetState(context = context, definition = CustomNotificationsStateDefinition, glanceId = glanceId) {
+            NotificationsStore(
+                notifications = emptyList(),
+                refreshing = true
+            )
+        }
+        NotificationsWidget().updateAll(context)
         NotificationsWorkManager(context).executeOnce()
     }
 }

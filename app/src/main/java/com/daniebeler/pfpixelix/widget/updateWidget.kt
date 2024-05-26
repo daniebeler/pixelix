@@ -8,13 +8,17 @@ import com.daniebeler.pfpixelix.widget.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.models.NotificationsStore
 
 suspend fun updateWidget(notifications: List<NotificationStoreItem>, context: Context) {
-    // Iterate through all the available glance id's.
-    GlanceAppWidgetManager(context).getGlanceIds(NotificationsWidget::class.java).forEach { glanceId ->
-        updateAppWidgetState(context = context, definition = CustomNotificationsStateDefinition, glanceId = glanceId) {
-            NotificationsStore(
-                notifications = notifications
-            )
+    GlanceAppWidgetManager(context).getGlanceIds(NotificationsWidget::class.java)
+        .forEach { glanceId ->
+            updateAppWidgetState(
+                context = context,
+                definition = CustomNotificationsStateDefinition,
+                glanceId = glanceId
+            ) {
+                NotificationsStore(
+                    notifications = notifications
+                )
+            }
         }
-    }
     NotificationsWidget().updateAll(context)
 }

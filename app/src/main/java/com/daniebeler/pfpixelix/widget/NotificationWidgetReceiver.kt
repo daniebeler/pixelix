@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.work_manager.NotificationsWorkManager
 
 class NotificationWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = NotificationsWidget()
+
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         NotificationsWorkManager(context).executePeriodic()

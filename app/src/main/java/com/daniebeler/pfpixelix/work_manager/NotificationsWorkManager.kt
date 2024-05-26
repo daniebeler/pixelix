@@ -17,7 +17,10 @@ class NotificationsWorkManager(private val context: Context) {
     fun executeOnce() = startWorkerOnce()
 
     private fun startWorkerOnce() {
-        val uploadWorkerRequest: WorkRequest = OneTimeWorkRequestBuilder<NotificationsTask>().build()
+        val uploadWorkerRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<NotificationsTask>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).build()
         WorkManager.getInstance(context).enqueue(uploadWorkerRequest)
     }
 
@@ -27,27 +30,21 @@ class NotificationsWorkManager(private val context: Context) {
             // KEEP documentation:
             // If there is existing pending (uncompleted) work with the same unique name, do nothing.
             // Otherwise, insert the newly-specified work.
-            ExistingPeriodicWorkPolicy.KEEP,
-            buildRequest()
+            ExistingPeriodicWorkPolicy.KEEP, buildRequest()
         )
     }
 
     private fun buildRequest(): PeriodicWorkRequest {
         // 1 day
-        return PeriodicWorkRequestBuilder<NotificationsTask>(15, TimeUnit.MINUTES)
-            .addTag("daily_read_worker_tag")
-            .setConstraints(
-                Constraints.Builder()
-                    // Network required
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
+        return PeriodicWorkRequestBuilder<NotificationsTask>(
+            15, TimeUnit.MINUTES
+        ).addTag("daily_read_worker_tag").setConstraints(
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).build()
     }
 
     fun cancelWork() {
-        WorkManager
-            .getInstance(context)
-            .cancelUniqueWork("daily_read_worker_tag")
+        WorkManager.getInstance(context).cancelUniqueWork("daily_read_worker_tag")
     }
 }
