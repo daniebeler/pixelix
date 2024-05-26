@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.work_manager
+package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
 import android.content.Context
 import android.content.Intent
@@ -16,9 +16,9 @@ import coil.imageLoader
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.widget.models.NotificationStoreItem
-import com.daniebeler.pfpixelix.widget.updateWidget
-import com.daniebeler.pfpixelix.widget.utils.WidgetRepositoryProvider
+import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
+import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
+import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.net.UnknownHostException
@@ -48,7 +48,7 @@ class NotificationsTask @AssistedInject constructor(
                         notification.type
                     )
                 }
-                updateWidget(notificationStoreItems, context)
+                updateNotificationsWidget(notificationStoreItems, context)
                 Log.i("Worker", "Updated")
             }
         } catch (e: Exception) {

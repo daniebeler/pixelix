@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.widget.models
+package com.daniebeler.pfpixelix.widget.notifications.models
 
 import kotlinx.serialization.Serializable
 

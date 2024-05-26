@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.widget.utils
+package com.daniebeler.pfpixelix.widget
 
 import HostSelectionInterceptor
 import androidx.datastore.core.DataStore

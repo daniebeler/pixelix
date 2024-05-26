@@ -1,7 +1,7 @@
-package com.daniebeler.pfpixelix.widget.utils
+package com.daniebeler.pfpixelix.widget.notifications.utils
 
 import androidx.datastore.core.Serializer
-import com.daniebeler.pfpixelix.widget.models.NotificationsStore
+import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream

@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.widget
+package com.daniebeler.pfpixelix.widget.notifications
 
 import android.content.Context
 import android.os.Build
@@ -48,9 +48,10 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.widget.models.NotificationStoreItem
-import com.daniebeler.pfpixelix.widget.models.NotificationsStore
-import com.daniebeler.pfpixelix.work_manager.NotificationsWorkManager
+import com.daniebeler.pfpixelix.widget.WidgetColors
+import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
+import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
+import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsWorkManager
 
 private val destinationKey = ActionParameters.Key<String>(
     MainActivity.KEY_DESTINATION
@@ -116,7 +117,7 @@ class NotificationsWidget : GlanceAppWidget() {
                             ) {
                                 if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
                                     Image(
-                                        provider = ImageProvider(R.drawable.pixelix_logo),
+                                        provider = ImageProvider(R.mipmap.ic_launcher_02_round),
                                         contentDescription = null,
                                         modifier = GlanceModifier.width(50.dp).height(50.dp)
                                             .cornerRadius(50.dp)

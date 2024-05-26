@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.work_manager
+package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
 import android.content.Context
 import androidx.work.Constraints

@@ -1,9 +1,9 @@
-package com.daniebeler.pfpixelix.widget
+package com.daniebeler.pfpixelix.widget.notifications
 
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import com.daniebeler.pfpixelix.work_manager.NotificationsWorkManager
+import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsWorkManager
 
 class NotificationWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = NotificationsWidget()

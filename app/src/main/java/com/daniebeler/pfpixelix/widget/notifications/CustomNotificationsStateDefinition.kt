@@ -1,11 +1,11 @@
-package com.daniebeler.pfpixelix.widget
+package com.daniebeler.pfpixelix.widget.notifications
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.glance.state.GlanceStateDefinition
-import com.daniebeler.pfpixelix.widget.models.NotificationsStore
-import com.daniebeler.pfpixelix.widget.utils.NotificationsStoreSerializer
+import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
+import com.daniebeler.pfpixelix.widget.notifications.utils.NotificationsStoreSerializer
 import java.io.File
 
 object CustomNotificationsStateDefinition : GlanceStateDefinition<NotificationsStore> {

@@ -133,7 +133,7 @@
         </activity>
 
         <receiver
-            android:name=".widget.NotificationWidgetReceiver"
+            android:name=".widget.notifications.NotificationWidgetReceiver"
             android:label="Notifications"
             android:exported="false">
 
