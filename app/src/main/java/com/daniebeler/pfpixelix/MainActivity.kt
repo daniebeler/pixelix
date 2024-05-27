@@ -63,8 +63,8 @@ class MainActivity : ComponentActivity() {
         const val KEY_DESTINATION: String = "destination"
         const val KEY_DESTINATION_PARAM: String = "destination_parameter"
 
-        enum class StartNavigation {
-            Notifications, Profile
+        enum class StartNavigation{
+            Notifications, Profile, Post
         }
     }
 
@@ -106,6 +106,15 @@ class MainActivity : ComponentActivity() {
                                                 Navigate.navigate(
                                                     "profile_screen/$accountId", navController
                                                 )
+                                            }
+                                        }
+
+                                        StartNavigation.Post.toString() -> {
+                                            val postId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (postId.isNotBlank()) {
+                                                Navigate.navigate("single_post_screen/$postId", navController)
                                             }
                                         }
                                     }

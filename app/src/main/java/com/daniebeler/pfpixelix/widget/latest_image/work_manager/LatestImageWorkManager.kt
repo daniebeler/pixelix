@@ -12,14 +12,15 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
 
-public val NotificationWorkManagerRetrySeonds: Long = 15
-class NotificationsWorkManager(private val context: Context) {
+public val LatestImageWorkManagerRetrySeconds: Long = 15
+
+class LatestImageWorkManager(private val context: Context) {
     fun executePeriodic() = enqueuePeriodicWorker()
     fun executeOnce() = startWorkerOnce()
 
     private fun startWorkerOnce() {
         val uploadWorkerRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<NotificationsTask>().setConstraints(
+            OneTimeWorkRequestBuilder<LatestImageTask>().setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).build()
         WorkManager.getInstance(context).enqueue(uploadWorkerRequest)
@@ -27,23 +28,27 @@ class NotificationsWorkManager(private val context: Context) {
 
     private fun enqueuePeriodicWorker() {
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "notifications_widget_task",
+            "latest_image_worker_task",
+            // KEEP documentation:
+            // If there is existing pending (uncompleted) work with the same unique name, do nothing.
+            // Otherwise, insert the newly-specified work.
             ExistingPeriodicWorkPolicy.KEEP, buildRequest()
         )
     }
 
     private fun buildRequest(): PeriodicWorkRequest {
         // 1 day
-        return PeriodicWorkRequestBuilder<NotificationsTask>(
+        return PeriodicWorkRequestBuilder<LatestImageTask>(
             15, TimeUnit.MINUTES
-        ).addTag("notifications_widget_task").setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).addTag("latest_image_worker_task").setConstraints(
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED).build()
         ).setBackoffCriteria(
-            BackoffPolicy.EXPONENTIAL, NotificationWorkManagerRetrySeonds, TimeUnit.SECONDS
+            BackoffPolicy.EXPONENTIAL, LatestImageWorkManagerRetrySeconds, TimeUnit.SECONDS
         ).build()
     }
 
     fun cancelWork() {
-        WorkManager.getInstance(context).cancelUniqueWork("notifications_widget_task")
+        WorkManager.getInstance(context).cancelUniqueWork("latest_image_worker_task")
     }
 }

@@ -16,51 +16,40 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
-import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
-import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
-import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
+import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
+import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class NotificationsTask @AssistedInject constructor(
+class LatestImageTask @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val dataStore: DataStore<Preferences>
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            updateNotificationsWidgetRefreshing(context)
+            updateLatestImageWidgetRefreshing(context)
             val repository = WidgetRepositoryProvider(dataStore).invoke()
             if (repository == null) {
-                updateNotificationsWidget(emptyList(), context, "you have to be logged in to an account")
+                updateLatestImageWidget("", "", context, "you have to be logged in to an account")
                 return Result.failure()
             }
-            val res = repository.getNotifications()
+            val res = repository.getLatestImage()
             if (res is Resource.Success && res.data != null) {
-                val notifications = res.data.take(10)
-                val notificationStoreItems = notifications.map { notification ->
-                    val accountAvatarUri = getImageUri(notification.account.avatar)
-                    NotificationStoreItem(
-                        notification.id,
-                        notification.account.avatar,
-                        accountAvatarUri,
-                        notification.account.id,
-                        notification.account.username,
-                        notification.timeAgo,
-                        notification.type
-                    )
-                }
-                updateNotificationsWidget(notificationStoreItems, context)
+
+                val imageUri = getImageUri(res.data.mediaAttachments.first().previewUrl)
+
+                updateLatestImageWidget(imageUri, res.data.id, context)
             } else {
                 throw Exception()
             }
         } catch (e: Exception) {
             if (runAttemptCount < 4) {
-                updateNotificationsWidget(emptyList(), context, "an error occurred, retrying in ${NotificationWorkManagerRetrySeonds * (runAttemptCount + 1)} seconds")
+                updateLatestImageWidget("", "", context, "an error occurred, retrying in ${NotificationWorkManagerRetrySeonds * (runAttemptCount + 1)} seconds")
                 return Result.retry()
             }
-            updateNotificationsWidget(emptyList(), context, "an unexpected error occurred")
+            updateLatestImageWidget("", "", context, "an unexpected error occurred")
             return Result.failure()
         }
         return Result.success()

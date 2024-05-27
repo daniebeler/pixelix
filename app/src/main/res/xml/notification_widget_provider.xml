@@ -9,4 +9,5 @@
     android:description="@string/notification_widget_description"
     android:resizeMode="horizontal|vertical"
     android:previewLayout="@layout/notification_widget_preview"
+    android:previewImage="@drawable/notification_widget_preview"
     android:initialLayout="@layout/notification_widget_preview"/>
