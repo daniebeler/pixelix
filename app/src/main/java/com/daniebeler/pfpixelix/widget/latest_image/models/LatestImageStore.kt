@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class LatestImageStore(
     val latestImageUri: String = "",
     val postId: String = "",
-    val refreshing: Boolean = false
+    val refreshing: Boolean = false,
+    val error: String = ""
 )

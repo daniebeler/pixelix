@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NotificationsStore(
     val notifications: List<NotificationStoreItem> = emptyList(),
-    val refreshing: Boolean = false
+    val refreshing: Boolean = false,
+    val error: String = ""
 )
 
 @Serializable

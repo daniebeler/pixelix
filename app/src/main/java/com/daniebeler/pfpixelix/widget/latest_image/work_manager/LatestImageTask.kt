@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -18,9 +17,9 @@ import coil.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
+import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.net.UnknownHostException
 
 @HiltWorker
 class LatestImageTask @AssistedInject constructor(
@@ -30,21 +29,27 @@ class LatestImageTask @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            Log.i("Worker", "starting")
+            updateLatestImageWidgetRefreshing(context)
             val repository = WidgetRepositoryProvider(dataStore).invoke()
+            if (repository == null) {
+                updateLatestImageWidget("", "", context, "you have to be logged in to an account")
+                return Result.failure()
+            }
             val res = repository.getLatestImage()
             if (res is Resource.Success && res.data != null) {
 
                 val imageUri = getImageUri(res.data.mediaAttachments.first().previewUrl)
 
                 updateLatestImageWidget(imageUri, res.data.id, context)
-                Log.i("Worker", "latestImage updated")
+            } else {
+                throw Exception()
             }
         } catch (e: Exception) {
-            if (e is UnknownHostException) {
-                Log.e("Worker", "unknown host, retry")
+            if (runAttemptCount < 4) {
+                updateLatestImageWidget("", "", context, "an error occurred, retrying in ${NotificationWorkManagerRetrySeonds * (runAttemptCount + 1)} seconds")
                 return Result.retry()
             }
+            updateLatestImageWidget("", "", context, "an unexpected error occurred")
             return Result.failure()
         }
         return Result.success()

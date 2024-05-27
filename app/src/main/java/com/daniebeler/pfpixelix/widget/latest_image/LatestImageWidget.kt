@@ -21,9 +21,16 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
+import androidx.glance.background
 import androidx.glance.currentState
+import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
 import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.widget.WidgetColors
 import com.daniebeler.pfpixelix.widget.notifications.models.LatestImageStore
@@ -55,9 +62,7 @@ class LatestImageWidget : GlanceAppWidget() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) GlanceTheme.colors
             else WidgetColors.colors
         ) {
-            if (state.refreshing || state.latestImageUri.isBlank()) {
-                CircularProgressIndicator(color = GlanceTheme.colors.primary)
-            } else {
+            if (state.latestImageUri.isNotBlank()) {
                 Image(
                     provider = getImageProvider(state.latestImageUri, context),
                     contentDescription = "latest home timeline picture",
@@ -70,6 +75,16 @@ class LatestImageWidget : GlanceAppWidget() {
                         )
                     )
                 )
+            } else {
+                Column(GlanceModifier.fillMaxSize().background(GlanceTheme.colors.background).padding(12.dp)) {
+                    Text(text = "Latest Image Widget", style = TextStyle(color = GlanceTheme.colors.onBackground))
+                    Spacer(GlanceModifier.height(12.dp))
+                    if (state.error.isNotBlank()) {
+                        Text(text = state.error, style = TextStyle(color = GlanceTheme.colors.error))
+                    } else if (state.refreshing || state.latestImageUri.isBlank()) {
+                        CircularProgressIndicator(color = GlanceTheme.colors.primary)
+                    }
+                }
             }
         }
     }

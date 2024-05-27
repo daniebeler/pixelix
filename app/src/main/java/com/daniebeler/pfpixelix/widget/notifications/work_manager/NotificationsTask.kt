@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -16,12 +15,12 @@ import coil.imageLoader
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
-import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
+import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.net.UnknownHostException
 
 @HiltWorker
 class NotificationsTask @AssistedInject constructor(
@@ -31,8 +30,12 @@ class NotificationsTask @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            Log.i("Worker", "starting")
+            updateNotificationsWidgetRefreshing(context)
             val repository = WidgetRepositoryProvider(dataStore).invoke()
+            if (repository == null) {
+                updateNotificationsWidget(emptyList(), context, "you have to be logged in to an account")
+                return Result.failure()
+            }
             val res = repository.getNotifications()
             if (res is Resource.Success && res.data != null) {
                 val notifications = res.data.take(10)
@@ -49,13 +52,15 @@ class NotificationsTask @AssistedInject constructor(
                     )
                 }
                 updateNotificationsWidget(notificationStoreItems, context)
-                Log.i("Worker", "Updated")
+            } else {
+                throw Exception()
             }
         } catch (e: Exception) {
-            if (e is UnknownHostException) {
-                Log.e("Worker", "unknown host, retry")
+            if (runAttemptCount < 4) {
+                updateNotificationsWidget(emptyList(), context, "an error occurred, retrying in ${NotificationWorkManagerRetrySeonds * (runAttemptCount + 1)} seconds")
                 return Result.retry()
             }
+            updateNotificationsWidget(emptyList(), context, "an unexpected error occurred")
             return Result.failure()
         }
         return Result.success()

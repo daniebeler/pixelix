@@ -28,8 +28,6 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
@@ -152,9 +150,12 @@ class NotificationsWidget : GlanceAppWidget() {
                         if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
                             Spacer(GlanceModifier.height(12.dp))
                         }
-
                     }
-                    if (notifications.isEmpty() || state.refreshing) {
+                    if (state.error.isNotBlank()) {
+                        item { Spacer(GlanceModifier.height(12.dp)) }
+                        item {  Text(text = state.error, style = TextStyle(color = GlanceTheme.colors.error))}
+                    }
+                    else if (notifications.isEmpty() || state.refreshing) {
                         item {
                             Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(color = GlanceTheme.colors.primary)
@@ -243,13 +244,7 @@ class RefreshAction : ActionCallback {
     override suspend fun onAction(
         context: Context, glanceId: GlanceId, parameters: ActionParameters
     ) {
-        updateAppWidgetState(context = context, definition = CustomNotificationsStateDefinition, glanceId = glanceId) {
-            NotificationsStore(
-                notifications = emptyList(),
-                refreshing = true
-            )
-        }
-        NotificationsWidget().updateAll(context)
+        updateNotificationsWidgetRefreshing(context)
         NotificationsWorkManager(context).executeOnce()
     }
 }

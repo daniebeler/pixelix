@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
 import android.content.Context
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -11,6 +12,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
 
+public val LatestImageWorkManagerRetrySeconds: Long = 15
 
 class LatestImageWorkManager(private val context: Context) {
     fun executePeriodic() = enqueuePeriodicWorker()
@@ -41,6 +43,8 @@ class LatestImageWorkManager(private val context: Context) {
         ).addTag("latest_image_worker_task").setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).setBackoffCriteria(
+            BackoffPolicy.EXPONENTIAL, LatestImageWorkManagerRetrySeconds, TimeUnit.SECONDS
         ).build()
     }
 

@@ -6,7 +6,22 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import com.daniebeler.pfpixelix.widget.notifications.models.LatestImageStore
 
-suspend fun updateLatestImageWidget(uri: String, postId: String, context: Context) {
+suspend fun updateLatestImageWidget(uri: String, postId: String, context: Context, error: String = "") {
+    val latestImageStore = LatestImageStore(
+        latestImageUri = uri,
+        postId = postId,
+        error = error
+    )
+    updateLatestImageWidget(latestImageStore, context)
+}
+suspend fun updateLatestImageWidgetRefreshing(context: Context) {
+    val latestImageStore = LatestImageStore(
+        refreshing = true
+    )
+    updateLatestImageWidget(latestImageStore, context)
+}
+
+private suspend fun updateLatestImageWidget(latestImageStore: LatestImageStore, context: Context) {
     GlanceAppWidgetManager(context).getGlanceIds(LatestImageWidget::class.java)
         .forEach { glanceId ->
             updateAppWidgetState(
@@ -14,10 +29,7 @@ suspend fun updateLatestImageWidget(uri: String, postId: String, context: Contex
                 definition = CustomLatestImageStateDefinition,
                 glanceId = glanceId
             ) {
-                LatestImageStore(
-                    latestImageUri = uri,
-                    postId = postId
-                )
+                latestImageStore
             }
         }
     LatestImageWidget().updateAll(context)

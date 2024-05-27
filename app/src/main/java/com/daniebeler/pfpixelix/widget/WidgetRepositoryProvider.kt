@@ -16,13 +16,18 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class WidgetRepositoryProvider(private val storage: DataStore<Preferences>) {
-    suspend operator fun invoke(): WidgetRepository {
+    suspend operator fun invoke(): WidgetRepository? {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         val hostSelectionInterceptor = HostSelectionInterceptor()
-        hostSelectionInterceptor.setHost(getBaseUrl().first().replace("https://", ""))
+        val baseUrl = getBaseUrl().first()
+        val jwtToken = getToken().first()
+        if (baseUrl.isBlank() || jwtToken.isBlank()) {
+            return null
+        }
+        hostSelectionInterceptor.setHost(baseUrl.replace("https://", ""))
         hostSelectionInterceptor.setToken(
-            getToken().first()
+            jwtToken
         )
         val client = OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor)
             .addInterceptor(logging).build()
