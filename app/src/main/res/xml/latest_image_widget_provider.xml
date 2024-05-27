@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="100dp"
+    android:minWidth="150dp"
     android:minHeight="100dp"
     android:minResizeWidth="100dp"
     android:minResizeHeight="100dp"
-    android:targetCellWidth="2"
+    android:targetCellWidth="3"
     android:targetCellHeight="2"
+    android:previewLayout="@layout/latest_image_widget_preview"
     android:description="@string/notification_widget_description"
     android:resizeMode="horizontal|vertical"/>
