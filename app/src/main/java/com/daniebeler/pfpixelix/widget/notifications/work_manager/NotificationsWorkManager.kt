@@ -26,7 +26,7 @@ class NotificationsWorkManager(private val context: Context) {
 
     private fun enqueuePeriodicWorker() {
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "daily_read_worker_tag",
+            "notifications_widget_task",
             // KEEP documentation:
             // If there is existing pending (uncompleted) work with the same unique name, do nothing.
             // Otherwise, insert the newly-specified work.
@@ -38,13 +38,13 @@ class NotificationsWorkManager(private val context: Context) {
         // 1 day
         return PeriodicWorkRequestBuilder<NotificationsTask>(
             15, TimeUnit.MINUTES
-        ).addTag("daily_read_worker_tag").setConstraints(
+        ).addTag("notifications_widget_task").setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED).build()
         ).build()
     }
 
     fun cancelWork() {
-        WorkManager.getInstance(context).cancelUniqueWork("daily_read_worker_tag")
+        WorkManager.getInstance(context).cancelUniqueWork("notifications_widget_task")
     }
 }

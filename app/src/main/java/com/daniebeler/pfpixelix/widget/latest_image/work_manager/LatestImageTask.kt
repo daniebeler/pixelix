@@ -37,7 +37,7 @@ class LatestImageTask @AssistedInject constructor(
 
                 val imageUri = getImageUri(res.data.mediaAttachments.first().previewUrl)
 
-                updateLatestImageWidget(imageUri, context)
+                updateLatestImageWidget(imageUri, res.data.id, context)
                 Log.i("Worker", "latestImage updated")
             }
         } catch (e: Exception) {
