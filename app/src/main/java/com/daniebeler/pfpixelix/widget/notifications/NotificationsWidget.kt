@@ -122,7 +122,8 @@ class NotificationsWidget : GlanceAppWidget() {
                                     )
                                     Spacer(GlanceModifier.width(6.dp))
                                     Text(
-                                        text = "Notifications", style = TextStyle(
+                                        text = LocalContext.current.getString(R.string.notifications),
+                                        style = TextStyle(
                                             color = GlanceTheme.colors.onBackground,
                                             fontSize = 20.sp
                                         )
@@ -130,8 +131,11 @@ class NotificationsWidget : GlanceAppWidget() {
 
                                 } else if (size.height <= BIG_SQUARE.height && size.width <= BIG_SQUARE.width) {
                                     Text(
-                                        text = "Notifications",
-                                        style = TextStyle(color = GlanceTheme.colors.onBackground)
+                                        text = LocalContext.current.getString(R.string.notifications),
+                                        style = TextStyle(
+                                            color = GlanceTheme.colors.onBackground,
+                                            fontSize = 13.sp
+                                        )
                                     )
                                 }
                             }
@@ -153,9 +157,13 @@ class NotificationsWidget : GlanceAppWidget() {
                     }
                     if (state.error.isNotBlank()) {
                         item { Spacer(GlanceModifier.height(12.dp)) }
-                        item {  Text(text = state.error, style = TextStyle(color = GlanceTheme.colors.error))}
-                    }
-                    else if (notifications.isEmpty() || state.refreshing) {
+                        item {
+                            Text(
+                                text = state.error,
+                                style = TextStyle(color = GlanceTheme.colors.error)
+                            )
+                        }
+                    } else if (notifications.isEmpty() || state.refreshing) {
                         item {
                             Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(color = GlanceTheme.colors.primary)
@@ -206,9 +214,18 @@ class NotificationsWidget : GlanceAppWidget() {
                                 Spacer(GlanceModifier.width(3.dp))
                             }
                             Text(
-                                text = getNotificationText(
-                                    notification.type
-                                ), style = TextStyle(color = GlanceTheme.colors.onBackground)
+                                text = LocalContext.current.getString(
+                                    getNotificationText(
+                                        notification.type
+                                    )
+                                ), style = TextStyle(
+                                    color = GlanceTheme.colors.onBackground,
+                                    fontSize = if (size.width >= BIG_SQUARE.width) {
+                                        14.sp
+                                    } else {
+                                        13.sp
+                                    }
+                                )
                             )
                         }
                         Text(
@@ -221,14 +238,16 @@ class NotificationsWidget : GlanceAppWidget() {
         }
     }
 
-    private fun getNotificationText(type: String): String {
+    private fun getNotificationText(type: String): Int {
         return when (type) {
-            "favourite" -> "liked your post"
-            "mention" -> "mentioned you"
-            "follow" -> "followed you"
+            "favourite" -> R.string.liked_your_post
+            "mention" -> R.string.mentioned_you
+            "follow" -> R.string.followed_you
+            "direct" -> R.string.sent_a_dm
+            "reblog" -> R.string.reblogged_your_post
 
             else -> {
-                ""
+                R.string.notifications
             }
         }
     }

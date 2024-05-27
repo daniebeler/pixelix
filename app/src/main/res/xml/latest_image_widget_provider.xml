@@ -8,5 +8,5 @@
     android:targetCellHeight="2"
     android:previewLayout="@layout/latest_image_widget_preview"
     android:previewImage="@drawable/default_image"
-    android:description="@string/notification_widget_description"
+    android:description="@string/latest_image_widget_description"
     android:resizeMode="horizontal|vertical"/>
