@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +41,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -96,20 +98,29 @@ fun LoginComposable(
                 Image(
                     painterResource(
                         if (isSystemInDarkTheme()) {
-                            R.drawable.default_launcher_icon_dark
+                            R.drawable.pixelix_logo_black_xxl
                         } else {
-                            R.drawable.default_launcher_icon_light
+                            R.drawable.pixelix_logo_white_xxl
                         }
-                    ), contentDescription = null, Modifier.size(200.dp)
+                    ), contentDescription = null,
+                    Modifier
+                        .size(150.dp)
+                        .clip(CircleShape)
                 )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
                 Text(
-                    text = "Pixelix", fontSize = 42.sp, color = if (isSystemInDarkTheme()) {
+                    text = "PIXELIX", fontSize = 38.sp, fontWeight = FontWeight.Black, color = if (isSystemInDarkTheme()) {
                         Color.Black
                     } else {
                         Color.White
                     }
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
+            
             Image(
                 painterResource(
                     id = if (isSystemInDarkTheme()) {
