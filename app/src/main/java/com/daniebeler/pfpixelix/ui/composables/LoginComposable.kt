@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,7 +59,18 @@ fun LoginComposable(
     error: String,
     viewModel: LoginViewModel = hiltViewModel(key = "login-viewmodel-key")
 ) {
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = if (isSystemInDarkTheme()) {
+            Color.White
+        } else {
+            Color.Black
+        }, darkIcons = isSystemInDarkTheme()
+    )
 
+    systemUiController.setNavigationBarColor(
+        color = Color.Transparent, darkIcons = isSystemInDarkTheme()
+    )
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -71,19 +84,40 @@ fun LoginComposable(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .background(
+                        if (isSystemInDarkTheme()) {
+                            Color.White
+                        } else {
+                            Color.Black
+                        }
+                    ), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
                 Image(
                     painterResource(
-                        R.drawable.default_launcher_icon_dark
+                        if (isSystemInDarkTheme()) {
+                            R.drawable.default_launcher_icon_dark
+                        } else {
+                            R.drawable.default_launcher_icon_light
+                        }
                     ), contentDescription = null, Modifier.size(200.dp)
                 )
-                Text(text = "Pixelix", fontSize = 42.sp, color = Color.Black)
+                Text(
+                    text = "Pixelix", fontSize = 42.sp, color = if (isSystemInDarkTheme()) {
+                        Color.Black
+                    } else {
+                        Color.White
+                    }
+                )
             }
             Image(
-                painterResource(id = R.drawable.login_wave),
+                painterResource(
+                    id = if (isSystemInDarkTheme()) {
+                        R.drawable.login_wave_light
+                    } else {
+                        R.drawable.login_wave_dark
+                    }
+                ),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier.fillMaxWidth()
@@ -152,9 +186,7 @@ fun LoginComposable(
                                 shape = RoundedCornerShape(12.dp),
                                 contentPadding = PaddingValues(12.dp),
                                 enabled = viewModel.isValidUrl,
-                                colors = ButtonColors(
-                                    disabledContainerColor = Color(0xFF121318),
-                                    disabledContentColor = Color(0xFF8D8D8D),
+                                colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.onPrimary
                                 )
@@ -178,9 +210,7 @@ fun LoginComposable(
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(16.dp),
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonColors(
-                            disabledContainerColor = Color(0xFF121318),
-                            disabledContentColor = Color(0xFF8D8D8D),
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
