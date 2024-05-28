@@ -1,5 +1,8 @@
 package com.daniebeler.pfpixelix.ui.composables.notifications
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +22,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +38,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +52,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -52,17 +60,23 @@ fun NotificationsComposable(
     navController: NavController,
     viewModel: NotificationsViewModel = hiltViewModel(key = "notifications-viewmodel-key")
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,
-            onRefresh = { viewModel.refresh() })
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.notificationsState.isRefreshing,
+        onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
-
     val scrollState = rememberScrollState()
+    val context: Context = LocalContext.current
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(stringResource(R.string.notifications), fontWeight = FontWeight.Bold)
+        }, actions = {
+            IconButton(onClick = {
+                pinWidget(context)
+            }) {
+                Icon(imageVector = Icons.Outlined.Widgets, contentDescription = "add widget")
+            }
         })
     }) { paddingValues ->
         Box(
@@ -86,7 +100,8 @@ fun NotificationsComposable(
                     if (viewModel.filter == NotificationsFilterEnum.Followers) {
                         ActiveFilterButton(text = stringResource(id = R.string.followers))
                     } else {
-                        InactiveFilterButton(text = stringResource(id = R.string.followers),
+                        InactiveFilterButton(
+                            text = stringResource(id = R.string.followers),
                             onClick = {
                                 viewModel.changeFilter(NotificationsFilterEnum.Followers)
                             })
@@ -189,6 +204,15 @@ fun NotificationsComposable(
         InfiniteListHandler(lazyListState = lazyListState) {
             viewModel.getNotificationsPaginated()
         }
+    }
+}
+
+private fun pinWidget(context: Context) {
+    val appWidgetManager = AppWidgetManager.getInstance(context)
+    val myProvider = ComponentName(context, NotificationWidgetReceiver::class.java)
+
+    if (appWidgetManager.isRequestPinAppWidgetSupported) {
+        appWidgetManager.requestPinAppWidget(myProvider, null, null)
     }
 }
 
