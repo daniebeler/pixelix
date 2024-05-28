@@ -10,7 +10,6 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.os.Build
 import android.provider.MediaStore
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.toBitmap
@@ -18,12 +17,16 @@ import androidx.core.net.toUri
 import androidx.glance.ImageProvider
 
 class GetImageProvider {
-    operator fun invoke(imagePath: String, context: Context, size: IntSize, radius: Float): ImageProvider {
+    operator fun invoke(imagePath: String, context: Context, radius: Float): ImageProvider {
         if (Build.VERSION.SDK_INT >= 29) {
             try {
                 val listener: ImageDecoder.OnHeaderDecodedListener =
                     ImageDecoder.OnHeaderDecodedListener { decoder, info, source ->
-                        decoder.setTargetSize(size.width, size.height)
+                        if (info.size.width > 1400 || info.size.height > 1400) {
+                            decoder.setTargetSampleSize(3)
+                        } else if (info.size.width > 800  || info.size.height > 800) {
+                            decoder.setTargetSampleSize(2)
+                        }
                         decoder.setPostProcessor { canvas ->
                             // This will create rounded corners.
                             val path = Path()

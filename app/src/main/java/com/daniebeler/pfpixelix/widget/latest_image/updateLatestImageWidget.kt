@@ -16,7 +16,7 @@ suspend fun updateLatestImageWidget(uri: String, postId: String, context: Contex
 }
 suspend fun updateLatestImageWidgetRefreshing(context: Context) {
     val latestImageStore = LatestImageStore(
-        refreshing = true
+        refreshing = true,
     )
     updateLatestImageWidget(latestImageStore, context)
 }

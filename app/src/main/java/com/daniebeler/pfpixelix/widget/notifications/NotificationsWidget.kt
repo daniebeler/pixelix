@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -142,7 +141,7 @@ class NotificationsWidget : GlanceAppWidget() {
                             Spacer(GlanceModifier.defaultWeight())
                             Box(
                                 modifier = GlanceModifier.clickable(
-                                    onClick = actionRunCallback<RefreshAction>()
+                                    onClick = actionRunCallback<RefreshActionNotificationsWidget>()
                                 )
                             ) {
                                 Image(
@@ -197,7 +196,7 @@ class NotificationsWidget : GlanceAppWidget() {
                 Spacer(GlanceModifier.height(12.dp))
                 Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
                     Image(
-                        provider = GetImageProvider()(notification.accountAvatarUri, context, IntSize(100, 100), 100f),
+                        provider = GetImageProvider()(notification.accountAvatarUri, context, 1000f),
                         contentDescription = "",
                         modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
                     )
@@ -253,7 +252,7 @@ class NotificationsWidget : GlanceAppWidget() {
     }
 }
 
-class RefreshAction : ActionCallback {
+class RefreshActionNotificationsWidget : ActionCallback {
     override suspend fun onAction(
         context: Context, glanceId: GlanceId, parameters: ActionParameters
     ) {

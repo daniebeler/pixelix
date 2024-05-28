@@ -3,12 +3,12 @@ package com.daniebeler.pfpixelix.widget.latest_image
 import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
@@ -16,21 +16,28 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.widget.WidgetColors
 import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.LatestImageStore
+import com.daniebeler.pfpixelix.widget.notifications.work_manager.LatestImageWorkManager
 
 
 class LatestImageWidget : GlanceAppWidget() {
@@ -61,7 +68,7 @@ class LatestImageWidget : GlanceAppWidget() {
         ) {
             if (state.latestImageUri.isNotBlank()) {
                 Image(
-                    provider = GetImageProvider()(state.latestImageUri, context, IntSize(600, 600), 50f),
+                    provider = GetImageProvider()(state.latestImageUri, context,50f),
                     contentDescription = "latest home timeline picture",
                     modifier = GlanceModifier.fillMaxSize().clickable(
                         actionStartActivity<MainActivity>(
@@ -77,10 +84,23 @@ class LatestImageWidget : GlanceAppWidget() {
                     GlanceModifier.fillMaxSize().background(GlanceTheme.colors.background)
                         .padding(12.dp)
                 ) {
-                    Text(
-                        text = "Latest Image Widget",
-                        style = TextStyle(color = GlanceTheme.colors.onBackground)
-                    )
+                    Row(GlanceModifier.fillMaxWidth()) {
+                        Text(
+                            text = "Latest Image Widget",
+                            style = TextStyle(color = GlanceTheme.colors.onBackground)
+                        )
+                        Spacer(GlanceModifier.defaultWeight())
+                        Box(
+                            modifier = GlanceModifier.clickable(
+                                onClick = actionRunCallback<RefreshActionLatestImageWidget>()
+                            )
+                        ) {
+                            Image(
+                                provider = ImageProvider(R.drawable.refresh_icon),
+                                contentDescription = "refresh"
+                            )
+                        }
+                    }
                     Spacer(GlanceModifier.height(12.dp))
                     if (state.error.isNotBlank()) {
                         Text(
@@ -92,5 +112,14 @@ class LatestImageWidget : GlanceAppWidget() {
                 }
             }
         }
+    }
+}
+
+class RefreshActionLatestImageWidget : ActionCallback {
+    override suspend fun onAction(
+        context: Context, glanceId: GlanceId, parameters: ActionParameters
+    ) {
+        updateLatestImageWidgetRefreshing(context)
+        LatestImageWorkManager(context).executeOnce()
     }
 }
