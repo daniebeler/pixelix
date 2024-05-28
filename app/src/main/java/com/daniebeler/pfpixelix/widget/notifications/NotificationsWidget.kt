@@ -2,12 +2,11 @@ package com.daniebeler.pfpixelix.widget.notifications
 
 import android.content.Context
 import android.os.Build
-import android.provider.MediaStore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -47,6 +46,7 @@ import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.widget.WidgetColors
+import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
 import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsWorkManager
@@ -197,7 +197,7 @@ class NotificationsWidget : GlanceAppWidget() {
                 Spacer(GlanceModifier.height(12.dp))
                 Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
                     Image(
-                        provider = getImageProvider(notification.accountAvatarUri, context),
+                        provider = GetImageProvider()(notification.accountAvatarUri, context, IntSize(100, 100), 100f),
                         contentDescription = "",
                         modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
                     )
@@ -250,12 +250,6 @@ class NotificationsWidget : GlanceAppWidget() {
                 R.string.notifications
             }
         }
-    }
-
-
-    private fun getImageProvider(path: String, context: Context): ImageProvider {
-        val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, path.toUri())
-        return ImageProvider(bitmap)
     }
 }
 

@@ -2,17 +2,13 @@ package com.daniebeler.pfpixelix.widget.latest_image
 
 import android.content.Context
 import android.os.Build
-import android.provider.MediaStore
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
@@ -33,6 +29,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.widget.WidgetColors
+import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.LatestImageStore
 
 
@@ -64,7 +61,7 @@ class LatestImageWidget : GlanceAppWidget() {
         ) {
             if (state.latestImageUri.isNotBlank()) {
                 Image(
-                    provider = getImageProvider(state.latestImageUri, context),
+                    provider = GetImageProvider()(state.latestImageUri, context, IntSize(600, 600), 50f),
                     contentDescription = "latest home timeline picture",
                     modifier = GlanceModifier.fillMaxSize().clickable(
                         actionStartActivity<MainActivity>(
@@ -76,23 +73,24 @@ class LatestImageWidget : GlanceAppWidget() {
                     )
                 )
             } else {
-                Column(GlanceModifier.fillMaxSize().background(GlanceTheme.colors.background).padding(12.dp)) {
-                    Text(text = "Latest Image Widget", style = TextStyle(color = GlanceTheme.colors.onBackground))
+                Column(
+                    GlanceModifier.fillMaxSize().background(GlanceTheme.colors.background)
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "Latest Image Widget",
+                        style = TextStyle(color = GlanceTheme.colors.onBackground)
+                    )
                     Spacer(GlanceModifier.height(12.dp))
                     if (state.error.isNotBlank()) {
-                        Text(text = state.error, style = TextStyle(color = GlanceTheme.colors.error))
+                        Text(
+                            text = state.error, style = TextStyle(color = GlanceTheme.colors.error)
+                        )
                     } else if (state.refreshing || state.latestImageUri.isBlank()) {
                         CircularProgressIndicator(color = GlanceTheme.colors.primary)
                     }
                 }
             }
         }
-    }
-
-    private fun getImageProvider(path: String, context: Context): ImageProvider {
-        val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, path.toUri())
-        val roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, bitmap)
-        roundedBitmapDrawable.cornerRadius = 50.dp.value
-        return ImageProvider(roundedBitmapDrawable.current.toBitmap())
     }
 }
