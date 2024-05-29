@@ -140,6 +140,7 @@ fun IconSelectionComposable(
             }, confirmButton = {
                 TextButton(onClick = {
                     viewModel.changeIcon(context = context, newIconName.value)
+                    newIconName.value = ""
                 }) {
                     Text(stringResource(R.string.change))
                 }

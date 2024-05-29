@@ -180,9 +180,9 @@
     <string name="notification_widget_description">Bleiben Sie mit Ihren neuesten Benachrichtigungen von Pixelfed direkt auf Ihrem Startbildschirm auf dem Laufenden.</string>
     <string name="customize_app_icon">App Icon ändern</string>
     <string name="change_app_icon">App Icon ändern?</string>
-    <string name="change_app_icon_dialog_content">Pixelix wird geschlossen, um die Änderung zu übernehmen.</string>
+    <string name="change_app_icon_dialog_content">Es kann kurz dauern, bis das neue App Icon sichtbar wird.</string>
     <string name="change">Ändern</string>
     <string name="mentioned_you">hat dich erwähnt</string>
-    <array name="latest_image_widget_description">Wirf einen Blick auf den neuesten Beitrag aus deiner Home-Timeline, direkt auf deinem Startbildschirm</array>
+    <string name="latest_image_widget_description">Wirf einen Blick auf den neuesten Beitrag aus deiner Home-Timeline, direkt auf deinem Startbildschirm</string>
 
 </resources>
