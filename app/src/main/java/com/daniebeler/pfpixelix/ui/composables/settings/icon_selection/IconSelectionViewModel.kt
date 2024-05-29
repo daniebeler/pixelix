@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.IconsHolder
 import com.daniebeler.pfpixelix.domain.usecase.DisableAllCustomAppIconsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.EnableCustomAppIconUseCase
@@ -25,6 +26,18 @@ class IconSelectionViewModel @Inject constructor(
 
     fun fillList(context: Context) {
         if (icons.isEmpty()) {
+            val mainDrawable = ResourcesCompat.getDrawableForDensity(
+                context.resources,
+                R.mipmap.ic_launcher_02,
+                DisplayMetrics.DENSITY_XXXHIGH,
+                context.theme
+            )
+
+            val mainBitmap = mainDrawable!!.toBitmap(
+                mainDrawable.minimumWidth, mainDrawable.minimumHeight
+            ).asImageBitmap()
+            icons.add(IconWithName("com.daniebeler.pfpixelix.MainActivity", mainBitmap, false))
+
             IconsHolder.list.forEach {
                 val drawable = ResourcesCompat.getDrawableForDensity(
                     context.resources,
@@ -51,16 +64,20 @@ class IconSelectionViewModel @Inject constructor(
         var foundItem = false
 
         icons.forEach {
-
-            val enabled = packageManager.getComponentEnabledSetting(
-                ComponentName(
-                    context, it.name
+            if (it.name == "com.daniebeler.pfpixelix.MainActivity") {
+                newList.add(IconWithName(it.name, it.icon, false))
+            }
+            else {
+                val enabled = packageManager.getComponentEnabledSetting(
+                    ComponentName(
+                        context, it.name
+                    )
                 )
-            )
 
-            foundItem = foundItem || enabled == 1
+                foundItem = foundItem || enabled == 1
 
-            newList.add(IconWithName(it.name, it.icon, enabled == 1))
+                newList.add(IconWithName(it.name, it.icon, enabled == 1))
+            }
         }
 
         if (!foundItem) {
