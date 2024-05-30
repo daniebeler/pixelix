@@ -9,8 +9,8 @@ import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowingUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
@@ -40,15 +40,15 @@ class AccountUseCaseModule {
     @Provides
     @Singleton
     fun provideGetOwnAccountUseCase(
-        storageRepository: StorageRepository, accountRepository: AccountRepository
-    ): GetOwnAccountUseCase = GetOwnAccountUseCase(storageRepository, accountRepository)
+        currentLoginDataUseCase: GetCurrentLoginDataUseCase, accountRepository: AccountRepository
+    ): GetOwnAccountUseCase = GetOwnAccountUseCase(currentLoginDataUseCase, accountRepository)
 
 
     @Provides
     @Singleton
     fun provideGetOwnPostsUseCase(
-        postRepository: PostRepository, storageRepository: StorageRepository
-    ): GetOwnPostsUseCase = GetOwnPostsUseCase(postRepository, storageRepository)
+        postRepository: PostRepository, currentLoginDataUseCase: GetCurrentLoginDataUseCase
+    ): GetOwnPostsUseCase = GetOwnPostsUseCase(postRepository, currentLoginDataUseCase)
 
     @Provides
     @Singleton
@@ -105,11 +105,6 @@ class AccountUseCaseModule {
     @Singleton
     fun provideGetAccountsFollowingUseCase(accountRepository: AccountRepository): GetAccountsFollowingUseCase =
         GetAccountsFollowingUseCase(accountRepository)
-
-    @Provides
-    @Singleton
-    fun provideGetOwnAccountIdUseCase(repository: StorageRepository): GetOwnAccountIdUseCase =
-        GetOwnAccountIdUseCase(repository)
 
     @Provides
     @Singleton

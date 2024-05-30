@@ -1,12 +1,12 @@
 package com.daniebeler.pfpixelix.di
 
+import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
-import com.daniebeler.pfpixelix.domain.repository.StorageRepository
-import com.daniebeler.pfpixelix.domain.usecase.GetClientIdUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetClientSecretUseCase
+import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreAccessTokenUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreAccountIdUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import dagger.Module
 import dagger.Provides
@@ -25,26 +25,36 @@ class AuthUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetClientSecretUseCase(storageRepository: StorageRepository): GetClientSecretUseCase =
-        GetClientSecretUseCase(storageRepository)
-
-    @Provides
-    @Singleton
-    fun provideGetClientIdUseCase(storageRepository: StorageRepository): GetClientIdUseCase =
-        GetClientIdUseCase(storageRepository)
-
-    @Provides
-    @Singleton
-    fun provideStoreAccessTokenUseCase(repository: CountryRepository): StoreAccessTokenUseCase =
-        StoreAccessTokenUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideStoreAccountIdUseCase(storageRepository: StorageRepository): StoreAccountIdUseCase =
-        StoreAccountIdUseCase(storageRepository)
-
-    @Provides
-    @Singleton
     fun provideVerifyTokenUseCase(repository: CountryRepository): VerifyTokenUseCase =
         VerifyTokenUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideAddInitialLoginUseCase(
+        repository: AuthRepository,
+        hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+    ): AddNewLoginUseCase =
+        AddNewLoginUseCase(repository, hostSelectionInterceptorInterface)
+
+    @Provides
+    @Singleton
+    fun provideFinishLoginUseCase(
+        repository: AuthRepository,
+        hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+    ): UpdateLoginDataUseCase =
+        UpdateLoginDataUseCase(repository, hostSelectionInterceptorInterface)
+
+    @Provides
+    @Singleton
+    fun provideGetOngoingLoginUseCase(
+        repository: AuthRepository,
+    ): GetOngoingLoginUseCase =
+        GetOngoingLoginUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetCurrentLoginDataUseCase(
+        repository: AuthRepository,
+    ): GetCurrentLoginDataUseCase =
+        GetCurrentLoginDataUseCase(repository)
 }

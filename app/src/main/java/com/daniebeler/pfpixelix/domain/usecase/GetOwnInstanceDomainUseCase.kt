@@ -1,16 +1,11 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import com.daniebeler.pfpixelix.domain.repository.StorageRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 
 class GetOwnInstanceDomainUseCase(
-    private val repository: StorageRepository
+    private val repository: AuthRepository
 ) {
-    operator fun invoke(): Flow<String> = flow {
-        repository.getBaseUrlFromStorage().collect { url ->
-            val res = url.substringAfter("https://")
-            emit(res)
-        }
+    suspend operator fun invoke(): String {
+        return repository.getCurrentLoginData()!!.baseUrl.substringAfter("https://")
     }
 }

@@ -1,8 +1,6 @@
 package com.daniebeler.pfpixelix.domain.repository
 
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
-import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
@@ -17,19 +15,6 @@ import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
-
-    fun doesAccessTokenExist(): Boolean
-
-
-    suspend fun storeBaseUrl(url: String)
-
-    fun getBaseUrlFromStorage(): Flow<String>
-
-    suspend fun storeAccessToken(accessToken: String)
-
-    fun getAccessTokenFromStorage(): Flow<String>
-    fun setAccessToken(token: String)
-
 
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
 

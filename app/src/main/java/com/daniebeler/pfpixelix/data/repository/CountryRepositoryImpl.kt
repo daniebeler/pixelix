@@ -1,10 +1,5 @@
 package com.daniebeler.pfpixelix.data.repository
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
@@ -15,7 +10,6 @@ import com.daniebeler.pfpixelix.data.remote.dto.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
-import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
@@ -30,76 +24,14 @@ import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
 
 class CountryRepositoryImpl @Inject constructor(
-    private val userDataStorePreferences: DataStore<Preferences>,
-    private val hostSelectionInterceptor: HostSelectionInterceptorInterface,
     private val pixelfedApi: PixelfedApi
 ) : CountryRepository {
-
-    private var accessToken: String = ""
-
-
-    init {
-        runBlocking {
-            val accessTokenFromStorage = getAccessTokenFromStorage().first()
-            if (accessTokenFromStorage.isNotEmpty()) {
-                accessToken = "Bearer $accessTokenFromStorage"
-                hostSelectionInterceptor.setToken(accessTokenFromStorage)
-            }
-            val baseUrlFromStorage = getBaseUrlFromStorage().first()
-            if (baseUrlFromStorage.isNotEmpty()) {
-                hostSelectionInterceptor.setHost(baseUrlFromStorage.replace("https://", ""))
-            }
-        }
-    }
-
-
-    override fun doesAccessTokenExist(): Boolean {
-        return accessToken.isNotEmpty()
-    }
-
-    override suspend fun storeBaseUrl(url: String) {
-        val host = url.replace("https://", "")
-        userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] = host
-        }
-        hostSelectionInterceptor.setHost(host)
-    }
-
-
-    override fun getBaseUrlFromStorage(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
-        }
-
-
-    override suspend fun storeAccessToken(accessToken: String) {
-        this.accessToken = "Bearer $accessToken"
-        userDataStorePreferences.edit { preferences ->
-            preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] = accessToken
-        }
-        hostSelectionInterceptor.setToken(accessToken)
-    }
-
-
-    override fun getAccessTokenFromStorage(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
-        }
-
-    override fun setAccessToken(token: String) {
-        this.accessToken = token
-    }
-
-
     override fun getTrendingAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
             pixelfedApi.getTrendingAccounts()

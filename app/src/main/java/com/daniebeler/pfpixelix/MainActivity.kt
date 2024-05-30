@@ -25,7 +25,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.common.Destinations
-import com.daniebeler.pfpixelix.domain.repository.CountryRepository
+import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.domain.model.LoginData
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
@@ -52,18 +54,21 @@ import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
-    lateinit var repository: CountryRepository
+    lateinit var currentLoginDataUseCase: GetCurrentLoginDataUseCase
 
+    @Inject
+    lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
     companion object {
         const val KEY_DESTINATION: String = "destination"
         const val KEY_DESTINATION_PARAM: String = "destination_parameter"
 
-        enum class StartNavigation{
+        enum class StartNavigation {
             Notifications, Profile, Post
         }
     }
@@ -73,50 +78,65 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        if (!repository.doesAccessTokenExist()) {
-            gotoLoginActivity(this@MainActivity)
-        } else {
-            setContent {
-                PixelixTheme {
-                    val navController: NavHostController = rememberNavController()
+        runBlocking {
+            val loginData: LoginData? = currentLoginDataUseCase()
+            if (loginData == null || loginData.accessToken.isBlank() || loginData.baseUrl.isBlank()) {
+                gotoLoginActivity(this@MainActivity)
+            } else {
 
-                    Scaffold(bottomBar = {
-                        BottomBar(navController = navController)
-                    }) { paddingValues ->
-                        Box(
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            NavigationGraph(
-                                navController = navController
-                            )
-                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+                    if (loginData.accessToken.isNotEmpty()) {
+                        hostSelectionInterceptorInterface.setToken(loginData.accessToken)
+                    }
+                    if (loginData.baseUrl.isNotEmpty()) {
+                        hostSelectionInterceptorInterface.setHost(loginData.baseUrl.replace("https://", ""))
+                    }
 
-                            if (destination.isNotBlank()) {
-                                // Delay the navigation action to ensure the graph is set
-                                LaunchedEffect(Unit) {
-                                    when (destination) {
-                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
-                                            "notifications_screen", navController
-                                        )
+            }
+        }
 
-                                        StartNavigation.Profile.toString() -> {
-                                            val accountId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (accountId.isNotBlank()) {
-                                                Navigate.navigate(
-                                                    "profile_screen/$accountId", navController
-                                                )
-                                            }
+        setContent {
+            PixelixTheme {
+                val navController: NavHostController = rememberNavController()
+
+                Scaffold(bottomBar = {
+                    BottomBar(navController = navController)
+                }) { paddingValues ->
+                    Box(
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
+                        NavigationGraph(
+                            navController = navController
+                        )
+                        val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+
+                        if (destination.isNotBlank()) {
+                            // Delay the navigation action to ensure the graph is set
+                            LaunchedEffect(Unit) {
+                                when (destination) {
+                                    StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                        "notifications_screen", navController
+                                    )
+
+                                    StartNavigation.Profile.toString() -> {
+                                        val accountId: String = intent.extras?.getString(
+                                            KEY_DESTINATION_PARAM
+                                        ) ?: ""
+                                        if (accountId.isNotBlank()) {
+                                            Navigate.navigate(
+                                                "profile_screen/$accountId", navController
+                                            )
                                         }
+                                    }
 
-                                        StartNavigation.Post.toString() -> {
-                                            val postId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (postId.isNotBlank()) {
-                                                Navigate.navigate("single_post_screen/$postId", navController)
-                                            }
+                                    StartNavigation.Post.toString() -> {
+                                        val postId: String = intent.extras?.getString(
+                                            KEY_DESTINATION_PARAM
+                                        ) ?: ""
+                                        if (postId.isNotBlank()) {
+                                            Navigate.navigate(
+                                                "single_post_screen/$postId",
+                                                navController
+                                            )
                                         }
                                     }
                                 }
@@ -126,7 +146,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
     }
 }
 
