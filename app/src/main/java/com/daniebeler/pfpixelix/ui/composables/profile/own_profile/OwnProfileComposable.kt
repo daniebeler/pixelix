@@ -1,14 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -67,7 +72,7 @@ fun OwnProfileComposable(
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(0) }
 
     val lazyGridState = rememberLazyGridState()
     val pullRefreshState =
@@ -84,10 +89,18 @@ fun OwnProfileComposable(
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text(
-                        text = viewModel.accountState.account?.username ?: "",
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(Modifier.clickable { showBottomSheet = 2 }) {
+                        Text(
+                            text = viewModel.accountState.account?.username ?: "",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowDown,
+                            contentDescription = "account switch dropdown",
+                            Modifier.size(36.dp)
+                        )
+                    }
                     Text(
                         text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
@@ -95,12 +108,13 @@ fun OwnProfileComposable(
             }
         }, actions = {
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
+                DomainSoftwareComposable(
+                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
                 ) { url -> viewModel.openUrl(context, url) }
             }
 
             IconButton(onClick = {
-                showBottomSheet = true
+                showBottomSheet = 1
             }) {
                 Icon(
                     imageVector = Icons.Outlined.MoreVert, contentDescription = ""
@@ -209,18 +223,24 @@ fun OwnProfileComposable(
         pullRefreshState,
     )
 
-    if (showBottomSheet) {
+    if (showBottomSheet > 0) {
         ModalBottomSheet(
             onDismissRequest = {
-                showBottomSheet = false
+                showBottomSheet = 0
             }, sheetState = sheetState
         ) {
-            ModalBottomSheetContent(navController = navController,
-                instanceDomain = viewModel.ownDomain,
-                appIcon = viewModel.appIcon,
-                closeBottomSheet = {
-                    showBottomSheet = false
+            if (showBottomSheet == 1) {
+                ModalBottomSheetContent(navController = navController,
+                    instanceDomain = viewModel.ownDomain,
+                    appIcon = viewModel.appIcon,
+                    closeBottomSheet = {
+                        showBottomSheet = 0
+                    })
+            } else if (showBottomSheet == 2) {
+                AccountSwitchBottomSheet(closeBottomSheet = {
+                    showBottomSheet = 0
                 })
+            }
         }
     }
 }

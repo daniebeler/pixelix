@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.di
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
@@ -57,4 +58,11 @@ class AuthUseCaseModule {
         repository: AuthRepository,
     ): GetCurrentLoginDataUseCase =
         GetCurrentLoginDataUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetAuthDataUseCase(
+        repository: AuthRepository,
+    ): GetAuthDataUseCase =
+        GetAuthDataUseCase(repository)
 }

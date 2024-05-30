@@ -48,6 +48,10 @@ class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<Au
         }
     }
 
+    override suspend fun getAuthData(): AuthData {
+        return dataStore.data.first()
+    }
+
     override suspend fun getOngoingLogin(): LoginData? {
         return dataStore.data.first().loginDataList.find { it.loginOngoing }
     }

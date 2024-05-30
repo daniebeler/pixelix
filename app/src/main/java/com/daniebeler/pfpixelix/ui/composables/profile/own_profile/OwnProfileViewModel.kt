@@ -71,7 +71,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private suspend fun getInstanceDomain() {
-        getOwnInstanceDomainUseCase()
+        ownDomain = getOwnInstanceDomainUseCase()
     }
 
     fun getAppIcon(context: Context){
