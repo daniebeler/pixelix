@@ -11,6 +11,8 @@ data class AuthData (
 @Serializable
 data class LoginData (
     val accountId: String = "",
+    val username: String = "",
+    val avatar: String = "",
     val clientId: String = "",
     val clientSecret: String = "",
     val baseUrl: String = "",

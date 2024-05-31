@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.LoginData
 interface AuthRepository {
     suspend fun addNewLoginData(newLoginData: LoginData)
     suspend fun updateOngoingLoginData(newLoginData: LoginData, currentlyLoggedIn: String = "")
+    suspend fun updateCurrentUser(accountId: String)
     suspend fun getAuthData(): AuthData
     suspend fun getOngoingLogin(): LoginData?
     suspend fun getCurrentLoginData(): LoginData?

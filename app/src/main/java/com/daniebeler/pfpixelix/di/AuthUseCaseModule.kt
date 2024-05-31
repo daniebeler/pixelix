@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateCurrentUserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import dagger.Module
@@ -65,4 +66,12 @@ class AuthUseCaseModule {
         repository: AuthRepository,
     ): GetAuthDataUseCase =
         GetAuthDataUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateCurrentUserUseCase(
+        repository: AuthRepository,
+        hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+    ): UpdateCurrentUserUseCase =
+        UpdateCurrentUserUseCase(repository, hostSelectionInterceptorInterface)
 }

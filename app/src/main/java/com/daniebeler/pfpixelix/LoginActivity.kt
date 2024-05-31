@@ -113,7 +113,7 @@ class LoginActivity : ComponentActivity() {
         verifyTokenUseCase(loginData.accessToken).collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    val newLoginData = loginData.copy(accountId = result.data!!.id, loginOngoing = false)
+                    val newLoginData = loginData.copy(accountId = result.data!!.id, username = result.data.username, avatar = result.data.avatar, loginOngoing = false)
                     updateLoginDataUseCase(newLoginData, newLoginData.accountId)
                     redirect()
                 }

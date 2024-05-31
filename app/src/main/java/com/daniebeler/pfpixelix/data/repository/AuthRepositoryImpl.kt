@@ -48,6 +48,16 @@ class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<Au
         }
     }
 
+    override suspend fun updateCurrentUser(accountId: String) {
+        dataStore.updateData { authData ->
+            if (authData.loginDataList.any { it.accountId == accountId }) {
+                authData.copy(currentlyLoggedIn = accountId)
+            } else {
+                authData
+            }
+        }
+    }
+
     override suspend fun getAuthData(): AuthData {
         return dataStore.data.first()
     }
