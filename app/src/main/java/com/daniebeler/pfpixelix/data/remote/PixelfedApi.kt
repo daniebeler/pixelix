@@ -106,7 +106,7 @@ interface PixelfedApi {
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
     fun getAccountsWhoLikedPost(
-        @Path("post Id") postId: String
+        @Path("postId") postId: String
     ): Call<List<AccountDto>>
 
 
