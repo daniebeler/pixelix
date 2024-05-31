@@ -68,24 +68,26 @@ fun CustomPost(post: Post, navController: NavController) {
             Navigate.navigate("single_post_screen/" + post.id, navController)
         })) {
 
-            if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
-                GlideImage(
-                    model = post.mediaAttachments[0].url,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(
-                            1f
-                        )
-                )
-            } else {
-                AsyncImage(
-                    model = post.mediaAttachments[0].previewUrl,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                    modifier = Modifier.aspectRatio(1f)
-                )
+            if (post.mediaAttachments.isNotEmpty()) {
+                if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
+                    GlideImage(
+                        model = post.mediaAttachments[0].url,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(
+                                1f
+                            )
+                    )
+                } else {
+                    AsyncImage(
+                        model = post.mediaAttachments[0].previewUrl,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                        modifier = Modifier.aspectRatio(1f)
+                    )
+                }
             }
         }
     }
