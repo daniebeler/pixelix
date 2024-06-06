@@ -177,4 +177,13 @@
     <string name="all">Alle</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="notification_widget_description">Bleiben Sie mit Ihren neuesten Benachrichtigungen von Pixelfed direkt auf Ihrem Startbildschirm auf dem Laufenden.</string>
+    <string name="customize_app_icon">App Icon ändern</string>
+    <string name="change_app_icon">App Icon ändern?</string>
+    <string name="change_app_icon_dialog_content">Es kann kurz dauern, bis das neue App Icon sichtbar wird.</string>
+    <string name="change">Ändern</string>
+    <string name="mentioned_you">hat dich erwähnt</string>
+    <string name="latest_image_widget_description">Wirf einen Blick auf den neuesten Beitrag aus deiner Home-Timeline, direkt auf deinem Startbildschirm</string>
+    <string name="two_icons_info">Wenn ein anders Icon als das Standardicon ausgewählt wird, werden in der Android App-Ansicht zwei Icons angezeigt.</string>
+
 </resources>

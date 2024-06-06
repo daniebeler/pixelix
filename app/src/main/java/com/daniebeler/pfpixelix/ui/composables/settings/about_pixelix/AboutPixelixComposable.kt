@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +61,7 @@ fun AboutPixelixComposable(
 
     LaunchedEffect(Unit) {
         viewModel.getVersionName(context)
+        viewModel.getAppIcon(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
@@ -87,14 +89,25 @@ fun AboutPixelixComposable(
                     .padding(vertical = 56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.pixelix_logo),
-                    contentDescription = null,
-                    Modifier
-                        .width(84.dp)
-                        .height(84.dp)
-                        .clip(CircleShape)
-                )
+                if (viewModel.appIcon == null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.pixelix_logo),
+                        contentDescription = null,
+                        Modifier
+                            .width(84.dp)
+                            .height(84.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Image(
+                        viewModel.appIcon!!,
+                        contentDescription = null,
+                        Modifier
+                            .width(84.dp)
+                            .height(84.dp)
+                            .clip(CircleShape)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -112,24 +125,10 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        viewModel.rateApp(context)
-                    }) {
-                Icon(
-                    imageVector = Icons.Outlined.StarRate,
-                    contentDescription = "",
-                    Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-                )
+            ButtonRowElement(icon = Icons.Outlined.StarRate,
+                text = stringResource(id = R.string.rate_us),
+                onClick = { viewModel.rateApp(context) })
 
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(verticalArrangement = Arrangement.Center) {
-                    Text(text = stringResource(R.string.rate_us))
-                }
-            }
 
             HorizontalDivider(Modifier.padding(12.dp))
 

@@ -5,17 +5,22 @@ import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
+import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class AboutPixelixViewModel @Inject constructor(
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
 ) : ViewModel() {
 
     var versionName by mutableStateOf("")
+
+    var appIcon by mutableStateOf<ImageBitmap?>(null)
 
     fun getVersionName(context: Context) {
         try {
@@ -23,6 +28,10 @@ class AboutPixelixViewModel @Inject constructor(
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+    }
+
+    fun getAppIcon(context: Context){
+        appIcon = getActiveAppIconUseCase(context)
     }
 
     fun rateApp(context: Context) {

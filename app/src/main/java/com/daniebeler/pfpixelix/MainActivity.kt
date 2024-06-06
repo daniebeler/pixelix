@@ -10,28 +10,21 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.TrendingUp
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
@@ -49,6 +42,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixel
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
@@ -65,10 +59,19 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var repository: CountryRepository
 
+    companion object {
+        const val KEY_DESTINATION: String = "destination"
+        const val KEY_DESTINATION_PARAM: String = "destination_parameter"
+
+        enum class StartNavigation{
+            Notifications, Profile, Post
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (!repository.doesAccessTokenExist()) {
             gotoLoginActivity(this@MainActivity)
@@ -86,12 +89,43 @@ class MainActivity : ComponentActivity() {
                             NavigationGraph(
                                 navController = navController
                             )
+                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+
+                            if (destination.isNotBlank()) {
+                                // Delay the navigation action to ensure the graph is set
+                                LaunchedEffect(Unit) {
+                                    when (destination) {
+                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                            "notifications_screen", navController
+                                        )
+
+                                        StartNavigation.Profile.toString() -> {
+                                            val accountId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (accountId.isNotBlank()) {
+                                                Navigate.navigate(
+                                                    "profile_screen/$accountId", navController
+                                                )
+                                            }
+                                        }
+
+                                        StartNavigation.Post.toString() -> {
+                                            val postId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (postId.isNotBlank()) {
+                                                Navigate.navigate("single_post_screen/$postId", navController)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-
 
     }
 }
@@ -100,99 +134,6 @@ fun gotoLoginActivity(context: Context) {
     val intent = Intent(context, LoginActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     context.startActivity(intent)
-}
-
-
-sealed class Destinations(
-    val route: String, val icon: ImageVector? = null
-) {
-    object HomeScreen : Destinations(
-        route = "home_screen", icon = Icons.Outlined.Home
-    )
-
-    object TrendingScreen : Destinations(
-        route = "trending_screen/{page}", icon = Icons.AutoMirrored.Outlined.TrendingUp
-    )
-
-    object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.Notifications
-    )
-
-    object OwnProfile : Destinations(
-        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle
-    )
-
-    object Profile : Destinations(
-        route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite
-    )
-
-    object EditProfile : Destinations(
-        route = "edit_profile_screen", icon = Icons.Outlined.Settings
-    )
-
-    object Preferences : Destinations(
-        route = "preferences_screen", icon = Icons.Outlined.Settings
-    )
-
-    object MutedAccounts : Destinations(
-        route = "muted_accounts_screen", icon = Icons.Outlined.Settings
-    )
-
-    object BlockedAccounts : Destinations(
-        route = "blocked_accounts_screen", icon = Icons.Outlined.Settings
-    )
-
-    object LikedPosts : Destinations(
-        route = "liked_posts_screen", icon = Icons.Outlined.Settings
-    )
-
-    object BookmarkedPosts : Destinations(
-        route = "bookmarked_posts_screen", icon = Icons.Outlined.Settings
-    )
-
-    object FollowedHashtags : Destinations(
-        route = "followed_hashtags_screen", icon = Icons.Outlined.Settings
-    )
-
-    object AboutInstance : Destinations(
-        route = "about_instance_screen", icon = Icons.Outlined.Settings
-    )
-
-    object AboutPixelix : Destinations(
-        route = "about_pixelix_screen", icon = Icons.Outlined.Settings
-    )
-
-    object NewPost : Destinations(
-        route = "new_post_screen", icon = Icons.Outlined.Settings
-    )
-
-    object Hashtag : Destinations(
-        route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings
-    )
-
-    object SinglePost : Destinations(
-        route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
-    )
-
-    object Collection : Destinations(
-        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite
-    )
-
-    object Followers : Destinations(
-        route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite
-    )
-
-    object Search : Destinations(
-        route = "search_screen", icon = Icons.Outlined.Search
-    )
-
-    object Conversation : Destinations(
-        route = "conversations", icon = Icons.Outlined.Home
-    )
-
-    object Chat : Destinations(
-        route = "chat/{userid}", icon = Icons.Outlined.Home
-    )
 }
 
 @Composable
@@ -233,6 +174,10 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.Preferences.route) {
             PreferencesComposable(navController)
+        }
+
+        composable(Destinations.IconSelection.route) {
+            IconSelectionComposable(navController)
         }
 
         composable(Destinations.NewPost.route) {
@@ -320,7 +265,7 @@ fun BottomBar(navController: NavHostController) {
         Destinations.OwnProfile
     )
 
-    NavigationBar() {
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

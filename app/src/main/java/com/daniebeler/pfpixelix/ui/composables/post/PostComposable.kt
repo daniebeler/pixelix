@@ -474,33 +474,6 @@ fun PostComposable(
     LoadingComposable(isLoading = viewModel.deleteState.isLoading)
 }
 
-@Composable
-fun CustomBottomSheetElement(
-    icon: ImageVector,
-    text: String,
-    onClick: () -> Unit,
-    color: Color = MaterialTheme.colorScheme.onSurface
-) {
-
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Icon(
-            imageVector = icon,
-            tint = color,
-            contentDescription = "",
-            modifier = Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Text(text = text, color = color)
-    }
-}
-
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
