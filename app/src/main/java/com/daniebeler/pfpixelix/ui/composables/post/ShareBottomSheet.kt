@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
@@ -86,6 +87,12 @@ fun ShareBottomSheet(
             text = stringResource(R.string.share_this_post),
             onClick = {
                 Share.shareText(context, url)
+            })
+
+        ButtonRowElement(icon = Icons.Outlined.Download,
+            text = "Download image",
+            onClick = {
+                viewModel.saveImage("fiefname", "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg", context)
             })
 
         if (minePost) {
