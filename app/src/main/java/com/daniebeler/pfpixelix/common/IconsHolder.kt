@@ -20,6 +20,9 @@ object IconsHolder {
         IconSelectionViewModel.IconAndName(
             "com.daniebeler.pfpixelix.Icon07", R.mipmap.ic_launcher_07
         ),
+        IconSelectionViewModel.IconAndName(
+            "com.daniebeler.pfpixelix.Icon08", R.mipmap.ic_launcher_08
+        ),
         IconSelectionViewModel.IconAndName("com.daniebeler.pfpixelix.Icon04", R.mipmap.ic_launcher)
     )
 }
