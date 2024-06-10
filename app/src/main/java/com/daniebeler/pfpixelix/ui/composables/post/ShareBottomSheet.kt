@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -94,18 +95,20 @@ fun ShareBottomSheet(
                 Share.shareText(context, url)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.Download, text = "Download image", onClick = {
-            if (viewModel.post == null || viewModel.post!!.mediaAttachments.isEmpty() || viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url == null) {
-                Toast.makeText(context, "an unexpected error occurred", Toast.LENGTH_LONG).show()
-            } else {
-                viewModel.saveImage(
-                    post.account.username,
-                    viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!,
-                    context
-                )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ButtonRowElement(icon = Icons.Outlined.Download, text = stringResource(R.string.download_image), onClick = {
+                if (viewModel.post == null || viewModel.post!!.mediaAttachments.isEmpty() || viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url == null) {
+                    Toast.makeText(context, "an unexpected error occurred", Toast.LENGTH_LONG).show()
+                } else {
+                    viewModel.saveImage(
+                        post.account.username,
+                        viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!,
+                        context
+                    )
 
-            }
-        })
+                }
+            })
+        }
 
         if (minePost) {
             ButtonRowElement(
