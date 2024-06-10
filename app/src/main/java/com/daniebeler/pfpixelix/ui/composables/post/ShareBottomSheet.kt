@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.content.Context
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants
+import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Share
@@ -94,20 +94,19 @@ fun ShareBottomSheet(
             onClick = {
                 Share.shareText(context, url)
             })
+        val mediaAttachment: MediaAttachment? =
+            viewModel.post?.mediaAttachments?.get(currentMediaAttachmentNumber)
+        if (mediaAttachment != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mediaAttachment.type == "image") {
+            ButtonRowElement(icon = Icons.Outlined.Download,
+                text = stringResource(R.string.download_image),
+                onClick = {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ButtonRowElement(icon = Icons.Outlined.Download, text = stringResource(R.string.download_image), onClick = {
-                if (viewModel.post == null || viewModel.post!!.mediaAttachments.isEmpty() || viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url == null) {
-                    Toast.makeText(context, "an unexpected error occurred", Toast.LENGTH_LONG).show()
-                } else {
                     viewModel.saveImage(
                         post.account.username,
                         viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!,
                         context
                     )
-
-                }
-            })
+                })
         }
 
         if (minePost) {
