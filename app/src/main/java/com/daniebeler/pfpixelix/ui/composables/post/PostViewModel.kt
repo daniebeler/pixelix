@@ -377,6 +377,7 @@ class PostViewModel @Inject constructor(
             val bitmap: Bitmap? = urlToBitmap(url, context)
             if (bitmap == null) {
                 cancel("an error occured when downloading the image")
+                return@launch
             }
 
             println(bitmap.toString())
@@ -385,6 +386,7 @@ class PostViewModel @Inject constructor(
                 saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap!!)
             if (uri == null) {
                 cancel("an error occured when saving the image")
+                return@launch
             }
         }
 
