@@ -11,15 +11,11 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
-import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
@@ -49,7 +45,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -359,11 +354,13 @@ class PostViewModel @Inject constructor(
     }
 
 
-    private fun generateUniqueName(imageName: String?, returnFullPath: Boolean, context: Context): String {
-        val sdf: SimpleDateFormat = SimpleDateFormat("yyyyMMddsshhmmss", Locale.getDefault())
+    private fun generateUniqueName(
+        imageName: String?, returnFullPath: Boolean, context: Context
+    ): String {
+        val sdf = SimpleDateFormat("yyyyMMddsshhmmss", Locale.getDefault())
         val date: String = sdf.format(Date())
 
-        val filename = String.format("%s_%s.jpg", imageName, date)
+        val filename = String.format("%s_%s", imageName, date)
 
         if (returnFullPath) {
             val directory: File = context.getDir("zest", Context.MODE_PRIVATE)
@@ -373,55 +370,47 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun saveImage(name: String?, url: String, context: Context): String {
+    fun saveImage(name: String?, url: String, context: Context) {
+        var uri: Uri? = null
+        val saveImageRoutine = CoroutineScope(Dispatchers.Default).launch {
 
-        var bitmap: Bitmap = ResourcesCompat.getDrawable(context.resources, R.drawable.default_image, null)!!.toBitmap()
+            val bitmap: Bitmap? = urlToBitmap(url, context)
+            if (bitmap == null) {
+                cancel("an error occured when downloading the image")
+            }
 
-        urlToBitmap(CoroutineScope(Dispatchers.Default), url, context, { bitmap = it }, {})
+            println(bitmap.toString())
 
-        if (bitmap != null)
-        println("fief")
-        println(bitmap.toString())
-
-        val uniqueNamePath = generateUniqueName(name, true, context)
-        val path = File(uniqueNamePath)
-
-        val uri = saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap)
-        println("resultrui: " + uri)
-        Toast.makeText(context, "Stored at: " + uri.toString(), Toast.LENGTH_LONG).show()
-
-        return path.toString()
-    }
-
-    private fun urlToBitmap(
-        scope: CoroutineScope,
-        imageURL: String,
-        context: Context,
-        onSuccess: (bitmap: Bitmap) -> Unit,
-        onError: (error: Throwable) -> Unit
-    ) {
-        var bitmap: Bitmap? = null
-        val loadBitmap = scope.launch(Dispatchers.IO) {
-            val loader = ImageLoader(context)
-            val request = ImageRequest.Builder(context)
-                .data(imageURL)
-                .allowHardware(false)
-                .build()
-            val result = loader.execute(request)
-            if (result is SuccessResult) {
-                bitmap = (result.drawable as BitmapDrawable).bitmap
-            } else if (result is ErrorResult) {
-                cancel(result.throwable.localizedMessage ?: "ErrorResult", result.throwable)
+            uri =
+                saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap!!)
+            if (uri == null) {
+                cancel("an error occured when saving the image")
             }
         }
-        loadBitmap.invokeOnCompletion { throwable ->
-            bitmap?.let {
-                println("foof" + it)
-                onSuccess(it)
-            } ?: throwable?.let {
-                onError(it)
-            } ?: onError(Throwable("Undefined Error"))
+
+        saveImageRoutine.invokeOnCompletion { throwable ->
+            CoroutineScope(Dispatchers.Main).launch {
+                uri?.let {
+                    Toast.makeText(context, "Stored at: " + uri.toString(), Toast.LENGTH_LONG).show()
+                } ?:
+                throwable?.let {
+                    Toast.makeText(context, "an error occurred downloading the image", Toast.LENGTH_LONG).show()
+                }
+            }
         }
+    }
+
+    private suspend fun urlToBitmap(
+        imageURL: String,
+        context: Context,
+    ): Bitmap? {
+        val loader = ImageLoader(context)
+        val request = ImageRequest.Builder(context).data(imageURL).allowHardware(false).build()
+        val result = loader.execute(request)
+        if (result is SuccessResult) {
+            return (result.drawable as BitmapDrawable).bitmap
+        }
+        return null
     }
 
     private fun saveImageToMediaStore(context: Context, displayName: String, bitmap: Bitmap): Uri? {

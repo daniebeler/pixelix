@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.R
@@ -36,7 +36,12 @@ import com.daniebeler.pfpixelix.utils.Share
 
 @Composable
 fun ShareBottomSheet(
-    context: Context, url: String, minePost: Boolean, viewModel: PostViewModel, post: Post
+    context: Context,
+    url: String,
+    minePost: Boolean,
+    viewModel: PostViewModel,
+    post: Post,
+    currentMediaAttachmentNumber: Int
 ) {
 
     var humanReadableVisibility by remember {
@@ -89,11 +94,18 @@ fun ShareBottomSheet(
                 Share.shareText(context, url)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.Download,
-            text = "Download image",
-            onClick = {
-                viewModel.saveImage("fiefname", "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg", context)
-            })
+        ButtonRowElement(icon = Icons.Outlined.Download, text = "Download image", onClick = {
+            if (viewModel.post == null || viewModel.post!!.mediaAttachments.isEmpty() || viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url == null) {
+                Toast.makeText(context, "an unexpected error occurred", Toast.LENGTH_LONG).show()
+            } else {
+                viewModel.saveImage(
+                    post.account.username,
+                    viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!,
+                    context
+                )
+
+            }
+        })
 
         if (minePost) {
             ButtonRowElement(
