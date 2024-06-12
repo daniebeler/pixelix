@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Story
 import com.daniebeler.pfpixelix.domain.usecase.GetStoriesCarouselUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -18,6 +19,8 @@ class PreviewRowViewModel @Inject constructor(
 ) : ViewModel() {
 
     var storiesCarousel by mutableStateOf(StoriesCarouselState())
+
+    var showStory by mutableStateOf(false)
 
     init {
         getStoriesCarousel()
