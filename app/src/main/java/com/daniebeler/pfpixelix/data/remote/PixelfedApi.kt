@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
+import com.daniebeler.pfpixelix.data.remote.dto.StoryCarouselDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
@@ -93,6 +94,8 @@ interface PixelfedApi {
     fun getHomeTimelineWithLimit(
         @Query("limit") limit: Int
     ): Call<List<PostDto>>
+
+
     // Favourites
 
 
@@ -207,6 +210,13 @@ interface PixelfedApi {
 
     @GET("api/v1/accounts/verify_credentials")
     fun verifyToken(): Call<AccountDto>
+
+
+    // Stories
+
+
+    @GET("api/pixelfed/v1/stories/self-carousel")
+    fun getStoriesCarousel(): Call<StoryCarouselDto>
 
 
     // Statuses

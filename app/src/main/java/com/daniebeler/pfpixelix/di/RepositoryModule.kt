@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.data.repository.PostEditorRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.PostRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
+import com.daniebeler.pfpixelix.data.repository.StoryRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.WidgetRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
@@ -27,6 +28,7 @@ import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
+import com.daniebeler.pfpixelix.domain.repository.StoryRepository
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
@@ -63,6 +65,12 @@ class RepositoryModule {
     fun provideTimelineRepository(
         pixelfedApi: PixelfedApi
     ): TimelineRepository = TimelineRepositoryImpl(pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun provideStoryRepository(
+        pixelfedApi: PixelfedApi
+    ): StoryRepository = StoryRepositoryImpl(pixelfedApi)
 
     @Provides
     @Singleton

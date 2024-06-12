@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.stories.PreviewRow
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
@@ -39,6 +40,9 @@ fun HomeTimelineComposable(
             onRefresh = {
                 viewModel.refresh()
             },
-            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
+            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
+            before = {
+                PreviewRow()
+            })
     }
 }
