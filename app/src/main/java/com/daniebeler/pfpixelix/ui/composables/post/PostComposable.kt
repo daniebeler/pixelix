@@ -384,12 +384,12 @@ fun PostComposable(
                                     "profile_screen/" + post.likedBy.id, navController
                                 )
                             })
-                        if (post.likedBy.others) {
+                        if (post.favouritesCount > 1) {
                             Text(
                                 text = " " + stringResource(id = R.string.and) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = post.likedBy.totalCount.toString() + " " + stringResource(id = R.string.others),
+                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(id = R.string.others),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.clickable {
