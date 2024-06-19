@@ -93,7 +93,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pfpixelix.R
@@ -109,7 +109,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.snapBackZoomable
-import net.engawapg.lib.zoomable.zoomable
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -256,12 +255,14 @@ fun PostComposable(
 
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) { page ->
-                        PostImage(
-                            mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                            viewModel.post!!.id,
-                            viewModel
-                        )
+                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1, modifier = Modifier.zIndex(50f)) { page ->
+                        Box(modifier = Modifier.zIndex(10f)) {
+                            PostImage(
+                                mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                viewModel.post!!.id,
+                                viewModel
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
@@ -285,11 +286,14 @@ fun PostComposable(
                         }
                     }
                 } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    PostImage(
-                        mediaAttachment = viewModel.post!!.mediaAttachments[0],
-                        viewModel.post!!.id,
-                        viewModel
-                    )
+                    Box(modifier = Modifier.zIndex(10f)) {
+                        PostImage(
+                            mediaAttachment = viewModel.post!!.mediaAttachments[0],
+                            viewModel.post!!.id,
+                            viewModel
+                        )
+                    }
+
                 }
             }
 
@@ -394,7 +398,9 @@ fun PostComposable(
                                 text = " " + stringResource(id = R.string.and) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(id = R.string.others),
+                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(
+                                id = R.string.others
+                            ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.clickable {
@@ -442,9 +448,13 @@ fun PostComposable(
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(context, post.url, true, viewModel, post, pagerState.currentPage)
+                    ShareBottomSheet(
+                        context, post.url, true, viewModel, post, pagerState.currentPage
+                    )
                 } else {
-                    ShareBottomSheet(context, post.url, false, viewModel, post, pagerState.currentPage)
+                    ShareBottomSheet(
+                        context, post.url, false, viewModel, post, pagerState.currentPage
+                    )
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
@@ -495,7 +505,9 @@ fun PostImage(
     var altText by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .zIndex(80f)
     ) {
 
         val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -514,17 +526,22 @@ fun PostImage(
             )
         }
 
+        val zoomState = rememberZoomState()
 
-        Box(modifier = Modifier.zIndex(1f).pointerInput(Unit) {
-            detectTapGestures(onDoubleTap = {
-                CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.likePost(postId)
-                    showHeart = true
-                }
-            })
-        }) {
+        Box(modifier = Modifier
+            .zIndex(100f)
+            .snapBackZoomable(zoomState)
+            .pointerInput(Unit) {
+                detectTapGestures(onDoubleTap = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId)
+                        showHeart = true
+                    }
+                })
+            }) {
             if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif") {
-                ImageWrapper(mediaAttachment)
+                ImageWrapper(mediaAttachment,
+                    { zoomState.setContentSize(it.painter.intrinsicSize) })
             } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
@@ -540,6 +557,7 @@ fun PostImage(
             IconButton(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
+                    .zIndex(110f)
                     .padding(8.dp), onClick = {
                     altText = mediaAttachment.description
                 }, colors = IconButtonDefaults.filledTonalIconButtonColors()
@@ -582,19 +600,18 @@ fun PostImage(
 }
 
 @Composable
-private fun ImageWrapper(mediaAttachment: MediaAttachment) {
+private fun ImageWrapper(
+    mediaAttachment: MediaAttachment,
+    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit
+) {
 
-    val zoomState = rememberZoomState()
-
-    AsyncImage(
-        model = mediaAttachment.url,
+    AsyncImage(model = mediaAttachment.url,
         contentDescription = "",
-        Modifier.fillMaxWidth().zIndex(1f).snapBackZoomable(zoomState),
+        Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
         onSuccess = { state ->
-            zoomState.setContentSize(state.painter.intrinsicSize)
-        }
-    )
+            setContentSize(state)
+        })
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
