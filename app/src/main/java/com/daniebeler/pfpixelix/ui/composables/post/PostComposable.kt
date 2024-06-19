@@ -80,6 +80,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
@@ -92,6 +93,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pfpixelix.R
@@ -105,6 +107,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.snapBackZoomable
+import net.engawapg.lib.zoomable.zoomable
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -510,7 +515,7 @@ fun PostImage(
         }
 
 
-        Box(modifier = Modifier.pointerInput(Unit) {
+        Box(modifier = Modifier.zIndex(1f).pointerInput(Unit) {
             detectTapGestures(onDoubleTap = {
                 CoroutineScope(Dispatchers.Default).launch {
                     viewModel.likePost(postId)
@@ -578,11 +583,17 @@ fun PostImage(
 
 @Composable
 private fun ImageWrapper(mediaAttachment: MediaAttachment) {
+
+    val zoomState = rememberZoomState()
+
     AsyncImage(
         model = mediaAttachment.url,
         contentDescription = "",
-        Modifier.fillMaxWidth(),
-        contentScale = ContentScale.FillWidth
+        Modifier.fillMaxWidth().zIndex(1f).snapBackZoomable(zoomState),
+        contentScale = ContentScale.FillWidth,
+        onSuccess = { state ->
+            zoomState.setContentSize(state.painter.intrinsicSize)
+        }
     )
 }
 

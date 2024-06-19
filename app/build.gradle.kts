@@ -121,6 +121,8 @@ dependencies {
 
     implementation("com.vanniktech:android-image-cropper:4.5.0")
 
+    implementation ("net.engawapg.lib:zoomable:2.0.0-beta01")
+
 
     val lifecycle_version = "2.7.0"
     val arch_version = "2.2.0"
