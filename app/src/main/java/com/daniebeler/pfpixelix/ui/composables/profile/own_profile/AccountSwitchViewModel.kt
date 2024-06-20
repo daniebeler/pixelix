@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateCurrentUserUseCase
+import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class AccountSwitchViewModel @Inject constructor(
@@ -22,6 +22,10 @@ class AccountSwitchViewModel @Inject constructor(
     var otherAccounts: OtherAccountsState by mutableStateOf(OtherAccountsState())
 
     init {
+        loadAccounts()
+    }
+
+    private fun loadAccounts() {
         viewModelScope.launch {
             val authData = getAuthDataUseCase()
             currentlyLoggedIn =
@@ -32,9 +36,15 @@ class AccountSwitchViewModel @Inject constructor(
         }
     }
 
-    fun switchAccount(newAccount: LoginData) {
-        viewModelScope.launch {
+    fun switchAccount(newAccount: LoginData, changedAccount: () -> Unit) {
+        val test = viewModelScope.launch {
             updateCurrentUserUseCase(newAccount)
+        }
+
+        test.invokeOnCompletion {
+            Navigate.changeAccount()
+            changedAccount()
+            loadAccounts()
         }
     }
 }

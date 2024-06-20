@@ -8,15 +8,29 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
 object Navigate {
-    var currentBottomBarRoute: String? = null
+    private var currentBottomBarRoute: String? = null
+    private var restoreStateRoutes: List<String> = emptyList()
+
+    fun changeAccount() {
+        restoreStateRoutes = emptyList()
+    }
+
     fun navigate(route: String, navController: NavController) {
+        val alreadySaved = restoreStateRoutes.indexOf(route) != -1
+        if (!alreadySaved) {
+            restoreStateRoutes = restoreStateRoutes + route
+        }
         navController.navigate(route) {
             launchSingleTop = true
-            restoreState = true
+            restoreState = alreadySaved
         }
     }
 
     fun navigateWithPopUp(newRoute: String, navController: NavController) {
+        val alreadySaved = restoreStateRoutes.indexOf(newRoute) != -1
+        if (!alreadySaved) {
+            restoreStateRoutes = restoreStateRoutes + newRoute
+        }
         if (newRoute == currentBottomBarRoute) {
             navController.navigate(newRoute) {
                 popUpTo(currentBottomBarRoute!!)
@@ -28,7 +42,7 @@ object Navigate {
                     saveState = true
                 }
                 launchSingleTop = true
-                restoreState = true
+                restoreState = alreadySaved
             }
         }
         currentBottomBarRoute = newRoute

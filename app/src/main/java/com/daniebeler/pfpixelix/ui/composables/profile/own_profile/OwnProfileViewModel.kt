@@ -78,13 +78,26 @@ class OwnProfileViewModel @Inject constructor(
         appIcon = getActiveAppIconUseCase(context)
     }
 
+    fun updateAccountSwitch() {
+        loadData(false)
+
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
+
+        viewModelScope.launch {
+            getInstanceDomain()
+        }
+    }
+
     fun loadData(refreshing: Boolean) {
         getAccount(refreshing)
         getPostsFirstLoad(refreshing)
 
         viewModelScope.launch {
             getCollections(getCurrentLoginDataUseCase()!!.accountId)
-
         }
     }
 

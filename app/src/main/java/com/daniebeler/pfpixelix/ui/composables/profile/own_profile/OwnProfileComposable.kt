@@ -239,7 +239,7 @@ fun OwnProfileComposable(
             } else if (showBottomSheet == 2) {
                 AccountSwitchBottomSheet(closeBottomSheet = {
                     showBottomSheet = 0
-                })
+                }, viewModel)
             }
         }
     }
