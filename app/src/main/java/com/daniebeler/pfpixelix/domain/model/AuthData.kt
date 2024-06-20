@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import com.daniebeler.pfpixelix.common.Constants
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,6 +10,7 @@ data class AuthData(
 
 @Serializable
 data class LoginData(
+    val version: Constants.AuthVersions = Constants.AuthVersions.V2,
     val accountId: String = "",
     val username: String = "",
     val displayName: String? = null,

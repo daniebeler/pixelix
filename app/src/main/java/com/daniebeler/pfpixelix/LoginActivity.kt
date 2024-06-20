@@ -15,7 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
+import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
@@ -41,7 +43,15 @@ class LoginActivity : ComponentActivity() {
     lateinit var updateLoginDataUseCase: UpdateLoginDataUseCase
 
     @Inject
+    lateinit var newLoginDataUseCase: AddNewLoginUseCase
+
+
+    @Inject
     lateinit var getOngoingLoginUseCase: GetOngoingLoginUseCase
+
+    @Inject
+    lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+
 
     private var isLoadingAfterRedirect: Boolean by mutableStateOf(false)
     private var error: String by mutableStateOf("")
@@ -50,6 +60,7 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         setContent {
             PixelixTheme {
@@ -65,6 +76,20 @@ class LoginActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        val extras = intent.extras
+        if (extras != null) {
+            val baseUrl = extras.getString("base_url")
+            val accessToken = extras.getString("access_token")
+            if (baseUrl != null && accessToken != null) {
+                hostSelectionInterceptorInterface.setHost(baseUrl)
+                hostSelectionInterceptorInterface.setToken(accessToken)
+                CoroutineScope(Dispatchers.Default).launch {
+                    verifyToken(LoginData(baseUrl = baseUrl, accessToken = accessToken), true)
+                }
+            }
+        }
+
         val url: Uri? = intent.data
 
         //Check if the activity was started after the authentication
@@ -93,7 +118,7 @@ class LoginActivity : ComponentActivity() {
                     is Resource.Success -> {
                         val newLoginData = loginData.copy(accessToken = result.data!!.accessToken)
                         updateLoginDataUseCase(newLoginData)
-                        verifyToken(newLoginData)
+                        verifyToken(newLoginData, false)
                     }
 
                     is Resource.Error -> {
@@ -109,7 +134,7 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun verifyToken(loginData: LoginData) {
+    private suspend fun verifyToken(loginData: LoginData, updateToAuthV2: Boolean) {
         verifyTokenUseCase(loginData.accessToken).collect { result ->
             when (result) {
                 is Resource.Success -> {
@@ -121,7 +146,11 @@ class LoginActivity : ComponentActivity() {
                         followers = result.data.followersCount,
                         loginOngoing = false
                     )
+                    if (updateToAuthV2) {
+                        newLoginDataUseCase.invoke(newLoginData)
+                    }
                     updateLoginDataUseCase(newLoginData, newLoginData.accountId)
+
                     redirect()
                 }
 

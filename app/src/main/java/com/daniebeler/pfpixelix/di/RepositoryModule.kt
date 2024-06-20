@@ -114,8 +114,9 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideApiRepository(
+        dataStore: DataStore<Preferences>,
         pixelfedApi: PixelfedApi
-    ): CountryRepository = CountryRepositoryImpl(pixelfedApi)
+    ): CountryRepository = CountryRepositoryImpl(dataStore, pixelfedApi)
 
     @Provides
     @Singleton

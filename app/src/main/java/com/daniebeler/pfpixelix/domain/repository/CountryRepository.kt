@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
 
+    fun getAuthV1Token(): Flow<String>
+    fun getAuthV1Baseurl(): Flow<String>
+
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
 
-
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
-
-
 
     fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 

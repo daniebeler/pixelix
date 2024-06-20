@@ -27,7 +27,9 @@ import androidx.navigation.compose.rememberNavController
 import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
+import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
+import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
@@ -54,6 +56,7 @@ import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -64,6 +67,13 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+
+    @Inject
+    lateinit var repository: CountryRepository
+
+    @Inject
+    lateinit var verifyTokenUseCase: VerifyTokenUseCase
+
     companion object {
         const val KEY_DESTINATION: String = "destination"
         const val KEY_DESTINATION_PARAM: String = "destination_parameter"
@@ -78,18 +88,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         runBlocking {
             val loginData: LoginData? = currentLoginDataUseCase()
             if (loginData == null || loginData.accessToken.isBlank() || loginData.baseUrl.isBlank()) {
-                gotoLoginActivity(this@MainActivity)
+                val oldBaseurl: String? = repository.getAuthV1Baseurl().firstOrNull()
+                val oldAccessToken: String? = repository.getAuthV1Token().firstOrNull()
+                if (oldBaseurl != null && oldAccessToken != null) {
+                    updateAuthToV2(this@MainActivity, oldBaseurl, oldAccessToken)
+                } else {
+                    gotoLoginActivity(this@MainActivity)
+                }
             } else {
 
-                    if (loginData.accessToken.isNotEmpty()) {
-                        hostSelectionInterceptorInterface.setToken(loginData.accessToken)
-                    }
-                    if (loginData.baseUrl.isNotEmpty()) {
-                        hostSelectionInterceptorInterface.setHost(loginData.baseUrl.replace("https://", ""))
-                    }
+                if (loginData.accessToken.isNotEmpty()) {
+                    hostSelectionInterceptorInterface.setToken(loginData.accessToken)
+                }
+                if (loginData.baseUrl.isNotEmpty()) {
+                    hostSelectionInterceptorInterface.setHost(
+                        loginData.baseUrl.replace(
+                            "https://", ""
+                        )
+                    )
+                } else {
+
+                }
 
             }
         }
@@ -104,11 +127,12 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier.padding(paddingValues)
                     ) {
+
+
                         NavigationGraph(
                             navController = navController
                         )
                         val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
-
                         if (destination.isNotBlank()) {
                             // Delay the navigation action to ensure the graph is set
                             LaunchedEffect(Unit) {
@@ -134,8 +158,7 @@ class MainActivity : ComponentActivity() {
                                         ) ?: ""
                                         if (postId.isNotBlank()) {
                                             Navigate.navigate(
-                                                "single_post_screen/$postId",
-                                                navController
+                                                "single_post_screen/$postId", navController
                                             )
                                         }
                                     }
@@ -143,10 +166,19 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+
+
                 }
             }
         }
     }
+}
+
+fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
+    val intent = Intent(context, LoginActivity::class.java)
+    intent.putExtra("base_url", baseUrl)
+    intent.putExtra("access_token", accessToken)
+    context.startActivity(intent)
 }
 
 fun gotoLoginActivity(context: Context) {
