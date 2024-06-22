@@ -24,4 +24,8 @@ object Constants {
     const val AUDIENCE_PUBLIC = "public"
     const val AUDIENCE_UNLISTED = "unlisted"
     const val AUDIENCE_FOLLOWERS_ONLY = "private"
+
+    enum class AuthVersions {
+        V1, V2
+    }
 }

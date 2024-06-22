@@ -35,9 +35,7 @@ class AboutInstanceViewModel @Inject constructor(
     }
 
     private suspend fun getInstanceDomain() {
-        getOwnInstanceDomainUseCase().collect { res ->
-            ownInstanceDomain = res
-        }
+        ownInstanceDomain = getOwnInstanceDomainUseCase()
     }
 
     private fun getInstance() {
