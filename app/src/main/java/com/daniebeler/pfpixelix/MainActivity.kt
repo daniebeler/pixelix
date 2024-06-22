@@ -14,10 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -157,6 +160,7 @@ class MainActivity : ComponentActivity() {
                                             Navigate.navigate(
                                                 "single_post_screen/$postId", navController
                                             )
+
                                         }
                                     }
                                 }
@@ -320,6 +324,8 @@ fun BottomBar(navController: NavHostController) {
 
             NavigationBarItem(icon = {
                 Icon(imageVector = screen.icon!!, contentDescription = "")
+            }, label = {
+                Text(text = stringResource(id = screen.label), maxLines = 1, overflow = TextOverflow.Visible)
             }, selected = currentRoute == screen.route, onClick = {
                 Navigate.navigateWithPopUp(screen.route, navController)
             })

@@ -188,4 +188,7 @@
     <string name="current_account">Current Account:</string>
     <string name="other_accounts">Other Accounts:</string>
     <string name="add_pixelfed_account">Add Pixelfed account</string>
+    <string name="download_image">Download image</string>
+    <string name="profile">Profile</string>
+    <string name="alerts">Inbox</string>
 </resources>

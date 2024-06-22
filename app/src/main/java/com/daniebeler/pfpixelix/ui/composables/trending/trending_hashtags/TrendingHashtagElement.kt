@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -67,19 +70,17 @@ fun TrendingHashtagElement(
             }
         }
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 10.dp), modifier = Modifier.height(150.dp)
-        ) {
+        LazyHorizontalGrid(rows = GridCells.Fixed(3), modifier = Modifier.height(450.dp)) {
             items(viewModel.postsState.posts, key = {
                 it.id
-            }) { item ->
+            }) {
                 Box(
                     modifier = Modifier
                         .width(150.dp)
                         .height(150.dp)
-                        .padding(horizontal = 2.dp)
+                        .padding(2.dp)
                 ) {
-                    CustomPost(post = item, navController = navController)
+                    CustomPost(post = it, navController = navController)
                 }
             }
         }

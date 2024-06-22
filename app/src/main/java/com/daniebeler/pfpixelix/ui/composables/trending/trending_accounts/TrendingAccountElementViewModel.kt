@@ -23,7 +23,7 @@ class TrendingAccountElementViewModel @Inject constructor(
 
     fun loadItems(accountId: String) {
         if (postsState.posts.isEmpty()) {
-            getAccountPosts(accountId).onEach { result ->
+            getAccountPosts(accountId, limit = 9).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingAccountPostsState(

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.common
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -9,24 +10,27 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.daniebeler.pfpixelix.R
 
 sealed class Destinations(
-    val route: String, val icon: ImageVector? = null
+    val route: String, val icon: ImageVector? = null, @StringRes val label: Int = R.string.home
 ) {
     object HomeScreen : Destinations(
-        route = "home_screen", icon = Icons.Outlined.Home
+        route = "home_screen", icon = Icons.Outlined.Home, label = R.string.home
     )
 
     object TrendingScreen : Destinations(
-        route = "trending_screen/{page}", icon = Icons.AutoMirrored.Outlined.TrendingUp
+        route = "trending_screen/{page}",
+        icon = Icons.AutoMirrored.Outlined.TrendingUp,
+        label = R.string.trending
     )
 
     object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.Notifications
+        route = "notifications_screen", icon = Icons.Outlined.Notifications, label = R.string.alerts
     )
 
     object OwnProfile : Destinations(
-        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle
+        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle, label = R.string.profile
     )
 
     object Profile : Destinations(
@@ -94,7 +98,7 @@ sealed class Destinations(
     )
 
     object Search : Destinations(
-        route = "search_screen", icon = Icons.Outlined.Search
+        route = "search_screen", icon = Icons.Outlined.Search, label = R.string.search
     )
 
     object Conversation : Destinations(

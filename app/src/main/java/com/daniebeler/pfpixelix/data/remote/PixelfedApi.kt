@@ -55,14 +55,14 @@ interface PixelfedApi {
     // Timelines
 
 
-    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/tag/{tag}?_pe=1")
     fun getHashtagTimeline(
-        @Path("tag") tag: String
+        @Path("tag") tag: String, @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
-    @GET("api/v1/timelines/tag/{tag}?_pe=1&limit=" + Constants.HASHTAG_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/tag/{tag}?_pe=1")
     fun getHashtagTimeline(
-        @Path("tag") tag: String, @Query("max_id") maxPostId: String
+        @Path("tag") tag: String, @Query("max_id") maxPostId: String, @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
@@ -106,7 +106,7 @@ interface PixelfedApi {
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
     fun getAccountsWhoLikedPost(
-        @Path("post Id") postId: String
+        @Path("postId") postId: String
     ): Call<List<AccountDto>>
 
 
@@ -135,14 +135,16 @@ interface PixelfedApi {
         @Body body: RequestBody
     ): Call<AccountDto>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses")
     fun getPostsByAccountId(
-        @Path("accountid") accountId: String
+        @Path("accountid") accountId: String, @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?limit=" + Constants.PROFILE_POSTS_LIMIT)
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses")
     fun getPostsByAccountId(
-        @Path("accountid") accountId: String, @Query("max_id") maxId: String
+        @Path("accountid") accountId: String,
+        @Query("max_id") maxId: String,
+        @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
     @GET("api/v1/accounts/relationships")

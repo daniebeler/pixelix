@@ -25,7 +25,7 @@
     <string name="liked_your_post">gefällt dein Beitrag</string>
     <string name="followed_you">folgt dir jetzt</string>
     <string name="share_this_post">Beitrag teilen</string>
-    <string name="trending">Im Trend</string>
+    <string name="trending">Trends</string>
     <string name="accounts">Profile</string>
     <string name="rules">Regeln</string>
     <string name="instance_version">Instanz Version</string>
@@ -188,5 +188,7 @@
     <string name="current_account">Aktueller Account:</string>
     <string name="other_accounts">Andere Accounts:</string>
     <string name="add_pixelfed_account">Pixelfed Account hinzufügen</string>
-
+    <string name="download_image">Bild herunterladen</string>
+    <string name="profile">Profil</string>
+    <string name="alerts">Inbox</string>
 </resources>

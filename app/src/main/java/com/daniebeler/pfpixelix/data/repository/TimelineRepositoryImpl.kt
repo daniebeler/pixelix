@@ -25,17 +25,17 @@ class TimelineRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getHashtagTimeline(hashtag: String, maxId: String): Flow<Resource<List<Post>>> {
+    override fun getHashtagTimeline(hashtag: String, maxId: String, limit: Int): Flow<Resource<List<Post>>> {
         return if (maxId.isNotEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getHashtagTimeline(
-                    hashtag, maxId
+                    hashtag, maxId, limit
                 )
             )
         } else {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getHashtagTimeline(
-                    hashtag
+                    hashtag, limit
                 )
             )
         }

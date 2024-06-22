@@ -15,8 +15,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 34
-        versionCode = 9
-        versionName = "2.0.0"
+        versionCode = 12
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -106,7 +106,7 @@ dependencies {
 
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation ("com.google.android.material:material:1.11.0")
+    implementation ("com.google.android.material:material:1.12.0")
 
     implementation ("androidx.compose.material:material:1.6.5")
 
