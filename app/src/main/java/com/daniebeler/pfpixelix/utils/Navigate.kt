@@ -9,7 +9,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 
 object Navigate {
     private var currentBottomBarRoute: String? = null
-    private var restoreStateRoutes: List<String> = emptyList()
+    private var restoreStateRoutes: List<String> = listOf("home_screen")
 
     fun changeAccount() {
         restoreStateRoutes = emptyList()

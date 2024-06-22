@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.loginDataToAccount
 import com.daniebeler.pfpixelix.gotoLoginActivity
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
@@ -41,7 +43,7 @@ fun AccountSwitchBottomSheet(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (viewModel.currentlyLoggedIn.currentAccount != null) {
             Text(
-                text = "Current Account:",
+                text = stringResource(R.string.current_account),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
@@ -50,7 +52,7 @@ fun AccountSwitchBottomSheet(
         }
         if (viewModel.otherAccounts.otherAccounts.isNotEmpty()) {
             Text(
-                text = "Other Accounts:",
+                text = stringResource(R.string.other_accounts),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
@@ -73,7 +75,11 @@ fun AccountSwitchBottomSheet(
                 .clickable { gotoLoginActivity(context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier.width(46.dp).height(46.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceContainer), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier
+                .width(46.dp)
+                .height(46.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainer), contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
                     contentDescription = "add account",
@@ -84,7 +90,7 @@ fun AccountSwitchBottomSheet(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "Add Pixelfed account", lineHeight = 8.sp, fontWeight = FontWeight.Bold
+                text = stringResource(R.string.add_pixelfed_account), lineHeight = 8.sp, fontWeight = FontWeight.Bold
             )
         }
     }
