@@ -18,6 +18,7 @@ interface CountryRepository {
 
     fun getAuthV1Token(): Flow<String>
     fun getAuthV1Baseurl(): Flow<String>
+    suspend fun deleteAuthV1Data()
 
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
 

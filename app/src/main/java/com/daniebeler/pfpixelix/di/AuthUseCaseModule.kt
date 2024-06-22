@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.di
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.FinishLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
@@ -40,7 +41,7 @@ class AuthUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideFinishLoginUseCase(
+    fun provideUpdateLoginDataUseCase(
         repository: AuthRepository,
         hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
     ): UpdateLoginDataUseCase =
@@ -74,4 +75,12 @@ class AuthUseCaseModule {
         hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
     ): UpdateCurrentUserUseCase =
         UpdateCurrentUserUseCase(repository, hostSelectionInterceptorInterface)
+
+    @Provides
+    @Singleton
+    fun provideFinishLoginUseCase(
+        repository: AuthRepository,
+        hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+    ): FinishLoginUseCase =
+        FinishLoginUseCase(repository, hostSelectionInterceptorInterface)
 }

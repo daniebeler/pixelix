@@ -32,7 +32,7 @@ class AccountSwitchViewModel @Inject constructor(
                 CurrentAccountState(currentAccount = authData.loginDataList.find { it.accountId == authData.currentlyLoggedIn }
                     ?: LoginData())
             otherAccounts =
-                OtherAccountsState(otherAccounts = authData.loginDataList.filter { it.accountId != authData.currentlyLoggedIn })
+                OtherAccountsState(otherAccounts = authData.loginDataList.filter { it.accountId != authData.currentlyLoggedIn && !it.loginOngoing })
         }
     }
 

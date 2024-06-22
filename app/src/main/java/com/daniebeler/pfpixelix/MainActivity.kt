@@ -94,13 +94,13 @@ class MainActivity : ComponentActivity() {
             if (loginData == null || loginData.accessToken.isBlank() || loginData.baseUrl.isBlank()) {
                 val oldBaseurl: String? = repository.getAuthV1Baseurl().firstOrNull()
                 val oldAccessToken: String? = repository.getAuthV1Token().firstOrNull()
-                if (oldBaseurl != null && oldAccessToken != null) {
+                if (oldBaseurl != null && oldAccessToken != null && oldBaseurl.isNotBlank() && oldAccessToken.isNotBlank()) {
+                    repository.deleteAuthV1Data()
                     updateAuthToV2(this@MainActivity, oldBaseurl, oldAccessToken)
                 } else {
                     gotoLoginActivity(this@MainActivity)
                 }
             } else {
-
                 if (loginData.accessToken.isNotEmpty()) {
                     hostSelectionInterceptorInterface.setToken(loginData.accessToken)
                 }
@@ -110,10 +110,7 @@ class MainActivity : ComponentActivity() {
                             "https://", ""
                         )
                     )
-                } else {
-
                 }
-
             }
         }
 

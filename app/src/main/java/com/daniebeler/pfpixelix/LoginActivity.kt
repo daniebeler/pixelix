@@ -18,6 +18,7 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.FinishLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
@@ -41,6 +42,9 @@ class LoginActivity : ComponentActivity() {
 
     @Inject
     lateinit var updateLoginDataUseCase: UpdateLoginDataUseCase
+
+    @Inject
+    lateinit var finishLoginUseCase: FinishLoginUseCase
 
     @Inject
     lateinit var newLoginDataUseCase: AddNewLoginUseCase
@@ -149,7 +153,7 @@ class LoginActivity : ComponentActivity() {
                     if (updateToAuthV2) {
                         newLoginDataUseCase.invoke(newLoginData)
                     }
-                    updateLoginDataUseCase(newLoginData, newLoginData.accountId)
+                    finishLoginUseCase(newLoginData, newLoginData.accountId)
 
                     redirect()
                 }

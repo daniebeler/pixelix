@@ -4,16 +4,16 @@ import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 
-class UpdateLoginDataUseCase constructor(
+class FinishLoginUseCase constructor(
     private val authRepository: AuthRepository,
     private val hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
 ) {
-    suspend operator fun invoke(loginData: LoginData) {
+    suspend operator fun invoke(loginData: LoginData, currentlyLoggedIn: String) {
         if (loginData.baseUrl.isNotBlank()) {
             hostSelectionInterceptorInterface.setHost(loginData.baseUrl.replace("https://", ""))        }
         if (loginData.accessToken.isNotBlank()) {
             hostSelectionInterceptorInterface.setToken(loginData.accessToken)
         }
-        authRepository.updateOngoingLoginData(loginData)
+        authRepository.finishLogin(loginData, currentlyLoggedIn)
     }
 }

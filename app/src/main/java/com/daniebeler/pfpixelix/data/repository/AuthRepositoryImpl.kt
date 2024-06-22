@@ -22,13 +22,10 @@ class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<Au
     }
 
     override suspend fun updateOngoingLoginData(
-        newLoginData: LoginData, currentlyLoggedIn: String
+        newLoginData: LoginData
     ) {
         dataStore.updateData { authData ->
             var updatedLoginDataList = authData.loginDataList
-            if (newLoginData.accountId.isNotBlank()) {
-                updatedLoginDataList.filter { it.accountId != newLoginData.accountId }
-            }
 
             updatedLoginDataList = updatedLoginDataList.map { loginData ->
                 if (loginData.loginOngoing) {
@@ -38,13 +35,26 @@ class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<Au
                 }
             }
 
-            if (currentlyLoggedIn.isNotBlank()) {
-                authData.copy(
-                    loginDataList = updatedLoginDataList, currentlyLoggedIn = currentlyLoggedIn
-                )
-            } else {
-                authData.copy(loginDataList = updatedLoginDataList)
-            }
+            authData.copy(
+                loginDataList = updatedLoginDataList
+            )
+        }
+    }
+
+    override suspend fun finishLogin(
+        newLoginData: LoginData, currentlyLoggedIn: String
+    ) {
+        dataStore.updateData { authData ->
+            var updatedLoginDataList = authData.loginDataList
+            updatedLoginDataList =
+                updatedLoginDataList.filter { it.accountId != newLoginData.accountId && it.accountId.isNotBlank() && !it.loginOngoing }
+
+
+            updatedLoginDataList = updatedLoginDataList + newLoginData
+
+            authData.copy(
+                loginDataList = updatedLoginDataList, currentlyLoggedIn = currentlyLoggedIn
+            )
         }
     }
 

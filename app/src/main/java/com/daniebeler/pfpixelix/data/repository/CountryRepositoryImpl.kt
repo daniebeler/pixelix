@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
@@ -38,15 +39,21 @@ class CountryRepositoryImpl @Inject constructor(
     private val userDataStorePreferences: DataStore<Preferences>,
     private val pixelfedApi: PixelfedApi
 ) : CountryRepository {
-    override fun getAuthV1Token(): Flow<String> =
-        userDataStorePreferences.data.map { preferences ->
-            preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
-        }
+    override fun getAuthV1Token(): Flow<String> = userDataStorePreferences.data.map { preferences ->
+        preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
+    }
 
     override fun getAuthV1Baseurl(): Flow<String> =
         userDataStorePreferences.data.map { preferences ->
             preferences[stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY)] ?: ""
         }
+
+    override suspend fun deleteAuthV1Data() {
+        userDataStorePreferences.edit {
+            it.remove(stringPreferencesKey(Constants.BASE_URL_DATASTORE_KEY))
+            it.remove(stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY))
+        }
+    }
 
     override fun getTrendingAccounts(): Flow<Resource<List<Account>>> {
         return NetworkCall<Account, AccountDto>().makeCallList(
