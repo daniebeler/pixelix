@@ -12,4 +12,5 @@ interface AuthRepository {
     suspend fun getOngoingLogin(): LoginData?
     suspend fun getCurrentLoginData(): LoginData?
     suspend fun logout()
+    suspend fun removeLoginData(accountId: String)
 }

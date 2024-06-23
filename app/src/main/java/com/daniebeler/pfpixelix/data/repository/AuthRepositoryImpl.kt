@@ -83,7 +83,13 @@ class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<Au
 
     override suspend fun logout() {
         dataStore.updateData { authData ->
-            authData.copy(loginDataList = authData.loginDataList.filter { loginData -> loginData.accountId != authData.currentlyLoggedIn })
+            authData.copy(loginDataList = authData.loginDataList.filter { loginData -> loginData.accountId != authData.currentlyLoggedIn }, currentlyLoggedIn = "")
+        }
+    }
+
+    override suspend fun removeLoginData(accountId: String) {
+        dataStore.updateData { authData ->
+            authData.copy(loginDataList = authData.loginDataList.filter { loginData -> loginData.accountId != accountId })
         }
     }
 }

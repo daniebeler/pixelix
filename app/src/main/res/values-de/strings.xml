@@ -191,4 +191,7 @@
     <string name="download_image">Bild herunterladen</string>
     <string name="profile">Profil</string>
     <string name="alerts">Inbox</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Bist du dir sicher, dass du diesen Account entfernen willst?</string>
+    <string name="remove_account">Account entfernen</string>
+    <string name="remove">Entfernen</string>
 </resources>
