@@ -577,7 +577,7 @@ fun PostImage(
             modifier = Modifier
                 .size(80.dp)
                 .align(Alignment.Center)
-                .scale(scale.value)
+                .scale(scale.value).zIndex(100f)
         )
 
         if (altText.isNotBlank()) {
