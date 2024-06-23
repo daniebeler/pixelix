@@ -90,7 +90,7 @@ class PreferencesViewModel @Inject constructor(
 
     fun openMoreSettingsPage(context: Context) {
         viewModelScope.launch {
-            val domain = getOwnInstanceDomainUseCase().first()
+            val domain = getOwnInstanceDomainUseCase()
             val moreSettingUrl = "https://$domain/settings/home"
             openExternalUrlUseCase(context, moreSettingUrl)
         }

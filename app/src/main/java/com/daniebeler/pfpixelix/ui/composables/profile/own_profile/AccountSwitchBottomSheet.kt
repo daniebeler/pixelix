@@ -14,10 +14,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +35,9 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.loginDataToAccount
 import com.daniebeler.pfpixelix.gotoLoginActivity
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountSwitchBottomSheet(
@@ -39,6 +46,7 @@ fun AccountSwitchBottomSheet(
     viewModel: AccountSwitchViewModel = hiltViewModel(key = "account_switcher_viewmodel")
 ) {
     val context = LocalContext.current
+    val showRemoveLoginDataAlert = remember { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (viewModel.currentlyLoggedIn.currentAccount != null) {
@@ -64,7 +72,10 @@ fun AccountSwitchBottomSheet(
                         closeBottomSheet()
                     }
                 }) {
-                    CustomAccount(account = loginDataToAccount(otherAccount))
+                    CustomAccount(
+                        account = loginDataToAccount(otherAccount),
+                        logoutButton = true,
+                        logout = {showRemoveLoginDataAlert.value = otherAccount.accountId})
                 }
             }
         }
@@ -75,11 +86,14 @@ fun AccountSwitchBottomSheet(
                 .clickable { gotoLoginActivity(context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier
-                .width(46.dp)
-                .height(46.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainer), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .width(46.dp)
+                    .height(46.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainer),
+                contentAlignment = Alignment.Center
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
                     contentDescription = "add account",
@@ -90,8 +104,35 @@ fun AccountSwitchBottomSheet(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = stringResource(R.string.add_pixelfed_account), lineHeight = 8.sp, fontWeight = FontWeight.Bold
+                text = stringResource(R.string.add_pixelfed_account),
+                lineHeight = 8.sp,
+                fontWeight = FontWeight.Bold
             )
         }
+    }
+
+    if (showRemoveLoginDataAlert.value.isNotBlank()) {
+        AlertDialog(title = {
+            Text(text = stringResource(R.string.remove_account))
+        }, text = {
+            Text(text = stringResource(R.string.are_you_sure_you_want_to_remove_this_account))
+        }, onDismissRequest = {
+            showRemoveLoginDataAlert.value = ""
+        }, confirmButton = {
+            TextButton(onClick = {
+                CoroutineScope(Dispatchers.Default).launch {
+                    viewModel.removeAccount(showRemoveLoginDataAlert.value)
+                    showRemoveLoginDataAlert.value = ""
+                }
+            }) {
+                Text(stringResource(R.string.remove))
+            }
+        }, dismissButton = {
+            TextButton(onClick = {
+                showRemoveLoginDataAlert.value = ""
+            }) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        })
     }
 }
