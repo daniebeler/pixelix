@@ -80,6 +80,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
@@ -92,6 +93,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pfpixelix.R
@@ -105,6 +107,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.snapBackZoomable
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -113,6 +117,7 @@ fun PostComposable(
     post: Post,
     navController: NavController,
     postGetsDeleted: (postId: String) -> Unit,
+    setZindex: (zIndex: Float) -> Unit,
     viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
@@ -254,15 +259,17 @@ fun PostComposable(
                     }
                 }
 
-
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1) { page ->
-                        PostImage(
-                            mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                            viewModel.post!!.id,
-                            viewModel
-                        )
+                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1, modifier = Modifier.zIndex(50f)) { page ->
+                        Box(modifier = Modifier.zIndex(10f)) {
+                            PostImage(
+                                mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                viewModel.post!!.id,
+                                setZindex = { setZindex(it) },
+                                viewModel
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
@@ -286,11 +293,14 @@ fun PostComposable(
                         }
                     }
                 } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    PostImage(
-                        mediaAttachment = viewModel.post!!.mediaAttachments[0],
-                        viewModel.post!!.id,
-                        viewModel
-                    )
+                    Box(modifier = Modifier.zIndex(10f)) {
+                        PostImage(
+                            mediaAttachment = viewModel.post!!.mediaAttachments[0],
+                            viewModel.post!!.id,
+                            setZindex = { setZindex(it) },
+                            viewModel
+                        )
+                    }
                 }
             }
 
@@ -395,7 +405,9 @@ fun PostComposable(
                                 text = " " + stringResource(id = R.string.and) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(id = R.string.others),
+                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(
+                                id = R.string.others
+                            ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.clickable {
@@ -482,7 +494,7 @@ fun PostComposable(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
-    mediaAttachment: MediaAttachment, postId: String, viewModel: PostViewModel
+    mediaAttachment: MediaAttachment, postId: String, setZindex: (zIndex: Float) -> Unit, viewModel: PostViewModel
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -496,7 +508,9 @@ fun PostImage(
     var altText by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .zIndex(80f)
     ) {
 
         val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -515,17 +529,34 @@ fun PostImage(
             )
         }
 
+        val zoomState = rememberZoomState()
 
-        Box(modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(onDoubleTap = {
-                CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.likePost(postId)
-                    showHeart = true
-                }
-            })
-        }) {
+        val showAltTextIcon = remember {
+            mutableStateOf(true)
+        }
+
+        if (zoomState.scale != 1f) {
+            setZindex(100f)
+            showAltTextIcon.value = false
+        } else {
+            setZindex(1f)
+            showAltTextIcon.value = true
+        }
+
+        Box(modifier = Modifier
+            .zIndex(2f)
+            .snapBackZoomable(zoomState)
+            .pointerInput(Unit) {
+                detectTapGestures(onDoubleTap = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId)
+                        showHeart = true
+                    }
+                })
+            }) {
             if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif") {
-                ImageWrapper(mediaAttachment)
+                ImageWrapper(mediaAttachment,
+                    { zoomState.setContentSize(it.painter.intrinsicSize) })
             } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
                 GifPlayer(mediaAttachment)
             } else {
@@ -537,10 +568,11 @@ fun PostImage(
             }
         }
 
-        if (mediaAttachment.description?.isNotBlank() == true) {
+        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value) {
             IconButton(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
+                    .zIndex(3f)
                     .padding(8.dp), onClick = {
                     altText = mediaAttachment.description
                 }, colors = IconButtonDefaults.filledTonalIconButtonColors()
@@ -561,6 +593,7 @@ fun PostImage(
                 .size(80.dp)
                 .align(Alignment.Center)
                 .scale(scale.value)
+                .zIndex(100f)
         )
 
         if (altText.isNotBlank()) {
@@ -583,13 +616,18 @@ fun PostImage(
 }
 
 @Composable
-private fun ImageWrapper(mediaAttachment: MediaAttachment) {
-    AsyncImage(
-        model = mediaAttachment.url,
+private fun ImageWrapper(
+    mediaAttachment: MediaAttachment,
+    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit
+) {
+
+    AsyncImage(model = mediaAttachment.url,
         contentDescription = "",
         Modifier.fillMaxWidth(),
-        contentScale = ContentScale.FillWidth
-    )
+        contentScale = ContentScale.FillWidth,
+        onSuccess = { state ->
+            setContentSize(state)
+        })
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
