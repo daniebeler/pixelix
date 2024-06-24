@@ -529,12 +529,19 @@ fun PostImage(
 
         val zoomState = rememberZoomState()
 
-        if (zoomState.scale > 1f) {
+        val showAltTextIcon = remember {
+            mutableStateOf(true)
+        }
+
+        if (zoomState.scale != 1f) {
             setZindex(100f)
+            showAltTextIcon.value = false
+        } else {
+            showAltTextIcon.value = true
         }
 
         Box(modifier = Modifier
-            .zIndex(100f)
+            .zIndex(2f)
             .snapBackZoomable(zoomState)
             .pointerInput(Unit) {
                 detectTapGestures(onDoubleTap = {
@@ -558,11 +565,11 @@ fun PostImage(
             }
         }
 
-        if (mediaAttachment.description?.isNotBlank() == true) {
+        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value) {
             IconButton(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .zIndex(110f)
+                    .zIndex(3f)
                     .padding(8.dp), onClick = {
                     altText = mediaAttachment.description
                 }, colors = IconButtonDefaults.filledTonalIconButtonColors()
