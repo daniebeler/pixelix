@@ -21,6 +21,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
+import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -348,6 +349,12 @@ interface PixelfedApi {
     fun createReply(
         @Body createReplyDto: CreateReplyDto
     ): Call<PostDto>
+
+    @PUT("/api/v1/statuses/{id}")
+    suspend fun updatePost(
+        @Path("id") postId: String,
+        @Body updatePostDto: UpdatePostDto
+    ): Response<Unit>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deletePost(

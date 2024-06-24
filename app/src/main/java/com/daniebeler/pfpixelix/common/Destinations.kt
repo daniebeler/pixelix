@@ -81,6 +81,10 @@ sealed class Destinations(
         route = "new_post_screen", icon = Icons.Outlined.Settings
     )
 
+    object EditPost : Destinations(
+        route = "edit_post_screen/{postId}", icon = Icons.Outlined.Settings
+    )
+
     object Hashtag : Destinations(
         route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings
     )

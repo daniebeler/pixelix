@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
@@ -37,6 +39,7 @@ import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
+import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -235,6 +238,13 @@ fun NavigationGraph(navController: NavHostController) {
             NewPostComposable(navController)
         }
 
+        composable(Destinations.EditPost.route) {navBackStackEntry ->
+            val postId = navBackStackEntry.arguments?.getString("postId")
+            postId?.let { id ->
+                EditPostComposable(postId, navController)
+            }
+        }
+
         composable(Destinations.MutedAccounts.route) {
             MutedAccountsComposable(navController)
         }
@@ -275,10 +285,14 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable(Destinations.SinglePost.route) { navBackStackEntry ->
+        composable("${Destinations.SinglePost.route}?refresh={refresh}", arguments = listOf(
+            navArgument("refresh") {defaultValue = false}
+        )) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
+            val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
+            Log.d("refresh", refresh!!.toString())
             uId?.let { id ->
-                SinglePostComposable(navController, postId = id)
+                SinglePostComposable(navController, postId = id, refresh)
             }
         }
 

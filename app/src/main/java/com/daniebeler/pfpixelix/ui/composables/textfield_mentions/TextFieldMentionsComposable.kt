@@ -25,6 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.getTextAfterSelection
+import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -54,7 +56,6 @@ fun TextFieldMentionsComposable(
                 label = { Text(stringResource(labelStringId)) },
                 modifier = modifier ?: Modifier,
                 singleLine = false,
-                shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(imeAction = imeAction),
                 keyboardActions = KeyboardActions(onSend = {
                     keyboardController?.hide()
@@ -82,11 +83,12 @@ fun TextFieldMentionsComposable(
                         viewModel.mentionSuggestions.mentions.map {
                             TextButton(onClick = {
                                 viewModel.mentionsDropdownOpen = false
-                                val index = text.text.lastIndexOf("@") + 1
-                                val newText = text.text.substring(0, index) + it.acct
+                                val textBeforeSelection = text.getTextBeforeSelection(9999).toString()
+                                val index = textBeforeSelection.lastIndexOf("@") + 1
+                                val newText = textBeforeSelection.substring(0, index) + it.acct
                                 changeText(
                                     text.copy(
-                                        text = newText, selection = TextRange(newText.length)
+                                        text = newText + text.getTextAfterSelection(9999).toString(), selection = TextRange(newText.length)
                                     )
                                 )
                             }) {
