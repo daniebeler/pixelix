@@ -537,6 +537,7 @@ fun PostImage(
             setZindex(100f)
             showAltTextIcon.value = false
         } else {
+            setZindex(1f)
             showAltTextIcon.value = true
         }
 
