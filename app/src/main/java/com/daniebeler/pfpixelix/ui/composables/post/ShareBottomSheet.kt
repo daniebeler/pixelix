@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
@@ -34,19 +34,19 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
 
 @Composable
 fun ShareBottomSheet(
-    context: Context, url: String, minePost: Boolean,navController: NavController, viewModel: PostViewModel, post: Post
     context: Context,
     url: String,
     minePost: Boolean,
     viewModel: PostViewModel,
     post: Post,
-    currentMediaAttachmentNumber: Int
+    currentMediaAttachmentNumber: Int,
+    navController: NavController
 ) {
 
     var humanReadableVisibility by remember {
@@ -114,14 +114,14 @@ fun ShareBottomSheet(
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))
 
-            CustomBottomSheetElement(
+            ButtonRowElement(
                 icon = Icons.Outlined.Edit,
                 text = stringResource(R.string.edit_post),
                 onClick = {
                     Navigate.navigate("edit_post_screen/${post.id}", navController = navController)
                 }
             )
-            CustomBottomSheetElement(
+            ButtonRowElement(
                 icon = Icons.Outlined.Delete,
                 text = stringResource(R.string.delete_this_post),
                 onClick = {

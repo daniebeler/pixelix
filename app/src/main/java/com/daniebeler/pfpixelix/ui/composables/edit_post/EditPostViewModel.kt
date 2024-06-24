@@ -36,7 +36,8 @@ class EditPostViewModel @Inject constructor(
     var caption by mutableStateOf(TextFieldValue())
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
-    var mediaAttachments = mutableStateListOf<MediaAttachment>()
+    var mediaAttachmentsEdit = mutableStateListOf<MediaAttachment>()
+    var mediaAttachmentsBefore = mutableStateListOf<MediaAttachment>()
     var mediaDescriptionItems = mutableStateListOf<MediaDescriptionItem>()
     var deleteMediaDialog by mutableStateOf<String?>(null)
 
@@ -52,7 +53,8 @@ class EditPostViewModel @Inject constructor(
                         caption = TextFieldValue(result.data.content)
                         sensitive = result.data.sensitive
                         sensitiveText = result.data.spoilerText
-                        mediaAttachments.addAll(result.data.mediaAttachments)
+                        mediaAttachmentsEdit.addAll(result.data.mediaAttachments)
+                        mediaAttachmentsBefore.addAll(result.data.mediaAttachments)
                         mediaDescriptionItems.addAll(result.data.mediaAttachments.map {
                             MediaDescriptionItem(
                                 it.id, it.description ?: "", false
@@ -83,7 +85,7 @@ class EditPostViewModel @Inject constructor(
             val updatePostDto = UpdatePostDto(_status = caption.text,
                 _sensitive = sensitive,
                 _spoilerText = sensitiveText,
-                _media_ids = mediaAttachments.map { it.id })
+                _media_ids = mediaAttachmentsEdit.map { it.id })
             updatePostUseCase(
                 postId, updatePostDto
             ).onEach { result ->
@@ -132,24 +134,24 @@ class EditPostViewModel @Inject constructor(
     }
 
     fun deleteMedia(mediaId: String) {
-        mediaAttachments.remove(mediaAttachments.find { it.id == mediaId })
+        mediaAttachmentsEdit.remove(mediaAttachmentsEdit.find { it.id == mediaId })
         mediaDescriptionItems.remove(mediaDescriptionItems.find { it.imageId == mediaId })
         deleteMediaDialog = null
     }
 
     fun moveMediaAttachmentUp(index: Int) {
         if (index >= 1) {
-            val copy = mediaAttachments[index]
-            mediaAttachments[index] = mediaAttachments[index - 1]
-            mediaAttachments[index - 1] = copy
+            val copy = mediaAttachmentsEdit[index]
+            mediaAttachmentsEdit[index] = mediaAttachmentsEdit[index - 1]
+            mediaAttachmentsEdit[index - 1] = copy
         }
     }
 
     fun moveMediaAttachmentDown(index: Int) {
-        if (index < mediaAttachments.size - 1) {
-            val copy = mediaAttachments[index]
-            mediaAttachments[index] = mediaAttachments[index + 1]
-            mediaAttachments[index + 1] = copy
+        if (index < mediaAttachmentsEdit.size - 1) {
+            val copy = mediaAttachmentsEdit[index]
+            mediaAttachmentsEdit[index] = mediaAttachmentsEdit[index + 1]
+            mediaAttachmentsEdit[index + 1] = copy
         }
     }
 }

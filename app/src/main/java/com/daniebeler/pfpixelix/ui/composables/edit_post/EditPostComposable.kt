@@ -99,7 +99,10 @@ fun EditPostComposable(
                 },
                 actions = {
                     if (viewModel.editPostState.post != null) {
-                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || (viewModel.sensitive == viewModel.editPostState.post!!.sensitive && viewModel.sensitiveText != viewModel.editPostState.post!!.spoilerText)) {
+                        val mediaAttachmentsEditIds = viewModel.mediaAttachmentsEdit.map { it.id }
+                        val mediaAttachmentsBeforeIds =
+                            viewModel.mediaAttachmentsBefore.map { it.id }
+                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds) {
                             if (viewModel.editPostState.isLoading) {
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
@@ -164,7 +167,7 @@ fun EditPostComposable(
                         )
                     }
 
-                    viewModel.mediaAttachments.forEachIndexed { index, mediaAttachment ->
+                    viewModel.mediaAttachmentsEdit.forEachIndexed { index, mediaAttachment ->
                         Row(
                             Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -226,7 +229,7 @@ fun EditPostComposable(
                                 label = { Text(stringResource(R.string.alt_text)) },
                             )
 
-                            if (viewModel.mediaAttachments.size > 1) {
+                            if (viewModel.mediaAttachmentsEdit.size > 1) {
                                 Column {
                                     IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
                                         Icon(
@@ -242,15 +245,16 @@ fun EditPostComposable(
                                     }
                                 }
                             }
-
-                            IconButton(onClick = {
-                                viewModel.deleteMediaDialog = mediaAttachment.id
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Delete,
-                                    contentDescription = "delete Image",
-                                    tint = MaterialTheme.colorScheme.error
-                                )
+                            if (viewModel.mediaAttachmentsEdit.size > 1) {
+                                IconButton(onClick = {
+                                    viewModel.deleteMediaDialog = mediaAttachment.id
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Delete,
+                                        contentDescription = "delete Image",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
                             }
                         }
 
