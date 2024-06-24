@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
+import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
@@ -12,11 +13,11 @@ class GetHashtagTimelineUseCase(
     private val timelineRepository: TimelineRepository,
     private val storageRepository: StorageRepository
 ) {
-    operator fun invoke(hashtag: String, maxPostId: String = ""): Flow<Resource<List<Post>>> =
+    operator fun invoke(hashtag: String, maxPostId: String = "", limit: Int = Constants.HASHTAG_TIMELINE_POSTS_LIMIT): Flow<Resource<List<Post>>> =
         flow {
             emit(Resource.Loading())
             val hideSensitiveContent = storageRepository.getHideSensitiveContent().first()
-            timelineRepository.getHashtagTimeline(hashtag, maxPostId).collect { timeline ->
+            timelineRepository.getHashtagTimeline(hashtag, maxPostId, limit).collect { timeline ->
                 if (timeline is Resource.Success && hideSensitiveContent) {
                     val res: List<Post> = timeline.data?.filter { s -> !s.sensitive } ?: emptyList()
                     emit(Resource.Success(res))

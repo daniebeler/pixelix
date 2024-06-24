@@ -11,15 +11,12 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +25,6 @@ class PreferencesViewModel @Inject constructor(
     private val storeHideSensitiveContentUseCase: StoreHideSensitiveContentUseCase,
     private val getHideSensitiveContentUseCase: GetHideSensitiveContentUseCase,
     private val getUseInAppBrowserUseCase: GetUseInAppBrowserUseCase,
-    private val getThemeUseCase: GetThemeUseCase,
-    private val storeThemeUseCase: StoreThemeUseCase,
     private val storeUseInAppBrowserUseCase: StoreUseInAppBrowserUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
@@ -95,7 +90,7 @@ class PreferencesViewModel @Inject constructor(
 
     fun openMoreSettingsPage(context: Context) {
         viewModelScope.launch {
-            val domain = getOwnInstanceDomainUseCase().first()
+            val domain = getOwnInstanceDomainUseCase()
             val moreSettingUrl = "https://$domain/settings/home"
             openExternalUrlUseCase(context, moreSettingUrl)
         }

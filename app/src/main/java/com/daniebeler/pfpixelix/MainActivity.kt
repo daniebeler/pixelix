@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,22 +15,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.daniebeler.pfpixelix.common.Destinations
+import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
+import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
+import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -52,18 +62,29 @@ import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
+    lateinit var currentLoginDataUseCase: GetCurrentLoginDataUseCase
+
+    @Inject
+    lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+
+    @Inject
     lateinit var repository: CountryRepository
+
+    @Inject
+    lateinit var verifyTokenUseCase: VerifyTokenUseCase
 
     companion object {
         const val KEY_DESTINATION: String = "destination"
         const val KEY_DESTINATION_PARAM: String = "destination_parameter"
 
-        enum class StartNavigation{
+        enum class StartNavigation {
             Notifications, Profile, Post
         }
     }
@@ -73,66 +94,99 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        if (!repository.doesAccessTokenExist()) {
-            gotoLoginActivity(this@MainActivity)
-        } else {
-            setContent {
-                PixelixTheme {
-                    val navController: NavHostController = rememberNavController()
 
-                    Scaffold(bottomBar = {
-                        BottomBar(navController = navController)
-                    }) { paddingValues ->
-                        Box(
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            NavigationGraph(
-                                navController = navController
-                            )
-                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+        runBlocking {
+            val loginData: LoginData? = currentLoginDataUseCase()
+            if (loginData == null || loginData.accessToken.isBlank() || loginData.baseUrl.isBlank()) {
+                val oldBaseurl: String? = repository.getAuthV1Baseurl().firstOrNull()
+                val oldAccessToken: String? = repository.getAuthV1Token().firstOrNull()
+                if (oldBaseurl != null && oldAccessToken != null && oldBaseurl.isNotBlank() && oldAccessToken.isNotBlank()) {
+                    repository.deleteAuthV1Data()
+                    updateAuthToV2(this@MainActivity, oldBaseurl, oldAccessToken)
+                } else {
+                    gotoLoginActivity(this@MainActivity)
+                }
+            } else {
+                if (loginData.accessToken.isNotEmpty()) {
+                    hostSelectionInterceptorInterface.setToken(loginData.accessToken)
+                }
+                if (loginData.baseUrl.isNotEmpty()) {
+                    hostSelectionInterceptorInterface.setHost(
+                        loginData.baseUrl.replace(
+                            "https://", ""
+                        )
+                    )
+                }
+            }
+        }
 
-                            if (destination.isNotBlank()) {
-                                // Delay the navigation action to ensure the graph is set
-                                LaunchedEffect(Unit) {
-                                    when (destination) {
-                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
-                                            "notifications_screen", navController
-                                        )
+        setContent {
+            PixelixTheme {
+                val navController: NavHostController = rememberNavController()
 
-                                        StartNavigation.Profile.toString() -> {
-                                            val accountId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (accountId.isNotBlank()) {
-                                                Navigate.navigate(
-                                                    "profile_screen/$accountId", navController
-                                                )
-                                            }
+                Scaffold(bottomBar = {
+                    BottomBar(navController = navController)
+                }) { paddingValues ->
+                    Box(
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
+
+
+                        NavigationGraph(
+                            navController = navController
+                        )
+                        val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+                        if (destination.isNotBlank()) {
+                            // Delay the navigation action to ensure the graph is set
+                            LaunchedEffect(Unit) {
+                                when (destination) {
+                                    StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                        "notifications_screen", navController
+                                    )
+
+                                    StartNavigation.Profile.toString() -> {
+                                        val accountId: String = intent.extras?.getString(
+                                            KEY_DESTINATION_PARAM
+                                        ) ?: ""
+                                        if (accountId.isNotBlank()) {
+                                            Navigate.navigate(
+                                                "profile_screen/$accountId", navController
+                                            )
                                         }
+                                    }
 
-                                        StartNavigation.Post.toString() -> {
-                                            val postId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (postId.isNotBlank()) {
-                                                Navigate.navigate("single_post_screen/$postId", navController)
-                                            }
+                                    StartNavigation.Post.toString() -> {
+                                        val postId: String = intent.extras?.getString(
+                                            KEY_DESTINATION_PARAM
+                                        ) ?: ""
+                                        if (postId.isNotBlank()) {
+                                            Navigate.navigate(
+                                                "single_post_screen/$postId", navController
+                                            )
+
                                         }
                                     }
                                 }
                             }
                         }
                     }
+
+
                 }
             }
         }
-
     }
+}
+
+fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
+    val intent = Intent(context, LoginActivity::class.java)
+    intent.putExtra("base_url", baseUrl)
+    intent.putExtra("access_token", accessToken)
+    context.startActivity(intent)
 }
 
 fun gotoLoginActivity(context: Context) {
     val intent = Intent(context, LoginActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     context.startActivity(intent)
 }
 
@@ -184,6 +238,13 @@ fun NavigationGraph(navController: NavHostController) {
             NewPostComposable(navController)
         }
 
+        composable(Destinations.EditPost.route) {navBackStackEntry ->
+            val postId = navBackStackEntry.arguments?.getString("postId")
+            postId?.let { id ->
+                EditPostComposable(postId, navController)
+            }
+        }
+
         composable(Destinations.MutedAccounts.route) {
             MutedAccountsComposable(navController)
         }
@@ -224,10 +285,14 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable(Destinations.SinglePost.route) { navBackStackEntry ->
+        composable("${Destinations.SinglePost.route}?refresh={refresh}", arguments = listOf(
+            navArgument("refresh") {defaultValue = false}
+        )) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
+            val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
+            Log.d("refresh", refresh!!.toString())
             uId?.let { id ->
-                SinglePostComposable(navController, postId = id)
+                SinglePostComposable(navController, postId = id, refresh)
             }
         }
 
@@ -273,6 +338,8 @@ fun BottomBar(navController: NavHostController) {
 
             NavigationBarItem(icon = {
                 Icon(imageVector = screen.icon!!, contentDescription = "")
+            }, label = {
+                Text(text = stringResource(id = screen.label), maxLines = 1, overflow = TextOverflow.Visible)
             }, selected = currentRoute == screen.route, onClick = {
                 Navigate.navigateWithPopUp(screen.route, navController)
             })

@@ -21,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdatePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
 import dagger.Module
 import dagger.Provides
@@ -107,6 +108,11 @@ class PostUseCaseModule {
     @Singleton
     fun provideUpdateMediaUseCase(postEditorRepository: PostEditorRepository): UpdateMediaUseCase =
         UpdateMediaUseCase(postEditorRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdatePostUseCase(postEditorRepository: PostEditorRepository): UpdatePostUseCase =
+        UpdatePostUseCase(postEditorRepository)
 
     @Provides
     @Singleton

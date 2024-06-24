@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.di
 
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
+import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
@@ -42,8 +43,8 @@ class SettingsUseCaseModule {
     @Provides
     @Singleton
     fun provideLogoutUseCase(
-        repository: CountryRepository, storageRepository: StorageRepository, savedSearchesRepository: SavedSearchesRepository
-    ): LogoutUseCase = LogoutUseCase(repository, storageRepository, savedSearchesRepository)
+        repository: AuthRepository, savedSearchesRepository: SavedSearchesRepository
+    ): LogoutUseCase = LogoutUseCase(repository, savedSearchesRepository)
 
     @Provides
     @Singleton
@@ -67,7 +68,7 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetOwnInstanceDomainUseCase(repository: StorageRepository): GetOwnInstanceDomainUseCase =
+    fun provideGetOwnInstanceDomainUseCase(repository: AuthRepository): GetOwnInstanceDomainUseCase =
         GetOwnInstanceDomainUseCase(repository)
 
     @Provides

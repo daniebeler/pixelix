@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.repository
 
+import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -7,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
 
-    fun getPostsByAccountId(accountId: String, maxPostId: String = ""): Flow<Resource<List<Post>>>
+    fun getPostsByAccountId(accountId: String, maxPostId: String, limit: Int): Flow<Resource<List<Post>>>
     fun getPostById(postId: String): Flow<Resource<Post>>
     fun likePost(postId: String): Flow<Resource<Post>>
     fun unlikePost(postId: String): Flow<Resource<Post>>

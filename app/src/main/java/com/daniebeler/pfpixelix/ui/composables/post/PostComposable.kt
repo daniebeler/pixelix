@@ -68,7 +68,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -136,6 +135,12 @@ fun PostComposable(
     LaunchedEffect(viewModel.deleteState.deleted) {
         if (viewModel.deleteState.deleted) {
             postGetsDeleted(post.id)
+        }
+    }
+
+    LaunchedEffect(post) {
+        if (viewModel.post == null || viewModel.post!!.copy() != post.copy()) {
+            viewModel.updatePost(post)
         }
     }
 
@@ -385,12 +390,12 @@ fun PostComposable(
                                     "profile_screen/" + post.likedBy.id, navController
                                 )
                             })
-                        if (post.likedBy.others) {
+                        if (post.favouritesCount > 1) {
                             Text(
                                 text = " " + stringResource(id = R.string.and) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = post.likedBy.totalCount.toString() + " " + stringResource(id = R.string.others),
+                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(id = R.string.others),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.clickable {
@@ -438,9 +443,9 @@ fun PostComposable(
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(context, post.url, true, viewModel, post)
+                    ShareBottomSheet(context, post.url, true, viewModel, post, pagerState.currentPage, navController)
                 } else {
-                    ShareBottomSheet(context, post.url, false, viewModel, post)
+                    ShareBottomSheet(context, post.url, false, viewModel, post, pagerState.currentPage, navController)
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
