@@ -1,9 +1,14 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
@@ -126,11 +131,19 @@ private fun LazyGridScope.PostsListInScope(
         items(items, span = { GridItemSpan(3) }, key = {
             it.id
         }) { item ->
-            PostComposable(
-                post = item,
-                postGetsDeleted = { postGetsDeleted(it) },
-                navController = navController
-            )
+            val zIndex = remember {
+                mutableFloatStateOf(1f)
+            }
+            Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
+                PostComposable(
+                    post = item,
+                    postGetsDeleted = { postGetsDeleted(it) },
+                    navController = navController,
+                    setZindex = {
+                        zIndex.floatValue = it
+                    }
+                )
+            }
         }
 
         if (isLoading && !isRefreshing) {

@@ -117,6 +117,7 @@ fun PostComposable(
     post: Post,
     navController: NavController,
     postGetsDeleted: (postId: String) -> Unit,
+    setZindex: (zIndex: Float) -> Unit,
     viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
@@ -252,7 +253,6 @@ fun PostComposable(
                     }
                 }
 
-
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
                     HorizontalPager(state = pagerState, beyondBoundsPageCount = 1, modifier = Modifier.zIndex(50f)) { page ->
@@ -260,6 +260,7 @@ fun PostComposable(
                             PostImage(
                                 mediaAttachment = viewModel.post!!.mediaAttachments[page],
                                 viewModel.post!!.id,
+                                setZindex = { setZindex(it) },
                                 viewModel
                             )
                         }
@@ -290,10 +291,10 @@ fun PostComposable(
                         PostImage(
                             mediaAttachment = viewModel.post!!.mediaAttachments[0],
                             viewModel.post!!.id,
+                            setZindex = { setZindex(it) },
                             viewModel
                         )
                     }
-
                 }
             }
 
@@ -491,7 +492,7 @@ fun PostComposable(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
-    mediaAttachment: MediaAttachment, postId: String, viewModel: PostViewModel
+    mediaAttachment: MediaAttachment, postId: String, setZindex: (zIndex: Float) -> Unit, viewModel: PostViewModel
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -527,6 +528,10 @@ fun PostImage(
         }
 
         val zoomState = rememberZoomState()
+
+        if (zoomState.scale > 1f) {
+            setZindex(100f)
+        }
 
         Box(modifier = Modifier
             .zIndex(100f)
@@ -577,7 +582,8 @@ fun PostImage(
             modifier = Modifier
                 .size(80.dp)
                 .align(Alignment.Center)
-                .scale(scale.value).zIndex(100f)
+                .scale(scale.value)
+                .zIndex(100f)
         )
 
         if (altText.isNotBlank()) {
