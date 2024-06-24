@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
@@ -72,7 +73,7 @@ class EditPostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun updatePost(postId: String) {
+    fun updatePost(postId: String, navController: NavController) {
         CoroutineScope(Dispatchers.Default).launch {
 
             mediaDescriptionItems.onEach { mediaDescriptionItem ->
@@ -88,6 +89,11 @@ class EditPostViewModel @Inject constructor(
             ).onEach { result ->
                 editPostState = when (result) {
                     is Resource.Success -> {
+                        navController.popBackStack()
+                        navController.navigate("single_post_screen/$postId?refresh=true") {
+                            launchSingleTop = true
+                        }
+
                         EditPostState(post = editPostState.post)
                     }
 

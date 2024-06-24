@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
@@ -291,10 +293,14 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable(Destinations.SinglePost.route) { navBackStackEntry ->
+        composable("${Destinations.SinglePost.route}?refresh={refresh}", arguments = listOf(
+            navArgument("refresh") {defaultValue = false}
+        )) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
+            val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
+            Log.d("refresh", refresh!!.toString())
             uId?.let { id ->
-                SinglePostComposable(navController, postId = id)
+                SinglePostComposable(navController, postId = id, refresh)
             }
         }
 

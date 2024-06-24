@@ -139,6 +139,12 @@ fun PostComposable(
         }
     }
 
+    LaunchedEffect(post) {
+        if (viewModel.post == null || viewModel.post!!.copy() != post.copy()) {
+            viewModel.updatePost(post)
+        }
+    }
+
     val mediaAttachmentsCount = post.mediaAttachments.count()
 
     val pagerState = rememberPagerState(pageCount = { mediaAttachmentsCount })

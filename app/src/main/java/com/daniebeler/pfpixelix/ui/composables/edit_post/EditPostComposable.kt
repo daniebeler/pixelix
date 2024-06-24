@@ -276,7 +276,7 @@ fun EditPostComposable(
                 }, confirmButton = {
                     TextButton(onClick = {
                         showSaveAlert = false
-                        viewModel.updatePost(postId)
+                        viewModel.updatePost(postId, navController)
                     }) {
                         Text(stringResource(id = R.string.save))
                     }
