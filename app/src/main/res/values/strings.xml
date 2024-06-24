@@ -90,7 +90,7 @@
     <string name="visibility_x">Visibility: %1$s</string>
     <string name="clear_cache">Clear cache</string>
     <string name="preferences">Preferences</string>
-    <string name="hide_sensitive_content">Hide sensitive Content</string>
+    <string name="hide_sensitive_content">Hide sensitive content</string>
     <string name="about_x">About %1$s</string>
     <string name="more_settings">More settings</string>
     <string name="use_in_app_browser">Use in-app-browser</string>
@@ -178,4 +178,21 @@
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
     <string name="edit_post">Edit this post</string>
+    <string name="notification_widget_description">Stay updated with your latest notifications from Pixelfed right on your home screen</string>
+    <string name="customize_app_icon">Customize app icon</string>
+    <string name="change_app_icon">Change app icon?</string>
+    <string name="change_app_icon_dialog_content">It may take a while until the new icon is shown.</string>
+    <string name="change">Change</string>
+    <string name="mentioned_you">mentioned you</string>
+    <string name="latest_image_widget_description">have a look at the newest post from your home timeline, right on your homescreen</string>
+    <string name="two_icons_info">If an icon other than the default icon is selected, two icons will be displayed in your apps drawer.</string>
+    <string name="current_account">Current Account:</string>
+    <string name="other_accounts">Other Accounts:</string>
+    <string name="add_pixelfed_account">Add Pixelfed account</string>
+    <string name="download_image">Download image</string>
+    <string name="profile">Profile</string>
+    <string name="alerts">Inbox</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account</string>
+    <string name="remove_account">Remove Account?</string>
+    <string name="remove">Remove</string>
 </resources>

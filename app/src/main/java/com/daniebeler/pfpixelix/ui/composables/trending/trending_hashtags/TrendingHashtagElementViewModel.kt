@@ -25,7 +25,7 @@ class TrendingHashtagElementViewModel @Inject constructor(
 
     fun loadItems(hashtag: String) {
         if (postsState.posts.isEmpty()) {
-            getHashtagTimelineUseCase(hashtag).onEach { result ->
+            getHashtagTimelineUseCase(hashtag, limit = 39).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingHashtagPostsState(

@@ -15,8 +15,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.4.0"
+        versionCode = 12
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -106,7 +106,7 @@ dependencies {
 
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation ("com.google.android.material:material:1.11.0")
+    implementation ("com.google.android.material:material:1.12.0")
 
     implementation ("androidx.compose.material:material:1.6.5")
 
@@ -137,6 +137,14 @@ dependencies {
 
     // Annotation processor
     annotationProcessor("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
+
+    // widget
+    implementation("androidx.glance:glance-appwidget:1.1.0-rc01")
+    implementation("androidx.glance:glance-material3")
+    // work Manager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
 }
 

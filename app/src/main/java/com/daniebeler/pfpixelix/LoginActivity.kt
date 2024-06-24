@@ -15,18 +15,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetClientIdUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetClientSecretUseCase
+import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.domain.model.LoginData
+import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.FinishLoginUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetOngoingLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.ObtainTokenUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreAccessTokenUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreAccountIdUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.LoginComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,19 +38,24 @@ class LoginActivity : ComponentActivity() {
     lateinit var obtainTokenUseCase: ObtainTokenUseCase
 
     @Inject
-    lateinit var getClientIdUseCase: GetClientIdUseCase
-
-    @Inject
-    lateinit var getClientSecretUseCase: GetClientSecretUseCase
-
-    @Inject
-    lateinit var storeAccessTokenUseCase: StoreAccessTokenUseCase
-
-    @Inject
-    lateinit var storeAccountIdUseCase: StoreAccountIdUseCase
-
-    @Inject
     lateinit var verifyTokenUseCase: VerifyTokenUseCase
+
+    @Inject
+    lateinit var updateLoginDataUseCase: UpdateLoginDataUseCase
+
+    @Inject
+    lateinit var finishLoginUseCase: FinishLoginUseCase
+
+    @Inject
+    lateinit var newLoginDataUseCase: AddNewLoginUseCase
+
+
+    @Inject
+    lateinit var getOngoingLoginUseCase: GetOngoingLoginUseCase
+
+    @Inject
+    lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
+
 
     private var isLoadingAfterRedirect: Boolean by mutableStateOf(false)
     private var error: String by mutableStateOf("")
@@ -58,6 +64,7 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         setContent {
             PixelixTheme {
@@ -73,6 +80,20 @@ class LoginActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        val extras = intent.extras
+        if (extras != null) {
+            val baseUrl = extras.getString("base_url")
+            val accessToken = extras.getString("access_token")
+            if (baseUrl != null && accessToken != null) {
+                hostSelectionInterceptorInterface.setHost(baseUrl)
+                hostSelectionInterceptorInterface.setToken(accessToken)
+                CoroutineScope(Dispatchers.Default).launch {
+                    verifyToken(LoginData(baseUrl = baseUrl, accessToken = accessToken), true)
+                }
+            }
+        }
+
         val url: Uri? = intent.data
 
         //Check if the activity was started after the authentication
@@ -91,35 +112,49 @@ class LoginActivity : ComponentActivity() {
     }
 
     private suspend fun getTokenAndRedirect(code: String) {
+        val loginData: LoginData? = getOngoingLoginUseCase()
+        if (loginData == null) {
+            error = "an unexpected error occured"
+            isLoadingAfterRedirect = false
+        } else {
+            obtainTokenUseCase(loginData.clientId, loginData.clientSecret, code).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val newLoginData = loginData.copy(accessToken = result.data!!.accessToken)
+                        updateLoginDataUseCase(newLoginData)
+                        verifyToken(newLoginData, false)
+                    }
 
-        val clientId: String = getClientIdUseCase().first()
-        val clientSecret: String = getClientSecretUseCase().first()
+                    is Resource.Error -> {
+                        error = result.message ?: "Error"
+                        isLoadingAfterRedirect = false
+                    }
 
-
-        obtainTokenUseCase(clientId, clientSecret, code).collect { result ->
-            when (result) {
-                is Resource.Success -> {
-                    storeAccessTokenUseCase(result.data!!.accessToken)
-                    verifyToken(result.data.accessToken)
-                }
-
-                is Resource.Error -> {
-                    error = result.message ?: "Error"
-                    isLoadingAfterRedirect = false
-                }
-
-                is Resource.Loading -> {
-                    isLoadingAfterRedirect = true
+                    is Resource.Loading -> {
+                        isLoadingAfterRedirect = true
+                    }
                 }
             }
         }
     }
 
-    private suspend fun verifyToken(token: String) {
-        verifyTokenUseCase(token).collect { result ->
+    private suspend fun verifyToken(loginData: LoginData, updateToAuthV2: Boolean) {
+        verifyTokenUseCase(loginData.accessToken).collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    storeAccountIdUseCase(result.data!!.id)
+                    val newLoginData = loginData.copy(
+                        accountId = result.data!!.id,
+                        username = result.data.username,
+                        avatar = result.data.avatar,
+                        displayName = result.data.displayname,
+                        followers = result.data.followersCount,
+                        loginOngoing = false
+                    )
+                    if (updateToAuthV2) {
+                        newLoginDataUseCase.invoke(newLoginData)
+                    }
+                    finishLoginUseCase(newLoginData, newLoginData.accountId)
+
                     redirect()
                 }
 

@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
@@ -30,13 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants
+import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Share
 
 @Composable
 fun ShareBottomSheet(
     context: Context, url: String, minePost: Boolean,navController: NavController, viewModel: PostViewModel, post: Post
+    context: Context,
+    url: String,
+    minePost: Boolean,
+    viewModel: PostViewModel,
+    post: Post,
+    currentMediaAttachmentNumber: Int
 ) {
 
     var humanReadableVisibility by remember {
@@ -75,17 +85,31 @@ fun ShareBottomSheet(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        CustomBottomSheetElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+        ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
             viewModel.openUrl(context, url)
         })
 
-        CustomBottomSheetElement(icon = Icons.Outlined.Share,
+        ButtonRowElement(icon = Icons.Outlined.Share,
             text = stringResource(R.string.share_this_post),
             onClick = {
                 Share.shareText(context, url)
             })
+        val mediaAttachment: MediaAttachment? =
+            viewModel.post?.mediaAttachments?.get(currentMediaAttachmentNumber)
+        if (mediaAttachment != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mediaAttachment.type == "image") {
+            ButtonRowElement(icon = Icons.Outlined.Download,
+                text = stringResource(R.string.download_image),
+                onClick = {
+
+                    viewModel.saveImage(
+                        post.account.username,
+                        viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!,
+                        context
+                    )
+                })
+        }
 
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))

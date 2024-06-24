@@ -4,13 +4,15 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
@@ -23,7 +25,6 @@ import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,7 +40,8 @@ class OwnProfileViewModel @Inject constructor(
     private val getViewUseCase: GetViewUseCase,
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
-    private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
+    private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase,
+    private val getActiveAppIconUseCase: GetActiveAppIconUseCase,
     application: android.app.Application
 ) : AndroidViewModel(application) {
 
@@ -49,6 +51,8 @@ class OwnProfileViewModel @Inject constructor(
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
     var view by mutableStateOf(ViewEnum.Loading)
+
+    var appIcon by mutableStateOf<ImageBitmap?>(null)
 
     var collectionsState by mutableStateOf(CollectionsState())
 
@@ -67,8 +71,24 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private suspend fun getInstanceDomain() {
-        getOwnInstanceDomainUseCase().collect { res ->
-            ownDomain = res
+        ownDomain = getOwnInstanceDomainUseCase()
+    }
+
+    fun getAppIcon(context: Context){
+        appIcon = getActiveAppIconUseCase(context)
+    }
+
+    fun updateAccountSwitch() {
+        loadData(false)
+
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
+
+        viewModelScope.launch {
+            getInstanceDomain()
         }
     }
 
@@ -77,8 +97,7 @@ class OwnProfileViewModel @Inject constructor(
         getPostsFirstLoad(refreshing)
 
         viewModelScope.launch {
-            getCollections(getOwnAccountIdUseCase().first())
-
+            getCollections(getCurrentLoginDataUseCase()!!.accountId)
         }
     }
 

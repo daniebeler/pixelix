@@ -25,7 +25,7 @@
     <string name="liked_your_post">gefällt dein Beitrag</string>
     <string name="followed_you">folgt dir jetzt</string>
     <string name="share_this_post">Beitrag teilen</string>
-    <string name="trending">Im Trend</string>
+    <string name="trending">Trends</string>
     <string name="accounts">Profile</string>
     <string name="rules">Regeln</string>
     <string name="instance_version">Instanz Version</string>
@@ -178,4 +178,21 @@
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
     <string name="edit_post">Beitrag bearbeiten</string>
+    <string name="notification_widget_description">Bleiben Sie mit Ihren neuesten Benachrichtigungen von Pixelfed direkt auf Ihrem Startbildschirm auf dem Laufenden.</string>
+    <string name="customize_app_icon">App Icon ändern</string>
+    <string name="change_app_icon">App Icon ändern?</string>
+    <string name="change_app_icon_dialog_content">Es kann kurz dauern, bis das neue App Icon sichtbar wird.</string>
+    <string name="change">Ändern</string>
+    <string name="mentioned_you">hat dich erwähnt</string>
+    <string name="latest_image_widget_description">Wirf einen Blick auf den neuesten Beitrag aus deiner Home-Timeline, direkt auf deinem Startbildschirm</string>
+    <string name="two_icons_info">Wenn ein anders Icon als das Standardicon ausgewählt wird, werden in der Android App-Ansicht zwei Icons angezeigt.</string>
+    <string name="current_account">Aktueller Account:</string>
+    <string name="other_accounts">Andere Accounts:</string>
+    <string name="add_pixelfed_account">Pixelfed Account hinzufügen</string>
+    <string name="download_image">Bild herunterladen</string>
+    <string name="profile">Profil</string>
+    <string name="alerts">Inbox</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Bist du dir sicher, dass du diesen Account entfernen willst?</string>
+    <string name="remove_account">Account entfernen</string>
+    <string name="remove">Entfernen</string>
 </resources>
