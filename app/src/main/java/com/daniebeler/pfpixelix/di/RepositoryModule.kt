@@ -7,6 +7,7 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.Preferences
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.repository.AccountRepositoryImpl
+import com.daniebeler.pfpixelix.data.repository.AuthRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CollectionRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.DirectMessagesRepositoryImpl
@@ -17,8 +18,10 @@ import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.WidgetRepositoryImpl
+import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
+import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
@@ -29,6 +32,7 @@ import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
+import com.daniebeler.pfpixelix.utils.AuthDataSerializer
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import dagger.Module
 import dagger.Provides
@@ -111,7 +115,18 @@ class RepositoryModule {
     @Singleton
     fun provideApiRepository(
         dataStore: DataStore<Preferences>,
-        hostSelectionInterceptor: HostSelectionInterceptorInterface,
         pixelfedApi: PixelfedApi
-    ): CountryRepository = CountryRepositoryImpl(dataStore, hostSelectionInterceptor, pixelfedApi)
+    ): CountryRepository = CountryRepositoryImpl(dataStore, pixelfedApi)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        dataStore: DataStore<AuthData>
+    ): AuthRepository = AuthRepositoryImpl(dataStore)
+
+    @Provides
+    @Singleton
+    fun provideAuthDataStore(@ApplicationContext context: Context): DataStore<AuthData> =
+        DataStoreFactory.create(serializer = AuthDataSerializer(),
+            produceFile = { context.dataStoreFile("auth_data_datastore.json") })
 }
