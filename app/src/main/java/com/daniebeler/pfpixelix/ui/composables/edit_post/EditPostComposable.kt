@@ -268,7 +268,7 @@ fun EditPostComposable(
 
             if (showSaveAlert) {
                 AlertDialog(title = {
-                    Text(text = stringResource(id = R.string.are_you_sure_you_want_to_log_out))
+                    Text(text = stringResource(R.string.sure_update_post))
                 }, onDismissRequest = {
                     showSaveAlert = false
                 }, dismissButton = {
