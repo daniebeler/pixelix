@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +22,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -67,6 +71,7 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(
@@ -81,7 +86,6 @@ fun NewPostComposable(
             Navigate.navigate("new_post_screen", navController)
             uris.forEach {
                 viewModel.addImage(it, context)
-                //viewModel.images += NewPostViewModel.ImageItem(it, "")
             }
         })
 
@@ -103,7 +107,8 @@ fun NewPostComposable(
             }
         }, actions = {
             Button(
-                onClick = { showReleaseAlert = true }, enabled = (viewModel.images.isNotEmpty())
+                onClick = { showReleaseAlert = true },
+                enabled = (viewModel.images.isNotEmpty() && !viewModel.mediaUploadState.isLoading)
             ) {
                 Text(text = stringResource(R.string.release))
             }
@@ -160,9 +165,36 @@ fun NewPostComposable(
                         OutlinedTextField(
                             value = image.text,
                             onValueChange = { viewModel.updateAltTextVariable(index, it) },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.weight(1f),
                             label = { Text(stringResource(R.string.alt_text)) },
                         )
+
+                        if (viewModel.images.size > 1) {
+                            Column {
+                                IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowUpward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowDownward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                            }
+                        }
+                        IconButton(onClick = {
+                            viewModel.deleteMedia(image.id, image.imageUri)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "delete Image",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+
                     }
 
                 }
