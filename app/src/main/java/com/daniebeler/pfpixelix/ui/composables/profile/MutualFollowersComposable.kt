@@ -1,75 +1,118 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TtsAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withAnnotation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.followers.FollowerElementComposable
+import com.daniebeler.pfpixelix.utils.Navigate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
+fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navController: NavController) {
+
+    val normalStyle = SpanStyle(color = MaterialTheme.colorScheme.onBackground)
+    val boldStyle = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     if (mutualFollowersState.mutualFollowers.isNotEmpty()) {
 
         val listSize = mutualFollowersState.mutualFollowers.size
 
         val annotatedString = buildAnnotatedString {
-            append(stringResource(R.string.followed_by) + " ")
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                append(mutualFollowersState.mutualFollowers.first().username)
+            withStyle(style = normalStyle) {
+                append(stringResource(R.string.followed_by) + " ")
+                withStyle(style = boldStyle) {
+                    pushStringAnnotation(tag = "account", annotation = mutualFollowersState.mutualFollowers.first().id)
+                    append(mutualFollowersState.mutualFollowers.first().username)
+                    pop()
+                }
+
+                if (listSize == 2) {
+                    append(" " + stringResource(R.string.and) + " ")
+                }
+                if (listSize > 2) {
+                    append(", ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(mutualFollowersState.mutualFollowers[1].username)
+                    }
+                }
+
+                if (listSize == 3) {
+                    append(" " + stringResource(R.string.and) + " ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(mutualFollowersState.mutualFollowers[2].username)
+                    }
+                }
+                if (listSize > 3) {
+                    append(", ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(mutualFollowersState.mutualFollowers[2].username)
+                    }
+                    append(" " + stringResource(id = R.string.and) + " ")
+
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        pushStringAnnotation(tag = "others", annotation = "others")
+                        append((listSize - 3).toString())
+                        if (listSize == 4) {
+                            append(" " + stringResource(R.string.other))
+                        } else {
+                            append(" " + stringResource(R.string.others))
+                        }
+
+                        pop()
+                    }
+                }
+
             }
 
-            if (listSize == 2) {
-                append(" " + stringResource(R.string.and) + " ")
-            }
-            if (listSize > 2) {
-                append(", ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(mutualFollowersState.mutualFollowers[1].username)
-                }
-            }
-
-            if (listSize == 3) {
-                append(" " + stringResource(R.string.and) + " ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(mutualFollowersState.mutualFollowers[2].username)
-                }
-            }
-            if (listSize > 3) {
-                append(", ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(mutualFollowersState.mutualFollowers[2].username)
-                }
-                append(" " + stringResource(id = R.string.and) + " ")
-                append((listSize - 3).toString())
-                if (listSize == 4) {
-                    append(" " + stringResource(R.string.other))
-                } else {
-                    append(" " + stringResource(R.string.others))
-                }
-            }
 
 
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp)) {
             Box {
                 AsyncImage(
                     model = mutualFollowersState.mutualFollowers.first().avatar,
@@ -125,7 +168,37 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState) {
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Text(text = annotatedString, fontSize = 12.sp, lineHeight = 18.sp)
+            ClickableText(text = annotatedString, style = MaterialTheme.typography.bodyMedium, onClick = {
+                annotatedString.getStringAnnotations("others", it, it)
+                    .firstOrNull()?.let {
+                        showBottomSheet = true
+                    }
+
+                /*annotatedString.getStringAnnotations("account", it, it)
+                    .firstOrNull()?.let { annotation ->
+                        println(annotation)
+                        Navigate.navigate("profile_screen/" + annotation.item, navController)
+                    }*/
+            })
+        }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                }, sheetState = sheetState
+            ) {
+                val lazyListState = rememberLazyListState()
+
+                LazyColumn(state = lazyListState, content = {
+                    items(mutualFollowersState.mutualFollowers, key = {
+                        it.id
+                    }) {
+                        FollowerElementComposable(account = it, navController)
+                    }
+
+                })
+            }
         }
     }
 }

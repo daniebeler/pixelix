@@ -170,8 +170,7 @@ fun OtherProfileComposable(
                                 })
                         }
 
-
-                        MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState)
+                        MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState, navController = navController)
 
                         Row(
                             modifier = Modifier
