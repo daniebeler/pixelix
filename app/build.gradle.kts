@@ -2,8 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
-    id ("kotlin-kapt")
-    id ("org.jetbrains.kotlin.plugin.serialization")
+    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 
@@ -28,8 +28,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -76,52 +75,48 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.10")
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.5")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
 
 
-    implementation ("com.google.dagger:hilt-android:2.49")
-    kapt ("com.google.dagger:hilt-android-compiler:2.45")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
-    implementation ("io.coil-kt:coil-compose:2.5.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
-
-    implementation ("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material3:material3:1.2.1")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    implementation ("androidx.datastore:datastore:1.0.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-    implementation ("androidx.browser:browser:1.8.0")
+    implementation("androidx.browser:browser:1.8.0")
 
-    implementation ("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material-icons-extended")
 
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
-    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation ("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.material:material:1.12.0")
 
-    implementation ("androidx.compose.material:material:1.6.5")
+    implementation("androidx.compose.material:material:1.6.5")
 
-    implementation ("androidx.media3:media3-exoplayer:1.3.0")
-    implementation ("androidx.media3:media3-exoplayer-dash:1.3.0")
-    implementation ("androidx.media3:media3-ui:1.3.0")
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    kapt ("com.github.bumptech.glide:compiler:4.12.0")
-    implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation("androidx.media3:media3-exoplayer:1.3.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.0")
+    implementation("androidx.media3:media3-ui:1.3.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    kapt("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     implementation("io.coil-kt:coil-video:2.5.0")
 
     implementation("com.vanniktech:android-image-cropper:4.5.0")
 
-    implementation ("net.engawapg.lib:zoomable:2.0.0-beta01")
+    implementation("net.engawapg.lib:zoomable:2.0.0-beta01")
 
 
     val lifecycle_version = "2.7.0"
@@ -146,7 +141,10 @@ dependencies {
     // work Manager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.hilt:hilt-work:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+
+    implementation(libs.hilt.naviation)
+    implementation(libs.dagger.hilt)
+    kapt(libs.dagger.hilt.compiler)
 
 }
 

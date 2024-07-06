@@ -1,0 +1,12 @@
+[versions]
+hilt = "2.49"
+
+
+[libraries]
+
+dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-naviation = "androidx.hilt:hilt-navigation-compose:1.2.0"
+
+[plugins]
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

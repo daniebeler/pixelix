@@ -1,10 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -32,29 +27,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TtsAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withAnnotation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowerElementComposable
-import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navController: NavController) {
+fun MutualFollowersComposable(
+    mutualFollowersState: MutualFollowersState, navController: NavController
+) {
 
     val normalStyle = SpanStyle(color = MaterialTheme.colorScheme.onBackground)
-    val boldStyle = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
+    val boldStyle =
+        SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -67,7 +60,10 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navCon
             withStyle(style = normalStyle) {
                 append(stringResource(R.string.followed_by) + " ")
                 withStyle(style = boldStyle) {
-                    pushStringAnnotation(tag = "account", annotation = mutualFollowersState.mutualFollowers.first().id)
+                    pushStringAnnotation(
+                        tag = "account",
+                        annotation = mutualFollowersState.mutualFollowers.first().id
+                    )
                     append(mutualFollowersState.mutualFollowers.first().username)
                     pop()
                 }
@@ -109,7 +105,6 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navCon
                 }
 
             }
-
 
 
         }
@@ -170,18 +165,19 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navCon
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            ClickableText(text = annotatedString, style = MaterialTheme.typography.bodyMedium, onClick = {
-                annotatedString.getStringAnnotations("others", it, it)
-                    .firstOrNull()?.let {
+            ClickableText(text = annotatedString,
+                style = MaterialTheme.typography.bodyMedium,
+                onClick = {
+                    annotatedString.getStringAnnotations("others", it, it).firstOrNull()?.let {
                         showBottomSheet = true
                     }
 
-                /*annotatedString.getStringAnnotations("account", it, it)
-                    .firstOrNull()?.let { annotation ->
-                        println(annotation)
-                        Navigate.navigate("profile_screen/" + annotation.item, navController)
-                    }*/
-            })
+                    /*annotatedString.getStringAnnotations("account", it, it)
+                        .firstOrNull()?.let { annotation ->
+                            println(annotation)
+                            Navigate.navigate("profile_screen/" + annotation.item, navController)
+                        }*/
+                })
         }
 
         if (showBottomSheet) {
