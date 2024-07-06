@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TtsAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withAnnotation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -191,6 +193,16 @@ fun MutualFollowersComposable(mutualFollowersState: MutualFollowersState, navCon
                 val lazyListState = rememberLazyListState()
 
                 LazyColumn(state = lazyListState, content = {
+
+                    item {
+                        Text(
+                            text = stringResource(R.string.mutual_followers),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        HorizontalDivider(Modifier.padding(12.dp))
+                    }
+
                     items(mutualFollowersState.mutualFollowers, key = {
                         it.id
                     }) {
