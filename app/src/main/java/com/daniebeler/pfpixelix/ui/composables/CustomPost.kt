@@ -26,7 +26,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CustomPost(post: Post, navController: NavController) {
+fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
@@ -82,7 +82,7 @@ fun CustomPost(post: Post, navController: NavController) {
                     )
                 } else {
                     AsyncImage(
-                        model = post.mediaAttachments[0].previewUrl,
+                        model = if (isFullQuality) {post.mediaAttachments[0].url} else {post.mediaAttachments[0].previewUrl},
                         contentScale = ContentScale.Crop,
                         contentDescription = null,
                         modifier = Modifier.aspectRatio(1f)

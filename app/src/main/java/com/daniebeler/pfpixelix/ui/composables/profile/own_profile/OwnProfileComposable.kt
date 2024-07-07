@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,6 +81,9 @@ fun OwnProfileComposable(
             onRefresh = { viewModel.loadData(true) })
 
     val context = LocalContext.current
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
 
     LaunchedEffect(Unit) {
         viewModel.getAppIcon(context)
@@ -204,7 +208,8 @@ fun OwnProfileComposable(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) }
+                , isFirstImageLarge = true, screenWidth = screenWidth)
 
             }
 
