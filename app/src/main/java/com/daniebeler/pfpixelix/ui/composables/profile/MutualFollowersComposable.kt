@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowerElementComposable
+import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,21 +74,36 @@ fun MutualFollowersComposable(
                 }
                 if (listSize > 2) {
                     append(", ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    withStyle(style = boldStyle) {
+                        pushStringAnnotation(
+                            tag = "account",
+                            annotation = mutualFollowersState.mutualFollowers[1].id
+                        )
                         append(mutualFollowersState.mutualFollowers[1].username)
+                        pop()
                     }
                 }
 
                 if (listSize == 3) {
                     append(" " + stringResource(R.string.and) + " ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    withStyle(style = boldStyle) {
+                        pushStringAnnotation(
+                            tag = "account",
+                            annotation = mutualFollowersState.mutualFollowers[2].id
+                        )
                         append(mutualFollowersState.mutualFollowers[2].username)
+                        pop()
                     }
                 }
                 if (listSize > 3) {
                     append(", ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    withStyle(style = boldStyle) {
+                        pushStringAnnotation(
+                            tag = "account",
+                            annotation = mutualFollowersState.mutualFollowers[2].id
+                        )
                         append(mutualFollowersState.mutualFollowers[2].username)
+                        pop()
                     }
                     append(" " + stringResource(id = R.string.and) + " ")
 
@@ -172,11 +188,11 @@ fun MutualFollowersComposable(
                         showBottomSheet = true
                     }
 
-                    /*annotatedString.getStringAnnotations("account", it, it)
+                    annotatedString.getStringAnnotations("account", it, it)
                         .firstOrNull()?.let { annotation ->
-                            println(annotation)
-                            Navigate.navigate("profile_screen/" + annotation.item, navController)
-                        }*/
+                            println(annotation.item)
+                            Navigate.navigate("profile_screen/" + annotation.item, navController, false)
+                        }
                 })
         }
 
