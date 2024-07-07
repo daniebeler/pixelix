@@ -3,8 +3,10 @@ package com.daniebeler.pfpixelix.ui.composables.newpost
 import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,7 +41,7 @@ class NewPostViewModel @Inject constructor(
         val imageUri: Uri, var id: String?, var text: String = "", var isLoading: Boolean
     )
 
-    var images by mutableStateOf(emptyList<ImageItem>())
+    var images = mutableStateListOf<ImageItem>()
     var caption: TextFieldValue by mutableStateOf(TextFieldValue())
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
@@ -76,7 +78,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun updateAltTextVariable(index: Int, newAltText: String) {
-        images = images.toMutableList().also {
+        images = images.also {
             it[index] = it[index].copy(text = newAltText)
         }
     }
@@ -140,6 +142,28 @@ class NewPostViewModel @Inject constructor(
         uploadImage(context, instance, uri, "")
     }
 
+    fun deleteMedia(mediaId: String?, imageUri: Uri) {
+        images.remove(images.find { it.id == mediaId })
+        mediaUploadState =
+            mediaUploadState.copy(mediaAttachments = mediaUploadState.mediaAttachments.filter { it.id != mediaId })
+    }
+
+    fun moveMediaAttachmentUp(index: Int) {
+        if (index >= 1) {
+            val copy = images[index]
+            images[index] = images[index - 1]
+            images[index - 1] = copy
+        }
+    }
+
+    fun moveMediaAttachmentDown(index: Int) {
+        if (index < images.size - 1) {
+            val copy = images[index]
+            images[index] = images[index + 1]
+            images[index + 1] = copy
+        }
+    }
+
     private fun uploadImage(context: Context, instance: Instance, uri: Uri, text: String) {
         uploadMediaUseCase(
             uri, text, context, instance.configuration.mediaAttachmentConfig
@@ -149,8 +173,13 @@ class NewPostViewModel @Inject constructor(
                     if (result.data?.type?.take(5) == "video") {
                         Thread.sleep(1500)
                     }
-                    images.find { it.imageUri == uri }?.isLoading = false
-                    images.find { it.imageUri == uri }?.id = result.data?.id
+                    images = images.map { image ->
+                        if (image.imageUri == uri) {
+                            image.copy(isLoading = false, id = result.data?.id) // Replace the object
+                        } else {
+                            image // Keep the original object
+                        }
+                    }.toMutableStateList()
                     mediaUploadState.copy(
                         mediaAttachments = mediaUploadState.mediaAttachments + result.data!!,
                         isLoading = false
@@ -187,8 +216,19 @@ class NewPostViewModel @Inject constructor(
                     updateAltText(index, it.text)
                 }
             }
+            mediaUploadState = sortMediaUploadState(mediaUploadState)
             createNewPost(mediaUploadState, navController)
         }
+    }
+
+    private fun sortMediaUploadState(mediaUploadState: MediaUploadState): MediaUploadState {
+        var newMediaUploadState = MediaUploadState()
+        images.forEach { image ->
+            newMediaUploadState =
+                newMediaUploadState.copy(mediaAttachments = newMediaUploadState.mediaAttachments + mediaUploadState.mediaAttachments.find { it.id == image.id }!!)
+        }
+
+        return newMediaUploadState
     }
 
     private fun updateAltText(index: Int, altText: String) {
@@ -236,7 +276,8 @@ class NewPostViewModel @Inject constructor(
 
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
-        val createPostDto = CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText)
+        val createPostDto =
+            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText)
         createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

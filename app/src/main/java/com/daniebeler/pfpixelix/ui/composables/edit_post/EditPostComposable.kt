@@ -244,8 +244,6 @@ fun EditPostComposable(
                                         )
                                     }
                                 }
-                            }
-                            if (viewModel.mediaAttachmentsEdit.size > 1) {
                                 IconButton(onClick = {
                                     viewModel.deleteMediaDialog = mediaAttachment.id
                                 }) {
