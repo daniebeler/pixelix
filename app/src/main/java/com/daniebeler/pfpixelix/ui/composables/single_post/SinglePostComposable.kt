@@ -81,7 +81,8 @@ fun SinglePostComposable(
                 if (viewModel.postState.post != null) {
                     PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
                         Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
-                    })
+                    },
+                        setZindex = { })
                 }
             }
 

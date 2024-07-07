@@ -10,8 +10,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
@@ -66,11 +70,19 @@ fun InfinitePostsList(
                 items(items, key = {
                     it.id
                 }) { item ->
-                    PostComposable(
-                        post = item,
-                        postGetsDeleted = ::delete,
-                        navController = navController
-                    )
+                    val zIndex = remember {
+                        mutableFloatStateOf(1f)
+                    }
+                    Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
+                        PostComposable(
+                            post = item,
+                            postGetsDeleted = ::delete,
+                            navController = navController,
+                            setZindex = { zIndex.floatValue = it
+                            }
+                        )
+                    }
+
                 }
 
                 if (isLoading && !isRefreshing) {

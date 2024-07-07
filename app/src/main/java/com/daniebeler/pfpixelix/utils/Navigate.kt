@@ -15,13 +15,13 @@ object Navigate {
         restoreStateRoutes = emptyList()
     }
 
-    fun navigate(route: String, navController: NavController) {
+    fun navigate(route: String, navController: NavController, singleTop: Boolean = true) {
         val alreadySaved = restoreStateRoutes.indexOf(route) != -1
         if (!alreadySaved) {
             restoreStateRoutes = restoreStateRoutes + route
         }
         navController.navigate(route) {
-            launchSingleTop = true
+            launchSingleTop = singleTop
             restoreState = alreadySaved
         }
     }
