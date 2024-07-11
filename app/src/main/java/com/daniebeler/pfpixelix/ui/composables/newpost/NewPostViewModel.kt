@@ -48,7 +48,7 @@ class NewPostViewModel @Inject constructor(
     var audience: String by mutableStateOf(AUDIENCE_PUBLIC)
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
-    lateinit var instance: Instance
+    var instance: Instance? = null
     var addImageError by mutableStateOf(Pair("", ""))
 
     init {
@@ -105,7 +105,7 @@ class NewPostViewModel @Inject constructor(
 
     fun addImage(uri: Uri, context: Context) {
         val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
-        if (!instance.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(fileType)) {
+        if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(fileType)) {
             addImageError = Pair(
                 "Media type is not supported",
                 "The media type $fileType is not supportet by this server"
@@ -116,22 +116,22 @@ class NewPostViewModel @Inject constructor(
 
         val size = file.length()
         if (fileType.take(5) == "image") {
-            if (size > instance.configuration.mediaAttachmentConfig.imageSizeLimit) {
+            if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
                 addImageError = Pair(
                     "Image is to big", "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}"
                 )
                 return
             }
         } else if (fileType.take(5) == "video") {
-            if (size > instance.configuration.mediaAttachmentConfig.videoSizeLimit) {
+            if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit) {
                 addImageError = Pair(
                     "Video is to big", "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}"
                 )
@@ -139,7 +139,7 @@ class NewPostViewModel @Inject constructor(
             }
         }
         images += ImageItem(uri, null, "", true)
-        uploadImage(context, instance, uri, "")
+        uploadImage(context, uri, "")
     }
 
     fun deleteMedia(mediaId: String?, imageUri: Uri) {
@@ -164,9 +164,9 @@ class NewPostViewModel @Inject constructor(
         }
     }
 
-    private fun uploadImage(context: Context, instance: Instance, uri: Uri, text: String) {
+    private fun uploadImage(context: Context, uri: Uri, text: String) {
         uploadMediaUseCase(
-            uri, text, context, instance.configuration.mediaAttachmentConfig
+            uri, text, context
         ).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {

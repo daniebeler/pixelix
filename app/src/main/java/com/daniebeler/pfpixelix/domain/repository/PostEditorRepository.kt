@@ -6,7 +6,6 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pfpixelix.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -15,7 +14,6 @@ interface PostEditorRepository {
         uri: Uri,
         description: String,
         context: Context,
-        mediaAttachmentConfiguration: MediaAttachmentConfiguration
     ): Flow<Resource<MediaAttachment>>
 
     fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>>

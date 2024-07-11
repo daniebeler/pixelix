@@ -41,7 +41,6 @@ class PostEditorRepositoryImpl @Inject constructor(
         uri: Uri,
         description: String,
         context: Context,
-        mediaAttachmentConfiguration: MediaAttachmentConfiguration
     ): Flow<Resource<MediaAttachment>> = flow {
         try {
             emit(Resource.Loading())
