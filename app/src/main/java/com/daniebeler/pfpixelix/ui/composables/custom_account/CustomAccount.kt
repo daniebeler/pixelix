@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -53,9 +54,11 @@ fun CustomAccount(
 
 @Composable
 fun CustomAccount(
-    account: Account
+    account: Account,
+    logoutButton: Boolean = false,
+    logout: () -> Unit = {}
 ) {
-    CustomAccountPrivateNotClickable(account = account)
+    CustomAccountPrivateNotClickable(account = account, logoutButton, logout)
 }
 
 @Composable
@@ -129,7 +132,9 @@ private fun CustomAccountPrivate(
                 if (account.displayname != null) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = account.displayname, lineHeight = 8.sp, fontWeight = FontWeight.Bold
+                            text = account.displayname,
+                            lineHeight = 8.sp,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Text(
@@ -187,12 +192,14 @@ private fun CustomAccountPrivate(
 
 @Composable
 private fun CustomAccountPrivateNotClickable(
-    account: Account
+    account: Account, logoutButton: Boolean, logout: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .padding(horizontal = 12.dp, vertical = 8.dp)
-        .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         AsyncImage(
             model = account.avatar,
             contentDescription = "",
@@ -208,7 +215,9 @@ private fun CustomAccountPrivateNotClickable(
                 if (account.displayname != null) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = account.displayname, lineHeight = 8.sp, fontWeight = FontWeight.Bold
+                            text = account.displayname,
+                            lineHeight = 8.sp,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Text(
@@ -230,6 +239,23 @@ private fun CustomAccountPrivateNotClickable(
                     )
                 }
 
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (logoutButton) {
+            Box(
+                modifier = Modifier
+                    .height(36.dp)
+                    .width(36.dp)
+                    .clickable { logout() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

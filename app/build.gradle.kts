@@ -1,9 +1,10 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-    id ("kotlin-kapt")
-    id ("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
+    alias(libs.plugins.compose.compiler)
 }
 
 
@@ -15,8 +16,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "2.1.0"
+        versionCode = 14
+        versionName = "2.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -27,9 +28,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -43,9 +45,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -56,98 +55,89 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2024.04.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("com.android.volley:volley:1.2.1")
-    implementation("com.google.code.gson:gson:2.10")
+    implementation(libs.androidx.core.ktx)
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
 
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.5")
-
-
-    implementation ("com.google.dagger:hilt-android:2.49")
-    kapt ("com.google.dagger:hilt-android-compiler:2.45")
-
-    implementation ("io.coil-kt:coil-compose:2.5.0")
-
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
-
-    implementation ("androidx.compose.material3:material3:1.2.1")
-
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-    implementation ("androidx.datastore:datastore:1.0.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-
-    implementation ("androidx.browser:browser:1.8.0")
-
-    implementation ("androidx.compose.material:material-icons-extended")
-
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-
-    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-    implementation ("com.google.android.material:material:1.12.0")
-
-    implementation ("androidx.compose.material:material:1.6.5")
-
-    implementation ("androidx.media3:media3-exoplayer:1.3.0")
-    implementation ("androidx.media3:media3-exoplayer-dash:1.3.0")
-    implementation ("androidx.media3:media3-ui:1.3.0")
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    kapt ("com.github.bumptech.glide:compiler:4.12.0")
-    implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
-
-    implementation("io.coil-kt:coil-video:2.5.0")
-
-    implementation("com.vanniktech:android-image-cropper:4.5.0")
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
 
-    val lifecycle_version = "2.7.0"
-    val arch_version = "2.2.0"
+    implementation(libs.volley)
+    implementation(libs.gson)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.androidx.runtime.livedata)
+
+
+    implementation(libs.coil.compose)
+
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.material3)
+
+    implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.androidx.datastore)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.browser)
+
+    implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.accompanist.systemuicontroller)
+
+
+    implementation(libs.material)
+
+    implementation(libs.androidx.material)
+
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.glide)
+    ksp(libs.compiler)
+    implementation(libs.compose)
+
+    implementation(libs.coil.video)
+
+    implementation(libs.android.image.cropper)
+
+    implementation(libs.zoomable)
 
     // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // LiveData
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     // Lifecycles only (without ViewModel or LiveData)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation(libs.lifecycle.runtime.ktx)
 
     // Saved state module for ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
     // Annotation processor
-    annotationProcessor("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
+    annotationProcessor(libs.androidx.lifecycle.compiler)
 
     // widget
-    implementation("androidx.glance:glance-appwidget:1.1.0-rc01")
-    implementation("androidx.glance:glance-material3")
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
     // work Manager
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
-    implementation("androidx.hilt:hilt-work:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
-}
+    implementation(libs.hilt.naviation)
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.compiler)
 
-kapt {
-    correctErrorTypes = true
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
@@ -28,11 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
 
 @Composable
@@ -42,7 +45,8 @@ fun ShareBottomSheet(
     minePost: Boolean,
     viewModel: PostViewModel,
     post: Post,
-    currentMediaAttachmentNumber: Int
+    currentMediaAttachmentNumber: Int,
+    navController: NavController
 ) {
 
     var humanReadableVisibility by remember {
@@ -65,8 +69,6 @@ fun ShareBottomSheet(
     Column(
         modifier = Modifier.padding(bottom = 32.dp)
     ) {
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {
@@ -110,6 +112,15 @@ fun ShareBottomSheet(
         }
 
         if (minePost) {
+            HorizontalDivider(Modifier.padding(12.dp))
+
+            ButtonRowElement(
+                icon = Icons.Outlined.Edit,
+                text = stringResource(R.string.edit_post),
+                onClick = {
+                    Navigate.navigate("edit_post_screen/${post.id}", navController = navController)
+                }
+            )
             ButtonRowElement(
                 icon = Icons.Outlined.Delete,
                 text = stringResource(R.string.delete_this_post),

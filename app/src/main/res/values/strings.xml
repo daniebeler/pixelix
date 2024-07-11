@@ -76,7 +76,7 @@
     <string name="no_bookmarked_posts">No bookmarked posts</string>
     <string name="nothing_to_show">Nothing to show</string>
     <string name="new_post">New post</string>
-    <string name="release">Release</string>
+    <string name="release">Publish</string>
     <string name="alt_text">Alt Text</string>
     <string name="caption">caption</string>
     <string name="sensitive_nsfw_media">Sensitive/NSFW Media</string>
@@ -111,7 +111,7 @@
     <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
     <string name="view_more">view more</string>
     <string name="edit_profile">Edit Profile</string>
-    <string name="save">save</string>
+    <string name="save">Save</string>
     <string name="delete_reply">Delete reply</string>
     <string name="reply">Reply</string>
     <string name="post">Post</string>
@@ -177,6 +177,7 @@
     <string name="all">All</string>
     <string name="likes_">Likes</string>
     <string name="reposts">Reposts</string>
+    <string name="edit_post">Edit this post</string>
     <string name="notification_widget_description">Stay updated with your latest notifications from Pixelfed right on your home screen</string>
     <string name="customize_app_icon">Customize app icon</string>
     <string name="change_app_icon">Change app icon?</string>
@@ -185,7 +186,15 @@
     <string name="mentioned_you">mentioned you</string>
     <string name="latest_image_widget_description">have a look at the newest post from your home timeline, right on your homescreen</string>
     <string name="two_icons_info">If an icon other than the default icon is selected, two icons will be displayed in your apps drawer.</string>
+    <string name="current_account">Current Account:</string>
+    <string name="other_accounts">Other Accounts:</string>
+    <string name="add_pixelfed_account">Add Pixelfed account</string>
     <string name="download_image">Download image</string>
     <string name="profile">Profile</string>
     <string name="alerts">Inbox</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account</string>
+    <string name="remove_account">Remove Account?</string>
+    <string name="remove">Remove</string>
+    <string name="sure_update_post">Are you sure, you want to update this post?</string>
+    <string name="mutual_followers">Mutual followers</string>
 </resources>

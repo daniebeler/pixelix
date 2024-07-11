@@ -1,14 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -40,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +73,7 @@ fun OwnProfileComposable(
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(0) }
 
     val lazyGridState = rememberLazyGridState()
     val pullRefreshState =
@@ -76,13 +82,16 @@ fun OwnProfileComposable(
 
     val context = LocalContext.current
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
     LaunchedEffect(Unit) {
         viewModel.getAppIcon(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(Modifier.clickable { showBottomSheet = 2 }) {
                 Column {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
@@ -92,15 +101,23 @@ fun OwnProfileComposable(
                         text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
+
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    contentDescription = "account switch dropdown",
+                    Modifier.size(36.dp)
+                )
             }
         }, actions = {
             if (viewModel.domainSoftwareState.domainSoftware != null) {
-                DomainSoftwareComposable(domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
+                DomainSoftwareComposable(
+                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
                 ) { url -> viewModel.openUrl(context, url) }
             }
 
             IconButton(onClick = {
-                showBottomSheet = true
+                showBottomSheet = 1
             }) {
                 Icon(
                     imageVector = Icons.Outlined.MoreVert, contentDescription = ""
@@ -177,7 +194,8 @@ fun OwnProfileComposable(
                     }
                 }
 
-                PostsWrapperComposable(accountState = viewModel.accountState,
+                PostsWrapperComposable(
+                    accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
@@ -190,7 +208,10 @@ fun OwnProfileComposable(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                    isFirstImageLarge = true,
+                    screenWidth = screenWidth
+                )
 
             }
 
@@ -209,18 +230,24 @@ fun OwnProfileComposable(
         pullRefreshState,
     )
 
-    if (showBottomSheet) {
+    if (showBottomSheet > 0) {
         ModalBottomSheet(
             onDismissRequest = {
-                showBottomSheet = false
+                showBottomSheet = 0
             }, sheetState = sheetState
         ) {
-            ModalBottomSheetContent(navController = navController,
-                instanceDomain = viewModel.ownDomain,
-                appIcon = viewModel.appIcon,
-                closeBottomSheet = {
-                    showBottomSheet = false
-                })
+            if (showBottomSheet == 1) {
+                ModalBottomSheetContent(navController = navController,
+                    instanceDomain = viewModel.ownDomain,
+                    appIcon = viewModel.appIcon,
+                    closeBottomSheet = {
+                        showBottomSheet = 0
+                    })
+            } else if (showBottomSheet == 2) {
+                AccountSwitchBottomSheet(closeBottomSheet = {
+                    showBottomSheet = 0
+                }, viewModel)
+            }
         }
     }
 }

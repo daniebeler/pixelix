@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
@@ -26,7 +27,7 @@ sealed class Destinations(
     )
 
     object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.Notifications, label = R.string.alerts
+        route = "notifications_screen", icon = Icons.Outlined.FavoriteBorder, label = R.string.alerts
     )
 
     object OwnProfile : Destinations(
@@ -79,6 +80,10 @@ sealed class Destinations(
 
     object NewPost : Destinations(
         route = "new_post_screen", icon = Icons.Outlined.Settings
+    )
+
+    object EditPost : Destinations(
+        route = "edit_post_screen/{postId}", icon = Icons.Outlined.Settings
     )
 
     object Hashtag : Destinations(

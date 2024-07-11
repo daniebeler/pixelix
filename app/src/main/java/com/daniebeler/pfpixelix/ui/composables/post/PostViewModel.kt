@@ -22,7 +22,7 @@ import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountIdUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
@@ -62,7 +62,7 @@ class PostViewModel @Inject constructor(
     private val bookmarkPostUseCase: BookmarkPostUseCase,
     private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
     private val deletePostUseCase: DeletePostUseCase,
-    private val getOwnAccountIdUseCase: GetOwnAccountIdUseCase,
+    private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
     private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
@@ -89,7 +89,7 @@ class PostViewModel @Inject constructor(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            myAccountId = getOwnAccountIdUseCase().first()
+            myAccountId = currentLoginDataUseCase()!!.accountId
         }
     }
 

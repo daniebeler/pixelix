@@ -34,12 +34,20 @@ import com.daniebeler.pfpixelix.utils.Navigate
 fun SinglePostComposable(
     navController: NavController,
     postId: String,
+    refresh: Boolean,
     viewModel: SinglePostViewModel = hiltViewModel(key = "single-post$postId")
 ) {
     val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
         viewModel.getPost(postId)
+    }
+
+    LaunchedEffect(refresh) {
+        if (refresh) {
+            viewModel.postState = SinglePostState()
+            viewModel.getPost(postId)
+        }
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
@@ -73,7 +81,8 @@ fun SinglePostComposable(
                 if (viewModel.postState.post != null) {
                     PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
                         Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
-                    })
+                    },
+                        setZindex = { })
                 }
             }
 

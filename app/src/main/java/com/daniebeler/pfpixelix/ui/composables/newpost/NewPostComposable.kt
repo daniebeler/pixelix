@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,12 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +37,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -47,11 +49,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -70,6 +71,7 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(
@@ -84,7 +86,6 @@ fun NewPostComposable(
             Navigate.navigate("new_post_screen", navController)
             uris.forEach {
                 viewModel.addImage(it, context)
-                //viewModel.images += NewPostViewModel.ImageItem(it, "")
             }
         })
 
@@ -106,7 +107,8 @@ fun NewPostComposable(
             }
         }, actions = {
             Button(
-                onClick = { showReleaseAlert = true }, enabled = (viewModel.images.isNotEmpty())
+                onClick = { showReleaseAlert = true },
+                enabled = (viewModel.images.isNotEmpty() && !viewModel.mediaUploadState.isLoading)
             ) {
                 Text(text = stringResource(R.string.release))
             }
@@ -118,7 +120,7 @@ fun NewPostComposable(
                     .padding(paddingValues)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 viewModel.images.forEachIndexed { index, image ->
@@ -159,19 +161,40 @@ fun NewPostComposable(
                             }
                         }
                         Spacer(Modifier.width(10.dp))
+
                         OutlinedTextField(
                             value = image.text,
                             onValueChange = { viewModel.updateAltTextVariable(index, it) },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.weight(1f),
                             label = { Text(stringResource(R.string.alt_text)) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedBorderColor = Color.Transparent,
-                            ),
-                            shape = RoundedCornerShape(12.dp)
                         )
+
+                        if (viewModel.images.size > 1) {
+                            Column {
+                                IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowUpward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowDownward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                            }
+                        }
+                        IconButton(onClick = {
+                            viewModel.deleteMedia(image.id, image.imageUri)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "delete Image",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+
                     }
 
                 }
@@ -199,8 +222,7 @@ fun NewPostComposable(
                     imeAction = ImeAction.Default,
                     suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
                     submitButton = null
-                )
-                /*OutlinedTextField(
+                )/*OutlinedTextField(
                     value = viewModel.caption,
                     onValueChange = { viewModel.caption = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -228,13 +250,6 @@ fun NewPostComposable(
                         onValueChange = { viewModel.sensitiveText = it },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedBorderColor = Color.Transparent,
-                        ),
-                        shape = RoundedCornerShape(12.dp),
                     )
                 }
                 Row(

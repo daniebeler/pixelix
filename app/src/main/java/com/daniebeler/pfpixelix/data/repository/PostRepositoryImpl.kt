@@ -20,18 +20,18 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override fun getPostsByAccountId(
-        accountId: String, maxPostId: String
+        accountId: String, maxPostId: String, limit: Int
     ): Flow<Resource<List<Post>>> {
         return if (maxPostId.isEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getPostsByAccountId(
-                    accountId
+                    accountId, limit
                 )
             )
         } else {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getPostsByAccountId(
-                    accountId, maxPostId
+                    accountId, maxPostId, limit
                 )
             )
         }
