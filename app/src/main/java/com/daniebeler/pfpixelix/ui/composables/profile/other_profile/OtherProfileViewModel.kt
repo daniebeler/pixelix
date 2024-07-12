@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +12,7 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetAccountByUsernameUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
@@ -40,6 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
     private val getAccountUseCase: GetAccountUseCase,
+    private val getAccountByUsernameUseCase: GetAccountByUsernameUseCase,
     private val getPostsOfAccountUseCase: GetPostsOfAccountUseCase,
     private val followAccountUseCase: FollowAccountUseCase,
     private val unfollowAccountUseCase: UnfollowAccountUseCase,
@@ -56,7 +59,7 @@ class OtherProfileViewModel @Inject constructor(
     private val getViewUseCase: GetViewUseCase,
     application: Application
 ) : AndroidViewModel(application) {
-
+    var userId: String = ""
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
@@ -69,9 +72,13 @@ class OtherProfileViewModel @Inject constructor(
     var context = application
     var view by mutableStateOf(ViewEnum.Timeline)
 
-    fun loadData(userId: String, refreshing: Boolean) {
+    fun loadData(_userId: String, refreshing: Boolean) {
+        userId = _userId
         getAccount(userId, refreshing)
+        loadDataExceptAccount(refreshing)
+    }
 
+    private fun loadDataExceptAccount(refreshing: Boolean) {
         getPostsFirstLoad(userId, refreshing)
 
         getRelationship(userId)
@@ -84,6 +91,11 @@ class OtherProfileViewModel @Inject constructor(
                 view = res
             }
         }
+    }
+
+    fun loadDataByUsername(username: String, refreshing: Boolean) {
+        Log.d("byUsername", "load data by username")
+        getAccountByUsername(username, refreshing)
     }
 
     private fun getRelationship(userId: String) {
@@ -137,6 +149,32 @@ class OtherProfileViewModel @Inject constructor(
         getAccountUseCase(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
+                    AccountState(account = result.data)
+                }
+
+                is Resource.Error -> {
+                    AccountState(error = result.message ?: "An unexpected error occurred")
+                }
+
+                is Resource.Loading -> {
+                    AccountState(isLoading = true, account = accountState.account, refreshing = refreshing)
+                }
+            }
+
+            if (accountState.account != null) {
+                domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
+                    ?: ""
+                getDomainSoftware(domain)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getAccountByUsername(username: String, refreshing: Boolean) {
+        getAccountByUsernameUseCase(username).onEach { result ->
+            accountState = when (result) {
+                is Resource.Success -> {
+                    userId = result.data!!.id
+                    loadDataExceptAccount(refreshing)
                     AccountState(account = result.data)
                 }
 

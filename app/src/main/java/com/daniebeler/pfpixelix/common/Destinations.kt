@@ -7,7 +7,6 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,6 +35,10 @@ sealed class Destinations(
 
     object Profile : Destinations(
         route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite
+    )
+
+    object ProfileByUsername : Destinations(
+        route = "profile_screen/byUsername/{username}", icon = Icons.Outlined.Favorite
     )
 
     object EditProfile : Destinations(

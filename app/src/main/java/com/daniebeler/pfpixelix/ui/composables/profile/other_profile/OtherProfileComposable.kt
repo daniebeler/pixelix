@@ -84,7 +84,8 @@ import com.daniebeler.pfpixelix.utils.Share
 fun OtherProfileComposable(
     navController: NavController,
     userId: String,
-    viewModel: OtherProfileViewModel = hiltViewModel(key = "other-profile$userId")
+    byUsername: String?,
+    viewModel: OtherProfileViewModel = hiltViewModel(key = "other-profile$userId$byUsername")
 ) {
 
     val sheetState = rememberModalBottomSheetState()
@@ -107,7 +108,11 @@ fun OtherProfileComposable(
     val screenWidth = configuration.screenWidthDp.dp
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(userId, false)
+        if (userId != "") {
+            viewModel.loadData(userId, false)
+        } else {
+            viewModel.loadDataByUsername(byUsername!!, false)
+        }
     }
 
 
@@ -202,9 +207,9 @@ fun OtherProfileComposable(
                                 onClick = {
                                     if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
                                         if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                            viewModel.unfollowAccount(userId)
+                                            viewModel.unfollowAccount(viewModel.userId)
                                         } else {
-                                            viewModel.followAccount(userId)
+                                            viewModel.followAccount(viewModel.userId)
                                         }
                                     }
                                 },
@@ -266,10 +271,10 @@ fun OtherProfileComposable(
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
-                        viewModel.loadData(userId, true)
+                        viewModel.loadData(viewModel.userId, true)
                     },
                     getPostsPaginated = {
-                        viewModel.getPostsPaginated(userId)
+                        viewModel.getPostsPaginated(viewModel.userId)
                     },
                     emptyState = EmptyState(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
@@ -281,7 +286,7 @@ fun OtherProfileComposable(
     }
 
     InfiniteGridHandler(lazyGridState = lazyGridState) {
-        viewModel.getPostsPaginated(userId)
+        viewModel.getPostsPaginated(viewModel.userId)
     }
 
     CustomPullRefreshIndicator(
@@ -352,28 +357,28 @@ fun OtherProfileComposable(
     if (showUnMuteAlert) {
         UnMuteAccountAlert(onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
             showUnMuteAlert = false
-            viewModel.unMuteAccount(userId)
+            viewModel.unMuteAccount(viewModel.userId)
         }, account = viewModel.accountState.account!!
         )
     }
     if (showMuteAlert) {
         MuteAccountAlert(onDismissRequest = { showMuteAlert = false }, onConfirmation = {
             showMuteAlert = false
-            viewModel.muteAccount(userId)
+            viewModel.muteAccount(viewModel.userId)
         }, account = viewModel.accountState.account!!
         )
     }
     if (showBlockAlert) {
         BlockAccountAlert(onDismissRequest = { showBlockAlert = false }, onConfirmation = {
             showBlockAlert = false
-            viewModel.blockAccount(userId)
+            viewModel.blockAccount(viewModel.userId)
         }, account = viewModel.accountState.account!!
         )
     }
     if (showUnBlockAlert) {
         UnBlockAccountAlert(onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
             showUnBlockAlert = false
-            viewModel.unblockAccount(userId)
+            viewModel.unblockAccount(viewModel.userId)
         }, account = viewModel.accountState.account!!
         )
     }

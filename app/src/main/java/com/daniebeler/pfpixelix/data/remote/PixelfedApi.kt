@@ -131,6 +131,11 @@ interface PixelfedApi {
         @Path("accountid") accountId: String
     ): Call<AccountDto>
 
+    @GET("/api/v1.1/accounts/username/{username}?_pe=1")
+    fun getAccountByUsername(
+        @Path("username") username: String
+    ): Call<AccountDto>
+
     @POST("api/v1/accounts/update_credentials?_pe=1")
     fun updateAccount(
         @Body body: RequestBody

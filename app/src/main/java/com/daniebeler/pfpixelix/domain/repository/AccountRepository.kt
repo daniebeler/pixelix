@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.domain.repository
 
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +8,7 @@ import okhttp3.RequestBody
 
 interface AccountRepository {
     fun getAccount(accountId: String): Flow<Resource<Account>>
+    fun getAccountByUsername(accountId: String): Flow<Resource<Account>>
     fun muteAccount(accountId: String): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
     fun blockAccount(accountId: String): Flow<Resource<Relationship>>
