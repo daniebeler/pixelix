@@ -38,7 +38,7 @@ data class AccountDto(
     @SerializedName("note_text")
     val noteText: String?,
     @SerializedName("pronouns")
-    val pronouns: List<Any>,
+    val pronouns: List<String>?,
     @SerializedName("statuses_count")
     val statusesCount: Int,
     @SerializedName("url")
@@ -63,7 +63,8 @@ data class AccountDto(
             url = url,
             locked = locked,
             createdAt = createdAt,
-            isAdmin = isAdmin
+            isAdmin = isAdmin,
+            pronouns = pronouns ?: emptyList()
         )
     }
 }

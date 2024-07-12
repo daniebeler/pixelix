@@ -39,5 +39,6 @@ fun loginDataToAccount(loginData: LoginData): Account {
         postsCount = 0,
         followingCount = 0,
         website = null,
+        pronouns = emptyList()
     )
 }
