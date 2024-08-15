@@ -18,7 +18,7 @@ data class MediaAttachmentDto(
     @SerializedName("is_nsfw")
     val isNsfw: Any,
     @SerializedName("license")
-    val license: LicenseDto,
+    val license: LicenseDto?,
     @SerializedName("meta")
     val meta: MetaDto?,
     @SerializedName("mime")
@@ -46,7 +46,8 @@ data class MediaAttachmentDto(
             meta = meta?.toModel(),
             blurHash = blurhash,
             type = type,
-            description = description
+            description = description,
+            license = license?.toModel()
         )
     }
 }

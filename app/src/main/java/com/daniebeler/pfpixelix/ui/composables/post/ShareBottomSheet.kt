@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.OpenInBrowser
@@ -53,6 +54,9 @@ fun ShareBottomSheet(
         mutableStateOf("")
     }
 
+    val mediaAttachment: MediaAttachment? =
+        viewModel.post?.mediaAttachments?.get(currentMediaAttachmentNumber)
+
     LaunchedEffect(Unit) {
         humanReadableVisibility = if (post.visibility == Constants.AUDIENCE_PUBLIC) {
             context.resources.getString(R.string.audience_public)
@@ -82,6 +86,13 @@ fun ShareBottomSheet(
 
             Text(text = stringResource(R.string.visibility_x, humanReadableVisibility))
         }
+        if (mediaAttachment?.license != null) {
+            ButtonRowElement(icon = Icons.Outlined.Description, text = stringResource(
+                R.string.license, mediaAttachment.license.title
+            ), onClick = {
+                viewModel.openUrl(context, mediaAttachment.license.url)
+            })
+        }
 
         HorizontalDivider(Modifier.padding(12.dp))
 
@@ -96,8 +107,7 @@ fun ShareBottomSheet(
             onClick = {
                 Share.shareText(context, url)
             })
-        val mediaAttachment: MediaAttachment? =
-            viewModel.post?.mediaAttachments?.get(currentMediaAttachmentNumber)
+
         if (mediaAttachment != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mediaAttachment.type == "image") {
             ButtonRowElement(icon = Icons.Outlined.Download,
                 text = stringResource(R.string.download_image),
