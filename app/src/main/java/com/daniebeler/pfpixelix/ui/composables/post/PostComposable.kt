@@ -554,10 +554,10 @@ fun PostImage(
                     }
                 })
             }) {
-            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif") {
+            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(5) != ".webp") {
                 ImageWrapper(mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) })
-            } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
+            } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
                 GifPlayer(mediaAttachment)
             } else {
                 VideoPlayer(
@@ -636,11 +636,14 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
     GlideImage(
         model = mediaAttachment.url,
         contentDescription = null,
-        modifier = Modifier
+        contentScale = ContentScale.FillWidth,
+        modifier = if (mediaAttachment.meta?.original != null) {Modifier
             .fillMaxWidth()
             .aspectRatio(
-                mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-            )
+                mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
+            )} else {
+                Modifier.fillMaxWidth()
+        }
     )
 }
 
