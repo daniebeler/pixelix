@@ -29,7 +29,7 @@ fun FollowerElementComposable(
     Row(
         modifier = Modifier
             .clickable {
-                Navigate.navigate("profile_screen/" + account.id, navController)
+                Navigate.navigate("profile_screen/" + account.id, navController, false)
             }
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()

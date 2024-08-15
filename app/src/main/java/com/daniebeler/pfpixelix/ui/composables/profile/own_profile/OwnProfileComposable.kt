@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,30 +82,32 @@ fun OwnProfileComposable(
 
     val context = LocalContext.current
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
     LaunchedEffect(Unit) {
         viewModel.getAppIcon(context)
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(Modifier.clickable { showBottomSheet = 2 }) {
                 Column {
-                    Row(Modifier.clickable { showBottomSheet = 2 }) {
-                        Text(
-                            text = viewModel.accountState.account?.username ?: "",
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Icon(
-                            imageVector = Icons.Outlined.KeyboardArrowDown,
-                            contentDescription = "account switch dropdown",
-                            Modifier.size(36.dp)
-                        )
-                    }
+                    Text(
+                        text = viewModel.accountState.account?.username ?: "",
+                        fontWeight = FontWeight.Bold
+                    )
                     Text(
                         text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
+
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    contentDescription = "account switch dropdown",
+                    Modifier.size(36.dp)
+                )
             }
         }, actions = {
             if (viewModel.domainSoftwareState.domainSoftware != null) {
@@ -191,7 +194,8 @@ fun OwnProfileComposable(
                     }
                 }
 
-                PostsWrapperComposable(accountState = viewModel.accountState,
+                PostsWrapperComposable(
+                    accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
                     refresh = {
@@ -204,7 +208,10 @@ fun OwnProfileComposable(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) })
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                    isFirstImageLarge = true,
+                    screenWidth = screenWidth
+                )
 
             }
 

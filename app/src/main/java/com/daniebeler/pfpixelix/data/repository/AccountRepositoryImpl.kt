@@ -4,7 +4,6 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
-import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
@@ -23,6 +22,14 @@ class AccountRepositoryImpl @Inject constructor(
         return NetworkCall<Account, AccountDto>().makeCall(
             pixelfedApi.getAccount(
                 accountId
+            )
+        )
+    }
+
+    override fun getAccountByUsername(username: String): Flow<Resource<Account>> {
+        return NetworkCall<Account, AccountDto>().makeCall(
+            pixelfedApi.getAccountByUsername(
+                username
             )
         )
     }

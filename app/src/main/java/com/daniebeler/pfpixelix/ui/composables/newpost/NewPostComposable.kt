@@ -70,6 +70,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.imeAwareInsets
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
@@ -118,6 +119,7 @@ fun NewPostComposable(
             Column(
                 Modifier
                     .padding(paddingValues)
+                    .imeAwareInsets(context, 100.dp)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)

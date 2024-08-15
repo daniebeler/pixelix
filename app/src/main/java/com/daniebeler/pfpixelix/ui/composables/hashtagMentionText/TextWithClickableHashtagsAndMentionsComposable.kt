@@ -102,41 +102,43 @@ fun HashtagsMentionsTextView(
         onClick = { position ->
             CoroutineScope(Dispatchers.Default).launch {
                 val annotatedStringRange =
-                    annotatedStringList.first { it.start <= position && position < it.end }
-                if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
-                    val newItem = annotatedStringRange.item.drop(1)
-                    val route = if (annotatedStringRange.tag == "tag") {
-                        "hashtag_timeline_screen/$newItem"
-                    } else {
-                        if (mentions == null) {
-                            ""
+                    annotatedStringList.firstOrNull { it.start <= position && position < it.end }
+                if (annotatedStringRange != null) {
+                    if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
+                        val newItem = annotatedStringRange.item.drop(1)
+                        val route = if (annotatedStringRange.tag == "tag") {
+                            "hashtag_timeline_screen/$newItem"
                         } else {
-                            var account =
-                                mentions.find { account: Account -> account.acct == newItem }
-                            if (account == null) {
-                                account = mentions.find { account: Account -> account.username == newItem }
-                            }
-                            if (account != null) {
-                                //get my account id and check if it is mine account
-                                val myAccountId = viewModel.getMyAccountId()
-                                if (account.id == myAccountId) {
-                                    "own_profile_screen"
-                                } else {
-                                    "profile_screen/${account.id}"
-                                }
+                            if (mentions == null) {
+                                "profile_screen/byUsername/${annotatedStringRange.item.drop(1)}"
                             } else {
-                                ""
+                                var account =
+                                    mentions.find { account: Account -> account.acct == newItem }
+                                if (account == null) {
+                                    account = mentions.find { account: Account -> account.username == newItem }
+                                }
+                                if (account != null) {
+                                    //get my account id and check if it is mine account
+                                    val myAccountId = viewModel.getMyAccountId()
+                                    if (account.id == myAccountId) {
+                                        "own_profile_screen"
+                                    } else {
+                                        "profile_screen/${account.id}"
+                                    }
+                                } else {
+                                    ""
+                                }
+                            }
+
+                        }
+                        withContext(Dispatchers.Main) {
+                            if (route.isNotBlank() && route.isNotEmpty()) {
+                                Navigate.navigate(route, navController)
                             }
                         }
-
+                    } else if (annotatedStringRange.tag == "link") {
+                        openUrl(annotatedStringRange.item)
                     }
-                    withContext(Dispatchers.Main) {
-                        if (route.isNotBlank() && route.isNotEmpty()) {
-                            Navigate.navigate(route, navController)
-                        }
-                    }
-                } else if (annotatedStringRange.tag == "link") {
-                    openUrl(annotatedStringRange.item)
                 }
             }
         })

@@ -210,8 +210,18 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.Profile.route) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("userid")
+
             uId?.let { id ->
-                OtherProfileComposable(navController, userId = id)
+                    OtherProfileComposable(navController, userId = id, byUsername = null)
+
+            }
+        }
+
+        composable(Destinations.ProfileByUsername.route) { navBackStackEntry ->
+            val username = navBackStackEntry.arguments?.getString("username")
+
+            username?.let { username ->
+                OtherProfileComposable(navController, userId = "", byUsername = username)
             }
         }
 
@@ -238,7 +248,7 @@ fun NavigationGraph(navController: NavHostController) {
             NewPostComposable(navController)
         }
 
-        composable(Destinations.EditPost.route) {navBackStackEntry ->
+        composable(Destinations.EditPost.route) { navBackStackEntry ->
             val postId = navBackStackEntry.arguments?.getString("postId")
             postId?.let { id ->
                 EditPostComposable(postId, navController)
@@ -285,9 +295,11 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable("${Destinations.SinglePost.route}?refresh={refresh}", arguments = listOf(
-            navArgument("refresh") {defaultValue = false}
-        )) { navBackStackEntry ->
+        composable("${Destinations.SinglePost.route}?refresh={refresh}",
+            arguments = listOf(navArgument("refresh") {
+                defaultValue = false
+            })
+        ) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
             val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
             Log.d("refresh", refresh!!.toString())
@@ -339,7 +351,11 @@ fun BottomBar(navController: NavHostController) {
             NavigationBarItem(icon = {
                 Icon(imageVector = screen.icon!!, contentDescription = "")
             }, label = {
-                Text(text = stringResource(id = screen.label), maxLines = 1, overflow = TextOverflow.Visible)
+                Text(
+                    text = stringResource(id = screen.label),
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
+                )
             }, selected = currentRoute == screen.route, onClick = {
                 Navigate.navigateWithPopUp(screen.route, navController)
             })

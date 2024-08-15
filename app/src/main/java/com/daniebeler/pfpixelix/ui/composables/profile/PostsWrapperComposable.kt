@@ -1,6 +1,11 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
@@ -8,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -26,11 +33,14 @@ fun LazyGridScope.PostsWrapperComposable(
     refresh: () -> Unit,
     getPostsPaginated: () -> Unit,
     view: ViewEnum,
-    postGetsDeleted: (postId: String) -> Unit
+    postGetsDeleted: (postId: String) -> Unit,
+    isFirstImageLarge: Boolean = false,
+    screenWidth: Dp? = null
 ) {
 
     if (view == ViewEnum.Grid) {
-        PostsGridInScope(items = postsState.posts,
+        PostsGridInScope(
+            items = postsState.posts,
             isLoading = postsState.isLoading,
             isRefreshing = accountState.isLoading && accountState.account != null,
             error = postsState.error,
@@ -38,9 +48,11 @@ fun LazyGridScope.PostsWrapperComposable(
             endReached = postsState.endReached,
             navController = navController,
             getItemsPaginated = { getPostsPaginated() },
-            before = { }) {
-            refresh()
-        }
+            before = { },
+            onRefresh = { refresh() },
+            isFirstImageLarge = isFirstImageLarge,
+            screenWidth = screenWidth
+        )
     }
 
     if (view == ViewEnum.Timeline) {
@@ -69,6 +81,8 @@ private fun LazyGridScope.PostsGridInScope(
     getItemsPaginated: () -> Unit = { },
     before: @Composable (() -> Unit)? = null,
     onRefresh: () -> Unit = { },
+    isFirstImageLarge: Boolean = false,
+    screenWidth: Dp?
 ) {
 
     if (before != null) {
@@ -77,11 +91,35 @@ private fun LazyGridScope.PostsGridInScope(
         }
     }
 
-    items(items, key = {
-        it.id
-    }) { photo ->
-        CustomPost(post = photo, navController = navController)
+    if (isFirstImageLarge && items.size >= 3 && screenWidth != null) {
+        item(span = { GridItemSpan(3) }) {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Box(modifier = Modifier.width(screenWidth/3*2-1.dp)) {
+                    CustomPost(post = items.first(), navController = navController, isFullQuality = true)
+                }
+                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Box {
+                        CustomPost(post = items[1], navController = navController)
+                    }
+                    Box {
+                        CustomPost(post = items[2], navController = navController)
+                    }
+                }
+            }
+        }
+        items(items.takeLast(items.size - 3), key = {
+            it.id
+        }) { photo ->
+            CustomPost(post = photo, navController = navController)
+        }
+    } else {
+        items(items, key = {
+            it.id
+        }) { photo ->
+            CustomPost(post = photo, navController = navController)
+        }
     }
+
 
     if (endReached && items.size > 10) {
         item(span = { GridItemSpan(3) }) {
@@ -135,14 +173,12 @@ private fun LazyGridScope.PostsListInScope(
                 mutableFloatStateOf(1f)
             }
             Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
-                PostComposable(
-                    post = item,
+                PostComposable(post = item,
                     postGetsDeleted = { postGetsDeleted(it) },
                     navController = navController,
                     setZindex = {
                         zIndex.floatValue = it
-                    }
-                )
+                    })
             }
         }
 

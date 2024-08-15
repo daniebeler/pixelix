@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -26,7 +28,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CustomPost(post: Post, navController: NavController) {
+fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
@@ -82,10 +84,27 @@ fun CustomPost(post: Post, navController: NavController) {
                     )
                 } else {
                     AsyncImage(
-                        model = post.mediaAttachments[0].previewUrl,
+                        model = if (isFullQuality) {
+                            post.mediaAttachments[0].url
+                        } else {
+                            post.mediaAttachments[0].previewUrl
+                        },
                         contentScale = ContentScale.Crop,
                         contentDescription = null,
                         modifier = Modifier.aspectRatio(1f)
+                    )
+                }
+            }
+
+            if (post.mediaAttachments.size > 1) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Collections,
+                        contentDescription = null,
                     )
                 }
             }

@@ -197,4 +197,5 @@
     <string name="remove">Remove</string>
     <string name="sure_update_post">Are you sure, you want to update this post?</string>
     <string name="mutual_followers">Mutual followers</string>
+    <string name="license">License: %1$s</string>
 </resources>

@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetAccountByUsernameUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowingUseCase
@@ -36,6 +37,11 @@ class AccountUseCaseModule {
     @Singleton
     fun provideGetAccountUseCase(accountRepository: AccountRepository): GetAccountUseCase =
         GetAccountUseCase(accountRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetAccountByUsernameUseCase(accountRepository: AccountRepository): GetAccountByUsernameUseCase =
+        GetAccountByUsernameUseCase(accountRepository)
 
     @Provides
     @Singleton
