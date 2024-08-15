@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +43,10 @@ import java.util.Locale
 
 @Composable
 fun ProfileTopSection(
-    account: Account?, relationship: Relationship?, navController: NavController, openUrl: (url: String) -> Unit
+    account: Account?,
+    relationship: Relationship?,
+    navController: NavController,
+    openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
         Column(Modifier.padding(12.dp)) {
@@ -101,41 +103,57 @@ fun ProfileTopSection(
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            if (account.displayname != null) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.displayname, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    if (account.locked) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Outlined.Lock,
-                            contentDescription = null,
-                            Modifier.size(16.dp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = account.displayname ?: account.username,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                if (account.locked) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.Lock,
+                        contentDescription = null,
+                        Modifier.size(16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (account.isAdmin) {
+                        ProfileBadge(text = stringResource(id = R.string.admin))
+                    }
+                    if (relationship != null && relationship.followedBy) {
+                        ProfileBadge(text = stringResource(R.string.follows_you))
+                    }
+
+                    if (relationship != null && relationship.muting) {
+                        ProfileBadge(
+                            text = stringResource(R.string.muted),
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (account.isAdmin) {
-                            ProfileBadge(text = stringResource(id = R.string.admin))
-                        }
-                        if (relationship != null && relationship.followedBy) {
-                            ProfileBadge(text = stringResource(R.string.follows_you))
-                        }
-
-                        if (relationship != null && relationship.muting) {
-                            ProfileBadge(text = stringResource(R.string.muted), color = MaterialTheme.colorScheme.error)
-                        }
-
-                        if (relationship != null && relationship.blocking) {
-                            ProfileBadge(text = stringResource(R.string.blocked), color = MaterialTheme.colorScheme.error)
-                        }
+                    if (relationship != null && relationship.blocking) {
+                        ProfileBadge(
+                            text = stringResource(R.string.blocked),
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
-
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
             }
+
+
+            if (account.pronouns.isNotEmpty()) {
+                Text(
+                    text = account.pronouns.joinToString(),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 12.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             if (account.note.isNotBlank()) {
                 HashtagsMentionsTextView(text = account.note,
@@ -175,10 +193,10 @@ private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.
     Box(
         Modifier
             .border(
-                BorderStroke(1.dp, color),
-                shape = RoundedCornerShape(8.dp)
+                BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 6.dp)) {
+            .padding(horizontal = 6.dp)
+    ) {
         Text(text = text, fontSize = 9.sp, color = color)
     }
 }
