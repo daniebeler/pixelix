@@ -142,8 +142,13 @@ class LoginActivity : ComponentActivity() {
         verifyTokenUseCase(loginData.accessToken).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    if (result.data == null) {
+                        error = "an unexpected error occured"
+                        isLoadingAfterRedirect = false
+                        return@collect
+                    }
                     val newLoginData = loginData.copy(
-                        accountId = result.data!!.id,
+                        accountId = result.data.id,
                         username = result.data.username,
                         avatar = result.data.avatar,
                         displayName = result.data.displayname,
