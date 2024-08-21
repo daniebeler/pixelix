@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -72,7 +71,6 @@ import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 
-@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NewPostComposable(

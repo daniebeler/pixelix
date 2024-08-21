@@ -12,11 +12,13 @@ class GetOwnAccountUseCase(
 ) {
     operator fun invoke(): Flow<Resource<Account>> = flow {
         emit(Resource.Loading())
-        val accountId = currentLoginDataUseCase()!!.accountId
-        if (accountId.isNotBlank()) {
-            accountRepository.getAccount(accountId).collect { res ->
+        val account = currentLoginDataUseCase()
+        if (account != null) {
+            accountRepository.getAccount(account.accountId).collect { res ->
                 emit(res)
             }
+        } else {
+            emit(Resource.Error("No account found"))
         }
     }
 }
