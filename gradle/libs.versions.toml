@@ -31,7 +31,6 @@ retrofit = "2.9.0"
 runtimeLivedata = "1.6.5"
 volley = "1.2.1"
 workRuntimeKtx = "2.9.0"
-zoomable = "2.0.0-beta01"
 kotlin = "2.0.0"
 agp = "8.5.0"
 
@@ -84,7 +83,6 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
-zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

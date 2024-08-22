@@ -16,8 +16,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 34
-        versionCode = 17
-        versionName = "2.4.1"
+        versionCode = 18
+        versionName = "2.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -113,8 +113,6 @@ dependencies {
     implementation(libs.coil.video)
 
     implementation(libs.android.image.cropper)
-
-    implementation(libs.zoomable)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
