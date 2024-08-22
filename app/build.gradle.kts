@@ -114,8 +114,6 @@ dependencies {
 
     implementation(libs.android.image.cropper)
 
-    implementation(libs.zoomable)
-
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // LiveData
