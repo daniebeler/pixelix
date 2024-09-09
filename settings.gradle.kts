@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pixels"
+rootProject.name = "Pixelix"
 include(":app")
  
