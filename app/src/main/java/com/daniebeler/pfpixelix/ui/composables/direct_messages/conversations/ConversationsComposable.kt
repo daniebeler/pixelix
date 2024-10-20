@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -173,10 +174,10 @@ fun ConversationsComposable(
         }
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+            ModalBottomSheet(onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState
+                }, sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Box(
                     modifier = Modifier

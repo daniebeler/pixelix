@@ -62,7 +62,7 @@ class PreferencesViewModel @Inject constructor(
 
     fun getVersionName(context: Context) {
         try {
-            versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+            versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }

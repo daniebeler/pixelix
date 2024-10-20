@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -114,10 +115,10 @@ fun CollectionComposable(
 
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+            ModalBottomSheet(onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState
+                }, sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)

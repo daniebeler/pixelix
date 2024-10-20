@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -261,7 +262,7 @@ fun PostComposable(
 
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1, modifier = Modifier.zIndex(50f)) { page ->
+                    HorizontalPager(state = pagerState, modifier = Modifier.zIndex(50f)) { page ->
                         Box(modifier = Modifier.zIndex(10f)) {
                             PostImage(
                                 mediaAttachment = viewModel.post!!.mediaAttachments[page],
@@ -446,10 +447,10 @@ fun PostComposable(
     }
 
     if (showBottomSheet > 0) {
-        ModalBottomSheet(
-            windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+        ModalBottomSheet(onDismissRequest = {
                 showBottomSheet = 0
-            }, sheetState = sheetState
+            }, sheetState = sheetState,
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
         ) {
             if (showBottomSheet == 1) {
                 CommentsBottomSheet(post, navController, viewModel)
@@ -649,7 +650,7 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(
     uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
 ) {
@@ -679,12 +680,12 @@ private fun VideoPlayer(
         MediaItem.fromUri(uri)
     }
 
-    LifecycleResumeEffect {
-        //exoPlayer.play()
-        onPauseOrDispose {
-            exoPlayer.pause()
-        }
-    }
+//    LifecycleResumeEffect {
+//        //exoPlayer.play()
+//        onPauseOrDispose {
+//            exoPlayer.pause()
+//        }
+//    }
 
 
     LaunchedEffect(Unit) {
