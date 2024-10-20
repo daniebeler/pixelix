@@ -32,7 +32,7 @@ runtimeLivedata = "1.6.5"
 volley = "1.2.1"
 workRuntimeKtx = "2.9.0"
 kotlin = "2.0.0"
-agp = "8.5.0"
+agp = "8.7.0"
 
 [libraries]
 
