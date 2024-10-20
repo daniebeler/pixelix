@@ -193,9 +193,7 @@ fun gotoLoginActivity(context: Context) {
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController,
-        startDestination = Destinations.HomeScreen.route,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None }) {
+        startDestination = Destinations.HomeScreen.route) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
         }
