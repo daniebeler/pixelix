@@ -13,7 +13,7 @@ data class ChatDto(
     val timeAgo: String,
     val url: String,
     val username: String
-): DtoInterface<Chat> {
+) : DtoInterface<Chat> {
     override fun toModel(): Chat {
         return Chat(
             avatar = avatar,

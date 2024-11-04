@@ -556,8 +556,8 @@ fun PostImage(
                 })
             }) {
             if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(5) != ".webp") {
-                ImageWrapper(mediaAttachment,
-                    { zoomState.setContentSize(it.painter.intrinsicSize) })
+                ImageWrapper(mediaAttachment
+                ) { zoomState.setContentSize(it.painter.intrinsicSize) }
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
                 GifPlayer(mediaAttachment)
             } else {
