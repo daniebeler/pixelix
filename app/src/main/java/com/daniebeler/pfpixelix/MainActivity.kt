@@ -193,7 +193,9 @@ fun gotoLoginActivity(context: Context) {
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController,
-        startDestination = Destinations.HomeScreen.route) {
+        startDestination = Destinations.HomeScreen.route,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
         }
@@ -210,7 +212,7 @@ fun NavigationGraph(navController: NavHostController) {
             val uId = navBackStackEntry.arguments?.getString("userid")
 
             uId?.let { id ->
-                    OtherProfileComposable(navController, userId = id, byUsername = null)
+                OtherProfileComposable(navController, userId = id, byUsername = null)
 
             }
         }
@@ -293,7 +295,8 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable("${Destinations.SinglePost.route}?refresh={refresh}",
+        composable(
+            "${Destinations.SinglePost.route}?refresh={refresh}",
             arguments = listOf(navArgument("refresh") {
                 defaultValue = false
             })
