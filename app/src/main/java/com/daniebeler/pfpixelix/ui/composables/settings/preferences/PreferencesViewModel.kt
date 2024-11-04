@@ -9,11 +9,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.StoreHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +26,8 @@ import javax.inject.Inject
 class PreferencesViewModel @Inject constructor(
     private val storeHideSensitiveContentUseCase: StoreHideSensitiveContentUseCase,
     private val getHideSensitiveContentUseCase: GetHideSensitiveContentUseCase,
+    private val storeHideAltTextButtonUseCase: StoreHideAltTextButtonUseCase,
+    private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
     private val getUseInAppBrowserUseCase: GetUseInAppBrowserUseCase,
     private val storeUseInAppBrowserUseCase: StoreUseInAppBrowserUseCase,
     private val logoutUseCase: LogoutUseCase,
@@ -33,6 +37,7 @@ class PreferencesViewModel @Inject constructor(
 ) : ViewModel() {
 
     var isSensitiveContentHidden by mutableStateOf(true)
+    var isAltTextButtonHidden by mutableStateOf(false)
     var isUsingInAppBrowser by mutableStateOf(true)
     var appIcon by mutableStateOf<ImageBitmap?>(null)
 
@@ -48,21 +53,26 @@ class PreferencesViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            getHideAltTextButtonUseCase().collect { res ->
+                isAltTextButtonHidden = res
+            }
+        }
+
+        viewModelScope.launch {
             getUseInAppBrowserUseCase().collect { res ->
                 isUsingInAppBrowser = res
             }
         }
-
-
     }
 
-    fun getAppIcon(context: Context){
+    fun getAppIcon(context: Context) {
         appIcon = getActiveAppIconUseCase(context)
     }
 
     fun getVersionName(context: Context) {
         try {
-            versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+            versionName =
+                context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -78,6 +88,13 @@ class PreferencesViewModel @Inject constructor(
         isSensitiveContentHidden = value
         viewModelScope.launch {
             storeHideSensitiveContentUseCase(value)
+        }
+    }
+
+    fun storeHideAltTextButton(value: Boolean) {
+        isAltTextButtonHidden = value
+        viewModelScope.launch {
+            storeHideAltTextButtonUseCase(value)
         }
     }
 

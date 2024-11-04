@@ -9,6 +9,7 @@ import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBlockedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBookmarkedPostsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
@@ -17,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.StoreHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
@@ -39,6 +41,16 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideGetHideSensitiveContentUseCase(repository: StorageRepository): GetHideSensitiveContentUseCase =
         GetHideSensitiveContentUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideStoreHideAltTextButtonUseCase(repository: StorageRepository): StoreHideAltTextButtonUseCase =
+        StoreHideAltTextButtonUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetHideAltTextButtonUseCase(repository: StorageRepository): GetHideAltTextButtonUseCase =
+        GetHideAltTextButtonUseCase(repository)
 
     @Provides
     @Singleton
@@ -98,6 +110,5 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetAppIconUseCase(): GetActiveAppIconUseCase =
-        GetActiveAppIconUseCase()
+    fun provideGetAppIconUseCase(): GetActiveAppIconUseCase = GetActiveAppIconUseCase()
 }

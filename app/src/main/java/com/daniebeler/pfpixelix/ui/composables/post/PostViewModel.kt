@@ -23,6 +23,7 @@ import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
@@ -64,6 +65,7 @@ class PostViewModel @Inject constructor(
     private val deletePostUseCase: DeletePostUseCase,
     private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
     private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
+    private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val setVolumeUseCase: SetVolumeUseCase
@@ -85,11 +87,19 @@ class PostViewModel @Inject constructor(
 
     var myAccountId: String? = null
 
+    var isAltTextButtonHidden by mutableStateOf(false)
+
     var volume by mutableStateOf(false)
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
             myAccountId = currentLoginDataUseCase()!!.accountId
+        }
+
+        viewModelScope.launch {
+            getHideAltTextButtonUseCase().collect { res ->
+                isAltTextButtonHidden = res
+            }
         }
     }
 

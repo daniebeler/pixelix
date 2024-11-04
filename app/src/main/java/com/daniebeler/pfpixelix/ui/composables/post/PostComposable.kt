@@ -447,18 +447,36 @@ fun PostComposable(
     }
 
     if (showBottomSheet > 0) {
-        ModalBottomSheet(onDismissRequest = {
+        ModalBottomSheet(
+            onDismissRequest = {
                 showBottomSheet = 0
-            }, sheetState = sheetState,
+            },
+            sheetState = sheetState,
             modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
         ) {
             if (showBottomSheet == 1) {
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(context, post.url, true, viewModel, post, pagerState.currentPage, navController)
+                    ShareBottomSheet(
+                        context,
+                        post.url,
+                        true,
+                        viewModel,
+                        post,
+                        pagerState.currentPage,
+                        navController
+                    )
                 } else {
-                    ShareBottomSheet(context, post.url, false, viewModel, post, pagerState.currentPage, navController)
+                    ShareBottomSheet(
+                        context,
+                        post.url,
+                        false,
+                        viewModel,
+                        post,
+                        pagerState.currentPage,
+                        navController
+                    )
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
@@ -495,7 +513,10 @@ fun PostComposable(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
-    mediaAttachment: MediaAttachment, postId: String, setZindex: (zIndex: Float) -> Unit, viewModel: PostViewModel
+    mediaAttachment: MediaAttachment,
+    postId: String,
+    setZindex: (zIndex: Float) -> Unit,
+    viewModel: PostViewModel
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -555,8 +576,12 @@ fun PostImage(
                     }
                 })
             }) {
-            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(5) != ".webp") {
-                ImageWrapper(mediaAttachment
+            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(
+                    5
+                ) != ".webp"
+            ) {
+                ImageWrapper(
+                    mediaAttachment
                 ) { zoomState.setContentSize(it.painter.intrinsicSize) }
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
                 GifPlayer(mediaAttachment)
@@ -569,14 +594,16 @@ fun PostImage(
             }
         }
 
-        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value) {
+        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value && !viewModel.isAltTextButtonHidden) {
             IconButton(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .zIndex(3f)
-                    .padding(8.dp), onClick = {
+                    .padding(8.dp),
+                onClick = {
                     altText = mediaAttachment.description
-                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+                },
+                colors = IconButtonDefaults.filledTonalIconButtonColors()
             ) {
                 Icon(
                     Icons.Outlined.Description,
@@ -638,12 +665,14 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
         model = mediaAttachment.url,
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
-        modifier = if (mediaAttachment.meta?.original != null) {Modifier
-            .fillMaxWidth()
-            .aspectRatio(
-                mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
-            )} else {
-                Modifier.fillMaxWidth()
+        modifier = if (mediaAttachment.meta?.original != null) {
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(
+                    mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
+                )
+        } else {
+            Modifier.fillMaxWidth()
         }
     )
 }

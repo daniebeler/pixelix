@@ -113,6 +113,12 @@ fun PreferencesComposable(
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
             SwitchRowItem(
+                Icons.Outlined.NoAdultContent,
+                stringResource(R.string.hide_alt_text_button),
+                viewModel.isAltTextButtonHidden
+            ) { checked -> viewModel.storeHideAltTextButton(checked) }
+
+            SwitchRowItem(
                 Icons.Outlined.OpenInBrowser,
                 stringResource(R.string.use_in_app_browser),
                 viewModel.isUsingInAppBrowser

@@ -198,4 +198,5 @@
     <string name="sure_update_post">Bist du dir sicher, dass du den Post updaten willst?</string>
     <string name="mutual_followers">Gemeinsame Follower</string>
     <string name="license">Lizenz: %1$s</string>
+    <string name="hide_alt_text_button">Hide Alt-text button</string>
 </resources>

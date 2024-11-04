@@ -16,8 +16,6 @@ class StorageRepositoryImpl @Inject constructor(
     private val storage: DataStore<Preferences>
 ) : StorageRepository {
 
-    private var hideSensitiveContent = false
-
     override fun getHideSensitiveContent(): Flow<Boolean> = storage.data.map { preferences ->
         preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] ?: true
     }
@@ -27,7 +25,16 @@ class StorageRepositoryImpl @Inject constructor(
             preferences[booleanPreferencesKey(Constants.SHOW_SENSITIVE_CONTENT_DATASTORE_KEY)] =
                 hideSensitiveContent
         }
-        this.hideSensitiveContent = hideSensitiveContent
+    }
+
+    override fun getHideAltTextButton(): Flow<Boolean> = storage.data.map { preferences ->
+        preferences[booleanPreferencesKey(Constants.SHOW_ALT_TEXT_BUTTON)] ?: false
+    }
+
+    override suspend fun storeHideAltTextButton(hideAltTextButton: Boolean) {
+        storage.edit { preferences ->
+            preferences[booleanPreferencesKey(Constants.SHOW_ALT_TEXT_BUTTON)] = hideAltTextButton
+        }
     }
 
     override fun getUseInAppBrowser(): Flow<Boolean> = storage.data.map { preferences ->
@@ -47,7 +54,8 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStoreVolume(): Flow<Boolean> = storage.data.map { preferences ->65
+    override fun getStoreVolume(): Flow<Boolean> = storage.data.map { preferences ->
+        65
 
         preferences[booleanPreferencesKey(Constants.VOLUME_DATASTORE_KEY)] ?: true
     }
@@ -68,10 +76,11 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStoredView(): Flow<ViewEnum> =
-        storage.data.map { preferences ->
-            ViewEnum.valueOf(preferences[stringPreferencesKey(Constants.VIEW_DATASTORE_KEY)] ?: "Grid")
-        }
+    override fun getStoredView(): Flow<ViewEnum> = storage.data.map { preferences ->
+        ViewEnum.valueOf(
+            preferences[stringPreferencesKey(Constants.VIEW_DATASTORE_KEY)] ?: "Grid"
+        )
+    }
 
     override suspend fun storeClientSecret(clientSecret: String) {
         storage.edit { preferences ->
