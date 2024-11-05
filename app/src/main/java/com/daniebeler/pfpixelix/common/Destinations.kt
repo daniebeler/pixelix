@@ -51,75 +51,93 @@ sealed class Destinations(
     )
 
     data object Profile : Destinations(
-        route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite
+        route = "profile_screen/{userid}", icon = Icons.Outlined.Favorite,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object ProfileByUsername : Destinations(
-        route = "profile_screen/byUsername/{username}", icon = Icons.Outlined.Favorite
+        route = "profile_screen/byUsername/{username}", icon = Icons.Outlined.Favorite,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object EditProfile : Destinations(
-        route = "edit_profile_screen", icon = Icons.Outlined.Settings
+        route = "edit_profile_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Preferences : Destinations(
-        route = "preferences_screen", icon = Icons.Outlined.Settings
+        route = "preferences_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object IconSelection : Destinations(
-        route = "icon_selection_screen", icon = Icons.Outlined.Settings
+        route = "icon_selection_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object MutedAccounts : Destinations(
-        route = "muted_accounts_screen", icon = Icons.Outlined.Settings
+        route = "muted_accounts_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object BlockedAccounts : Destinations(
-        route = "blocked_accounts_screen", icon = Icons.Outlined.Settings
+        route = "blocked_accounts_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object LikedPosts : Destinations(
-        route = "liked_posts_screen", icon = Icons.Outlined.Settings
+        route = "liked_posts_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object BookmarkedPosts : Destinations(
-        route = "bookmarked_posts_screen", icon = Icons.Outlined.Settings
+        route = "bookmarked_posts_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object FollowedHashtags : Destinations(
-        route = "followed_hashtags_screen", icon = Icons.Outlined.Settings
+        route = "followed_hashtags_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object AboutInstance : Destinations(
-        route = "about_instance_screen", icon = Icons.Outlined.Settings
+        route = "about_instance_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object AboutPixelix : Destinations(
-        route = "about_pixelix_screen", icon = Icons.Outlined.Settings
+        route = "about_pixelix_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object NewPost : Destinations(
-        route = "new_post_screen", icon = Icons.Outlined.Settings
+        route = "new_post_screen", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object EditPost : Destinations(
-        route = "edit_post_screen/{postId}", icon = Icons.Outlined.Settings
+        route = "edit_post_screen/{postId}", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Hashtag : Destinations(
-        route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings
+        route = "hashtag_timeline_screen/{hashtag}", icon = Icons.Outlined.Settings,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object SinglePost : Destinations(
-        route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite
+        route = "single_post_screen/{postid}", icon = Icons.Outlined.Favorite,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Collection : Destinations(
-        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite
+        route = "collection_screen/{collectionid}", icon = Icons.Outlined.Favorite,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Followers : Destinations(
-        route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite
+        route = "followers_screen/{page}/{userid}", icon = Icons.Outlined.Favorite,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Search : Destinations(
@@ -130,10 +148,12 @@ sealed class Destinations(
     )
 
     data object Conversation : Destinations(
-        route = "conversations", icon = Icons.Outlined.Home
+        route = "conversations", icon = Icons.Outlined.Home,
+        activeIcon = Icons.Filled.AccountCircle
     )
 
     data object Chat : Destinations(
-        route = "chat/{userid}", icon = Icons.Outlined.Home
+        route = "chat/{userid}", icon = Icons.Outlined.Home,
+        activeIcon = Icons.Filled.AccountCircle
     )
 }

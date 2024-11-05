@@ -267,20 +267,42 @@ fun PostComposable(
 
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    HorizontalPager(state = pagerState, modifier = Modifier.zIndex(50f)) { page ->
+                    Box(
+
+                    ) {
+                        HorizontalPager(
+                            state = pagerState, modifier = Modifier.zIndex(50f)
+                        ) { page ->
+                            Box(
+                                modifier = Modifier
+                                    .zIndex(10f)
+                                    .padding(start = 12.dp, end = 12.dp)
+                            ) {
+                                PostImage(
+                                    mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                    viewModel.post!!.id,
+                                    setZindex = { setZindex(it) },
+                                    viewModel
+                                )
+                            }
+                        }
+
                         Box(
                             modifier = Modifier
-                                .zIndex(10f)
-                                .padding(start = 12.dp, end = 12.dp)
+                                .align(Alignment.TopEnd)
+                                .zIndex(51f)
+                                .padding(top = 16.dp, end = 28.dp)
+                                .clip(CircleShape)
+                                .background(Color(0x80000000))
+                                .padding(vertical = 3.dp, horizontal = 12.dp)
                         ) {
-                            PostImage(
-                                mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                                viewModel.post!!.id,
-                                setZindex = { setZindex(it) },
-                                viewModel
+                            Text(
+                                text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
+                                fontSize = 14.sp
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
                         Modifier
@@ -659,6 +681,8 @@ fun PostImage(
                 )
             }
         }
+
+
 
         Icon(
             imageVector = Icons.Filled.Favorite,
