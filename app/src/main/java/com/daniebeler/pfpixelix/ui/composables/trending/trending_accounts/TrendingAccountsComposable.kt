@@ -40,11 +40,7 @@ fun TrendingAccountsComposable(
                 it.id
             }) {
                 TrendingAccountElement(
-                    account = it,
-                    relationship = viewModel.accountRelationShipsState.accountRelationships.find { relationship ->
-                        relationship.id == it.id
-                    },
-                    navController = navController
+                    account = it, navController = navController
                 )
             }
         })

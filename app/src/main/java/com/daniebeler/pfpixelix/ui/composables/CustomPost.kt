@@ -28,7 +28,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController) {
+fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController, customModifier: Modifier = Modifier) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
@@ -44,7 +44,7 @@ fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavCon
             blurHashAsDrawable.bitmap.asImageBitmap(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.aspectRatio(1f)
+            modifier = customModifier.aspectRatio(1f)
         )
     }
 
@@ -66,7 +66,7 @@ fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavCon
             )
         }
     } else {
-        Box(Modifier.clickable(onClick = {
+        Box(customModifier.clickable(onClick = {
             Navigate.navigate("single_post_screen/" + post.id, navController)
         })) {
 

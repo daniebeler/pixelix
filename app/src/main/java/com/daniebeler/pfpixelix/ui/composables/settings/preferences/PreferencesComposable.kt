@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.NoAdultContent
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Palette
@@ -116,7 +117,7 @@ fun PreferencesComposable(
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
             SwitchRowItem(
-                Icons.Outlined.NoAdultContent,
+                Icons.Outlined.Description,
                 stringResource(R.string.hide_alt_text_button),
                 viewModel.isAltTextButtonHidden
             ) { checked -> viewModel.storeHideAltTextButton(checked) }

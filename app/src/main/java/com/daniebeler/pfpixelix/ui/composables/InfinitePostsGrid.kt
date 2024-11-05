@@ -2,13 +2,16 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -55,8 +58,7 @@ fun InfinitePostsGrid(
             modifier = Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefreshState)
-                .padding(12.dp)
-                .clip(RoundedCornerShape(12.dp)),
+                .padding(horizontal = 12.dp),
             state = lazyGridState,
             columns = GridCells.Fixed(3)
         ) {
@@ -67,11 +69,35 @@ fun InfinitePostsGrid(
                 }
             }
 
-            items(items, key = {
-                it.id
-            }) { photo ->
-                CustomPost(post = photo, navController = navController)
+            item (span = { GridItemSpan(3) }) {
+                Spacer(Modifier.height(12.dp))
             }
+
+            itemsIndexed(items) { index, photo ->
+
+                val baseModifier = Modifier
+
+                val customModifier = when {
+                    // Case for a single row
+                    items.size <= 3 -> {
+                        when (index) {
+                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp, topEnd = 0.dp, bottomStart = 0.dp, bottomEnd = 0.dp)) // Top-left corner
+                            1 -> baseModifier.clip(RoundedCornerShape(topStart = 0.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 0.dp)) // Top-right corner
+                            2 -> baseModifier.clip(RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomStart = 12.dp, bottomEnd = 12.dp)) // Bottom-right corner
+                            else -> baseModifier // Fallback for safety
+                        }
+                    }
+                    // Cases for multiple rows
+                    index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp)) // Top-left corner
+                    index == 2 -> baseModifier.clip(RoundedCornerShape(topEnd = 12.dp)) // Top-right corner
+                    index == items.size - 1 && items.size % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomEnd = 12.dp)) // Bottom-right corner
+                    index >= items.size - 3 && index % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp)) // Bottom-left corner
+                    else -> baseModifier
+                }
+                CustomPost(post = photo, navController = navController, customModifier = customModifier)
+            }
+
+
 
             if (endReached && items.size > 10) {
                 item(span = { GridItemSpan(3) }) {
@@ -94,6 +120,10 @@ fun InfinitePostsGrid(
                         }
                     }
                 }
+            }
+
+            item (span = { GridItemSpan(3) }) {
+                Spacer(Modifier.height(12.dp))
             }
         }
 
