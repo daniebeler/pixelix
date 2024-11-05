@@ -81,9 +81,8 @@ fun InfinitePostsGrid(
                     // Case for a single row
                     items.size <= 3 -> {
                         when (index) {
-                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp, topEnd = 0.dp, bottomStart = 0.dp, bottomEnd = 0.dp)) // Top-left corner
-                            1 -> baseModifier.clip(RoundedCornerShape(topStart = 0.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 0.dp)) // Top-right corner
-                            2 -> baseModifier.clip(RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomStart = 12.dp, bottomEnd = 12.dp)) // Bottom-right corner
+                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)) // Top-left corner
+                            2 -> baseModifier.clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)) // Bottom-right corner
                             else -> baseModifier // Fallback for safety
                         }
                     }
