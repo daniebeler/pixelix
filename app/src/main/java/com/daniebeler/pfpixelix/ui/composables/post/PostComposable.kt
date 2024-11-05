@@ -664,20 +664,22 @@ fun PostImage(
         }
 
         if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value && !viewModel.isAltTextButtonHidden) {
-            IconButton(
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .zIndex(3f)
-                    .padding(8.dp),
-                onClick = {
-                    altText = mediaAttachment.description
-                },
-                colors = IconButtonDefaults.filledTonalIconButtonColors()
+                    .padding(12.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xB0000000))
+                    .clickable {
+                        altText = mediaAttachment.description
+                    }
+                    .padding(10.dp),
             ) {
                 Icon(
                     Icons.Outlined.Description,
                     contentDescription = "Show alt text",
-                    Modifier.size(18.dp)
+                    Modifier.size(22.dp)
                 )
             }
         }
