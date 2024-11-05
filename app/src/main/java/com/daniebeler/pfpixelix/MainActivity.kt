@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -367,7 +368,7 @@ fun BottomBar(navController: NavHostController) {
             },
                 selected = currentRoute == screen.route,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White, indicatorColor = Color.Transparent
+                    selectedIconColor = MaterialTheme.colorScheme.inverseSurface, indicatorColor = Color.Transparent
                 ),
                 onClick = {
                     Navigate.navigateWithPopUp(screen.route, navController)

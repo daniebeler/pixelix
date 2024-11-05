@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.post
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +39,6 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreHoriz
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -85,7 +83,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -114,7 +111,7 @@ import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.snapBackZoomable
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostComposable(
     post: Post,
@@ -361,17 +358,22 @@ fun PostComposable(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(32.dp))
 
-                        IconButton(onClick = {
-                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
-                            showBottomSheet = 1
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ChatBubbleOutline,
-                                contentDescription = ""
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Outlined.ChatBubbleOutline,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clickable {
+                                    viewModel.loadReplies(
+                                        viewModel.post!!.account.id, viewModel.post!!.id
+                                    )
+                                    showBottomSheet = 1
+                                },
+                            contentDescription = ""
+                        )
+
+                        Spacer(Modifier.width(4.dp))
 
                         Text(
                             text = viewModel.post!!.replyCount.toString(),
@@ -379,8 +381,10 @@ fun PostComposable(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.width(8.dp))
 
+                    }
+
+                    Row {
 
                         if (viewModel.post!!.reblogged) {
                             IconButton(onClick = {
@@ -401,29 +405,27 @@ fun PostComposable(
                                 )
                             }
                         }
-                    }
 
-                    Row {
-                        Spacer(modifier = Modifier.width(40.dp))
-
-                        if (viewModel.post!!.bookmarked) {
-                            IconButton(onClick = {
-                                viewModel.unBookmarkPost(post.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                viewModel.bookmarkPost(post.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.BookmarkBorder,
-                                    contentDescription = ""
-                                )
-                            }
-                        }
+//                        Spacer(Modifier.width(14.dp))
+//
+//                        if (viewModel.post!!.bookmarked) {
+//                            IconButton(onClick = {
+//                                viewModel.unBookmarkPost(post.id)
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
+//                                )
+//                            }
+//                        } else {
+//                            IconButton(onClick = {
+//                                viewModel.bookmarkPost(post.id)
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Outlined.BookmarkBorder,
+//                                    contentDescription = ""
+//                                )
+//                            }
+//                        }
                     }
                 }
 
@@ -468,17 +470,24 @@ fun PostComposable(
                 }
 
                 if (viewModel.post!!.replyCount > 0) {
-                    TextButton(onClick = {
-                        viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
-                        showBottomSheet = 1
-                    }) {
-                        Text(
-                            text = stringResource(
-                                R.string.view_comments, viewModel.post!!.replyCount
-                            )
-                        )
-                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(text = stringResource(
+                        R.string.view_comments, viewModel.post!!.replyCount
+                    ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable {
+                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
+                            showBottomSheet = 1
+                        })
                 }
+
+                Text(
+                    text = viewModel.timeAgoString,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
