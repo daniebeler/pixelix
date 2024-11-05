@@ -33,6 +33,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -117,9 +118,9 @@ fun OtherProfileComposable(
 
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row {
-                Column {
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
                         fontWeight = FontWeight.Bold

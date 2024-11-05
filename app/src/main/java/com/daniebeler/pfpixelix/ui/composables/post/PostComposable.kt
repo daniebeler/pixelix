@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -159,7 +161,7 @@ fun PostComposable(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 16.dp, end = 12.dp)
                     .clickable(onClick = {
                         Navigate.navigate(
                             "profile_screen/" + viewModel.post!!.account.id, navController
@@ -170,16 +172,20 @@ fun PostComposable(
                     model = viewModel.post!!.account.avatar,
                     contentDescription = "",
                     modifier = Modifier
-                        .height(32.dp)
-                        .width(32.dp)
+                        .height(36.dp)
+                        .width(36.dp)
                         .clip(CircleShape)
                 )
                 Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(text = viewModel.post!!.account.displayname ?: "")
+//                    Text(
+//                        text = viewModel.post!!.account.displayname ?: "",
+//                        fontWeight = FontWeight.Bold,
+//                        lineHeight = 10.sp
+//                    )
                     Text(
-                        text = viewModel.timeAgoString + " • @" + viewModel.post!!.account.acct,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = viewModel.post!!.account.acct,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
                     )
 
                     if (viewModel.post!!.place != null) {
@@ -208,12 +214,14 @@ fun PostComposable(
                     showBottomSheet = 2
                 }) {
                     Icon(
-                        imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                        imageVector = Icons.Outlined.MoreHoriz,
+                        modifier = Modifier.size(32.dp),
+                        contentDescription = ""
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             if (viewModel.post!!.sensitive && !viewModel.showPost) {
 
@@ -263,7 +271,11 @@ fun PostComposable(
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
                     HorizontalPager(state = pagerState, modifier = Modifier.zIndex(50f)) { page ->
-                        Box(modifier = Modifier.zIndex(10f)) {
+                        Box(
+                            modifier = Modifier
+                                .zIndex(10f)
+                                .padding(start = 12.dp, end = 12.dp)
+                        ) {
                             PostImage(
                                 mediaAttachment = viewModel.post!!.mediaAttachments[page],
                                 viewModel.post!!.id,
@@ -294,7 +306,11 @@ fun PostComposable(
                         }
                     }
                 } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    Box(modifier = Modifier.zIndex(10f)) {
+                    Box(
+                        modifier = Modifier
+                            .zIndex(10f)
+                            .padding(start = 12.dp, end = 12.dp)
+                    ) {
                         PostImage(
                             mediaAttachment = viewModel.post!!.mediaAttachments[0],
                             viewModel.post!!.id,
@@ -305,34 +321,47 @@ fun PostComposable(
                 }
             }
 
-            Column(Modifier.padding(8.dp)) {
+            Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         if (viewModel.post!!.favourited) {
-                            IconButton(onClick = {
-                                viewModel.unlikePost(viewModel.post!!.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Favorite,
-                                    contentDescription = "",
-                                    tint = Color(0xFFDD2E44)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Filled.Favorite,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clickable {
+                                        viewModel.unlikePost(viewModel.post!!.id)
+                                    },
+                                contentDescription = "",
+                                tint = Color(0xFFDD2E44)
+                            )
                         } else {
-                            IconButton(onClick = {
-                                viewModel.likePost(viewModel.post!!.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.FavoriteBorder,
-                                    contentDescription = ""
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clickable {
+                                        viewModel.likePost(viewModel.post!!.id)
+                                    },
+                                contentDescription = ""
+                            )
+
                         }
+
+                        Spacer(Modifier.width(4.dp))
+
+                        Text(
+                            text = viewModel.post!!.favouritesCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(Modifier.width(8.dp))
 
                         IconButton(onClick = {
                             viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
@@ -343,6 +372,14 @@ fun PostComposable(
                                 contentDescription = ""
                             )
                         }
+
+                        Text(
+                            text = viewModel.post!!.replyCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(Modifier.width(8.dp))
 
 
                         if (viewModel.post!!.reblogged) {
@@ -533,6 +570,7 @@ fun PostImage(
         modifier = Modifier
             .fillMaxWidth()
             .zIndex(80f)
+            .clip(RoundedCornerShape(12.dp))
     ) {
 
         val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -677,7 +715,6 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(

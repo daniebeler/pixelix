@@ -24,10 +24,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.SwitchAccount
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -90,9 +93,9 @@ fun OwnProfileComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(Modifier.clickable { showBottomSheet = 2 }) {
-                Column {
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
                         fontWeight = FontWeight.Bold
@@ -101,12 +104,15 @@ fun OwnProfileComposable(
                         text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
-
-                Spacer(modifier = Modifier.width(6.dp))
+            }
+        }, navigationIcon = {
+            IconButton(onClick = {
+                showBottomSheet = 2
+            }) {
                 Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    imageVector = Icons.Outlined.SwitchAccount,
                     contentDescription = "account switch dropdown",
-                    Modifier.size(36.dp)
+                    Modifier.size(24.dp)
                 )
             }
         }, actions = {

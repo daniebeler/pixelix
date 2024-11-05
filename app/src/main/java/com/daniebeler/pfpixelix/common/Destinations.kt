@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.daniebeler.pfpixelix.R
 
@@ -16,7 +17,7 @@ sealed class Destinations(
     val route: String, val icon: ImageVector? = null, @StringRes val label: Int = R.string.home
 ) {
     object HomeScreen : Destinations(
-        route = "home_screen", icon = Icons.Outlined.Home, label = R.string.home
+        route = "home_screen", icon = Icons.Rounded.Home, label = R.string.home
     )
 
     object TrendingScreen : Destinations(
@@ -25,7 +26,7 @@ sealed class Destinations(
         label = R.string.trending
     )
 
-    object NotificationsScreen : Destinations(
+    data object NotificationsScreen : Destinations(
         route = "notifications_screen", icon = Icons.Outlined.FavoriteBorder, label = R.string.alerts
     )
 

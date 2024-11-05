@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,13 +61,15 @@ fun HomeComposable(navController: NavController) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
+        },navigationIcon = {
+            IconButton(onClick = { showBottomSheet = true }) {
+                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+            }
         }, actions = {
             Row {
-                IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
-                }
+
                 IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
                     Icon(imageVector = Icons.Outlined.Mail, contentDescription = null)
                 }
