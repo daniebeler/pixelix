@@ -2,7 +2,14 @@ package com.daniebeler.pfpixelix.common
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -14,24 +21,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.daniebeler.pfpixelix.R
 
 sealed class Destinations(
-    val route: String, val icon: ImageVector? = null, @StringRes val label: Int = R.string.home
+    val route: String, val icon: ImageVector? = null, val activeIcon: ImageVector? = null, @StringRes val label: Int = R.string.home
 ) {
     object HomeScreen : Destinations(
-        route = "home_screen", icon = Icons.Rounded.Home, label = R.string.home
+        route = "home_screen", icon = Icons.Outlined.Home, activeIcon = Icons.Filled.Home, label = R.string.home
     )
 
     object TrendingScreen : Destinations(
         route = "trending_screen/{page}",
-        icon = Icons.AutoMirrored.Outlined.TrendingUp,
+        icon = Icons.AutoMirrored.Rounded.TrendingUp, activeIcon = Icons.AutoMirrored.Rounded.TrendingUp,
         label = R.string.trending
     )
 
     data object NotificationsScreen : Destinations(
-        route = "notifications_screen", icon = Icons.Outlined.FavoriteBorder, label = R.string.alerts
+        route = "notifications_screen", icon = Icons.Outlined.FavoriteBorder, activeIcon = Icons.Filled.Favorite, label = R.string.alerts
     )
 
     object OwnProfile : Destinations(
-        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle, label = R.string.profile
+        route = "own_profile_screen", icon = Icons.Outlined.AccountCircle, activeIcon = Icons.Filled.AccountCircle, label = R.string.profile
     )
 
     object Profile : Destinations(
@@ -107,7 +114,7 @@ sealed class Destinations(
     )
 
     object Search : Destinations(
-        route = "search_screen", icon = Icons.Outlined.Search, label = R.string.search
+        route = "search_screen", icon = Icons.Outlined.Search, activeIcon = Icons.Filled.Search, label = R.string.search
     )
 
     object Conversation : Destinations(
