@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
@@ -86,10 +87,14 @@ private fun LazyListScope.PostsGridInScope(
 
     if (isFirstImageLarge && items.size >= 3 && screenWidth != null) {
         var largePostRoundedCorners = Modifier.clip(RoundedCornerShape(topStart = 16.dp))
+        var thirdPostRoundedCorners: Modifier = Modifier
         if (items.size == 3) {
-            largePostRoundedCorners = largePostRoundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-        }
+            largePostRoundedCorners =
+                largePostRoundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
+            thirdPostRoundedCorners =
+                thirdPostRoundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
 
+        }
         item {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -101,14 +106,12 @@ private fun LazyListScope.PostsGridInScope(
                         post = items.first(),
                         navController = navController,
                         isFullQuality = true,
-                        customModifier = Modifier.clip(
-                            RoundedCornerShape(topStart = 16.dp)
-                        )
+                        customModifier = largePostRoundedCorners
                     )
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     CustomPost(
                         post = items[1],
@@ -119,7 +122,11 @@ private fun LazyListScope.PostsGridInScope(
                             )
                         )
                     )
-                    CustomPost(post = items[2], navController = navController)
+                    CustomPost(
+                        post = items[2],
+                        navController = navController,
+                        customModifier = thirdPostRoundedCorners
+                    )
 
                 }
             }
@@ -127,37 +134,40 @@ private fun LazyListScope.PostsGridInScope(
 
 
         val rows = items.takeLast(items.size - 3).chunked(3)
-        items(rows) { rowItems ->
+        itemsIndexed(rows) {rowIndex, rowItems ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 2.dp, horizontal = 10.dp),
+                    .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Fill the row with 3 items (or fewer for the last row)
                 rowItems.forEachIndexed { index, post ->
-                    val isBottomLeft = rowItems == rows.last() && index == 0
-                    val isBottomRight = rowItems == rows.last() && index == 2
 
-                    val cornerShape = when {
-                        isBottomLeft -> RoundedCornerShape(bottomStart = 16.dp)
-                        isBottomRight -> RoundedCornerShape(bottomEnd = 16.dp)
-                        else -> RoundedCornerShape(0.dp)
+                    var roundedCorners: Modifier = Modifier
+                    val isBottomLeft = rowItems == rows.last() && index == 0
+                    val isBottomRight = (rowItems == rows.last() && (index == 2 || index == rowItems.size-1)) || (index == 2 && items.size - (rowIndex+2)*3 < 3)
+
+                    if (isBottomLeft) {
+                        roundedCorners =
+                            roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
                     }
+                    if (isBottomRight) {
+                        roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
+                    }
+
                     Box(
                         Modifier
                             .padding(horizontal = 2.dp)
                             .weight(1f)
-                            .clip(cornerShape)
                     ) {
 
                         CustomPost(
-                            post = post, navController = navController, customModifier = Modifier
+                            post = post, navController = navController, customModifier = roundedCorners
                         )
                     }
                 }
 
-                // Add empty Composables for spacing if the last row has fewer than 3 items
                 repeat(3 - rowItems.size) {
                     Spacer(
                         modifier = Modifier
@@ -178,30 +188,37 @@ private fun LazyListScope.PostsGridInScope(
                     .padding(vertical = 2.dp, horizontal = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Fill the row with 3 items (or fewer for the last row)
+
                 rowItems.forEachIndexed { index, post ->
 
                     val isTopLeft = rowItems == rows.first() && index == 0
-                    val isTopRight = rowItems == rows.first() && index == 2
+                    val isTopRight = rowItems == rows.first() && index == 2 || index == rowItems.size-1
                     val isBottomLeft = rowItems == rows.last() && index == 0
-                    val isBottomRight = rowItems == rows.last() && index == 2
+                    val isBottomRight = rowItems == rows.last() && index == 2 || index == rowItems.size-1
 
-                    val cornerShape = when {
-                        isTopLeft -> RoundedCornerShape(topStart = 16.dp)
-                        isTopRight -> RoundedCornerShape(topEnd = 16.dp)
-                        isBottomLeft -> RoundedCornerShape(bottomStart = 16.dp)
-                        isBottomRight -> RoundedCornerShape(bottomEnd = 16.dp)
-                        else -> RoundedCornerShape(0.dp)
+                    var roundedCorners: Modifier = Modifier
+
+                    if (isTopLeft) {
+                        roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
                     }
+                    if (isBottomLeft) {
+                        roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
+                    }
+                    if (isTopRight) {
+                        roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
+                    }
+                    if (isBottomRight) {
+                        roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
+                    }
+
                     Box(
                         Modifier
                             .padding(horizontal = 2.dp)
                             .weight(1f)
-                            .clip(cornerShape)
                     ) {
 
                         CustomPost(
-                            post = post, navController = navController, customModifier = Modifier
+                            post = post, navController = navController, customModifier = roundedCorners
                         )
                     }
                 }

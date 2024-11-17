@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +29,12 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController, customModifier: Modifier = Modifier) {
+fun CustomPost(
+    post: Post,
+    isFullQuality: Boolean = false,
+    navController: NavController,
+    customModifier: Modifier = Modifier
+) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
@@ -39,7 +45,7 @@ fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavCon
         },
     )
 
-    Box (modifier = customModifier.aspectRatio(1f)) {
+    Box(modifier = customModifier.aspectRatio(1f)) {
         if (blurHashAsDrawable.bitmap != null) {
             Image(
                 blurHashAsDrawable.bitmap.asImageBitmap(),
@@ -105,6 +111,7 @@ fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavCon
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Collections,
+                            tint = Color.White,
                             contentDescription = null,
                         )
                     }

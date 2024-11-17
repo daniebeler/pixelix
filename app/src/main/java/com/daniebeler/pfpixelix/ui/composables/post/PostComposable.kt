@@ -293,7 +293,7 @@ fun PostComposable(
                                 .zIndex(51f)
                                 .padding(top = 16.dp, end = 28.dp)
                                 .clip(CircleShape)
-                                .background(Color(0x80000000))
+                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                                 .padding(vertical = 3.dp, horizontal = 12.dp)
                         ) {
                             Text(
@@ -670,7 +670,7 @@ fun PostImage(
                     .zIndex(3f)
                     .padding(12.dp)
                     .clip(CircleShape)
-                    .background(Color(0xB0000000))
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     .clickable {
                         altText = mediaAttachment.description
                     }
