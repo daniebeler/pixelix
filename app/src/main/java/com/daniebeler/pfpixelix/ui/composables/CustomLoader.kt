@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomLoader() {
     // Create animatables for the alpha values of the squares
-    val alphas = List(12) { remember { Animatable(1f) } }
+    val alphas = List(5) { remember { Animatable(1f) } }
 
     // Launch the animation in a loop
     LaunchedEffect(Unit) {
