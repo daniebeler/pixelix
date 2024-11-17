@@ -75,25 +75,27 @@ fun InfinitePostsGrid(
 
             itemsIndexed(items) { index, photo ->
 
-                val baseModifier = Modifier
+                val isTopLeft = index == 0
+                val isTopRight = index == 2
+                val isBottomLeft = index >= items.size - 3 && index % 3 == 0
+                val isBottomRight = (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
 
-                val customModifier = when {
-                    // Case for a single row
-                    items.size <= 3 -> {
-                        when (index) {
-                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)) // Top-left corner
-                            2 -> baseModifier.clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp)) // Bottom-right corner
-                            else -> baseModifier // Fallback for safety
-                        }
-                    }
-                    // Cases for multiple rows
-                    index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 16.dp)) // Top-left corner
-                    index == 2 -> baseModifier.clip(RoundedCornerShape(topEnd = 16.dp)) // Top-right corner
-                    index == items.size - 1 && items.size % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomEnd = 16.dp)) // Bottom-right corner
-                    index >= items.size - 3 && index % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomStart = 16.dp)) // Bottom-left corner
-                    else -> baseModifier
+                var roundedCorners: Modifier = Modifier
+
+                if (isTopLeft) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
                 }
-                CustomPost(post = photo, navController = navController, customModifier = customModifier)
+                if (isBottomLeft) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
+                }
+                if (isTopRight) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
+                }
+                if (isBottomRight) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
+                }
+
+                CustomPost(post = photo, navController = navController, customModifier = roundedCorners)
             }
 
 
