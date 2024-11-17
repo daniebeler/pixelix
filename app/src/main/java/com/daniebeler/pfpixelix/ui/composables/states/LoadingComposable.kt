@@ -10,29 +10,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.ui.composables.CustomLoader
 
 @Composable
 fun LoadingComposable(isLoading: Boolean) {
 
     if (isLoading) {
-        CircularProgressIndicator(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center)
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CustomLoader()
+        }
     }
 }
 
 @Composable
 fun FullscreenLoadingComposable() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+        CustomLoader()
     }
 }
 
 @Composable
 fun FixedHeightLoadingComposable() {
     Box(modifier = Modifier.fillMaxWidth().padding(vertical = 50.dp), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+        CustomLoader()
     }
 }

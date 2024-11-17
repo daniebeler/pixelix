@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -93,7 +94,7 @@ fun EditProfileComposable(
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
+            CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
                 scrollBehavior = scrollBehavior,
                 title = {
                     Text(text = stringResource(R.string.edit_profile), fontWeight = FontWeight.Bold)

@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.QuestionMark
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,7 +70,7 @@ fun TrendingComposable(navController: NavController, page: String) {
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+            CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
                 Text(stringResource(R.string.trending), fontWeight = FontWeight.Bold)
             }, actions = {
                 if (pagerState.currentPage == 0) {
@@ -181,10 +183,10 @@ fun TrendingComposable(navController: NavController, page: String) {
         }
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+            ModalBottomSheet(onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState
+                }, sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Box(
                     modifier = Modifier

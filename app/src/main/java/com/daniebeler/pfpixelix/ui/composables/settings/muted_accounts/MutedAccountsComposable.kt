@@ -10,8 +10,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,14 +44,14 @@ fun MutedAccountsComposable(
             onRefresh = { viewModel.getMutedAccounts(true) })
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(text = stringResource(id = R.string.muted_accounts), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
                 )
             }
         })

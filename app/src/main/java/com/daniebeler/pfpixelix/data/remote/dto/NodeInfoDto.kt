@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
-import com.daniebeler.pfpixelix.domain.model.DomainSoftware
 import com.daniebeler.pfpixelix.domain.model.NodeInfo
 
 data class NodeInfoDto(

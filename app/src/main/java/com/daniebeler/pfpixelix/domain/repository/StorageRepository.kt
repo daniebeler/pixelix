@@ -6,6 +6,10 @@ import kotlinx.coroutines.flow.Flow
 interface StorageRepository {
     fun getHideSensitiveContent(): Flow<Boolean>
     suspend fun storeHideSensitiveContent(hideSensitiveContent: Boolean)
+
+    fun getHideAltTextButton(): Flow<Boolean>
+    suspend fun storeHideAltTextButton(hideAltTextButton: Boolean)
+
     fun getUseInAppBrowser(): Flow<Boolean>
     suspend fun storeUseInAppBrowser(hideSensitiveContent: Boolean)
     suspend fun storeClientSecret(clientSecret: String)

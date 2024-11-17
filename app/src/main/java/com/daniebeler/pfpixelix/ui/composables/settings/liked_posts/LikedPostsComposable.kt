@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,14 +34,14 @@ fun LikedPostsComposable(
 ) {
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(stringResource(id = R.string.liked_posts), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
                 )
             }
         })

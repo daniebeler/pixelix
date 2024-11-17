@@ -11,17 +11,19 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -212,7 +214,7 @@ fun NavigationGraph(navController: NavHostController) {
             val uId = navBackStackEntry.arguments?.getString("userid")
 
             uId?.let { id ->
-                    OtherProfileComposable(navController, userId = id, byUsername = null)
+                OtherProfileComposable(navController, userId = id, byUsername = null)
 
             }
         }
@@ -295,7 +297,8 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable("${Destinations.SinglePost.route}?refresh={refresh}",
+        composable(
+            "${Destinations.SinglePost.route}?refresh={refresh}",
             arguments = listOf(navArgument("refresh") {
                 defaultValue = false
             })
@@ -349,16 +352,27 @@ fun BottomBar(navController: NavHostController) {
         screens.forEach { screen ->
 
             NavigationBarItem(icon = {
-                Icon(imageVector = screen.icon!!, contentDescription = "")
-            }, label = {
-                Text(
-                    text = stringResource(id = screen.label),
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
-            }, selected = currentRoute == screen.route, onClick = {
-                Navigate.navigateWithPopUp(screen.route, navController)
-            })
+                if (currentRoute == screen.route) {
+                    Icon(
+                        imageVector = screen.activeIcon!!,
+                        modifier = Modifier.size(32.dp),
+                        contentDescription = ""
+                    )
+                } else {
+                    Icon(
+                        imageVector = screen.icon!!,
+                        modifier = Modifier.size(32.dp),
+                        contentDescription = ""
+                    )
+                }
+            },
+                selected = currentRoute == screen.route,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.inverseSurface, indicatorColor = Color.Transparent
+                ),
+                onClick = {
+                    Navigate.navigateWithPopUp(screen.route, navController)
+                })
         }
     }
 }

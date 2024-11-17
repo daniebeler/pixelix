@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -58,9 +62,9 @@ fun CollectionComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             if (viewModel.collectionState.collection != null) {
-                Column {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         viewModel.collectionState.collection!!.title, fontWeight = FontWeight.Bold
                     )
@@ -76,7 +80,7 @@ fun CollectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
                 )
             }
         }, actions = {
@@ -115,25 +119,25 @@ fun CollectionComposable(
 
         if (showBottomSheet) {
             ModalBottomSheet(
-                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+                onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState
+                },
+                sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    ButtonRowElement(icon = Icons.Outlined.OpenInBrowser,
-                        text = stringResource(
-                            R.string.open_in_browser
-                        ),
-                        onClick = {
-                            if (viewModel.collectionState.collection != null) {
-                                viewModel.openUrl(
-                                    context, viewModel.collectionState.collection!!.url
-                                )
-                            }
-                        })
+                    ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                        R.string.open_in_browser
+                    ), onClick = {
+                        if (viewModel.collectionState.collection != null) {
+                            viewModel.openUrl(
+                                context, viewModel.collectionState.collection!!.url
+                            )
+                        }
+                    })
 
                     ButtonRowElement(icon = Icons.Outlined.Share,
                         text = stringResource(R.string.share_this_collection),

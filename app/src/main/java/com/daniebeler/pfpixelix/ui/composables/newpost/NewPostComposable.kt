@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
@@ -101,7 +102,7 @@ fun NewPostComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
                 )
             }
         }, actions = {

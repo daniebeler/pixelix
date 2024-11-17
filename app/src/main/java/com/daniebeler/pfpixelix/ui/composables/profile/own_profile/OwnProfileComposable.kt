@@ -6,28 +6,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.SwitchAccount
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -36,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -55,7 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
+import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
@@ -75,7 +72,7 @@ fun OwnProfileComposable(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(0) }
 
-    val lazyGridState = rememberLazyGridState()
+    val lazyGridState = rememberLazyListState()
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(true) })
@@ -90,9 +87,9 @@ fun OwnProfileComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(Modifier.clickable { showBottomSheet = 2 }) {
-                Column {
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
                         fontWeight = FontWeight.Bold
@@ -101,12 +98,15 @@ fun OwnProfileComposable(
                         text = viewModel.ownDomain, fontSize = 12.sp, lineHeight = 6.sp
                     )
                 }
-
-                Spacer(modifier = Modifier.width(6.dp))
+            }
+        }, navigationIcon = {
+            IconButton(onClick = {
+                showBottomSheet = 2
+            }) {
                 Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    imageVector = Icons.Outlined.SwitchAccount,
                     contentDescription = "account switch dropdown",
-                    Modifier.size(36.dp)
+                    Modifier.size(24.dp)
                 )
             }
         }, actions = {
@@ -139,14 +139,12 @@ fun OwnProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            LazyColumn (
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.pullRefresh(pullRefreshState),
                 state = lazyGridState
             ) {
-                item(span = { GridItemSpan(3) }) {
+                item {
                     Column {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(account = viewModel.accountState.account,
@@ -198,12 +196,6 @@ fun OwnProfileComposable(
                     accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
-                    refresh = {
-                        viewModel.loadData(true)
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated()
-                    },
                     emptyState = EmptyState(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
@@ -221,7 +213,7 @@ fun OwnProfileComposable(
         }
     }
 
-    InfiniteGridHandler(lazyGridState = lazyGridState) {
+    InfiniteListHandler (lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()
     }
 

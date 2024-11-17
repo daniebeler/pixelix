@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,12 +20,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -89,7 +92,7 @@ fun ConversationsComposable(
         }
 
     }, topBar = {
-        TopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Text(stringResource(R.string.conversations), fontWeight = FontWeight.Bold)
 
         }, navigationIcon = {
@@ -97,7 +100,7 @@ fun ConversationsComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
                 )
             }
         }, actions = {
@@ -173,10 +176,10 @@ fun ConversationsComposable(
         }
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+            ModalBottomSheet(onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState
+                }, sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Box(
                     modifier = Modifier

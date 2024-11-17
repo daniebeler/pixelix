@@ -2,18 +2,24 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -51,7 +57,8 @@ fun InfinitePostsGrid(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState),
+                .pullRefresh(pullRefreshState)
+                .padding(horizontal = 12.dp),
             state = lazyGridState,
             columns = GridCells.Fixed(3)
         ) {
@@ -62,11 +69,36 @@ fun InfinitePostsGrid(
                 }
             }
 
-            items(items, key = {
-                it.id
-            }) { photo ->
-                CustomPost(post = photo, navController = navController)
+            item (span = { GridItemSpan(3) }) {
+                Spacer(Modifier.height(12.dp))
             }
+
+            itemsIndexed(items) { index, photo ->
+
+                val isTopLeft = index == 0
+                val isTopRight = index == 2
+                val isBottomLeft = index >= items.size - 3 && index % 3 == 0
+                val isBottomRight = (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
+
+                var roundedCorners: Modifier = Modifier
+
+                if (isTopLeft) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
+                }
+                if (isBottomLeft) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
+                }
+                if (isTopRight) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
+                }
+                if (isBottomRight) {
+                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
+                }
+
+                CustomPost(post = photo, navController = navController, customModifier = roundedCorners)
+            }
+
+
 
             if (endReached && items.size > 10) {
                 item(span = { GridItemSpan(3) }) {
@@ -89,6 +121,10 @@ fun InfinitePostsGrid(
                         }
                     }
                 }
+            }
+
+            item (span = { GridItemSpan(3) }) {
+                Spacer(Modifier.height(12.dp))
             }
         }
 

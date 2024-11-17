@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
-import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Message
 
 data class MessageDto(
@@ -11,10 +10,10 @@ data class MessageDto(
     val meta: Any,
     val reportId: String,
     val seen: Boolean,
-    val text: String,
+    val text: String?,
     val timeAgo: String,
     val type: String
-): DtoInterface<Message> {
+) : DtoInterface<Message> {
     override fun toModel(): Message {
         return Message(
             hidden = hidden,
@@ -22,7 +21,7 @@ data class MessageDto(
             isAuthor = isAuthor,
             reportId = reportId,
             seen = seen,
-            text = text,
+            text = text ?: "",
             timeAgo = timeAgo,
             type = type
         )

@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.UpdateAccountDto
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.utils.GetFile

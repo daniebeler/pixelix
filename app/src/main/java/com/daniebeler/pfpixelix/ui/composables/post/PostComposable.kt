@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.post
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,10 +20,12 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
@@ -37,7 +38,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,7 +83,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -111,7 +111,7 @@ import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.snapBackZoomable
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostComposable(
     post: Post,
@@ -158,7 +158,7 @@ fun PostComposable(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 16.dp, end = 12.dp)
                     .clickable(onClick = {
                         Navigate.navigate(
                             "profile_screen/" + viewModel.post!!.account.id, navController
@@ -169,16 +169,20 @@ fun PostComposable(
                     model = viewModel.post!!.account.avatar,
                     contentDescription = "",
                     modifier = Modifier
-                        .height(32.dp)
-                        .width(32.dp)
+                        .height(36.dp)
+                        .width(36.dp)
                         .clip(CircleShape)
                 )
                 Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(text = viewModel.post!!.account.displayname ?: "")
+//                    Text(
+//                        text = viewModel.post!!.account.displayname ?: "",
+//                        fontWeight = FontWeight.Bold,
+//                        lineHeight = 10.sp
+//                    )
                     Text(
-                        text = viewModel.timeAgoString + " • @" + viewModel.post!!.account.acct,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = viewModel.post!!.account.acct,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
                     )
 
                     if (viewModel.post!!.place != null) {
@@ -207,12 +211,14 @@ fun PostComposable(
                     showBottomSheet = 2
                 }) {
                     Icon(
-                        imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                        imageVector = Icons.Outlined.MoreHoriz,
+                        modifier = Modifier.size(32.dp),
+                        contentDescription = ""
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             if (viewModel.post!!.sensitive && !viewModel.showPost) {
 
@@ -261,16 +267,42 @@ fun PostComposable(
 
             } else {
                 if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    HorizontalPager(state = pagerState, beyondBoundsPageCount = 1, modifier = Modifier.zIndex(50f)) { page ->
-                        Box(modifier = Modifier.zIndex(10f)) {
-                            PostImage(
-                                mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                                viewModel.post!!.id,
-                                setZindex = { setZindex(it) },
-                                viewModel
+                    Box(
+
+                    ) {
+                        HorizontalPager(
+                            state = pagerState, modifier = Modifier.zIndex(50f)
+                        ) { page ->
+                            Box(
+                                modifier = Modifier
+                                    .zIndex(10f)
+                                    .padding(start = 12.dp, end = 12.dp)
+                            ) {
+                                PostImage(
+                                    mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                    viewModel.post!!.id,
+                                    setZindex = { setZindex(it) },
+                                    viewModel
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .zIndex(51f)
+                                .padding(top = 16.dp, end = 28.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                                .padding(vertical = 3.dp, horizontal = 12.dp)
+                        ) {
+                            Text(
+                                text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
+                                fontSize = 14.sp
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
                         Modifier
@@ -293,7 +325,11 @@ fun PostComposable(
                         }
                     }
                 } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    Box(modifier = Modifier.zIndex(10f)) {
+                    Box(
+                        modifier = Modifier
+                            .zIndex(10f)
+                            .padding(start = 12.dp, end = 12.dp)
+                    ) {
                         PostImage(
                             mediaAttachment = viewModel.post!!.mediaAttachments[0],
                             viewModel.post!!.id,
@@ -304,45 +340,73 @@ fun PostComposable(
                 }
             }
 
-            Column(Modifier.padding(8.dp)) {
+            Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         if (viewModel.post!!.favourited) {
-                            IconButton(onClick = {
-                                viewModel.unlikePost(viewModel.post!!.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Favorite,
-                                    contentDescription = "",
-                                    tint = Color(0xFFDD2E44)
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                viewModel.likePost(viewModel.post!!.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.FavoriteBorder,
-                                    contentDescription = ""
-                                )
-                            }
-                        }
-
-                        IconButton(onClick = {
-                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
-                            showBottomSheet = 1
-                        }) {
                             Icon(
-                                imageVector = Icons.Outlined.ChatBubbleOutline,
+                                imageVector = Icons.Filled.Favorite,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clickable {
+                                        viewModel.unlikePost(viewModel.post!!.id)
+                                    },
+                                contentDescription = "",
+                                tint = Color(0xFFDD2E44)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.FavoriteBorder,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clickable {
+                                        viewModel.likePost(viewModel.post!!.id)
+                                    },
                                 contentDescription = ""
                             )
+
                         }
 
+                        Spacer(Modifier.width(4.dp))
+
+                        Text(
+                            text = viewModel.post!!.favouritesCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(Modifier.width(32.dp))
+
+                        Icon(
+                            imageVector = Icons.Outlined.ChatBubbleOutline,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clickable {
+                                    viewModel.loadReplies(
+                                        viewModel.post!!.account.id, viewModel.post!!.id
+                                    )
+                                    showBottomSheet = 1
+                                },
+                            contentDescription = ""
+                        )
+
+                        Spacer(Modifier.width(4.dp))
+
+                        Text(
+                            text = viewModel.post!!.replyCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+
+                    }
+
+                    Row {
 
                         if (viewModel.post!!.reblogged) {
                             IconButton(onClick = {
@@ -363,29 +427,27 @@ fun PostComposable(
                                 )
                             }
                         }
-                    }
 
-                    Row {
-                        Spacer(modifier = Modifier.width(40.dp))
-
-                        if (viewModel.post!!.bookmarked) {
-                            IconButton(onClick = {
-                                viewModel.unBookmarkPost(post.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                viewModel.bookmarkPost(post.id)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.BookmarkBorder,
-                                    contentDescription = ""
-                                )
-                            }
-                        }
+//                        Spacer(Modifier.width(14.dp))
+//
+//                        if (viewModel.post!!.bookmarked) {
+//                            IconButton(onClick = {
+//                                viewModel.unBookmarkPost(post.id)
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
+//                                )
+//                            }
+//                        } else {
+//                            IconButton(onClick = {
+//                                viewModel.bookmarkPost(post.id)
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Outlined.BookmarkBorder,
+//                                    contentDescription = ""
+//                                )
+//                            }
+//                        }
                     }
                 }
 
@@ -430,34 +492,59 @@ fun PostComposable(
                 }
 
                 if (viewModel.post!!.replyCount > 0) {
-                    TextButton(onClick = {
-                        viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
-                        showBottomSheet = 1
-                    }) {
-                        Text(
-                            text = stringResource(
-                                R.string.view_comments, viewModel.post!!.replyCount
-                            )
-                        )
-                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(text = stringResource(
+                        R.string.view_comments, viewModel.post!!.replyCount
+                    ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable {
+                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
+                            showBottomSheet = 1
+                        })
                 }
+
+                Text(
+                    text = viewModel.timeAgoString,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
 
     if (showBottomSheet > 0) {
         ModalBottomSheet(
-            windowInsets = WindowInsets.navigationBars, onDismissRequest = {
+            onDismissRequest = {
                 showBottomSheet = 0
-            }, sheetState = sheetState
+            },
+            sheetState = sheetState,
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
         ) {
             if (showBottomSheet == 1) {
                 CommentsBottomSheet(post, navController, viewModel)
             } else if (showBottomSheet == 2) {
                 if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(context, post.url, true, viewModel, post, pagerState.currentPage, navController)
+                    ShareBottomSheet(
+                        context,
+                        post.url,
+                        true,
+                        viewModel,
+                        post,
+                        pagerState.currentPage,
+                        navController
+                    )
                 } else {
-                    ShareBottomSheet(context, post.url, false, viewModel, post, pagerState.currentPage, navController)
+                    ShareBottomSheet(
+                        context,
+                        post.url,
+                        false,
+                        viewModel,
+                        post,
+                        pagerState.currentPage,
+                        navController
+                    )
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
@@ -494,7 +581,10 @@ fun PostComposable(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun PostImage(
-    mediaAttachment: MediaAttachment, postId: String, setZindex: (zIndex: Float) -> Unit, viewModel: PostViewModel
+    mediaAttachment: MediaAttachment,
+    postId: String,
+    setZindex: (zIndex: Float) -> Unit,
+    viewModel: PostViewModel
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -511,6 +601,7 @@ fun PostImage(
         modifier = Modifier
             .fillMaxWidth()
             .zIndex(80f)
+            .clip(RoundedCornerShape(16.dp))
     ) {
 
         val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -554,9 +645,13 @@ fun PostImage(
                     }
                 })
             }) {
-            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(5) != ".webp") {
-                ImageWrapper(mediaAttachment,
-                    { zoomState.setContentSize(it.painter.intrinsicSize) })
+            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(
+                    5
+                ) != ".webp"
+            ) {
+                ImageWrapper(
+                    mediaAttachment
+                ) { zoomState.setContentSize(it.painter.intrinsicSize) }
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
                 GifPlayer(mediaAttachment)
             } else {
@@ -568,22 +663,28 @@ fun PostImage(
             }
         }
 
-        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value) {
-            IconButton(
+        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value && !viewModel.isAltTextButtonHidden) {
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .zIndex(3f)
-                    .padding(8.dp), onClick = {
-                    altText = mediaAttachment.description
-                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+                    .padding(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .clickable {
+                        altText = mediaAttachment.description
+                    }
+                    .padding(10.dp),
             ) {
                 Icon(
                     Icons.Outlined.Description,
                     contentDescription = "Show alt text",
-                    Modifier.size(18.dp)
+                    Modifier.size(22.dp)
                 )
             }
         }
+
+
 
         Icon(
             imageVector = Icons.Filled.Favorite,
@@ -637,19 +738,20 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
         model = mediaAttachment.url,
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
-        modifier = if (mediaAttachment.meta?.original != null) {Modifier
-            .fillMaxWidth()
-            .aspectRatio(
-                mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
-            )} else {
-                Modifier.fillMaxWidth()
+        modifier = if (mediaAttachment.meta?.original != null) {
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(
+                    mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
+                )
+        } else {
+            Modifier.fillMaxWidth()
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(
     uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
 ) {
@@ -679,12 +781,12 @@ private fun VideoPlayer(
         MediaItem.fromUri(uri)
     }
 
-    LifecycleResumeEffect {
-        //exoPlayer.play()
-        onPauseOrDispose {
-            exoPlayer.pause()
-        }
-    }
+//    LifecycleResumeEffect {
+//        //exoPlayer.play()
+//        onPauseOrDispose {
+//            exoPlayer.pause()
+//        }
+//    }
 
 
     LaunchedEffect(Unit) {

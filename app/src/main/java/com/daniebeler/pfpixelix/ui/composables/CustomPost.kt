@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +29,12 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavController) {
+fun CustomPost(
+    post: Post,
+    isFullQuality: Boolean = false,
+    navController: NavController,
+    customModifier: Modifier = Modifier
+) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
         LocalContext.current.resources,
@@ -39,75 +45,80 @@ fun CustomPost(post: Post, isFullQuality: Boolean = false, navController: NavCon
         },
     )
 
-    if (blurHashAsDrawable.bitmap != null) {
-        Image(
-            blurHashAsDrawable.bitmap.asImageBitmap(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.aspectRatio(1f)
-        )
-    }
-
-    if (post.sensitive) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .clickable(onClick = {
-                    Navigate.navigate("single_post_screen/" + post.id, navController)
-                }),
-        ) {
-
-
-            Icon(
-                imageVector = Icons.Outlined.VisibilityOff,
+    Box(modifier = customModifier.aspectRatio(1f)) {
+        if (blurHashAsDrawable.bitmap != null) {
+            Image(
+                blurHashAsDrawable.bitmap.asImageBitmap(),
                 contentDescription = null,
-                Modifier.size(50.dp)
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.aspectRatio(1f)
             )
         }
-    } else {
-        Box(Modifier.clickable(onClick = {
-            Navigate.navigate("single_post_screen/" + post.id, navController)
-        })) {
 
-            if (post.mediaAttachments.isNotEmpty()) {
-                if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
-                    GlideImage(
-                        model = post.mediaAttachments[0].url,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(
-                                1f
-                            )
-                    )
-                } else {
-                    AsyncImage(
-                        model = if (isFullQuality) {
-                            post.mediaAttachments[0].url
-                        } else {
-                            post.mediaAttachments[0].previewUrl
-                        },
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier.aspectRatio(1f)
-                    )
-                }
+        if (post.sensitive) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clickable(onClick = {
+                        Navigate.navigate("single_post_screen/" + post.id, navController)
+                    }),
+            ) {
+
+
+                Icon(
+                    imageVector = Icons.Outlined.VisibilityOff,
+                    contentDescription = null,
+                    Modifier.size(50.dp)
+                )
             }
+        } else {
+            Box(customModifier.clickable(onClick = {
+                Navigate.navigate("single_post_screen/" + post.id, navController)
+            })) {
 
-            if (post.mediaAttachments.size > 1) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Collections,
-                        contentDescription = null,
-                    )
+                if (post.mediaAttachments.isNotEmpty()) {
+                    if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
+                        GlideImage(
+                            model = post.mediaAttachments[0].url,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(
+                                    1f
+                                )
+                        )
+                    } else {
+                        AsyncImage(
+                            model = if (isFullQuality) {
+                                post.mediaAttachments[0].url
+                            } else {
+                                post.mediaAttachments[0].previewUrl
+                            },
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            modifier = Modifier.aspectRatio(1f)
+                        )
+                    }
+                }
+
+                if (post.mediaAttachments.size > 1) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Collections,
+                            tint = Color.White,
+                            contentDescription = null,
+                        )
+                    }
                 }
             }
         }
     }
+
+
 }
