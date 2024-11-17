@@ -601,7 +601,7 @@ fun PostImage(
         modifier = Modifier
             .fillMaxWidth()
             .zIndex(80f)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
     ) {
 
         val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(

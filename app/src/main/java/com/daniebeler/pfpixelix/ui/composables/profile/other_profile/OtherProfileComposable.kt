@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -71,6 +73,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
+import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
@@ -92,7 +95,7 @@ fun OtherProfileComposable(
 
     val sheetState = rememberModalBottomSheetState()
 
-    val lazyGridState = rememberLazyGridState()
+    val lazyGridState = rememberLazyListState()
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(userId, true) })
@@ -121,7 +124,7 @@ fun OtherProfileComposable(
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row {
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
                         fontWeight = FontWeight.Bold
@@ -164,14 +167,12 @@ fun OtherProfileComposable(
                 .padding(paddingValues)
         ) {
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.pullRefresh(pullRefreshState),
                 state = lazyGridState
             ) {
-                item(span = { GridItemSpan(3) }) {
+                item {
                     Column {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(account = viewModel.accountState.account,
@@ -182,7 +183,10 @@ fun OtherProfileComposable(
                                 })
                         }
 
-                        MutualFollowersComposable(mutualFollowersState = viewModel.mutualFollowersState, navController = navController)
+                        MutualFollowersComposable(
+                            mutualFollowersState = viewModel.mutualFollowersState,
+                            navController = navController
+                        )
 
                         Row(
                             modifier = Modifier
@@ -269,25 +273,23 @@ fun OtherProfileComposable(
                     }
                 }
 
-                PostsWrapperComposable(accountState = viewModel.accountState,
+                PostsWrapperComposable(
+                    accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
-                    refresh = {
-                        viewModel.loadData(viewModel.userId, true)
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated(viewModel.userId)
-                    },
                     emptyState = EmptyState(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
                     view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) }, isFirstImageLarge = true, screenWidth = screenWidth)
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                    isFirstImageLarge = true,
+                    screenWidth = screenWidth
+                )
             }
         }
     }
 
-    InfiniteGridHandler(lazyGridState = lazyGridState) {
+    InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)
     }
 

@@ -81,16 +81,16 @@ fun InfinitePostsGrid(
                     // Case for a single row
                     items.size <= 3 -> {
                         when (index) {
-                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)) // Top-left corner
-                            2 -> baseModifier.clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)) // Bottom-right corner
+                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)) // Top-left corner
+                            2 -> baseModifier.clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp)) // Bottom-right corner
                             else -> baseModifier // Fallback for safety
                         }
                     }
                     // Cases for multiple rows
-                    index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp)) // Top-left corner
-                    index == 2 -> baseModifier.clip(RoundedCornerShape(topEnd = 12.dp)) // Top-right corner
-                    index == items.size - 1 && items.size % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomEnd = 12.dp)) // Bottom-right corner
-                    index >= items.size - 3 && index % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp)) // Bottom-left corner
+                    index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 16.dp)) // Top-left corner
+                    index == 2 -> baseModifier.clip(RoundedCornerShape(topEnd = 16.dp)) // Top-right corner
+                    index == items.size - 1 && items.size % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomEnd = 16.dp)) // Bottom-right corner
+                    index >= items.size - 3 && index % 3 == 0 -> baseModifier.clip(RoundedCornerShape(bottomStart = 16.dp)) // Bottom-left corner
                     else -> baseModifier
                 }
                 CustomPost(post = photo, navController = navController, customModifier = customModifier)

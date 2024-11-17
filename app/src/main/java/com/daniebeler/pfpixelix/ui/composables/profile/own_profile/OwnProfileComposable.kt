@@ -6,22 +6,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.SwitchAccount
@@ -38,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
-import com.daniebeler.pfpixelix.ui.composables.InfiniteGridHandler
+import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
@@ -78,7 +72,7 @@ fun OwnProfileComposable(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(0) }
 
-    val lazyGridState = rememberLazyGridState()
+    val lazyGridState = rememberLazyListState()
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(true) })
@@ -145,14 +139,12 @@ fun OwnProfileComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            LazyColumn (
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.pullRefresh(pullRefreshState),
                 state = lazyGridState
             ) {
-                item(span = { GridItemSpan(3) }) {
+                item {
                     Column {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(account = viewModel.accountState.account,
@@ -204,12 +196,6 @@ fun OwnProfileComposable(
                     accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
-                    refresh = {
-                        viewModel.loadData(true)
-                    },
-                    getPostsPaginated = {
-                        viewModel.getPostsPaginated()
-                    },
                     emptyState = EmptyState(
                         icon = Icons.Outlined.Photo, heading = "No Posts"
                     ),
@@ -227,7 +213,7 @@ fun OwnProfileComposable(
         }
     }
 
-    InfiniteGridHandler(lazyGridState = lazyGridState) {
+    InfiniteListHandler (lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()
     }
 
