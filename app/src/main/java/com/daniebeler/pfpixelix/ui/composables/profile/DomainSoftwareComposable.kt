@@ -86,66 +86,81 @@ fun DomainSoftwareComposable(domainSoftware: DomainSoftware, openUrl: (url: Stri
                     Text(text = "Visit " + domainSoftware.link)
                 }
 
-                HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
+                if (domainSoftware.postsCount != -1 || domainSoftware.totalUserCount != -1 || domainSoftware.activeUserCount != -1) {
+                    HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
-                Text(
-                    text = domainSoftware.domain,
-                    fontSize = 32.sp,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-
-
-                if (domainSoftware.nodeDescription.isNotBlank()) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(domainSoftware.nodeDescription)
-                }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row {
-                    Text("Total posts:")
-                    Spacer(Modifier.width(8.dp))
                     Text(
-                        text = String.format(
-                            Locale.GERMANY, "%,d", domainSoftware.postsCount
-                        ), fontWeight = FontWeight.Bold
+                        text = domainSoftware.domain,
+                        fontSize = 32.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    if (domainSoftware.nodeDescription.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(domainSoftware.nodeDescription)
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    if (domainSoftware.postsCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Total posts:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY, "%,d", domainSoftware.postsCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    if (domainSoftware.totalUserCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Total users:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY, "%,d", domainSoftware.totalUserCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    if (domainSoftware.activeUserCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Active users:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY, "%,d", domainSoftware.activeUserCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    TextButton (
+                        onClick = { openUrl("https://" + domainSoftware.domain) },
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(text = "Visit https://" + domainSoftware.domain)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row {
-                    Text("Total users:")
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = String.format(
-                            Locale.GERMANY, "%,d", domainSoftware.totalUserCount
-                        ), fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row {
-                    Text("Active users:")
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = String.format(
-                            Locale.GERMANY, "%,d", domainSoftware.activeUserCount
-                        ), fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-
             }
         }
     }
