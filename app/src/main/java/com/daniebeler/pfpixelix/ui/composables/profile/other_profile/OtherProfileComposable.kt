@@ -93,7 +93,7 @@ fun OtherProfileComposable(
     viewModel: OtherProfileViewModel = hiltViewModel(key = "other-profile$userId$byUsername")
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val lazyGridState = rememberLazyListState()
     val pullRefreshState =

@@ -2,10 +2,12 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,8 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,16 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.DomainSoftware
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DomainSoftwareComposable(domainSoftware: DomainSoftware, openUrl: (url: String) -> Unit) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Image(painterResource(id = domainSoftware.icon),
         contentDescription = "",
@@ -50,9 +56,15 @@ fun DomainSoftwareComposable(domainSoftware: DomainSoftware, openUrl: (url: Stri
             }, sheetState = sheetState
         ) {
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Image(
                         painterResource(id = domainSoftware.icon),
                         contentDescription = null,
@@ -63,15 +75,77 @@ fun DomainSoftwareComposable(domainSoftware: DomainSoftware, openUrl: (url: Stri
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = domainSoftware.description)
+
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(
-                    onClick = { openUrl(domainSoftware.link) }, modifier = Modifier.fillMaxWidth(),
+                TextButton (
+                    onClick = { openUrl(domainSoftware.link) },
                     shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(12.dp),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    Text(text = stringResource(R.string.more_information))
+                    Text(text = "Visit " + domainSoftware.link)
                 }
+
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = domainSoftware.domain,
+                    fontSize = 32.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+
+
+                if (domainSoftware.nodeDescription.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(domainSoftware.nodeDescription)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row {
+                    Text("Total posts:")
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = String.format(
+                            Locale.GERMANY, "%,d", domainSoftware.postsCount
+                        ), fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row {
+                    Text("Total users:")
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = String.format(
+                            Locale.GERMANY, "%,d", domainSoftware.totalUserCount
+                        ), fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row {
+                    Text("Active users:")
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = String.format(
+                            Locale.GERMANY, "%,d", domainSoftware.activeUserCount
+                        ), fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+
             }
         }
     }

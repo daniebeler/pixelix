@@ -4,6 +4,7 @@ import android.content.Context
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.DomainSoftware
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,6 +13,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
     operator fun invoke(domain: String, context: Context): Flow<Resource<DomainSoftware>> = flow {
         if (domain == "threads.net") {
             val domainSoftware = DomainSoftware(
+                domain = domain,
                 name = "Threads",
                 icon = R.drawable.threads_logo,
                 link = "https://www.threads.net",
@@ -32,7 +34,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
                             wellKnownDomains.data.links[0].let {
                                 countryRepository.getNodeInfo(it.href).collect { nodeInfo ->
                                     if (nodeInfo is Resource.Success && nodeInfo.data != null) {
-                                        val res = getData(nodeInfo.data.software, context)
+                                        val res = getData(domain, nodeInfo.data, context)
                                         if (res != null) {
                                             emit(Resource.Success(res))
                                         } else {
@@ -49,10 +51,12 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
         }
     }
 
-    private fun getData(domainSoftware: String, context: Context): DomainSoftware? {
-        return when (domainSoftware) {
+    private fun getData(domain: String, nodeInfo: NodeInfo, context: Context): DomainSoftware? {
+
+        val software: DomainSoftware = when (nodeInfo.software) {
             "pixelfed" -> {
                 DomainSoftware(
+                    domain = domain,
                     name = "Pixelfed",
                     icon = R.drawable.pixelfed_logo,
                     link = "https://pixelfed.org/",
@@ -62,6 +66,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
 
             "mastodon" -> {
                 DomainSoftware(
+                    domain = domain,
                     name = "Mastodon",
                     icon = R.drawable.mastodon_logo,
                     link = "https://joinmastodon.org/",
@@ -71,6 +76,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
 
             "peertube" -> {
                 DomainSoftware(
+                    domain = domain,
                     name = "PeerTube",
                     icon = R.drawable.peertube_logo,
                     link = "https://joinpeertube.org/",
@@ -80,6 +86,7 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
 
             "lemmy" -> {
                 DomainSoftware(
+                    domain = domain,
                     name = "Lemmy",
                     icon = R.drawable.lemmy_logo,
                     link = "https://join-lemmy.org/",
@@ -91,6 +98,13 @@ class GetDomainSoftwareUseCase(private val countryRepository: CountryRepository)
                 return null
             }
         }
+
+        software.totalUserCount = nodeInfo.usage.users.total
+        software.activeUserCount = nodeInfo.usage.users.activeMonth
+        software.postsCount = nodeInfo.usage.localPosts
+        software.nodeDescription = nodeInfo.metadata.nodeDescription
+
+        return software
     }
 }
 

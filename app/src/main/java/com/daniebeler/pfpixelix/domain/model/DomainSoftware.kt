@@ -1,12 +1,15 @@
 package com.daniebeler.pfpixelix.domain.model
-import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.graphics.vector.ImageVector
 
 data class DomainSoftware(
+    val domain: String,
     val name: String,
     @DrawableRes
     val icon: Int,
     val link: String,
-    val description: String
+    val description: String,
+    var totalUserCount: Int = -1,
+    var activeUserCount: Int = -1,
+    var postsCount: Int = -1,
+    var nodeDescription: String = ""
 )
