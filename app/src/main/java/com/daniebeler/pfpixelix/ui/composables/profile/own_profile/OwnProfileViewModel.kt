@@ -12,7 +12,7 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
+import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
@@ -36,7 +36,7 @@ class OwnProfileViewModel @Inject constructor(
     private val getOwnPostsUseCase: GetOwnPostsUseCase,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
+    private val getDomainSoftwareUseCase: GetFediServerUseCase,
     private val getViewUseCase: GetViewUseCase,
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
@@ -105,9 +105,6 @@ class OwnProfileViewModel @Inject constructor(
         getOwnAccountUseCase().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
-                    val domain = result.data?.url?.substringAfter("https://")
-                        ?.substringBefore("/") ?: ""
-                    getDomainSoftware(domain)
                     AccountState(account = result.data)
                 }
 
@@ -180,24 +177,6 @@ class OwnProfileViewModel @Inject constructor(
                     CollectionsState(
                         isLoading = true, collections = collectionsState.collections
                     )
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun getDomainSoftware(domain: String) {
-        getDomainSoftwareUseCase(domain, context).onEach { result ->
-            domainSoftwareState = when (result) {
-                is Resource.Success -> {
-                    DomainSoftwareState(domainSoftware = result.data)
-                }
-
-                is Resource.Error -> {
-                    DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    DomainSoftwareState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

@@ -1,6 +1,7 @@
-package com.daniebeler.pfpixelix.data.remote.dto
+package com.daniebeler.pfpixelix.data.remote.dto.nodeinfo
 
 
+import com.daniebeler.pfpixelix.data.remote.dto.DtoInterface
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeinfoMetadata
 import com.google.gson.annotations.SerializedName
 
