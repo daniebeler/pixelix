@@ -1,9 +1,11 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.server_stats
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
@@ -21,10 +23,7 @@ class ServerStatsViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getFediServerUseCase: GetFediServerUseCase,
     private val getFediSoftwareUseCase: GetFediSoftwareUseCase,
-    application: android.app.Application
-) : AndroidViewModel(application) {
-
-    var context = application
+) : ViewModel() {
 
     var statsState by mutableStateOf(DomainSoftwareState())
 
@@ -91,7 +90,7 @@ class ServerStatsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun openUrl(url: String) {
+    fun openUrl(url: String, context: Context) {
         openExternalUrlUseCase(context, url)
     }
 

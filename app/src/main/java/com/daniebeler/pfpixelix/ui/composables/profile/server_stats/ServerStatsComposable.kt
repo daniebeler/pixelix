@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +46,8 @@ import java.util.Locale
 fun DomainSoftwareComposable(
     domain: String, viewModel: ServerStatsViewModel = hiltViewModel(key = "serverstats$domain")
 ) {
+
+    val context = LocalContext.current
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -169,7 +172,7 @@ fun DomainSoftwareComposable(
 
                     if (viewModel.statsState.fediSoftware!!.website.isNotEmpty()) {
                         TextButton(
-                            onClick = { viewModel.openUrl(viewModel.statsState.fediSoftware!!.website) },
+                            onClick = { viewModel.openUrl(viewModel.statsState.fediSoftware!!.website, context) },
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
@@ -260,7 +263,7 @@ fun DomainSoftwareComposable(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     TextButton(
-                        onClick = { viewModel.openUrl("https://" + viewModel.statsState.fediServer!!.domain) },
+                        onClick = { viewModel.openUrl("https://" + viewModel.statsState.fediServer!!.domain, context) },
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
