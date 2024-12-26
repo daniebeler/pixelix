@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
@@ -61,9 +62,9 @@ fun NotificationsComposable(
     navController: NavController,
     viewModel: NotificationsViewModel = hiltViewModel(key = "notifications-viewmodel-key")
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewModel.notificationsState.isRefreshing,
-        onRefresh = { viewModel.refresh() })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
     val scrollState = rememberScrollState()
@@ -101,8 +102,7 @@ fun NotificationsComposable(
                     if (viewModel.filter == NotificationsFilterEnum.Followers) {
                         ActiveFilterButton(text = stringResource(id = R.string.followers))
                     } else {
-                        InactiveFilterButton(
-                            text = stringResource(id = R.string.followers),
+                        InactiveFilterButton(text = stringResource(id = R.string.followers),
                             onClick = {
                                 viewModel.changeFilter(NotificationsFilterEnum.Followers)
                             })
@@ -219,7 +219,7 @@ private fun pinWidget(context: Context) {
 
 @Composable
 private fun ActiveFilterButton(text: String) {
-    Button(onClick = { }) {
+    Button(onClick = { }, shape = RoundedCornerShape(12.dp)) {
         Text(text = text)
     }
 }
@@ -227,7 +227,9 @@ private fun ActiveFilterButton(text: String) {
 @Composable
 private fun InactiveFilterButton(text: String, onClick: () -> Unit) {
     Button(
-        onClick = { onClick() }, colors = ButtonDefaults.buttonColors(
+        onClick = { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSurface
         )

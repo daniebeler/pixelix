@@ -23,7 +23,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,21 +83,21 @@ fun EditProfileComposable(
     }
 
 
-    val singlePhotoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    val cropOptions = CropImageContractOptions(
-                        uri, CropImageOptions(
-                            fixAspectRatio = true,
-                            aspectRatioX = 1,
-                            aspectRatioY = 1,
-                            cropShape = CropImageView.CropShape.OVAL
-                        )
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                val cropOptions = CropImageContractOptions(
+                    uri, CropImageOptions(
+                        fixAspectRatio = true,
+                        aspectRatioX = 1,
+                        aspectRatioY = 1,
+                        cropShape = CropImageView.CropShape.OVAL
                     )
-                    imageCropLauncher.launch(cropOptions)
-                }
-            })
+                )
+                imageCropLauncher.launch(cropOptions)
+            }
+        })
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -110,7 +112,7 @@ fun EditProfileComposable(
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                             contentDescription = ""
                         )
                     }
@@ -127,7 +129,11 @@ fun EditProfileComposable(
                                     onClick = {},
                                     modifier = Modifier.width(120.dp),
                                     shape = RoundedCornerShape(12.dp),
-                                    enabled = false
+                                    enabled = false,
+                                    colors = ButtonDefaults.buttonColors(
+                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                    )
                                 ) {
                                     Text(text = stringResource(R.string.save))
                                 }
