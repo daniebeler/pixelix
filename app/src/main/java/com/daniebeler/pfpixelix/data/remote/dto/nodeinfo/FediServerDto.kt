@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName
 
 data class FediServerDto(
     @SerializedName("banner_url")
-    val bannerUrl: String,
+    val bannerUrl: String?,
     @SerializedName("description")
-    val description: String,
+    val description: String?,
     @SerializedName("domain")
-    val domain: String,
+    val domain: String?,
     @SerializedName("id")
     val id: Int,
     @SerializedName("open_registration")
-    val openRegistration: Boolean,
+    val openRegistration: Boolean?,
     @SerializedName("software")
-    val software: SoftwareSmallDto,
+    val software: SoftwareSmallDto?,
     @SerializedName("stats")
-    val stats: ServerStatsDto
+    val stats: ServerStatsDto?
 )

@@ -42,7 +42,6 @@ class ServerStatsViewModel @Inject constructor(
                     if (result.data?.software?.name?.isNotEmpty() == true) {
                         getFediSoftware(result.data.software.name.lowercase(Locale.ROOT))
                     }
-
                 }
 
                 is Resource.Error -> {
