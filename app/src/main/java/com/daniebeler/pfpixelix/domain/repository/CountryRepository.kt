@@ -4,14 +4,16 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.NodeInfo
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
@@ -49,5 +51,9 @@ interface CountryRepository {
     fun getWellKnownDomains(domain: String): Flow<Resource<WellKnownDomains>>
 
     fun getNodeInfo(domain: String): Flow<Resource<NodeInfo>>
+
+    fun getSoftwareFromFediDB(slug: String): Flow<Resource<FediSoftware>>
+
+    fun getServerFromFediDB(slug: String): Flow<Resource<FediServer>>
 
 }
