@@ -8,17 +8,8 @@ import kotlinx.coroutines.flow.flow
 
 class GetFediServerUseCase(private val countryRepository: CountryRepository) {
 
-    operator fun invoke(domain: String): Flow<Resource<FediServer>> = flow {
-        countryRepository.getServerFromFediDB(domain)
-            .collect { res ->
-                if (res is Resource.Error) {
-                    emit(Resource.Error(res.message!!))
-                }
-                if (res is Resource.Success) {
-
-                    emit(res)
-                }
-            }
+    operator fun invoke(domain: String): Flow<Resource<FediServer>> {
+        return countryRepository.getServerFromFediDB(domain)
     }
 }
 

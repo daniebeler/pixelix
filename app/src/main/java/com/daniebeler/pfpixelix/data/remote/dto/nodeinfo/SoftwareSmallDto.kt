@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.data.remote.dto.nodeinfo
 
 
+import android.util.Log
 import com.daniebeler.pfpixelix.data.remote.dto.DtoInterface
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.SoftwareSmall
 import com.google.gson.annotations.SerializedName
@@ -16,6 +17,7 @@ data class SoftwareSmallDto(
     val version: String
 ): DtoInterface<SoftwareSmall> {
     override fun toModel(): SoftwareSmall {
+        Log.d("SoftwareSmallDto", "Converting SoftwareSmallDto to SoftwareSmall: $this")
         return SoftwareSmall(
             id = id,
             name = name,
