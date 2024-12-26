@@ -28,11 +28,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.R
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +99,7 @@ fun DomainSoftwareComposable(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row {
-                            Text("Instances:")
+                            Text(stringResource(R.string.instances))
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = String.format(
@@ -113,7 +115,7 @@ fun DomainSoftwareComposable(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row {
-                            Text("Total posts:")
+                            Text(stringResource(R.string.total_posts))
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = String.format(
@@ -129,7 +131,7 @@ fun DomainSoftwareComposable(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row {
-                            Text("Total users:")
+                            Text(stringResource(R.string.total_users))
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = String.format(
@@ -145,7 +147,7 @@ fun DomainSoftwareComposable(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row {
-                            Text("Active users:")
+                            Text(stringResource(R.string.active_users))
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = String.format(
@@ -166,7 +168,11 @@ fun DomainSoftwareComposable(
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text(text = "Visit " + viewModel.statsState.fediSoftware!!.website)
+                            Text(
+                                text = stringResource(
+                                    R.string.visit_url, viewModel.statsState.fediSoftware!!.website
+                                )
+                            )
                         }
                     }
 
@@ -194,13 +200,19 @@ fun DomainSoftwareComposable(
                     }
 
                     Row {
-                        Text(viewModel.statsState.fediServer!!.software.name + " version " + viewModel.statsState.fediServer!!.software.version)
+                        Text(
+                            stringResource(
+                                R.string.server_version,
+                                viewModel.statsState.fediServer!!.software.name,
+                                viewModel.statsState.fediServer!!.software.version
+                            )
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row {
-                        Text("Total posts:")
+                        Text(stringResource(R.string.total_posts))
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = String.format(
@@ -214,7 +226,7 @@ fun DomainSoftwareComposable(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Row {
-                        Text("Total users:")
+                        Text(stringResource(R.string.total_users))
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = String.format(
@@ -228,7 +240,7 @@ fun DomainSoftwareComposable(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Row {
-                        Text("Active users:")
+                        Text(stringResource(R.string.active_users))
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = String.format(
@@ -247,7 +259,12 @@ fun DomainSoftwareComposable(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text(text = "Visit https://" + viewModel.statsState.fediServer!!.domain)
+                        Text(
+                            text = stringResource(
+                                R.string.visit_url,
+                                ("https://" + viewModel.statsState.fediServer!!.domain)
+                            )
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
