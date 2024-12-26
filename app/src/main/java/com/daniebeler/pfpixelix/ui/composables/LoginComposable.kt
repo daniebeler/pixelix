@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,6 +31,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -107,11 +112,14 @@ fun LoginComposable(
                         .size(150.dp)
                         .clip(CircleShape)
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 Text(
-                    text = "PIXELIX", fontSize = 38.sp, fontWeight = FontWeight.Black, color = if (isSystemInDarkTheme()) {
+                    text = "PIXELIX",
+                    fontSize = 38.sp,
+                    fontWeight = FontWeight.Black,
+                    color = if (isSystemInDarkTheme()) {
                         Color.Black
                     } else {
                         Color.White
@@ -120,7 +128,7 @@ fun LoginComposable(
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
-            
+
             Image(
                 painterResource(
                     id = if (isSystemInDarkTheme()) {
@@ -145,18 +153,35 @@ fun LoginComposable(
             } else {
                 Spacer(modifier = Modifier.weight(1f))
                 Column(Modifier.padding(12.dp)) {
+
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.server_url), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
                     Row(verticalAlignment = Alignment.Bottom) {
-                        OutlinedTextField(
+
+
+                        TextField(
                             value = viewModel.customUrl,
+                            prefix = { Text("https://") },
+                            singleLine = true,
                             onValueChange = {
                                 viewModel.customUrl = it
                                 viewModel.domainChanged()
                             },
                             modifier = Modifier.weight(1f),
-                            prefix = { Text("https://") },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.server_url)) },
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
                                 keyboardController?.hide()
@@ -166,6 +191,7 @@ fun LoginComposable(
                                 }
                             })
                         )
+
                         Spacer(Modifier.width(12.dp))
                         if (viewModel.loading) {
                             Box(
@@ -174,7 +200,7 @@ fun LoginComposable(
                                     .height(56.dp)
                                     .width(56.dp)
                                     .padding(0.dp, 0.dp)
-                                    .clip(RoundedCornerShape(12.dp))
+                                    .clip(RoundedCornerShape(16.dp))
                                     .background(MaterialTheme.colorScheme.primary)
 
                             ) {
@@ -194,16 +220,17 @@ fun LoginComposable(
                                     .height(56.dp)
                                     .width(56.dp)
                                     .padding(0.dp, 0.dp),
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 contentPadding = PaddingValues(12.dp),
                                 enabled = viewModel.isValidUrl,
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                                 )
                             ) {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                                     contentDescription = "submit",
                                     Modifier
                                         .fillMaxSize()
@@ -213,41 +240,19 @@ fun LoginComposable(
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
-                    Button(
-                        onClick = {
-                            val url = "https://pixelfed.org/servers"
-                            Navigate.openUrlInApp(context, url)
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+
+                    TextButton(onClick = {
+                        val url = "https://pixelfed.org/servers"
+                        Navigate.openUrlInApp(context, url)
+                    }) {
+                        Text(
+                            stringResource(id = R.string.i_don_t_have_an_account),
+                            textDecoration = TextDecoration.Underline,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-                        ) {
-                            Row(
-                                modifier = Modifier.align(Alignment.CenterStart)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.PersonAdd,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            Text(
-                                modifier = Modifier.align(Alignment.Center),
-                                text = stringResource(id = R.string.i_don_t_have_an_account),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                textAlign = TextAlign.Center,
-                                fontSize = 15.sp
-                            )
-                        }
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(200.dp))
