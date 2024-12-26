@@ -199,10 +199,10 @@
     <string name="mutual_followers">Gemeinsame Follower</string>
     <string name="license">Lizenz: %1$s</string>
     <string name="hide_alt_text_button">Alt-Text-Button verbergen</string>
-    <string name="instances">Instances:</string>
-    <string name="total_posts">Total posts:</string>
-    <string name="total_users">Total users:</string>
-    <string name="active_users">Active users:</string>
-    <string name="server_version">%1$s version %2$s</string>
-    <string name="visit_url">Visit %1$s</string>
+    <string name="instances">Instanzen:</string>
+    <string name="total_posts">Gesamte Posts:</string>
+    <string name="total_users">Gesamte Benutzer:</string>
+    <string name="active_users">Aktive Benutzer:</string>
+    <string name="server_version">%1$s Version %2$s</string>
+    <string name="visit_url">Besuche %1$s</string>
 </resources>
