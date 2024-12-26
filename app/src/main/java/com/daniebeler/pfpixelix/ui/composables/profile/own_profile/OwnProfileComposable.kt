@@ -54,7 +54,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
@@ -110,10 +110,10 @@ fun OwnProfileComposable(
                 )
             }
         }, actions = {
-            if (viewModel.domainSoftwareState.domainSoftware != null) {
+            if (viewModel.ownDomain.isNotEmpty()) {
                 DomainSoftwareComposable(
-                    domainSoftware = viewModel.domainSoftwareState.domainSoftware!!
-                ) { url -> viewModel.openUrl(context, url) }
+                    domain = viewModel.ownDomain
+                )
             }
 
             IconButton(onClick = {

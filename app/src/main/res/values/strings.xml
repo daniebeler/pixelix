@@ -55,7 +55,7 @@
     <string name="monthly">monthly</string>
     <string name="daily">daily</string>
     <string name="i_don_t_have_an_account">I don\'t have an account</string>
-    <string name="server_url">Server url</string>
+    <string name="server_url">Server URL</string>
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
     <string name="logout_questionmark">Logout?</string>
     <string name="view_comments">View %1$s comments</string>
@@ -199,4 +199,13 @@
     <string name="mutual_followers">Mutual followers</string>
     <string name="license">License: %1$s</string>
     <string name="hide_alt_text_button">Hide Alt-text button</string>
+    <string name="instances">Instances:</string>
+    <string name="total_posts">Total posts:</string>
+    <string name="total_users">Total users:</string>
+    <string name="active_users">Active users:</string>
+    <string name="server_version">%1$s version %2$s</string>
+    <string name="visit_url">Visit %1$s</string>
+    <string name="displayname">Displayname</string>
+    <string name="bio">Bio</string>
+    <string name="website">Website</string>
 </resources>

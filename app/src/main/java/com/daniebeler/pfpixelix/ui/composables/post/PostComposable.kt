@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -83,10 +84,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -428,26 +433,26 @@ fun PostComposable(
                             }
                         }
 
-//                        Spacer(Modifier.width(14.dp))
-//
-//                        if (viewModel.post!!.bookmarked) {
-//                            IconButton(onClick = {
-//                                viewModel.unBookmarkPost(post.id)
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
-//                                )
-//                            }
-//                        } else {
-//                            IconButton(onClick = {
-//                                viewModel.bookmarkPost(post.id)
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Outlined.BookmarkBorder,
-//                                    contentDescription = ""
-//                                )
-//                            }
-//                        }
+                        Spacer(Modifier.width(14.dp))
+
+                        if (viewModel.post!!.bookmarked) {
+                            IconButton(onClick = {
+                                viewModel.unBookmarkPost(post.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                viewModel.bookmarkPost(post.id)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BookmarkBorder,
+                                    contentDescription = ""
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -756,7 +761,31 @@ private fun VideoPlayer(
     uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
 ) {
     val context = LocalContext.current
-    val exoPlayer = ExoPlayer.Builder(context).build()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var hasAudio by remember { mutableStateOf(false) }
+
+    val exoPlayer = remember(context) {
+        ExoPlayer.Builder(context).build().apply {
+            addListener(object : Player.Listener {
+                override fun onTracksChanged(tracks: Tracks) {
+                    tracks.groups.forEach { trackGroup ->
+                        trackGroup.mediaTrackGroup.let { mediaTrackGroup ->
+                            for (i in 0 until mediaTrackGroup.length) {
+                                val format = mediaTrackGroup.getFormat(i)
+                                if (format.sampleMimeType?.startsWith("audio/") == true) {
+                                    hasAudio = true
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    }
+
     var visible by remember {
         mutableStateOf(false)
     }
@@ -781,12 +810,26 @@ private fun VideoPlayer(
         MediaItem.fromUri(uri)
     }
 
-//    LifecycleResumeEffect {
-//        //exoPlayer.play()
-//        onPauseOrDispose {
-//            exoPlayer.pause()
-//        }
-//    }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    exoPlayer.pause()
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    exoPlayer.play()
+                }
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            exoPlayer.release()
+        }
+    }
 
 
     LaunchedEffect(Unit) {
@@ -845,30 +888,33 @@ private fun VideoPlayer(
                     exoPlayer.release()
                 }
             })
-            IconButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp), onClick = {
-                    viewModel.toggleVolume(!viewModel.volume)
-                    exoPlayer.volume = if (viewModel.volume) {
-                        1f
+
+            if (hasAudio) {
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(8.dp), onClick = {
+                        viewModel.toggleVolume(!viewModel.volume)
+                        exoPlayer.volume = if (viewModel.volume) {
+                            1f
+                        } else {
+                            0f
+                        }
+                    }, colors = IconButtonDefaults.filledTonalIconButtonColors()
+                ) {
+                    if (viewModel.volume) {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.VolumeUp,
+                            contentDescription = "Volume on",
+                            Modifier.size(18.dp)
+                        )
                     } else {
-                        0f
+                        Icon(
+                            Icons.AutoMirrored.Outlined.VolumeOff,
+                            contentDescription = "Volume off",
+                            Modifier.size(18.dp)
+                        )
                     }
-                }, colors = IconButtonDefaults.filledTonalIconButtonColors()
-            ) {
-                if (viewModel.volume) {
-                    Icon(
-                        Icons.AutoMirrored.Outlined.VolumeUp,
-                        contentDescription = "Volume on",
-                        Modifier.size(18.dp)
-                    )
-                } else {
-                    Icon(
-                        Icons.AutoMirrored.Outlined.VolumeOff,
-                        contentDescription = "Volume off",
-                        Modifier.size(18.dp)
-                    )
                 }
             }
         }
@@ -897,7 +943,6 @@ fun Modifier.isVisible(
         val layoutTop = layoutCoordinates.positionInRoot().y
         val layoutBottom = layoutTop + layoutHeight
 
-        // This should be parentLayoutCoordinates not parentCoordinates
         val parent = layoutCoordinates.parentLayoutCoordinates
 
         parent?.boundsInRoot()?.let { rect: Rect ->

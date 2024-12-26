@@ -15,7 +15,6 @@ import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountByUsernameUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetDomainSoftwareUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
@@ -28,7 +27,6 @@ import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
-import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
@@ -53,7 +51,6 @@ class OtherProfileViewModel @Inject constructor(
     private val getMutualFollowersUseCase: GetMutualFollowersUseCase,
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getDomainSoftwareUseCase: GetDomainSoftwareUseCase,
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
     private val getViewUseCase: GetViewUseCase,
@@ -68,7 +65,6 @@ class OtherProfileViewModel @Inject constructor(
     var collectionsState by mutableStateOf(CollectionsState())
 
     var domain by mutableStateOf("")
-    var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
     var view by mutableStateOf(ViewEnum.Timeline)
 
@@ -164,7 +160,6 @@ class OtherProfileViewModel @Inject constructor(
             if (accountState.account != null) {
                 domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
                     ?: ""
-                getDomainSoftware(domain)
             }
         }.launchIn(viewModelScope)
     }
@@ -190,7 +185,6 @@ class OtherProfileViewModel @Inject constructor(
             if (accountState.account != null) {
                 domain = accountState.account?.url?.substringAfter("https://")?.substringBefore("/")
                     ?: ""
-                getDomainSoftware(domain)
             }
         }.launchIn(viewModelScope)
     }
@@ -367,24 +361,6 @@ class OtherProfileViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     RelationshipState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun getDomainSoftware(domain: String) {
-        getDomainSoftwareUseCase(domain, context).onEach { result ->
-            domainSoftwareState = when (result) {
-                is Resource.Success -> {
-                    DomainSoftwareState(domainSoftware = result.data)
-                }
-
-                is Resource.Error -> {
-                    DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    DomainSoftwareState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

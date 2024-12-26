@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +26,17 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextAfterSelection
 import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun TextFieldMentionsComposable(
@@ -46,24 +54,33 @@ fun TextFieldMentionsComposable(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Column {
+
         Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
+
+            TextField(
                 value = text,
+                singleLine = false,
                 onValueChange = {
                     viewModel.changeText(it)
                     changeText(it)
                 },
-                label = { Text(stringResource(labelStringId)) },
-                modifier = modifier ?: Modifier,
-                singleLine = false,
+                placeholder = { Text(stringResource(labelStringId)) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                ),
                 keyboardOptions = KeyboardOptions(imeAction = imeAction),
-                keyboardActions = KeyboardActions(onSend = {
+                keyboardActions = KeyboardActions(onDone = {
                     keyboardController?.hide()
                     focusManager.clearFocus()
                     submit(text.text)
                     viewModel.mentionsDropdownOpen = false
                 })
             )
+
+
             if (submitButton != null) {
                 Spacer(modifier = Modifier.width(12.dp))
                 submitButton()

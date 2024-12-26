@@ -3,6 +3,8 @@ package com.daniebeler.pfpixelix.ui.composables.edit_profile
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +19,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,12 +36,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -104,7 +112,7 @@ fun EditProfileComposable(
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                             contentDescription = ""
                         )
                     }
@@ -118,29 +126,43 @@ fun EditProfileComposable(
                         ) {
                             if (!viewModel.accountState.isLoading) {
                                 Button(
-                                    onClick = {}, modifier = Modifier.width(120.dp), enabled = false
+                                    onClick = {},
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    enabled = false,
+                                    colors = ButtonDefaults.buttonColors(
+                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                    )
                                 ) {
                                     Text(text = stringResource(R.string.save))
                                 }
                             }
                         } else {
                             if (viewModel.accountState.isLoading) {
-                                Button(onClick = {}, modifier = Modifier.width(120.dp)) {
+                                Button(
+                                    onClick = {},
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(20.dp),
                                         color = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
                             } else {
-                                Button(onClick = {
-                                    viewModel.save(context)
-                                }, modifier = Modifier.width(120.dp)) {
+                                Button(
+                                    onClick = {
+                                        viewModel.save(context)
+                                    },
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
                                     Text(text = stringResource(R.string.save))
                                 }
                             }
                         }
                     }
-
                 })
         }) { paddingValues ->
         Box(
@@ -171,42 +193,89 @@ fun EditProfileComposable(
                                 })
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                    OutlinedTextField(value = viewModel.displayname,
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.displayname),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    TextField(
+                        value = viewModel.displayname,
                         singleLine = true,
                         onValueChange = { viewModel.displayname = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = {
-                            Text(text = "Displayname")
-                        })
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                    OutlinedTextField(value = viewModel.note,
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(text = stringResource(R.string.bio), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
+
+                    TextField(
+                        value = viewModel.note,
                         onValueChange = { viewModel.note = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = {
-                            Text(text = "Note")
-                        })
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                    OutlinedTextField(value = viewModel.website,
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(text = stringResource(R.string.website), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    TextField(
+                        value = viewModel.website,
                         singleLine = true,
-                        onValueChange = { viewModel.website = it },
-                        modifier = Modifier.fillMaxWidth(),
                         prefix = {
                             Text(text = "https://")
                         },
-                        label = {
-                            Text(text = "Website")
-                        })
+                        onValueChange = { viewModel.website = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = stringResource(R.string.private_profile))
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.private_profile),
+                            fontWeight = FontWeight.Bold
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(checked = viewModel.privateProfile,
                             onCheckedChange = { viewModel.privateProfile = it })

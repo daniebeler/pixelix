@@ -131,7 +131,7 @@ fun CommentsBottomSheet(
                                 .height(56.dp)
                                 .width(56.dp)
                                 .padding(0.dp, 0.dp),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(16.dp),
                             contentPadding = PaddingValues(12.dp),
                             enabled = replyText.text.isNotBlank()
                         ) {
