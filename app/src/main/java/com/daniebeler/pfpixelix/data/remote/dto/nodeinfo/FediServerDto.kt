@@ -15,5 +15,7 @@ data class FediServerDto(
     @SerializedName("open_registration")
     val openRegistration: Boolean,
     @SerializedName("software")
-    val software: SoftwareSmallDto
+    val software: SoftwareSmallDto,
+    @SerializedName("stats")
+    val stats: ServerStatsDto
 )

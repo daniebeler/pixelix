@@ -36,7 +36,9 @@ class ServerStatsViewModel @Inject constructor(
         getFediServerUseCase(domain).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    statsState = DomainSoftwareState(fediServer = result.data)
+                    statsState = DomainSoftwareState(
+                        fediServer = result.data, fediSoftware = statsState.fediSoftware
+                    )
                     if (result.data?.software?.name?.isNotEmpty() == true) {
                         getFediSoftware(result.data.software.name.lowercase(Locale.ROOT))
                     }
@@ -44,11 +46,19 @@ class ServerStatsViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    statsState = DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
+                    statsState = DomainSoftwareState(
+                        error = result.message ?: "An unexpected error occurred",
+                        fediServer = statsState.fediServer,
+                        fediSoftware = statsState.fediSoftware
+                    )
                 }
 
                 is Resource.Loading -> {
-                    statsState = DomainSoftwareState(isLoading = true)
+                    statsState = DomainSoftwareState(
+                        isLoading = true,
+                        fediServer = statsState.fediServer,
+                        fediSoftware = statsState.fediSoftware
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -58,15 +68,25 @@ class ServerStatsViewModel @Inject constructor(
         getFediSoftwareUseCase(softwareSlug).onEach { result ->
             statsState = when (result) {
                 is Resource.Success -> {
-                    DomainSoftwareState(fediSoftware = result.data)
+                    DomainSoftwareState(
+                        fediSoftware = result.data, fediServer = statsState.fediServer
+                    )
                 }
 
                 is Resource.Error -> {
-                    DomainSoftwareState(error = result.message ?: "An unexpected error occurred")
+                    DomainSoftwareState(
+                        error = result.message ?: "An unexpected error occurred",
+                        fediServer = statsState.fediServer,
+                        fediSoftware = statsState.fediSoftware
+                    )
                 }
 
                 is Resource.Loading -> {
-                    DomainSoftwareState(isLoading = true)
+                    DomainSoftwareState(
+                        isLoading = true,
+                        fediServer = statsState.fediServer,
+                        fediSoftware = statsState.fediSoftware
+                    )
                 }
             }
         }.launchIn(viewModelScope)

@@ -12,7 +12,9 @@ data class FediSoftwareDto(
     @SerializedName("name") val name: String?,
     @SerializedName("slug") val slug: String?,
     @SerializedName("status_count") val statusCount: Int?,
-    @SerializedName("user_count") val userCount: Int?
+    @SerializedName("user_count") val userCount: Int?,
+    @SerializedName("monthly_actives") val activeUserCount: Int?,
+    @SerializedName("website") val website: String?,
 ) : DtoInterface<FediSoftware> {
     override fun toModel(): FediSoftware {
         return FediSoftware(
@@ -23,8 +25,10 @@ data class FediSoftwareDto(
             name = name ?: "",
             statusCount = statusCount ?: -1,
             userCount = userCount ?: -1,
+            activeUserCount = activeUserCount ?: -1,
             slug = slug ?: "",
-            icon = null
+            icon = null,
+            website = website ?: ""
         )
     }
 }

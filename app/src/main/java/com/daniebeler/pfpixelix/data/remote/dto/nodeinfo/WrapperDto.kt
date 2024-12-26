@@ -5,8 +5,7 @@ import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
 import com.google.gson.annotations.SerializedName
 
 data class WrapperDto(
-    @SerializedName("data")
-    val data: FediServerDto
+    @SerializedName("data") val data: FediServerDto
 ) : DtoInterface<FediServer> {
     override fun toModel(): FediServer {
         return FediServer(
@@ -15,7 +14,8 @@ data class WrapperDto(
             domain = data.domain,
             id = data.id,
             openRegistration = data.openRegistration,
-            software = data.software.toModel()
+            software = data.software.toModel(),
+            stats = data.stats.toModel()
         )
     }
 }

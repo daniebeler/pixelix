@@ -11,6 +11,8 @@ data class FediSoftware(
     val slug: String,
     val statusCount: Int,
     val userCount: Int,
+    val activeUserCount: Int,
     @DrawableRes
     var icon: Int?,
+    val website: String
 )

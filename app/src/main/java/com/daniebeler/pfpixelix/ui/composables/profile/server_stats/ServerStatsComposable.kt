@@ -10,9 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,14 +29,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DomainSoftwareComposable(domain: String, viewModel: ServerStatsViewModel = hiltViewModel(key = "serverstats$domain")) {
-
+fun DomainSoftwareComposable(
+    domain: String, viewModel: ServerStatsViewModel = hiltViewModel(key = "serverstats$domain")
+) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -59,6 +67,7 @@ fun DomainSoftwareComposable(domain: String, viewModel: ServerStatsViewModel = h
                 modifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth()
+                    .verticalScroll(state = rememberScrollState())
             ) {
                 if (viewModel.statsState.fediSoftware != null) {
                     Row(
@@ -66,13 +75,17 @@ fun DomainSoftwareComposable(domain: String, viewModel: ServerStatsViewModel = h
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-//                        Image(
-//                            painterResource(id = domainSoftware.icon),
-//                            contentDescription = null,
-//                            modifier = Modifier.height(56.dp)
-//                        )
+                        Image(
+                            painterResource(id = viewModel.statsState.fediSoftware!!.icon!!),
+                            contentDescription = null,
+                            modifier = Modifier.height(56.dp)
+                        )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(text = viewModel.statsState.fediSoftware!!.name, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = viewModel.statsState.fediSoftware!!.name,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
 
                     if (viewModel.statsState.fediSoftware!!.description.isNotBlank()) {
@@ -80,94 +93,165 @@ fun DomainSoftwareComposable(domain: String, viewModel: ServerStatsViewModel = h
                         Text(text = viewModel.statsState.fediSoftware!!.description)
                     }
 
+                    if (viewModel.statsState.fediSoftware!!.instanceCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Instances:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.statsState.fediSoftware!!.instanceCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    if (viewModel.statsState.fediSoftware!!.statusCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Total posts:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.statsState.fediSoftware!!.statusCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    if (viewModel.statsState.fediSoftware!!.userCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Total users:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.statsState.fediSoftware!!.userCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    if (viewModel.statsState.fediSoftware!!.activeUserCount != -1) {
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row {
+                            Text("Active users:")
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = String.format(
+                                    Locale.GERMANY,
+                                    "%,d",
+                                    viewModel.statsState.fediSoftware!!.activeUserCount
+                                ), fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-//                    TextButton (
-//                        onClick = { viewModel.openUrl(viewModel.statsState.fediSoftware.link) },
-//                        shape = RoundedCornerShape(12.dp),
-//                        modifier = Modifier.align(Alignment.CenterHorizontally)
-//                    ) {
-//                        Text(text = "Visit " + domainSoftware.link)
-//                    }
+                    if (viewModel.statsState.fediSoftware!!.website.isNotEmpty()) {
+                        TextButton(
+                            onClick = { viewModel.openUrl(viewModel.statsState.fediSoftware!!.website) },
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = "Visit " + viewModel.statsState.fediSoftware!!.website)
+                        }
+                    }
+
                 }
 
+                if (viewModel.statsState.fediServer != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                if (domainSoftware.postsCount != -1 || domainSoftware.totalUserCount != -1 || domainSoftware.activeUserCount != -1) {
-//                    HorizontalDivider(Modifier.padding(vertical = 12.dp))
-//
-//                    Spacer(modifier = Modifier.height(12.dp))
-//
-//                    Text(
-//                        text = domainSoftware.domain,
-//                        fontSize = 32.sp,
-//                        textAlign = TextAlign.Center,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.fillMaxWidth()
-//                    )
-//
-//                    if (domainSoftware.nodeDescription.isNotBlank()) {
-//                        Spacer(modifier = Modifier.height(12.dp))
-//                        Text(domainSoftware.nodeDescription)
-//                        Spacer(modifier = Modifier.height(12.dp))
-//                    }
-//
-//                    if (domainSoftware.postsCount != -1) {
-//                        Spacer(modifier = Modifier.height(12.dp))
-//
-//                        Row {
-//                            Text("Total posts:")
-//                            Spacer(Modifier.width(8.dp))
-//                            Text(
-//                                text = String.format(
-//                                    Locale.GERMANY, "%,d", domainSoftware.postsCount
-//                                ), fontWeight = FontWeight.Bold
-//                            )
-//                        }
-//                    }
-//
-//                    if (domainSoftware.totalUserCount != -1) {
-//                        Spacer(modifier = Modifier.height(12.dp))
-//
-//                        Row {
-//                            Text("Total users:")
-//                            Spacer(Modifier.width(8.dp))
-//                            Text(
-//                                text = String.format(
-//                                    Locale.GERMANY, "%,d", domainSoftware.totalUserCount
-//                                ), fontWeight = FontWeight.Bold
-//                            )
-//                        }
-//                    }
-//
-//                    if (domainSoftware.activeUserCount != -1) {
-//                        Spacer(modifier = Modifier.height(12.dp))
-//
-//                        Row {
-//                            Text("Active users:")
-//                            Spacer(Modifier.width(8.dp))
-//                            Text(
-//                                text = String.format(
-//                                    Locale.GERMANY, "%,d", domainSoftware.activeUserCount
-//                                ), fontWeight = FontWeight.Bold
-//                            )
-//                        }
-//                    }
-//
-//                    Spacer(modifier = Modifier.height(12.dp))
-//
-//                    TextButton (
-//                        onClick = { viewModel.openUrl("https://" + domainSoftware.domain) },
-//                        shape = RoundedCornerShape(12.dp),
-//                        modifier = Modifier.align(Alignment.CenterHorizontally)
-//                    ) {
-//                        Text(text = "Visit https://" + domainSoftware.domain)
-//                    }
-//
-//                    Spacer(modifier = Modifier.height(12.dp))
-//                }
+                    HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = viewModel.statsState.fediServer!!.domain,
+                        fontSize = 32.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (viewModel.statsState.fediServer!!.description.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(viewModel.statsState.fediServer!!.description)
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    Row {
+                        Text(viewModel.statsState.fediServer!!.software.name + " version " + viewModel.statsState.fediServer!!.software.version)
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row {
+                        Text("Total posts:")
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = String.format(
+                                Locale.GERMANY,
+                                "%,d",
+                                viewModel.statsState.fediServer!!.stats.statusCount
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text("Total users:")
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = String.format(
+                                Locale.GERMANY,
+                                "%,d",
+                                viewModel.statsState.fediServer!!.stats.userCount
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text("Active users:")
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = String.format(
+                                Locale.GERMANY,
+                                "%,d",
+                                viewModel.statsState.fediServer!!.stats.monthlyActiveUsers
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    TextButton(
+                        onClick = { viewModel.openUrl("https://" + viewModel.statsState.fediServer!!.domain) },
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(text = "Visit https://" + viewModel.statsState.fediServer!!.domain)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }
