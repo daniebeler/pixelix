@@ -11,6 +11,7 @@ plugins {
 android {
     namespace = "com.daniebeler.pfpixelix"
     compileSdk = 35
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.daniebeler.pfpixelix"
