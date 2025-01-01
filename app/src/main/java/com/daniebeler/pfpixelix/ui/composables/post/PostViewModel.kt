@@ -40,7 +40,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -230,12 +229,18 @@ class PostViewModel @Inject constructor(
 
     fun likePost(postId: String) {
         if (post?.favourited == false) {
-            post = post?.copy(favourited = true)
+            post = post?.copy(
+                favourited = true, favouritesCount = post?.favouritesCount?.plus(
+                    1
+                ) ?: 0
+            )
             CoroutineScope(Dispatchers.Default).launch {
                 likePostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(favourited = result.data?.favourited ?: false)
+                            post = post?.copy(
+                                favourited = result.data?.favourited ?: false, favouritesCount = result.data?.favouritesCount ?: 0
+                            )
                         }
 
                         is Resource.Error -> {
@@ -392,8 +397,7 @@ class PostViewModel @Inject constructor(
 
             println(bitmap.toString())
 
-            uri =
-                saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap!!)
+            uri = saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap!!)
             if (uri == null) {
                 cancel("an error occured when saving the image")
                 return@launch
@@ -403,10 +407,12 @@ class PostViewModel @Inject constructor(
         saveImageRoutine.invokeOnCompletion { throwable ->
             CoroutineScope(Dispatchers.Main).launch {
                 uri?.let {
-                    Toast.makeText(context, "Stored at: " + uri.toString(), Toast.LENGTH_LONG).show()
-                } ?:
-                throwable?.let {
-                    Toast.makeText(context, "an error occurred downloading the image", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Stored at: " + uri.toString(), Toast.LENGTH_LONG)
+                        .show()
+                } ?: throwable?.let {
+                    Toast.makeText(
+                        context, "an error occurred downloading the image", Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
