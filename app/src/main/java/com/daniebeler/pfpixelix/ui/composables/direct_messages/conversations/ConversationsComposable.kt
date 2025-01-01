@@ -19,13 +19,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.QuestionMark
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,7 +36,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -76,11 +72,7 @@ fun ConversationsComposable(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
-    var showNewChatDialog = remember { mutableStateOf(false) }
-
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.conversationsState.isRefreshing,
-            onRefresh = { viewModel.refresh() })
+    val showNewChatDialog = remember { mutableStateOf(false) }
 
     val lazyListState = rememberLazyListState()
 
@@ -113,43 +105,41 @@ fun ConversationsComposable(
             }
         })
     }) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = viewModel.conversationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn(state = lazyListState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState),
-                content = {
-                    if (viewModel.conversationsState.conversations.isNotEmpty()) {
-                        items(viewModel.conversationsState.conversations, key = {
-                            it.id
-                        }) {
-                            ConversationElementComposable(
-                                conversation = it, navController = navController
+            LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
+                if (viewModel.conversationsState.conversations.isNotEmpty()) {
+                    items(viewModel.conversationsState.conversations, key = {
+                        it.id
+                    }) {
+                        ConversationElementComposable(
+                            conversation = it, navController = navController
+                        )
+                    }
+
+                    if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
+                        item {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                                    .wrapContentSize(Alignment.Center)
                             )
                         }
+                    }
 
-                        if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
-                            item {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(80.dp)
-                                        .wrapContentSize(Alignment.Center)
-                                )
-                            }
-                        }
-
-                        if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
-                            item {
-                                EndOfListComposable()
-                            }
+                    if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
+                        item {
+                            EndOfListComposable()
                         }
                     }
-                })
+                }
+            })
 
             if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
                 FullscreenEmptyStateComposable(
@@ -161,14 +151,10 @@ fun ConversationsComposable(
                 )
             }
 
-            CustomPullRefreshIndicator(
-                viewModel.conversationsState.isRefreshing, pullRefreshState
-            )
-
             if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
                 LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
             }
-            ErrorComposable(message = viewModel.conversationsState.error, pullRefreshState)
+            ErrorComposable(message = viewModel.conversationsState.error)
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {
@@ -176,9 +162,11 @@ fun ConversationsComposable(
         }
 
         if (showBottomSheet) {
-            ModalBottomSheet(onDismissRequest = {
+            ModalBottomSheet(
+                onDismissRequest = {
                     showBottomSheet = false
-                }, sheetState = sheetState,
+                },
+                sheetState = sheetState,
                 modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Box(
