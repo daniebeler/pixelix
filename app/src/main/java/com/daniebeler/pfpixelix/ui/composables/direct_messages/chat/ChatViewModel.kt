@@ -10,10 +10,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.domain.model.Message
 import com.daniebeler.pfpixelix.domain.usecase.DeleteMessageUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetConversationsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SendMessageUseCase
-import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsState
-import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +24,7 @@ class ChatViewModel @Inject constructor(
     var chatState by mutableStateOf(ChatState())
     var newMessage by mutableStateOf("")
     var newMessageState by mutableStateOf(NewMessageState())
-    fun getChat(accountId: String) {
+    fun getChat(accountId: String, refreshing: Boolean = false) {
         getChatUseCase(accountId).onEach { result ->
             chatState = when (result) {
                 is Resource.Success -> {
@@ -42,7 +39,7 @@ class ChatViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     ChatState(
-                        isLoading = true, chat = chatState.chat
+                        isLoading = true, chat = chatState.chat, isRefreshing = refreshing
                     )
                 }
             }
@@ -57,7 +54,10 @@ class ChatViewModel @Inject constructor(
                         is Resource.Success -> {
                             val endReached = result.data?.messages!!.isEmpty()
 
-                            val messages = (chatState.chat?.messages ?: emptyList()) + result.data.messages
+                            val existingMessageIds = chatState.chat?.messages?.map { it.id }?.toSet() ?: emptySet()
+                            val newMessages = result.data.messages.filter { it.id !in existingMessageIds }
+                            val messages = (chatState.chat?.messages ?: emptyList()) + newMessages
+
                             val chat = chatState.chat?.copy()
                             if (chat != null) {
                                 chat.messages = messages
