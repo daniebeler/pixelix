@@ -1,22 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +27,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateCompos
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfinitePostsGrid(
     items: List<Post>,
@@ -48,16 +44,14 @@ fun InfinitePostsGrid(
 
     val lazyGridState = rememberLazyGridState()
 
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { onRefresh() })
-
-    Box(modifier = Modifier.fillMaxSize()) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
+    ) {
         LazyVerticalGrid(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState)
                 .padding(horizontal = 12.dp),
             state = lazyGridState,
             columns = GridCells.Fixed(3)
@@ -69,7 +63,7 @@ fun InfinitePostsGrid(
                 }
             }
 
-            item (span = { GridItemSpan(3) }) {
+            item(span = { GridItemSpan(3) }) {
                 Spacer(Modifier.height(12.dp))
             }
 
@@ -78,7 +72,8 @@ fun InfinitePostsGrid(
                 val isTopLeft = index == 0
                 val isTopRight = index == 2
                 val isBottomLeft = index >= items.size - 3 && index % 3 == 0
-                val isBottomRight = (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
+                val isBottomRight =
+                    (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
 
                 var roundedCorners: Modifier = Modifier
 
@@ -95,7 +90,9 @@ fun InfinitePostsGrid(
                     roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
                 }
 
-                CustomPost(post = photo, navController = navController, customModifier = roundedCorners)
+                CustomPost(
+                    post = photo, navController = navController, customModifier = roundedCorners
+                )
             }
 
 
@@ -123,7 +120,7 @@ fun InfinitePostsGrid(
                 }
             }
 
-            item (span = { GridItemSpan(3) }) {
+            item(span = { GridItemSpan(3) }) {
                 Spacer(Modifier.height(12.dp))
             }
         }
@@ -146,11 +143,6 @@ fun InfinitePostsGrid(
     InfiniteGridHandler(lazyGridState = lazyGridState) {
         getItemsPaginated()
     }
-
-    CustomPullRefreshIndicator(
-        isRefreshing,
-        pullRefreshState,
-    )
 }
 
 

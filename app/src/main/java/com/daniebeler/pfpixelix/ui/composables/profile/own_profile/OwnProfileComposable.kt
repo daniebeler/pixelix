@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,8 +19,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.SwitchAccount
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -33,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,13 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -73,9 +70,6 @@ fun OwnProfileComposable(
     var showBottomSheet by remember { mutableStateOf(0) }
 
     val lazyGridState = rememberLazyListState()
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-            onRefresh = { viewModel.loadData(true) })
 
     val context = LocalContext.current
 
@@ -89,7 +83,7 @@ fun OwnProfileComposable(
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
         CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
             Row(Modifier.clickable { showBottomSheet = 2 }) {
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
                         fontWeight = FontWeight.Bold
@@ -134,14 +128,15 @@ fun OwnProfileComposable(
     }
 
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+            onRefresh = { viewModel.loadData(true) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LazyColumn (
+            LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.pullRefresh(pullRefreshState),
                 state = lazyGridState
             ) {
                 item {
@@ -213,14 +208,9 @@ fun OwnProfileComposable(
         }
     }
 
-    InfiniteListHandler (lazyListState = lazyGridState) {
+    InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()
     }
-
-    CustomPullRefreshIndicator(
-        viewModel.postsState.refreshing || viewModel.accountState.refreshing,
-        pullRefreshState,
-    )
 
     if (showBottomSheet > 0) {
         ModalBottomSheet(

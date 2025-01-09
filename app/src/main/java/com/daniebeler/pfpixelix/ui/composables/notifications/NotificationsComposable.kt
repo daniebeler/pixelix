@@ -24,8 +24,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Widgets
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -36,7 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -62,9 +59,6 @@ fun NotificationsComposable(
     navController: NavController,
     viewModel: NotificationsViewModel = hiltViewModel(key = "notifications-viewmodel-key")
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.notificationsState.isRefreshing,
-            onRefresh = { viewModel.refresh() })
 
     val lazyListState = rememberLazyListState()
     val scrollState = rememberScrollState()
@@ -102,7 +96,8 @@ fun NotificationsComposable(
                     if (viewModel.filter == NotificationsFilterEnum.Followers) {
                         ActiveFilterButton(text = stringResource(id = R.string.followers))
                     } else {
-                        InactiveFilterButton(text = stringResource(id = R.string.followers),
+                        InactiveFilterButton(
+                            text = stringResource(id = R.string.followers),
                             onClick = {
                                 viewModel.changeFilter(NotificationsFilterEnum.Followers)
                             })
@@ -133,11 +128,11 @@ fun NotificationsComposable(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                LazyColumn(state = lazyListState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pullRefresh(pullRefreshState),
-                    content = {
+                PullToRefreshBox(
+                    isRefreshing = viewModel.notificationsState.isRefreshing,
+                    onRefresh = { viewModel.refresh() },
+                ) {
+                    LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id
@@ -179,6 +174,7 @@ fun NotificationsComposable(
                             }
                         }
                     })
+                }
             }
 
 
@@ -192,14 +188,10 @@ fun NotificationsComposable(
                 )
             }
 
-            CustomPullRefreshIndicator(
-                viewModel.notificationsState.isRefreshing, pullRefreshState
-            )
-
             if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
                 LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
             }
-            ErrorComposable(message = viewModel.notificationsState.error, pullRefreshState)
+            ErrorComposable(message = viewModel.notificationsState.error)
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {

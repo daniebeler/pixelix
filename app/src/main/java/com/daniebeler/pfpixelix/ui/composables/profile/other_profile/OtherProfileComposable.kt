@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,8 +25,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,6 +39,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,14 +63,13 @@ import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.Share
@@ -89,9 +86,6 @@ fun OtherProfileComposable(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val lazyGridState = rememberLazyListState()
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-            onRefresh = { viewModel.loadData(userId, true) })
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -154,7 +148,9 @@ fun OtherProfileComposable(
         })
 
     }) { paddingValues ->
-        Box(
+        PullToRefreshBox (
+            isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+            onRefresh = { viewModel.loadData(userId, true) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -162,7 +158,6 @@ fun OtherProfileComposable(
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.pullRefresh(pullRefreshState),
                 state = lazyGridState
             ) {
                 item {
@@ -285,11 +280,6 @@ fun OtherProfileComposable(
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)
     }
-
-    CustomPullRefreshIndicator(
-        viewModel.postsState.refreshing || viewModel.accountState.refreshing,
-        pullRefreshState,
-    )
 
     if (showBottomSheet) {
         ModalBottomSheet(

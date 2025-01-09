@@ -2,14 +2,10 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,14 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun CustomLoader() {
+fun CustomLoader(sizeFactor: Float = 1f) {
     // Create animatables for the alpha values of the squares
     val alphas = List(5) { remember { Animatable(1f) } }
 
@@ -55,14 +50,14 @@ fun CustomLoader() {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3), modifier = Modifier
-            .width(36.dp)
-            .height(48.dp)
+            .width((36 * sizeFactor).dp)
+            .height((48 * sizeFactor).dp)
     ) {
 
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[0].value))
             )
         }
@@ -70,7 +65,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[1].value))
             )
         }
@@ -78,7 +73,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(Color.Transparent)
             )
         }
@@ -86,7 +81,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[1].value))
             )
         }
@@ -94,7 +89,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(Color.Transparent)
             )
         }
@@ -102,7 +97,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[3].value))
             )
         }
@@ -110,7 +105,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(Color.Transparent)
             )
         }
@@ -118,7 +113,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[3].value))
             )
         }
@@ -126,7 +121,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[4].value))
             )
         }
@@ -134,7 +129,7 @@ fun CustomLoader() {
         item {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size((12 * sizeFactor).dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = alphas[3].value))
             )
         }

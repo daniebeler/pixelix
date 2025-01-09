@@ -2,18 +2,14 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,7 +24,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateCompos
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfinitePostsList(
     items: List<Post>,
@@ -43,24 +39,19 @@ fun InfinitePostsList(
     itemGetsDeleted: (postId: String) -> Unit,
     before: @Composable (() -> Unit)? = null,
 ) {
-
     val lazyListState = rememberLazyListState()
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = { onRefresh() }
-    )
 
     fun delete(postId: String) {
         itemGetsDeleted(postId)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(32.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState),
+            modifier = with(Modifier) { fillMaxSize() },
             state = lazyListState
         ) {
             if (before != null) {
@@ -78,13 +69,12 @@ fun InfinitePostsList(
                         mutableFloatStateOf(1f)
                     }
                     Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
-                        PostComposable(
-                            post = item,
+                        PostComposable(post = item,
                             postGetsDeleted = ::delete,
                             navController = navController,
-                            setZindex = { zIndex.floatValue = it
-                            }
-                        )
+                            setZindex = {
+                                zIndex.floatValue = it
+                            })
                     }
 
                 }
@@ -103,6 +93,7 @@ fun InfinitePostsList(
             }
         }
 
+
         if (items.isEmpty() && !isLoading && error.isEmpty()) {
             FullscreenEmptyStateComposable(emptyMessage)
         }
@@ -119,9 +110,4 @@ fun InfinitePostsList(
     InfiniteListHandler(lazyListState = lazyListState) {
         getItemsPaginated()
     }
-
-    CustomPullRefreshIndicator(
-        isRefreshing,
-        pullRefreshState,
-    )
 }

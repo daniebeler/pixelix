@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomPullRefreshIndicator
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -33,11 +31,6 @@ fun FollowersComposable(
     navController: NavController,
     viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
 ) {
-
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = viewModel.followersState.isRefreshing,
-            onRefresh = { viewModel.getFollowersFirstLoad(true) })
-
     val lazyListState = rememberLazyListState()
 
     LazyColumn(state = lazyListState, content = {
@@ -78,10 +71,6 @@ fun FollowersComposable(
     InfiniteListHandler(lazyListState = lazyListState) {
         viewModel.getFollowersPaginated()
     }
-
-    CustomPullRefreshIndicator(
-        viewModel.followersState.isRefreshing, pullRefreshState
-    )
 
     LoadingComposable(isLoading = viewModel.followersState.isLoading && viewModel.followersState.followers.isEmpty())
     ErrorComposable(message = viewModel.followersState.error)
