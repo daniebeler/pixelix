@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.di
 
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
+import com.daniebeler.pfpixelix.domain.usecase.SearchLocationUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
 import dagger.Module
 import dagger.Provides
@@ -16,5 +17,10 @@ class SearchModule {
     @Singleton
     fun provideSearchUseCase(repository: CountryRepository): SearchUseCase =
         SearchUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideSearchLocationUseCase(repository: CountryRepository): SearchLocationUseCase =
+        SearchLocationUseCase(repository)
 
 }

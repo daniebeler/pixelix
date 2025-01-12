@@ -43,6 +43,7 @@ class NewPostViewModel @Inject constructor(
 
     var images = mutableStateListOf<ImageItem>()
     var caption: TextFieldValue by mutableStateOf(TextFieldValue())
+    private var locationId: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var audience: String by mutableStateOf(AUDIENCE_PUBLIC)
@@ -277,7 +278,7 @@ class NewPostViewModel @Inject constructor(
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
         val createPostDto =
-            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText)
+            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText, locationId)
         createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
@@ -296,5 +297,9 @@ class NewPostViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun setLocation(id: String) {
+        locationId = id
     }
 }

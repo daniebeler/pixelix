@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowDownward
@@ -67,6 +66,7 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -315,8 +315,19 @@ fun NewPostComposable(
                                     }
                                 })
                         }
+
+
+
                     }
                 }
+                TextFieldLocationsComposable(
+                    submit = {viewModel.setLocation(it)},
+                    labelStringId = R.string.location,
+                    modifier = Modifier.fillMaxWidth(),
+                    imeAction = ImeAction.Default,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                    submitButton = null
+                )
             }
 
             if (viewModel.addImageError.first.isNotBlank()) {
