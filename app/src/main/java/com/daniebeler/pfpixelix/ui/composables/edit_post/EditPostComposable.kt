@@ -58,6 +58,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
@@ -102,7 +103,7 @@ fun EditPostComposable(
                         val mediaAttachmentsEditIds = viewModel.mediaAttachmentsEdit.map { it.id }
                         val mediaAttachmentsBeforeIds =
                             viewModel.mediaAttachmentsBefore.map { it.id }
-                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds) {
+                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds || viewModel.editPostState.post!!.place != viewModel.location) {
                             if (viewModel.editPostState.isLoading) {
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
@@ -138,6 +139,94 @@ fun EditPostComposable(
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                viewModel.mediaAttachmentsEdit.forEachIndexed { index, mediaAttachment ->
+                    Row(
+                        Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+
+                            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(
+                                    4
+                                ) != ".gif"
+                            ) {
+                                AsyncImage(
+                                    model = mediaAttachment.url,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
+                                GlideImage(
+                                    model = mediaAttachment.url,
+                                    contentDescription = null,
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            } else {
+                                val model = ImageRequest.Builder(context).data(mediaAttachment.url)
+                                    .decoderFactory { result, options, _ ->
+                                        VideoFrameDecoder(
+                                            result.source, options
+                                        )
+                                    }.build()
+
+                                AsyncImage(
+                                    model = model,
+                                    contentDescription = "video thumbnail",
+                                    modifier = Modifier.width(100.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.width(10.dp))
+
+                        val mediaDescriptionItem =
+                            viewModel.mediaDescriptionItems.find { mediaDescriptionItem -> mediaDescriptionItem.imageId == mediaAttachment.id }
+                                ?: EditPostViewModel.MediaDescriptionItem(
+                                    mediaAttachment.id, "", false
+                                )
+                        val indexOfDescriptionItem =
+                            viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
+                        OutlinedTextField(
+                            value = mediaDescriptionItem.description,
+                            onValueChange = {
+                                val oldMediaAttachment =
+                                    viewModel.editPostState.post!!.mediaAttachments.find { it.id == mediaDescriptionItem.imageId }
+                                val changed = it != (oldMediaAttachment!!.description ?: "")
+                                viewModel.mediaDescriptionItems[indexOfDescriptionItem] =
+                                    viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(
+                                        description = it, changed = changed
+                                    )
+                            },
+                            modifier = Modifier.weight(1f),
+                            label = { Text(stringResource(R.string.alt_text)) },
+                        )
+
+                        if (viewModel.mediaAttachmentsEdit.size > 1) {
+                            Column {
+                                IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowUpward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowDownward,
+                                        contentDescription = "move Imageupwards"
+                                    )
+                                }
+                            }
+                            IconButton(onClick = {
+                                viewModel.deleteMediaDialog = mediaAttachment.id
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = "delete Image",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    }
+                }
                 if (!viewModel.editPostState.isLoading && viewModel.editPostState.post != null) {
                     TextFieldMentionsComposable(submit = {},
                         text = viewModel.caption,
@@ -166,97 +255,14 @@ fun EditPostComposable(
                             label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
                         )
                     }
-
-                    viewModel.mediaAttachmentsEdit.forEachIndexed { index, mediaAttachment ->
-                        Row(
-                            Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-
-                                if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(
-                                        4
-                                    ) != ".gif"
-                                ) {
-                                    AsyncImage(
-                                        model = mediaAttachment.url,
-                                        contentDescription = null,
-                                        modifier = Modifier.width(100.dp)
-                                    )
-                                } else if (mediaAttachment.url?.takeLast(4) == ".gif") {
-                                    GlideImage(
-                                        model = mediaAttachment.url,
-                                        contentDescription = null,
-                                        modifier = Modifier.width(100.dp)
-                                    )
-                                } else {
-                                    val model =
-                                        ImageRequest.Builder(context).data(mediaAttachment.url)
-                                            .decoderFactory { result, options, _ ->
-                                                VideoFrameDecoder(
-                                                    result.source, options
-                                                )
-                                            }.build()
-
-                                    AsyncImage(
-                                        model = model,
-                                        contentDescription = "video thumbnail",
-                                        modifier = Modifier.width(100.dp)
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.width(10.dp))
-
-                            val mediaDescriptionItem =
-                                viewModel.mediaDescriptionItems.find { mediaDescriptionItem -> mediaDescriptionItem.imageId == mediaAttachment.id }
-                                    ?: EditPostViewModel.MediaDescriptionItem(
-                                        mediaAttachment.id, "", false
-                                    )
-                            val indexOfDescriptionItem =
-                                viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
-                            OutlinedTextField(
-                                value = mediaDescriptionItem.description,
-                                onValueChange = {
-                                    val oldMediaAttachment =
-                                        viewModel.editPostState.post!!.mediaAttachments.find { it.id == mediaDescriptionItem.imageId }
-                                    val changed = it != (oldMediaAttachment!!.description ?: "")
-                                    viewModel.mediaDescriptionItems[indexOfDescriptionItem] =
-                                        viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(
-                                            description = it, changed = changed
-                                        )
-                                },
-                                modifier = Modifier.weight(1f),
-                                label = { Text(stringResource(R.string.alt_text)) },
-                            )
-
-                            if (viewModel.mediaAttachmentsEdit.size > 1) {
-                                Column {
-                                    IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.ArrowUpward,
-                                            contentDescription = "move Imageupwards"
-                                        )
-                                    }
-                                    IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.ArrowDownward,
-                                            contentDescription = "move Imageupwards"
-                                        )
-                                    }
-                                }
-                                IconButton(onClick = {
-                                    viewModel.deleteMediaDialog = mediaAttachment.id
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Delete,
-                                        contentDescription = "delete Image",
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                }
-                            }
-                        }
-
-                    }
+                    TextFieldLocationsComposable(submit = {}, submitPlace = {viewModel._setLocation(it)},
+                        initialValue = viewModel.editPostState.post!!.place,
+                        labelStringId = R.string.location,
+                        modifier = Modifier.fillMaxWidth(),
+                        imeAction = ImeAction.Default,
+                        suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                        submitButton = null
+                    )
                 }
 
                 LoadingComposable(isLoading = viewModel.editPostState.isLoading)

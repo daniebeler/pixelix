@@ -106,7 +106,10 @@ class NewPostViewModel @Inject constructor(
 
     fun addImage(uri: Uri, context: Context) {
         val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
-        if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(fileType)) {
+        if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(
+                fileType
+            )
+        ) {
             addImageError = Pair(
                 "Media type is not supported",
                 "The media type $fileType is not supportet by this server"
@@ -176,7 +179,9 @@ class NewPostViewModel @Inject constructor(
                     }
                     images = images.map { image ->
                         if (image.imageUri == uri) {
-                            image.copy(isLoading = false, id = result.data?.id) // Replace the object
+                            image.copy(
+                                isLoading = false, id = result.data?.id
+                            ) // Replace the object
                         } else {
                             image // Keep the original object
                         }
@@ -277,8 +282,13 @@ class NewPostViewModel @Inject constructor(
 
     private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
+        val locationIdNullable = if (locationId.isBlank()) {
+            null
+        } else {
+            locationId
+        }
         val createPostDto =
-            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText, locationId)
+            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
         createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

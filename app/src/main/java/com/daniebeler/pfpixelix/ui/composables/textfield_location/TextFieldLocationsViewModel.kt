@@ -22,6 +22,11 @@ class TextFieldLocationsViewModel @Inject constructor(
     var locationsDropdownOpen by mutableStateOf(false)
     var locationsSuggestions by mutableStateOf(LocationsState())
 
+    fun initializePlace(initialPlace: Place) {
+        locationsSuggestions = LocationsState(location = initialPlace)
+        text = TextFieldValue(initialPlace.name!!)
+    }
+
     fun changeText(newText: TextFieldValue) {
         text = newText
 

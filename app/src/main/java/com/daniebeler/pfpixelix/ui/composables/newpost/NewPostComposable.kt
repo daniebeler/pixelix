@@ -322,6 +322,8 @@ fun NewPostComposable(
                 }
                 TextFieldLocationsComposable(
                     submit = {viewModel.setLocation(it)},
+                    submitPlace = {},
+                    initialValue = null,
                     labelStringId = R.string.location,
                     modifier = Modifier.fillMaxWidth(),
                     imeAction = ImeAction.Default,

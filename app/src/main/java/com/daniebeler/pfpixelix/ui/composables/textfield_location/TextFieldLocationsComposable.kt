@@ -23,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,10 +34,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.domain.model.Place
 
 @Composable
 fun TextFieldLocationsComposable(
     submit: (id: String) -> Unit,
+    submitPlace: (place: Place?) -> Unit,
+    initialValue: Place?,
     labelStringId: Int,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,
@@ -44,6 +48,12 @@ fun TextFieldLocationsComposable(
     suggestionsBoxColor: Color,
     viewModel: TextFieldLocationsViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(initialValue) {
+        initialValue?.let {
+            viewModel.initializePlace(initialValue)
+        }
+    }
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -64,12 +74,14 @@ fun TextFieldLocationsComposable(
                 IconButton(onClick = {
                     viewModel.edit()
                     submit("")
+                    submitPlace(null)
                 }) {
                     Icon(imageVector = Icons.Outlined.Edit, contentDescription = "edit")
                 }
                 IconButton(onClick = {
                     viewModel.removeLocation()
                     submit("")
+                    submitPlace(null)
                 }) {
                     Icon(imageVector = Icons.Outlined.Delete, contentDescription = "remove")
                 }
@@ -120,6 +132,7 @@ fun TextFieldLocationsComposable(
                             TextButton(onClick = {
                                 viewModel.clickLocation(it)
                                 submit(it.id)
+                                submitPlace(it)
                             }) {
                                 Text(
                                     text = "${it.name ?: ""}, ${it.country}",
