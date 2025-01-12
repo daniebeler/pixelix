@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,11 +30,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -42,8 +46,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -71,6 +78,9 @@ fun EditPostComposable(
     var showSaveAlert by remember {
         mutableStateOf(false)
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val context = LocalContext.current
 
@@ -185,7 +195,7 @@ fun EditPostComposable(
                                 )
                         val indexOfDescriptionItem =
                             viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
-                        OutlinedTextField(
+                        TextField(
                             value = mediaDescriptionItem.description,
                             onValueChange = {
                                 val oldMediaAttachment =
@@ -197,7 +207,18 @@ fun EditPostComposable(
                                     )
                             },
                             modifier = Modifier.weight(1f),
-                            label = { Text(stringResource(R.string.alt_text)) },
+                            singleLine = false,
+                            placeholder = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                            ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            keyboardActions = KeyboardActions(onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            })
                         )
 
                         if (viewModel.mediaAttachmentsEdit.size > 1) {
@@ -248,11 +269,22 @@ fun EditPostComposable(
                             onCheckedChange = { viewModel.sensitive = it })
                     }
                     if (viewModel.sensitive) {
-                        OutlinedTextField(
+                        TextField(
                             value = viewModel.sensitiveText,
+                            singleLine = false,
                             onValueChange = { viewModel.sensitiveText = it },
+                            placeholder = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                            ),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            keyboardActions = KeyboardActions(onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            })
                         )
                     }
                     TextFieldLocationsComposable(submit = {}, submitPlace = {viewModel._setLocation(it)},
