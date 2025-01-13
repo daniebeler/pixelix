@@ -39,7 +39,9 @@ fun InfinitePostsGrid(
     navController: NavController,
     getItemsPaginated: () -> Unit = { },
     before: @Composable (() -> Unit)? = null,
-    onRefresh: () -> Unit = { }
+    onRefresh: () -> Unit = { },
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = { }
 ) {
 
     val lazyGridState = rememberLazyGridState()
@@ -91,7 +93,7 @@ fun InfinitePostsGrid(
                 }
 
                 CustomPost(
-                    post = photo, navController = navController, customModifier = roundedCorners
+                    post = photo, navController = navController, customModifier = roundedCorners, edit = edit, editRemove = {id -> editRemove(id)}
                 )
             }
 

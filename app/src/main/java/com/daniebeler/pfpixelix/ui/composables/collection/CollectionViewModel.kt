@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,11 +21,16 @@ import javax.inject.Inject
 class CollectionViewModel @Inject constructor(
     private val getCollectionUseCase: GetCollectionUseCase,
     private val getPostsOfCollectionUseCase: GetPostsOfCollectionUseCase,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val removePostOfCollectionUseCase: RemovePostOfCollectionUseCase
 ) : ViewModel() {
 
     var collectionState by mutableStateOf(CollectionState())
     var collectionPostsState by mutableStateOf(CollectionPostsState())
+    var editMode by mutableStateOf(false)
+    var editPosts by mutableStateOf<List<Post>>(emptyList())
+    private var editRemovedIds by mutableStateOf<List<String>>(emptyList())
+    var editAddedPosts by mutableStateOf<List<Post>>(emptyList())
 
     fun loadData(collectionId: String) {
         if (collectionState.id == null) {
@@ -93,6 +100,45 @@ class CollectionViewModel @Inject constructor(
 
     }
 
+    fun confirmEdit() {
+        collectionPostsState = collectionPostsState.copy(posts = editPosts)
+        editMode = false
+        editRemovedIds.map {
+            removePostOfCollection(it)
+        }
+    }
+
+    private fun removePostOfCollection(postId: String) {
+        if (collectionState.id != null) {
+            removePostOfCollectionUseCase(collectionState.id!!, postId).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        getPostsFirstLoad(false)
+                    }
+
+                    is Resource.Error -> {
+
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun toggleEditMode() {
+        if (!editMode) {
+            editPosts = collectionPostsState.posts
+        }
+        editMode = !editMode
+    }
+
+    fun editRemove(id: String) {
+        editRemovedIds = editRemovedIds + id
+        editPosts = editPosts.filter { !editRemovedIds.contains(it.id) }
+    }
 
     fun refresh() {
         getPostsFirstLoad(true)

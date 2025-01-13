@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.OpenInBrowser
@@ -21,7 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,13 +84,34 @@ fun CollectionComposable(
                 )
             }
         }, actions = {
-            IconButton(onClick = {
-                //Navigate.navigate("settings_screen", navController)
-                showBottomSheet = true
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.MoreVert, contentDescription = ""
-                )
+            if (viewModel.editMode) {
+                TextButton(onClick = {
+                    viewModel.toggleEditMode()
+                }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+                TextButton(onClick = {
+                    viewModel.confirmEdit()
+                }) {
+                    Text(stringResource(id = R.string.confirm))
+                }
+            } else {
+
+                IconButton(onClick = {
+                    viewModel.toggleEditMode()
+                }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit, contentDescription = ""
+                    )
+                }
+                IconButton(onClick = {
+                    //Navigate.navigate("settings_screen", navController)
+                    showBottomSheet = true
+                }) {
+                    Icon(
+                        imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                    )
+                }
             }
         })
     }) { paddingValues ->
@@ -99,8 +120,7 @@ fun CollectionComposable(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
-            InfinitePostsGrid(items = viewModel.collectionPostsState.posts,
+            InfinitePostsGrid(items = if (viewModel.editMode) {viewModel.editPosts} else {viewModel.collectionPostsState.posts},
                 isLoading = viewModel.collectionPostsState.isLoading,
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
@@ -113,7 +133,9 @@ fun CollectionComposable(
                 },
                 onRefresh = {
                     viewModel.refresh()
-                })
+                },
+                edit = viewModel.editMode,
+                editRemove = {id -> viewModel.editRemove(id)})
         }
 
 
