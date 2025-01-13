@@ -39,6 +39,7 @@ fun InfinitePostsGrid(
     navController: NavController,
     getItemsPaginated: () -> Unit = { },
     before: @Composable (() -> Unit)? = null,
+    after: @Composable (() -> Unit)? = null,
     onRefresh: () -> Unit = { },
     edit: Boolean = false,
     editRemove: (postId: String) -> Unit = { }
@@ -96,6 +97,13 @@ fun InfinitePostsGrid(
                     post = photo, navController = navController, customModifier = roundedCorners, edit = edit, editRemove = {id -> editRemove(id)}
                 )
             }
+
+            if (after != null) {
+                item(span = { GridItemSpan(3) }) {
+                    after()
+                }
+            }
+
 
 
 

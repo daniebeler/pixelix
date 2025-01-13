@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.collection
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
@@ -54,6 +54,7 @@ fun CollectionComposable(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showAddPostBottomSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -84,7 +85,7 @@ fun CollectionComposable(
                 )
             }
         }, actions = {
-            if (viewModel.editMode) {
+            if (viewModel.editState.editMode) {
                 TextButton(onClick = {
                     viewModel.toggleEditMode()
                 }) {
@@ -115,12 +116,16 @@ fun CollectionComposable(
             }
         })
     }) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            InfinitePostsGrid(items = if (viewModel.editMode) {viewModel.editPosts} else {viewModel.collectionPostsState.posts},
+            InfinitePostsGrid(items = if (viewModel.editState.editMode) {
+                viewModel.editState.editPosts
+            } else {
+                viewModel.collectionPostsState.posts
+            },
                 isLoading = viewModel.collectionPostsState.isLoading,
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
@@ -131,13 +136,35 @@ fun CollectionComposable(
                 getItemsPaginated = {
                     //viewModel.getItemsPaginated()
                 },
+                after = {
+                    IconButton(onClick = {
+                        showAddPostBottomSheet = true
+                        viewModel.getPostsExceptCollection()
+                    }) {
+                        Icon(Icons.Outlined.AddCircle, contentDescription = "")
+                    }
+                },
                 onRefresh = {
                     viewModel.refresh()
                 },
-                edit = viewModel.editMode,
-                editRemove = {id -> viewModel.editRemove(id)})
+                edit = viewModel.editState.editMode,
+                editRemove = { id -> viewModel.editRemove(id) })
+
+
+            IconButton(onClick = {
+                showAddPostBottomSheet = true
+                viewModel.getPostsExceptCollection()
+            }) {
+                Icon(Icons.Outlined.AddCircle, contentDescription = "")
+            }
         }
 
+        IconButton(onClick = {
+            showAddPostBottomSheet = true
+            viewModel.getPostsExceptCollection()
+        }) {
+            Icon(Icons.Outlined.AddCircle, contentDescription = "")
+        }
 
         if (showBottomSheet) {
             ModalBottomSheet(
@@ -172,6 +199,35 @@ fun CollectionComposable(
 
             }
 
+        }
+        if (showAddPostBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showAddPostBottomSheet = false
+                },
+                sheetState = sheetState,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+            ) {
+                Column(
+                    modifier = Modifier.padding(bottom = 32.dp)
+                ) {
+
+                    InfinitePostsGrid(items = viewModel.editState.allPostsExceptCollection,
+                        isLoading = viewModel.editState.isLoading,
+                        isRefreshing = false,
+                        error = viewModel.editState.error,
+                        emptyMessage = EmptyState(
+                            icon = Icons.Outlined.FavoriteBorder, heading = "Empty Collection"
+                        ),
+                        navController = navController,
+                        getItemsPaginated = {
+                            //viewModel.getItemsPaginated()
+                        },
+                        onRefresh = {
+                            viewModel.refresh()
+                        })
+                }
+            }
         }
     }
 }
