@@ -4,16 +4,17 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.model.Notification
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
@@ -28,15 +29,13 @@ interface CountryRepository {
 
     fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
 
-
     fun getInstance(): Flow<Resource<Instance>>
-
 
     fun getNotifications(maxNotificationId: String = ""): Flow<Resource<List<Notification>>>
 
-
     fun search(searchText: String, type: String?): Flow<Resource<Search>>
 
+    fun searchLocations(searchText: String): Flow<Resource<List<Place>>>
 
     fun createReply(postId: String, content: String): Flow<Resource<Post>>
 

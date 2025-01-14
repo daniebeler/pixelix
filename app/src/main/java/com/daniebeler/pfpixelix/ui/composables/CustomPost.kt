@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Collections
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -33,7 +37,10 @@ fun CustomPost(
     post: Post,
     isFullQuality: Boolean = false,
     navController: NavController,
-    customModifier: Modifier = Modifier
+    customModifier: Modifier = Modifier,
+    onClick: ((id: String) -> Unit)? = null,
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = {}
 ) {
 
     val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
@@ -61,7 +68,11 @@ fun CustomPost(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .clickable(onClick = {
-                        Navigate.navigate("single_post_screen/" + post.id, navController)
+                        if (!edit && onClick == null) {
+                            Navigate.navigate("single_post_screen/" + post.id, navController)
+                        } else if (onClick != null){
+                            onClick(post.id)
+                        }
                     }),
             ) {
 
@@ -73,9 +84,26 @@ fun CustomPost(
                 )
             }
         } else {
-            Box(customModifier.clickable(onClick = {
-                Navigate.navigate("single_post_screen/" + post.id, navController)
-            })) {
+            Box(
+                customModifier
+                    .clickable(onClick = {
+                        if (!edit && onClick == null) {
+                            Navigate.navigate("single_post_screen/" + post.id, navController)
+                        } else if (onClick != null){
+                            onClick(post.id)
+                        }
+                    })
+                    .padding(
+                        all = if (edit) {
+                            12.dp
+                        } else {
+                            0.dp
+                        }
+                    )
+                    .clip(if (edit) {RoundedCornerShape(12.dp)} else {
+                        RoundedCornerShape(0)
+                    })
+            ) {
 
                 if (post.mediaAttachments.isNotEmpty()) {
                     if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
@@ -103,18 +131,34 @@ fun CustomPost(
                     }
                 }
 
-                if (post.mediaAttachments.size > 1) {
+                if (post.mediaAttachments.size > 1 && !edit) {
                     Box(
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
                             .padding(8.dp)
+                            .align(Alignment.TopEnd)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Collections,
                             tint = Color.White,
                             contentDescription = null,
                         )
+
                     }
+                }
+
+
+            }
+            if (edit) {
+                Box(
+                    modifier = Modifier.align(Alignment.TopEnd).clickable {
+                        editRemove(post.id)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.RemoveCircle,
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = null,
+                    )
                 }
             }
         }

@@ -11,12 +11,11 @@ import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
+import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
@@ -24,7 +23,8 @@ import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediServerDto
+import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
+import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.WrapperDto
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -46,7 +46,7 @@ interface PixelfedApi {
     // Discover
 
 
-    @GET("api/pixelfed/v2/discover/posts/trending")
+    @GET("api/v1.1/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
     @GET("api/v1.1/discover/posts/hashtags?_pe=1")
@@ -129,7 +129,7 @@ interface PixelfedApi {
     // Accounts
 
 
-    @GET("api/pixelfed/v1/accounts/{accountid}")
+    @GET("api/v1/accounts/{accountid}")
     fun getAccount(
         @Path("accountid") accountId: String
     ): Call<AccountDto>
@@ -144,12 +144,12 @@ interface PixelfedApi {
         @Body body: RequestBody
     ): Call<AccountDto>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses")
+    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
     fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
-    @GET("api/pixelfed/v1/accounts/{accountid}/statuses")
+    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Query("max_id") maxId: String,
@@ -272,6 +272,17 @@ interface PixelfedApi {
         @Path("collectionid") collectionId: String
     ): Call<List<PostDto>>
 
+    @POST("api/v1.1/collections/remove")
+    fun removePostOfCollection(
+        @Query("collection_id") collectionId: String,
+        @Query("post_id") postId: String
+    ): Call<String>
+
+    @POST("api/v1.1/collections/add")
+    fun addPostOfCollection(
+        @Query("collection_id") collectionId: String,
+        @Query("post_id") postId: String
+    ): Call<String>
 
     // Tags
 
@@ -335,6 +346,11 @@ interface PixelfedApi {
     fun getSearch(
         @Query("q") searchText: String, @Query("type") type: String?
     ): Call<SearchDto>
+
+    @GET("/api/v1.1/compose/search/location?limit=5")
+    fun searchLocations(
+        @Query("q") searchText: String
+    ): Call<List<PlaceDto>>
 
     @POST("/api/v2/media")
     fun uploadMedia(

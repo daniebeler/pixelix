@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -51,6 +52,7 @@ fun InfinitePostsList(
     ) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(32.dp),
+            contentPadding = PaddingValues(top = 12.dp),
             modifier = with(Modifier) { fillMaxSize() },
             state = lazyListState
         ) {

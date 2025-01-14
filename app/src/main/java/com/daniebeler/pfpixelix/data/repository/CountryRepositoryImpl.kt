@@ -10,27 +10,28 @@ import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
+import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
-import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediServerDto
+import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
+import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.WrapperDto
 import com.daniebeler.pfpixelix.domain.model.AccessToken
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Application
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.model.Notification
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
+import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
@@ -127,6 +128,14 @@ class CountryRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             emit(Resource.Error("Unknown Error"))
         }
+    }
+
+    override fun searchLocations(searchText: String): Flow<Resource<List<Place>>> {
+        return NetworkCall<Place, PlaceDto>().makeCallList(
+            pixelfedApi.searchLocations(
+                searchText
+            )
+        )
     }
 
     override fun getInstance(): Flow<Resource<Instance>> {

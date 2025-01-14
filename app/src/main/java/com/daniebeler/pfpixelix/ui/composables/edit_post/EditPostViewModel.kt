@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdatePostUseCase
@@ -34,6 +36,7 @@ class EditPostViewModel @Inject constructor(
 
     var editPostState by mutableStateOf(EditPostState())
     var caption by mutableStateOf(TextFieldValue())
+    var location by mutableStateOf<Place?>(null)
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var mediaAttachmentsEdit = mutableStateListOf<MediaAttachment>()
@@ -51,6 +54,9 @@ class EditPostViewModel @Inject constructor(
                 is Resource.Success -> {
                     if (result.data != null) {
                         caption = TextFieldValue(result.data.content)
+                        result.data.place?.let {
+                            location = it
+                        }
                         sensitive = result.data.sensitive
                         sensitiveText = result.data.spoilerText
                         mediaAttachmentsEdit.addAll(result.data.mediaAttachments)
@@ -77,15 +83,30 @@ class EditPostViewModel @Inject constructor(
 
     fun updatePost(postId: String, navController: NavController) {
         CoroutineScope(Dispatchers.Default).launch {
+            val placeDto = if (location != null) {
+                PlaceDto(
+                    id = location!!.id,
+                    name = location!!.name!!,
+                    slug = location!!.slug,
+                    country = location!!.country!!,
+                    url = location!!.url
+                )
+            } else {
+                null
+            }
+
+            val updatePostDto = UpdatePostDto(
+                _status = caption.text,
+                _sensitive = sensitive,
+                _spoilerText = sensitiveText,
+                _media_ids = mediaAttachmentsEdit.map { it.id },
+                _location = placeDto
+            )
 
             mediaDescriptionItems.onEach { mediaDescriptionItem ->
                 updateMedia(mediaDescriptionItem)
             }
 
-            val updatePostDto = UpdatePostDto(_status = caption.text,
-                _sensitive = sensitive,
-                _spoilerText = sensitiveText,
-                _media_ids = mediaAttachmentsEdit.map { it.id })
             updatePostUseCase(
                 postId, updatePostDto
             ).onEach { result ->
@@ -153,6 +174,10 @@ class EditPostViewModel @Inject constructor(
             mediaAttachmentsEdit[index] = mediaAttachmentsEdit[index + 1]
             mediaAttachmentsEdit[index + 1] = copy
         }
+    }
+
+    fun _setLocation(_location: Place?) {
+        location = _location
     }
 }
 

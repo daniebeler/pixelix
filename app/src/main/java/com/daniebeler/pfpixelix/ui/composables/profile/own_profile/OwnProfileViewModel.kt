@@ -12,13 +12,13 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
+import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
@@ -97,7 +97,10 @@ class OwnProfileViewModel @Inject constructor(
         getPostsFirstLoad(refreshing)
 
         viewModelScope.launch {
-            getCollections(getCurrentLoginDataUseCase()!!.accountId)
+            val currentLoginData = getCurrentLoginDataUseCase()
+            currentLoginData?.let {
+                getCollections(it.accountId)
+            }
         }
     }
 

@@ -9,4 +9,6 @@ interface CollectionRepository {
     fun getCollections(userId: String): Flow<Resource<List<Collection>>>
     fun getCollection(collectionId: String): Flow<Resource<Collection>>
     fun getPostsOfCollection(collectionId: String): Flow<Resource<List<Post>>>
+    fun removePostOfCollection(collectionId: String, postId: String): Flow<Resource<String>>
+    fun addPostOfCollection(collectionId: String, postId: String): Flow<Resource<String>>
 }
