@@ -15,8 +15,8 @@ class GetOwnPostsUseCase(
     ): Flow<Resource<List<Post>>> = flow {
         emit(Resource.Loading())
 
-        val accountId = currentLoginDataUseCase()!!.accountId
-        if (accountId.isNotEmpty()) {
+        val accountId = currentLoginDataUseCase()?.accountId
+        accountId?.let {
             postRepository.getPostsByAccountId(accountId, maxPostId, limit).collect { res ->
                 emit(res)
             }
