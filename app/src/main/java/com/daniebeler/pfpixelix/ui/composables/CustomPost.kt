@@ -38,6 +38,7 @@ fun CustomPost(
     isFullQuality: Boolean = false,
     navController: NavController,
     customModifier: Modifier = Modifier,
+    onClick: ((id: String) -> Unit)? = null,
     edit: Boolean = false,
     editRemove: (postId: String) -> Unit = {}
 ) {
@@ -52,7 +53,6 @@ fun CustomPost(
     )
 
     Box(modifier = customModifier.aspectRatio(1f)) {
-
         if (blurHashAsDrawable.bitmap != null) {
             Image(
                 blurHashAsDrawable.bitmap.asImageBitmap(),
@@ -68,7 +68,11 @@ fun CustomPost(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .clickable(onClick = {
-                        Navigate.navigate("single_post_screen/" + post.id, navController)
+                        if (!edit && onClick == null) {
+                            Navigate.navigate("single_post_screen/" + post.id, navController)
+                        } else if (onClick != null){
+                            onClick(post.id)
+                        }
                     }),
             ) {
 
@@ -83,8 +87,10 @@ fun CustomPost(
             Box(
                 customModifier
                     .clickable(onClick = {
-                        if (!edit) {
+                        if (!edit && onClick == null) {
                             Navigate.navigate("single_post_screen/" + post.id, navController)
+                        } else if (onClick != null){
+                            onClick(post.id)
                         }
                     })
                     .padding(

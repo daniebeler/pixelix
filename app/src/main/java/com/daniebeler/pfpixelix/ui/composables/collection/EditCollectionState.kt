@@ -8,6 +8,6 @@ data class EditCollectionState(
     var editMode: Boolean = false,
     var editPosts: List<Post> = emptyList(),
     var removedIds: List<String> = emptyList(),
-    val addedIds: List<String> = emptyList(),
+    var addedIds: List<String> = emptyList(),
     val error: String = ""
 )

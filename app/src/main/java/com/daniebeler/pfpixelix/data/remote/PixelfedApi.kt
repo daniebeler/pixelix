@@ -278,6 +278,12 @@ interface PixelfedApi {
         @Query("post_id") postId: String
     ): Call<String>
 
+    @POST("api/v1.1/collections/add")
+    fun addPostOfCollection(
+        @Query("collection_id") collectionId: String,
+        @Query("post_id") postId: String
+    ): Call<String>
+
     // Tags
 
 

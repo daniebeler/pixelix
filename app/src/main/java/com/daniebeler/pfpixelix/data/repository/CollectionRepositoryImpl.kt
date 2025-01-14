@@ -59,4 +59,23 @@ class CollectionRepositoryImpl @Inject constructor(
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
+
+    override fun addPostOfCollection(
+        collectionId: String, postId: String
+    ): Flow<Resource<String>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = pixelfedApi.addPostOfCollection(
+                collectionId, postId
+            ).awaitResponse()
+            if (response.isSuccessful) {
+                val res = response.body()
+                emit(Resource.Success(res!!))
+            } else {
+                emit(Resource.Error("Unknown Error"))
+            }
+        } catch (exception: Exception) {
+            emit(Resource.Error(exception.message ?: "Unknown Error"))
+        }
+    }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.usecase.AddPostOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
@@ -23,6 +24,7 @@ class CollectionViewModel @Inject constructor(
     private val getPostsOfCollectionUseCase: GetPostsOfCollectionUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val removePostOfCollectionUseCase: RemovePostOfCollectionUseCase,
+    private val addPostOfCollectionUseCase: AddPostOfCollectionUseCase,
     private val getOwnPostsUseCase: GetOwnPostsUseCase
 ) : ViewModel() {
 
@@ -95,15 +97,13 @@ class CollectionViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
-
     }
 
     fun getPostsExceptCollection() {
         getOwnPostsUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    //Todo: filter out posts already in collection
-                    val posts = result.data!!.filter {!editState.removedIds.contains(it.id)}
+                    val posts = result.data!!.filter {!editState.editPosts.contains(it)}
                     editState = editState.copy(allPostsExceptCollection = posts)
                 }
 
@@ -118,11 +118,45 @@ class CollectionViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun addPostToCollection(id: String) {
+        val postToAdd = editState.allPostsExceptCollection.find { it.id == id }
+        val allPosts = editState.allPostsExceptCollection.filter {it.id != id}
+        postToAdd?.let {
+            val posts = editState.editPosts + postToAdd
+            editState = editState.copy(editPosts = posts, addedIds = editState.addedIds + id, allPostsExceptCollection = allPosts)
+        }
+    }
+
     fun confirmEdit() {
         collectionPostsState = collectionPostsState.copy(posts = editState.editPosts)
         editState = editState.copy(editMode = false)
         editState.removedIds.map {
             removePostOfCollection(it)
+        }
+        editState.addedIds.map {
+            addPostsOfCollection(
+                it
+            )
+        }
+    }
+
+    private fun addPostsOfCollection(postId: String) {
+        if (collectionState.id != null) {
+            addPostOfCollectionUseCase(collectionState.id!!, postId).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        getPostsFirstLoad(false)
+                    }
+
+                    is Resource.Error -> {
+
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -149,6 +183,8 @@ class CollectionViewModel @Inject constructor(
     fun toggleEditMode() {
         val newEditState = editState.copy()
         if (!editState.editMode) {
+            newEditState.addedIds = emptyList()
+            newEditState.removedIds = emptyList()
             newEditState.editPosts = collectionPostsState.posts
         }
         newEditState.editMode = !newEditState.editMode

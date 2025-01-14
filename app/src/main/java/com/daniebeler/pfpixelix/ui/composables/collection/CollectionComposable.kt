@@ -1,10 +1,13 @@
 package com.daniebeler.pfpixelix.ui.composables.collection
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
@@ -53,6 +56,7 @@ fun CollectionComposable(
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val showAddPostBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet by remember { mutableStateOf(false) }
     var showAddPostBottomSheet by remember { mutableStateOf(false) }
 
@@ -137,33 +141,26 @@ fun CollectionComposable(
                     //viewModel.getItemsPaginated()
                 },
                 after = {
-                    IconButton(onClick = {
-                        showAddPostBottomSheet = true
-                        viewModel.getPostsExceptCollection()
-                    }) {
-                        Icon(Icons.Outlined.AddCircle, contentDescription = "")
+                    if (viewModel.editState.editMode) {
+                        Spacer(Modifier.height(22.dp))
+                        IconButton(onClick = {
+                            showAddPostBottomSheet = true
+                            viewModel.getPostsExceptCollection()
+                        }) {
+                            Icon(
+                                Icons.Outlined.AddCircle,
+                                contentDescription = "",
+                                Modifier.height(200.dp).width(200.dp)
+                            )
+                        }
                     }
+
                 },
                 onRefresh = {
                     viewModel.refresh()
                 },
                 edit = viewModel.editState.editMode,
                 editRemove = { id -> viewModel.editRemove(id) })
-
-
-            IconButton(onClick = {
-                showAddPostBottomSheet = true
-                viewModel.getPostsExceptCollection()
-            }) {
-                Icon(Icons.Outlined.AddCircle, contentDescription = "")
-            }
-        }
-
-        IconButton(onClick = {
-            showAddPostBottomSheet = true
-            viewModel.getPostsExceptCollection()
-        }) {
-            Icon(Icons.Outlined.AddCircle, contentDescription = "")
         }
 
         if (showBottomSheet) {
@@ -205,13 +202,12 @@ fun CollectionComposable(
                 onDismissRequest = {
                     showAddPostBottomSheet = false
                 },
-                sheetState = sheetState,
+                sheetState = showAddPostBottomSheetState,
                 modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-
                     InfinitePostsGrid(items = viewModel.editState.allPostsExceptCollection,
                         isLoading = viewModel.editState.isLoading,
                         isRefreshing = false,
@@ -225,7 +221,8 @@ fun CollectionComposable(
                         },
                         onRefresh = {
                             viewModel.refresh()
-                        })
+                        }, onClick = { viewModel.addPostToCollection(it) }, pullToRefresh = false
+                    )
                 }
             }
         }

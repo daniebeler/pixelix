@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -42,111 +43,145 @@ fun InfinitePostsGrid(
     after: @Composable (() -> Unit)? = null,
     onRefresh: () -> Unit = { },
     edit: Boolean = false,
-    editRemove: (postId: String) -> Unit = { }
+    editRemove: (postId: String) -> Unit = { },
+    onClick: ((id: String) -> Unit)? = null,
+    pullToRefresh: Boolean = true
 ) {
 
+    if (pullToRefresh) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
+        ) {
+            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, before, after, edit, editRemove, onClick)
+        }
+    } else {
+        Box(
+          modifier = Modifier.fillMaxSize()
+        ) {
+            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, before, after, edit, editRemove, onClick)
+        }
+    }
+}
+
+@Composable
+fun privateInfinitePostsGrid(
+    items: List<Post>,
+    isLoading: Boolean,
+    isRefreshing: Boolean,
+    error: String,
+    endReached: Boolean = false,
+    emptyMessage: EmptyState,
+    navController: NavController,
+    getItemsPaginated: () -> Unit = { },
+    before: @Composable (() -> Unit)? = null,
+    after: @Composable (() -> Unit)? = null,
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = { },
+    onClick: ((id: String) -> Unit)? = null
+) {
     val lazyGridState = rememberLazyGridState()
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
+    LazyVerticalGrid(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp),
+        state = lazyGridState,
+        columns = GridCells.Fixed(3)
     ) {
-        LazyVerticalGrid(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            state = lazyGridState,
-            columns = GridCells.Fixed(3)
-        ) {
 
-            if (before != null) {
-                item(span = { GridItemSpan(3) }) {
-                    before()
-                }
-            }
-
+        if (before != null) {
             item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.height(12.dp))
+                before()
+            }
+        }
+
+        item(span = { GridItemSpan(3) }) {
+            Spacer(Modifier.height(12.dp))
+        }
+
+        itemsIndexed(items) { index, photo ->
+
+            val isTopLeft = index == 0
+            val isTopRight = index == 2
+            val isBottomLeft = index >= items.size - 3 && index % 3 == 0
+            val isBottomRight =
+                (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
+
+            var roundedCorners: Modifier = Modifier
+
+            if (isTopLeft) {
+                roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
+            }
+            if (isBottomLeft) {
+                roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
+            }
+            if (isTopRight) {
+                roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
+            }
+            if (isBottomRight) {
+                roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
             }
 
-            itemsIndexed(items) { index, photo ->
+            CustomPost(
+                post = photo,
+                navController = navController,
+                customModifier = roundedCorners,
+                edit = edit,
+                editRemove = { id -> editRemove(id) },
+                onClick = onClick
+            )
+        }
 
-                val isTopLeft = index == 0
-                val isTopRight = index == 2
-                val isBottomLeft = index >= items.size - 3 && index % 3 == 0
-                val isBottomRight =
-                    (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
-
-                var roundedCorners: Modifier = Modifier
-
-                if (isTopLeft) {
-                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
-                }
-                if (isBottomLeft) {
-                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-                }
-                if (isTopRight) {
-                    roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
-                }
-                if (isBottomRight) {
-                    roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
-                }
-
-                CustomPost(
-                    post = photo, navController = navController, customModifier = roundedCorners, edit = edit, editRemove = {id -> editRemove(id)}
-                )
+        if (after != null) {
+            item(span = { GridItemSpan(3) }) {
+                after()
             }
+        }
 
-            if (after != null) {
+
+
+
+        if (endReached && items.size > 10) {
+            item(span = { GridItemSpan(3) }) {
+                EndOfListComposable()
+            }
+        }
+
+        if (before != null) {
+            if (isLoading) {
                 item(span = { GridItemSpan(3) }) {
-                    after()
+                    FixedHeightLoadingComposable()
                 }
             }
 
 
-
-
-            if (endReached && items.size > 10) {
-                item(span = { GridItemSpan(3) }) {
-                    EndOfListComposable()
-                }
-            }
-
-            if (before != null) {
-                if (isLoading) {
+            if (items.isEmpty()) {
+                if (!isLoading && error.isEmpty()) {
                     item(span = { GridItemSpan(3) }) {
-                        FixedHeightLoadingComposable()
-                    }
-                }
-
-
-                if (items.isEmpty()) {
-                    if (!isLoading && error.isEmpty()) {
-                        item(span = { GridItemSpan(3) }) {
-                            FixedHeightEmptyStateComposable(emptyMessage)
-                        }
+                        FixedHeightEmptyStateComposable(emptyMessage)
                     }
                 }
             }
-
-            item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.height(12.dp))
-            }
         }
 
-        if (items.isEmpty() && error.isNotBlank()) {
-            FullscreenErrorComposable(message = error)
+        item(span = { GridItemSpan(3) }) {
+            Spacer(Modifier.height(12.dp))
+        }
+    }
+
+    if (items.isEmpty() && error.isNotBlank()) {
+        FullscreenErrorComposable(message = error)
+    }
+
+    if (before == null && items.isEmpty()) {
+        if (isLoading && !isRefreshing) {
+            FullscreenLoadingComposable()
         }
 
-        if (before == null && items.isEmpty()) {
-            if (isLoading && !isRefreshing) {
-                FullscreenLoadingComposable()
-            }
-
-            if (!isLoading && error.isEmpty()) {
-                FullscreenEmptyStateComposable(emptyMessage)
-            }
+        if (!isLoading && error.isEmpty()) {
+            FullscreenEmptyStateComposable(emptyMessage)
         }
     }
 
@@ -154,5 +189,3 @@ fun InfinitePostsGrid(
         getItemsPaginated()
     }
 }
-
-

@@ -25,16 +25,15 @@ fun TrendingPostsComposable(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        InfinitePostsGrid(
-            items = viewModel.trendingState.trendingPosts,
+        InfinitePostsGrid(items = viewModel.trendingState.trendingPosts,
             isLoading = viewModel.trendingState.isLoading,
             isRefreshing = viewModel.trendingState.isRefreshing,
             endReached = true,
             error = viewModel.trendingState.error,
             emptyMessage = EmptyState(heading = stringResource(R.string.no_trending_posts)),
-            navController = navController
-        ) {
-            viewModel.getTrendingPosts(range, true)
-        }
+            navController = navController,
+            onRefresh = {
+                viewModel.getTrendingPosts(range, true)
+            })
     }
 }

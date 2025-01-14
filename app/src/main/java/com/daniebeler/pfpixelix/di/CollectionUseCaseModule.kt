@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.di
 
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
+import com.daniebeler.pfpixelix.domain.usecase.AddPostOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
@@ -36,4 +37,8 @@ class CollectionUseCaseModule {
     fun provideRemovePostsOfCollectionUseCase(repository: CollectionRepository): RemovePostOfCollectionUseCase =
         RemovePostOfCollectionUseCase(repository)
 
+    @Provides
+    @Singleton
+    fun provideAddPostsOfCollectionUseCase(repository: CollectionRepository): AddPostOfCollectionUseCase =
+        AddPostOfCollectionUseCase(repository)
 }
