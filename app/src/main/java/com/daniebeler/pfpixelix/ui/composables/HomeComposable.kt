@@ -118,7 +118,6 @@ fun HomeComposable(navController: NavController) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
-                    .padding(top = 12.dp)
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->

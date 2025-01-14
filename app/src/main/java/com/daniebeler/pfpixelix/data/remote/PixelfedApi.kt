@@ -46,7 +46,7 @@ interface PixelfedApi {
     // Discover
 
 
-    @GET("api/pixelfed/v2/discover/posts/trending")
+    @GET("api/v1.1/discover/posts/trending")
     fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
 
     @GET("api/v1.1/discover/posts/hashtags?_pe=1")
