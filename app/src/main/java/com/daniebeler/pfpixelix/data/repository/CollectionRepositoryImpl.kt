@@ -17,10 +17,10 @@ class CollectionRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi
 ) : CollectionRepository {
 
-    override fun getCollections(userId: String): Flow<Resource<List<Collection>>> {
+    override fun getCollections(userId: String, page: Int): Flow<Resource<List<Collection>>> {
         return NetworkCall<Collection, CollectionDto>().makeCallList(
             pixelfedApi.getCollectionsByUserId(
-                userId
+                userId, page
             )
         )
     }

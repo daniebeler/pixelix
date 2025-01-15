@@ -248,6 +248,7 @@ fun OtherProfileComposable(
                         }
 
                         CollectionsComposable(collectionsState = viewModel.collectionsState,
+                            getMoreCollections = {viewModel.getCollections(viewModel.accountState.account!!.id, true)},
                             navController = navController,
                             instanceDomain = viewModel.domain,
                             openUrl = { url -> viewModel.openUrl(context, url) })

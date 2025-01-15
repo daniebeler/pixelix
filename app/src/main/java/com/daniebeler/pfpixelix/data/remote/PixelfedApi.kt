@@ -259,7 +259,8 @@ interface PixelfedApi {
 
     @GET("api/v1.1/collections/accounts/{userId}")
     fun getCollectionsByUserId(
-        @Path("userId") userId: String
+        @Path("userId") userId: String,
+        @Query("page") page: Int
     ): Call<List<CollectionDto>>
 
     @GET("api/v1.1/collections/view/{collectionid}")

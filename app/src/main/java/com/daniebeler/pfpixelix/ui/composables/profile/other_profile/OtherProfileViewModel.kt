@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -61,7 +62,7 @@ class OtherProfileViewModel @Inject constructor(
     var relationshipState by mutableStateOf(RelationshipState())
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
     var postsState by mutableStateOf(PostsState())
-
+    private var collectionPage by mutableIntStateOf(1)
     var collectionsState by mutableStateOf(CollectionsState())
 
     var domain by mutableStateOf("")
@@ -80,7 +81,7 @@ class OtherProfileViewModel @Inject constructor(
         getRelationship(userId)
 
         getMutualFollowers(userId)
-        getCollections(userId)
+        getCollections(userId, false)
 
         viewModelScope.launch {
             getViewUseCase().collect { res ->
@@ -189,19 +190,32 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getCollections(userId: String) {
-        getCollectionsUseCase(userId).onEach { result ->
-            collectionsState = when (result) {
+    fun getCollections(userId: String, paginated: Boolean) {
+        if (collectionsState.endReached) {
+            return
+        }
+        if (!paginated) {
+            collectionPage = 1
+        } else {
+            collectionPage++
+        }
+        getCollectionsUseCase(userId, collectionPage).onEach { result ->
+            when (result) {
                 is Resource.Success -> {
-                    CollectionsState(collections = result.data ?: emptyList())
+                    collectionsState = if (!paginated) {
+                        CollectionsState(collections = result.data ?: emptyList())
+                    } else {
+                        val endReached = result.data!!.isEmpty()
+                        CollectionsState(collections = collectionsState.collections + result.data, endReached = endReached)
+                    }
                 }
 
                 is Resource.Error -> {
-                    CollectionsState(error = result.message ?: "An unexpected error occurred")
+                    collectionsState = CollectionsState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    CollectionsState(
+                    collectionsState = CollectionsState(
                         isLoading = true, collections = collectionsState.collections
                     )
                 }

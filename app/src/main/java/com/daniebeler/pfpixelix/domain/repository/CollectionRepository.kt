@@ -6,7 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
 interface CollectionRepository {
-    fun getCollections(userId: String): Flow<Resource<List<Collection>>>
+    fun getCollections(userId: String, page: Int): Flow<Resource<List<Collection>>>
     fun getCollection(collectionId: String): Flow<Resource<Collection>>
     fun getPostsOfCollection(collectionId: String): Flow<Resource<List<Post>>>
     fun removePostOfCollection(collectionId: String, postId: String): Flow<Resource<String>>

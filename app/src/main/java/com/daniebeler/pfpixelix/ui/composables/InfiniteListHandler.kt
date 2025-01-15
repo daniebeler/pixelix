@@ -15,12 +15,6 @@ fun InfiniteListHandler(
     buffer: Int = 2,
     onLoadMore: () -> Unit
 ) {
-    val totalItems = remember {
-        derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
-            layoutInfo.totalItemsCount
-        }
-    }
     val loadMore = remember {
         derivedStateOf {
             val layoutInfo = lazyListState.layoutInfo

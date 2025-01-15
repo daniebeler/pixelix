@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetCollectionsUseCase(
     private val collectionRepository: CollectionRepository
 ) {
-    operator fun invoke(accountId: String): Flow<Resource<List<Collection>>> {
-        return collectionRepository.getCollections(accountId)
+    operator fun invoke(accountId: String, page: Int): Flow<Resource<List<Collection>>> {
+        return collectionRepository.getCollections(accountId, page)
     }
 }

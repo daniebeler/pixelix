@@ -175,6 +175,14 @@ fun OwnProfileComposable(
 
                         CollectionsComposable(
                             collectionsState = viewModel.collectionsState,
+                            getMoreCollections = {
+                                viewModel.accountState.account?.let {
+                                    viewModel.getCollections(
+                                        it.id,
+                                        true
+                                    )
+                                }
+                            },
                             navController = navController,
                             addNewButton = true,
                             instanceDomain = viewModel.ownDomain,
