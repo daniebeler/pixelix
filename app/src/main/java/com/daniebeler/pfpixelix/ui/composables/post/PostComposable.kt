@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -615,13 +614,14 @@ fun PostImage(
         )
 
         if (blurHashAsDrawable.bitmap != null) {
+            val blurHashModifier = if (mediaAttachment.meta?.original?.aspect == null) {Modifier} else {Modifier.aspectRatio(
+                mediaAttachment.meta.original.aspect.toFloat()
+            )}
             Image(
                 blurHashAsDrawable.bitmap.asImageBitmap(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
-                )
+                modifier = blurHashModifier
             )
         }
 
@@ -743,15 +743,7 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
         model = mediaAttachment.url,
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
-        modifier = if (mediaAttachment.meta?.original != null) {
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
-                )
-        } else {
-            Modifier.fillMaxWidth()
-        }
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
@@ -871,19 +863,17 @@ private fun VideoPlayer(
                 }
             }
         }) {
-            DisposableEffect(key1 = AndroidView(factory = { ctx ->
+            AndroidView(factory = { ctx ->
                 PlayerView(ctx).apply {
                     player = exoPlayer
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
                     setShowPreviousButton(false)
                     useController = false
                 }
             }, modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                )
-                .onGloballyPositioned { }), effect = {
+                .onGloballyPositioned { })
+            DisposableEffect(key1 = Unit, effect = {
                 onDispose {
                     exoPlayer.release()
                 }
