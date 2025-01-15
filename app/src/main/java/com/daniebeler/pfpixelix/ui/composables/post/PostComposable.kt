@@ -592,6 +592,7 @@ fun PostImage(
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
+    var imageLoaded by remember { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
             delay(1000)
@@ -613,16 +614,17 @@ fun PostImage(
             mediaAttachment.blurHash,
         )
 
-        if (blurHashAsDrawable.bitmap != null) {
-            val blurHashModifier = if (mediaAttachment.meta?.original?.aspect == null) {Modifier} else {Modifier.aspectRatio(
-                mediaAttachment.meta.original.aspect.toFloat()
-            )}
-            Image(
-                blurHashAsDrawable.bitmap.asImageBitmap(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = blurHashModifier
-            )
+        if (!imageLoaded) {
+            if (blurHashAsDrawable.bitmap != null) {
+                Image(
+                    blurHashAsDrawable.bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.aspectRatio(
+                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+                    )
+                )
+            }
         }
 
         val zoomState = rememberZoomState()
@@ -654,17 +656,16 @@ fun PostImage(
                     5
                 ) != ".webp"
             ) {
-                ImageWrapper(
-                    mediaAttachment
-                ) { zoomState.setContentSize(it.painter.intrinsicSize) }
+                ImageWrapper(mediaAttachment,
+                    { zoomState.setContentSize(it.painter.intrinsicSize) },
+                    { imageLoaded = true })
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
-                GifPlayer(mediaAttachment)
+                GifPlayer(mediaAttachment, { imageLoaded = true })
             } else {
-                VideoPlayer(
-                    uri = Uri.parse(mediaAttachment.url),
+                VideoPlayer(uri = Uri.parse(mediaAttachment.url),
                     mediaAttachment = mediaAttachment,
-                    viewModel
-                )
+                    viewModel,
+                    { imageLoaded = true })
             }
         }
 
@@ -724,21 +725,23 @@ fun PostImage(
 @Composable
 private fun ImageWrapper(
     mediaAttachment: MediaAttachment,
-    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit
+    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
+    onSuccess: () -> Unit
 ) {
-
     AsyncImage(model = mediaAttachment.url,
         contentDescription = "",
         Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
         onSuccess = { state ->
             setContentSize(state)
+            onSuccess()
         })
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun GifPlayer(mediaAttachment: MediaAttachment) {
+private fun GifPlayer(mediaAttachment: MediaAttachment, onSuccess: () -> Unit) {
+    onSuccess()
     GlideImage(
         model = mediaAttachment.url,
         contentDescription = null,
@@ -750,7 +753,7 @@ private fun GifPlayer(mediaAttachment: MediaAttachment) {
 @Composable
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(
-    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
+    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel, onSuccess: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -808,9 +811,15 @@ private fun VideoPlayer(
                 Lifecycle.Event.ON_PAUSE -> {
                     exoPlayer.pause()
                 }
+
                 Lifecycle.Event.ON_RESUME -> {
                     exoPlayer.play()
                 }
+
+                Lifecycle.Event.ON_CREATE -> {
+                    onSuccess()
+                }
+
                 else -> {}
             }
         }
