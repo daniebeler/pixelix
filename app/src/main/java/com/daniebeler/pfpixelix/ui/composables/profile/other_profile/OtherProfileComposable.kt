@@ -64,6 +64,7 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.ToTopButton
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
@@ -277,6 +278,8 @@ fun OtherProfileComposable(
             }
         }
     }
+
+    ToTopButton(listState = lazyGridState)
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)

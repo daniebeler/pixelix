@@ -214,7 +214,9 @@ fun OwnProfileComposable(
                 FullscreenErrorComposable(message = viewModel.postsState.error)
             }
         }
+
     }
+    //ToTopButton(listState = lazyGridState)
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()

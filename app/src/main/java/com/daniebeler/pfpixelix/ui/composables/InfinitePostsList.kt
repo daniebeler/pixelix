@@ -40,6 +40,7 @@ fun InfinitePostsList(
     itemGetsDeleted: (postId: String) -> Unit,
     before: @Composable (() -> Unit)? = null,
 ) {
+
     val lazyListState = rememberLazyListState()
 
     fun delete(postId: String) {
@@ -107,6 +108,8 @@ fun InfinitePostsList(
         if (error.isNotEmpty() && items.isEmpty()) {
             FullscreenErrorComposable(message = error)
         }
+
+        ToTopButton(lazyListState)
     }
 
     InfiniteListHandler(lazyListState = lazyListState) {
