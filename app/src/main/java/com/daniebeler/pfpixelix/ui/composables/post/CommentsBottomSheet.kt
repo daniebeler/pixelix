@@ -178,7 +178,7 @@ fun CommentsBottomSheet(
                 }
             }
 
-            if (!viewModel.repliesState.isLoading && viewModel.repliesState.replies.isEmpty()) {
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isBlank() && viewModel.repliesState.replies.isEmpty()) {
                 item {
                     Row(
                         modifier = Modifier
@@ -190,6 +190,13 @@ fun CommentsBottomSheet(
                     }
                 }
             }
+
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isNotBlank() && viewModel.repliesState.replies.isEmpty()) {
+                item {
+                     ErrorComposable(viewModel.repliesState.error)
+                }
+            }
+
             item {
                 Spacer(modifier = Modifier.height(18.dp))
                 Spacer(
