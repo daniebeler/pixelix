@@ -129,7 +129,7 @@ interface PixelfedApi {
     // Accounts
 
 
-    @GET("api/v1/accounts/{accountid}")
+    @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(
         @Path("accountid") accountId: String
     ): Call<AccountDto>

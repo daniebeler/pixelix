@@ -1,14 +1,11 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
-import android.provider.OpenableColumns
+import android.util.Log
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
-import com.daniebeler.pfpixelix.utils.GetFile
 import com.daniebeler.pfpixelix.utils.MimeType
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -26,12 +23,17 @@ class UpdateAccountUseCase(
         val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
 
         if (avatarUri != null) {
-            val fileType = MimeType.getMimeType(avatarUri, context.contentResolver) ?: "image/*"
+            try {
 
-            val inputStream = context.contentResolver.openInputStream(avatarUri)
-            val fileRequestBody = inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
+                val fileType = MimeType.getMimeType(avatarUri, context.contentResolver) ?: "image/*"
+                val inputStream = context.contentResolver.openInputStream(avatarUri)
+                val fileRequestBody = inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
+                builder.addFormDataPart("avatar", "avatar", fileRequestBody!!)
+            } catch (e: Exception) {
+                Log.e("UpdateAccountUseCase", e.message!!)
+            }
 
-            builder.addFormDataPart("avatar", "avatar", fileRequestBody!!)
+
         }
 
         builder.addFormDataPart("display_name", displayName)
