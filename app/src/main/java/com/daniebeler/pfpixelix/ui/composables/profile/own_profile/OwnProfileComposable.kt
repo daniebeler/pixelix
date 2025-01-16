@@ -165,7 +165,7 @@ fun OwnProfileComposable(
                                     contentPadding = PaddingValues(12.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        contentColor = MaterialTheme.colorScheme.onSurface
                                     )
                                 ) {
                                     Text(text = stringResource(id = R.string.edit_profile))
