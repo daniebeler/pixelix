@@ -69,6 +69,9 @@ fun CustomNotification(notification: Notification, navController: NavController)
                 .height(46.dp)
                 .width(46.dp)
                 .clip(CircleShape)
+                .clickable {
+                    Navigate.navigate("profile_screen/" + notification.account.id, navController)
+                }
         )
         Spacer(modifier = Modifier.width(10.dp))
         Column {
@@ -99,6 +102,9 @@ fun CustomNotification(notification: Notification, navController: NavController)
                     .height(36.dp)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(4.dp))
+                    .clickable {
+                        Navigate.navigate("single_post_screen/" + notification.post!!.id, navController)
+                    }
             )
         }
     }
