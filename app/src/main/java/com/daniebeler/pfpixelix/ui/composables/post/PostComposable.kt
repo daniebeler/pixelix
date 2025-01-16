@@ -660,7 +660,7 @@ fun PostImage(
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
-                GifPlayer(mediaAttachment, { imageLoaded = true })
+                GifPlayer(mediaAttachment) { imageLoaded = true }
             } else {
                 VideoPlayer(uri = Uri.parse(mediaAttachment.url),
                     mediaAttachment = mediaAttachment,
@@ -741,7 +741,9 @@ private fun ImageWrapper(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun GifPlayer(mediaAttachment: MediaAttachment, onSuccess: () -> Unit) {
-    onSuccess()
+    LaunchedEffect(Unit) {
+        onSuccess()
+    }
     GlideImage(
         model = mediaAttachment.url,
         contentDescription = null,
