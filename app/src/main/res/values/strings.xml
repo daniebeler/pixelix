@@ -15,8 +15,8 @@
     <string name="mute_this_profile">Mute this profile</string>
     <string name="unmute_this_profile">Unmute this profile</string>
     <string name="load_more">Load More</string>
-    <string name="follow">follow</string>
-    <string name="unfollow">unfollow</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="followers">Followers</string>
     <string name="following">Following</string>
     <string name="posts">Posts</string>
