@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -120,15 +118,14 @@ fun AboutInstanceComposable(
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    Text(
-                        text = stringResource(R.string.admin),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
+                    viewModel.instanceState.instance?.admin?.let { account ->
+                        Text(
+                            text = stringResource(R.string.admin),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(12.dp, 0.dp)
+                        )
 
-                    if (viewModel.instanceState.instance != null) {
-                        val account = viewModel.instanceState.instance!!.admin
                         Row(modifier = Modifier
                             .clickable {
                                 Navigate.navigate(
@@ -156,103 +153,103 @@ fun AboutInstanceComposable(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
+                Text(
+                    text = stringResource(R.string.privacy_policy),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(12.dp, 0.dp)
+                )
+
+                Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(12.dp, 0.dp)
+                        .clickable {
+                            if (viewModel.instanceState.instance != null) {
+                                viewModel.openUrl(
+                                    context = context,
+                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
+                                )
+                            }
+                        })
+
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+
+                Text(
+                    text = stringResource(R.string.terms_of_use),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(12.dp, 0.dp)
+                )
+
+                Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(12.dp, 0.dp)
+                        .clickable {
+                            if (viewModel.instanceState.instance != null) {
+                                viewModel.openUrl(
+                                    context = context,
+                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
+                                )
+                            }
+                        })
+
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Text(
+                    text = stringResource(R.string.rules),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(12.dp, 0.dp)
+                )
+            }
+
+            items(viewModel.instanceState.instance?.rules ?: emptyList()) {
+                Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
                     Text(
-                        text = stringResource(R.string.privacy_policy),
+                        text = it.id,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
+                        color = MaterialTheme.colorScheme.primary
                     )
-
-                    Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
-                            .clickable {
-                                if (viewModel.instanceState.instance != null) {
-                                    viewModel.openUrl(
-                                        context = context,
-                                        url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
-                                    )
-                                }
-                            })
-
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-
-                    Text(
-                        text = stringResource(R.string.terms_of_use),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(12.dp, 0.dp)
-                            .clickable {
-                                if (viewModel.instanceState.instance != null) {
-                                    viewModel.openUrl(
-                                        context = context,
-                                        url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
-                                    )
-                                }
-                            })
-
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = stringResource(R.string.rules),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-                }
-
-                items(viewModel.instanceState.instance?.rules ?: emptyList()) {
-                    Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
-                        Text(
-                            text = it.id,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(18.dp))
-                        Text(text = it.text)
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = stringResource(R.string.instance_version),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Text(
-                        text = viewModel.instanceState.instance?.version ?: "",
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.width(18.dp))
+                    Text(text = it.text)
                 }
             }
 
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Text(
+                    text = stringResource(R.string.instance_version),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(12.dp, 0.dp)
+                )
+
+                Text(
+                    text = viewModel.instanceState.instance?.version ?: "",
+                    modifier = Modifier.padding(12.dp, 0.dp)
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
 
-        if (viewModel.instanceState.isLoading) {
-            FullscreenLoadingComposable()
-        }
-
-        if (viewModel.instanceState.error.isNotBlank()) {
-            FullscreenErrorComposable(message = viewModel.instanceState.error)
-        }
     }
+
+    if (viewModel.instanceState.isLoading) {
+        FullscreenLoadingComposable()
+    }
+
+    if (viewModel.instanceState.error.isNotBlank()) {
+        FullscreenErrorComposable(message = viewModel.instanceState.error)
+    }
+}
 }

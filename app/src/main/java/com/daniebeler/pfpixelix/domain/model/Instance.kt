@@ -6,7 +6,7 @@ data class Instance(
     val shortDescription: String,
     val description: String,
     val thumbnailUrl: String,
-    val admin: Account,
+    val admin: Account?,
     val stats: InstanceStats,
     val version: String,
     val configuration: Configuration
