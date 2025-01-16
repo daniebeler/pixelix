@@ -16,6 +16,9 @@ object Navigate {
     }
 
     fun navigate(route: String, navController: NavController, singleTop: Boolean = true) {
+        if (navController.currentDestination!!.route == route) {
+            return
+        }
         val alreadySaved = restoreStateRoutes.indexOf(route) != -1
         if (!alreadySaved) {
             restoreStateRoutes = restoreStateRoutes + route
@@ -27,6 +30,9 @@ object Navigate {
     }
 
     fun navigateWithPopUp(newRoute: String, navController: NavController) {
+        if (navController.currentDestination!!.route == newRoute) {
+            return
+        }
         val alreadySaved = restoreStateRoutes.indexOf(newRoute) != -1
         if (!alreadySaved) {
             restoreStateRoutes = restoreStateRoutes + newRoute
