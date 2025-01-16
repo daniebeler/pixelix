@@ -11,4 +11,5 @@ interface CollectionRepository {
     fun getPostsOfCollection(collectionId: String): Flow<Resource<List<Post>>>
     fun removePostOfCollection(collectionId: String, postId: String): Flow<Resource<String>>
     fun addPostOfCollection(collectionId: String, postId: String): Flow<Resource<String>>
+    fun updateCollection(collectionId: String, title: String, description: String, visibility: String): Flow<Resource<Collection>>
 }

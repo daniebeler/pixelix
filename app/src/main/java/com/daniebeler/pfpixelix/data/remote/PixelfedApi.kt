@@ -285,6 +285,15 @@ interface PixelfedApi {
         @Query("post_id") postId: String
     ): Call<String>
 
+    @FormUrlEncoded
+    @POST("/api/v1.1/collections/update/{collectionId}")
+    fun updateCollection(
+        @Path("collectionId") collectionId: String,
+        @Field("title") title: String,
+        @Field("description") description: String,
+        @Field("visibility") visibility: String
+    ): Call<CollectionDto>
+
     // Tags
 
 

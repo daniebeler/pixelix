@@ -9,5 +9,6 @@ data class EditCollectionState(
     var editPosts: List<Post> = emptyList(),
     var removedIds: List<String> = emptyList(),
     var addedIds: List<String> = emptyList(),
+    var name: String = "",
     val error: String = ""
 )

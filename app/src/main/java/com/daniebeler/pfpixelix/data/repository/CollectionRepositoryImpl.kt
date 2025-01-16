@@ -78,4 +78,12 @@ class CollectionRepositoryImpl @Inject constructor(
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
     }
+
+    override fun updateCollection(collectionId: String, title: String, description: String, visibility: String): Flow<Resource<Collection>> {
+        return NetworkCall<Collection, CollectionDto>().makeCall(
+            pixelfedApi.updateCollection(
+                collectionId, title, description, visibility
+            )
+        )
+    }
 }

@@ -100,6 +100,7 @@ class OwnProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val currentLoginData = getCurrentLoginDataUseCase()
             currentLoginData?.let {
+                collectionsState = collectionsState.copy(endReached = false)
                 getCollections(it.accountId, false)
             }
         }
