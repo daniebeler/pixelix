@@ -107,7 +107,8 @@ fun CommentsBottomSheet(
                         favourited = false,
                         visibility = "",
                         spoilerText = "",
-                        place = null
+                        place = null,
+                        inReplyToId = null
                     )
                     ReplyElement(reply = ownDescription,
                         true,

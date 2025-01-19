@@ -22,5 +22,6 @@ Post(
     val mentions: List<Account>,
     val place: Place?,
     val likedBy: LikedBy?,
-    val visibility: String
+    val visibility: String,
+    val inReplyToId: String?
 )

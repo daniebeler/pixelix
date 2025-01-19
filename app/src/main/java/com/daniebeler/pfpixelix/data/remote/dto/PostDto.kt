@@ -17,7 +17,7 @@ data class PostDto(
     @SerializedName("favourites_count") val favouritesCount: Int,
     @SerializedName("id") val id: String,
     @SerializedName("in_reply_to_account_id") val inReplyToAccountId: Any,
-    @SerializedName("in_reply_to_id") val inReplyToId: Any,
+    @SerializedName("in_reply_to_id") val inReplyToId: String?,
     @SerializedName("label") val label: LabelDto,
     @SerializedName("language") val language: Any,
     @SerializedName("liked_by") val likedBy: LikedByDto?,
@@ -44,7 +44,7 @@ data class PostDto(
     @SerializedName("url") val url: String,
     @SerializedName("_v") val v: Int,
     @SerializedName("visibility") val visibility: String,
-    @SerializedName("bookmarked") val bookmarked: Boolean
+    @SerializedName("bookmarked") val bookmarked: Boolean,
 ) : DtoInterface<Post> {
     override fun toModel(): Post {
         return Post(
@@ -53,7 +53,7 @@ data class PostDto(
             account = account.toModel(),
             tags = tags.map { it.toModel() },
             favouritesCount = favouritesCount,
-            content = contentText ?: "",
+            content = contentText,
             replyCount = replyCount,
             createdAt = createdAt,
             url = url,
@@ -65,7 +65,8 @@ data class PostDto(
             mentions = mentions.map { it.toModel() },
             place = place?.toModel(),
             likedBy = likedBy?.toModel(),
-            visibility = visibility
+            visibility = visibility,
+            inReplyToId = inReplyToId
         )
     }
 }

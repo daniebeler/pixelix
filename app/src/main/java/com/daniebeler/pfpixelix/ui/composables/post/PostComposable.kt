@@ -122,13 +122,14 @@ fun PostComposable(
     navController: NavController,
     postGetsDeleted: (postId: String) -> Unit,
     setZindex: (zIndex: Float) -> Unit,
+    openReplies: Boolean = false,
     viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableIntStateOf(0) }
+    var showBottomSheet by remember { mutableIntStateOf(if (openReplies) {1} else {0}) }
 
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
@@ -150,6 +151,12 @@ fun PostComposable(
     LaunchedEffect(post) {
         if (viewModel.post == null || viewModel.post!!.copy() != post.copy()) {
             viewModel.updatePost(post)
+        }
+    }
+
+    LaunchedEffect(openReplies) {
+        if (openReplies) {
+            viewModel.loadReplies(post.id)
         }
     }
 
@@ -663,7 +670,6 @@ fun PostImage(
                 GifPlayer(mediaAttachment) { imageLoaded = true }
             } else {
                 VideoPlayer(uri = Uri.parse(mediaAttachment.url),
-                    mediaAttachment = mediaAttachment,
                     viewModel,
                     { imageLoaded = true })
             }
@@ -755,7 +761,7 @@ private fun GifPlayer(mediaAttachment: MediaAttachment, onSuccess: () -> Unit) {
 @Composable
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(
-    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel, onSuccess: () -> Unit
+    uri: Uri, viewModel: PostViewModel, onSuccess: () -> Unit
 ) {
     val context = LocalContext.current
 

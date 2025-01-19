@@ -228,8 +228,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable(Destinations.ProfileByUsername.route) { navBackStackEntry ->
             val username = navBackStackEntry.arguments?.getString("username")
 
-            username?.let { username ->
-                OtherProfileComposable(navController, userId = "", byUsername = username)
+            username?.let {
+                OtherProfileComposable(navController, userId = "", byUsername = it)
             }
         }
 
@@ -304,16 +304,20 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(
-            "${Destinations.SinglePost.route}?refresh={refresh}",
+            "${Destinations.SinglePost.route}?refresh={refresh}&openReplies={openReplies}",
             arguments = listOf(navArgument("refresh") {
+                defaultValue = false
+            }, navArgument("openReplies") {
                 defaultValue = false
             })
         ) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
             val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
+            val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")
             Log.d("refresh", refresh!!.toString())
+            Log.d("openReplies", openReplies!!.toString())
             uId?.let { id ->
-                SinglePostComposable(navController, postId = id, refresh)
+                SinglePostComposable(navController, postId = id, refresh, openReplies)
             }
         }
 
