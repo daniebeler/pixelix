@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Widgets
@@ -53,7 +52,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateCompos
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsComposable(
     navController: NavController,
@@ -124,6 +123,14 @@ fun NotificationsComposable(
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
+
+                    if (viewModel.filter == NotificationsFilterEnum.Mentions) {
+                        ActiveFilterButton(text = stringResource(R.string.mentions))
+                    } else {
+                        InactiveFilterButton(text = stringResource(R.string.mentions), onClick = {
+                            viewModel.changeFilter(NotificationsFilterEnum.Mentions)
+                        })
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -150,6 +157,10 @@ fun NotificationsComposable(
                                         notification = it, navController = navController
                                     )
                                 } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == "reblog") {
+                                    CustomNotification(
+                                        notification = it, navController = navController
+                                    )
+                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == "mention") {
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )

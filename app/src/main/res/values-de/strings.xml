@@ -209,4 +209,5 @@
     <string name="bio">Bio</string>
     <string name="website">Website</string>
     <string name="location">Standort</string>
+    <string name="mentions">Erwähnungen</string>
 </resources>
