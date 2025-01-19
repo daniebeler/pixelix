@@ -2,7 +2,10 @@ package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,6 +68,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -129,7 +133,17 @@ fun PostComposable(
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableIntStateOf(if (openReplies) {1} else {0}) }
+    var showBottomSheet by remember {
+        mutableIntStateOf(
+            if (openReplies) {
+                1
+            } else {
+                0
+            }
+        )
+    }
+
+
 
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
@@ -163,6 +177,26 @@ fun PostComposable(
     val mediaAttachmentsCount = post.mediaAttachments.count()
 
     val pagerState = rememberPagerState(pageCount = { mediaAttachmentsCount })
+
+    var animateBoost by remember { mutableStateOf(false) }
+    val boostRotation by animateFloatAsState(
+        label = "StarRotation", targetValue = if (animateBoost) {
+            720f
+        } else {
+            0f
+        },
+        animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+    )
+
+
+    var animateHeart by remember { mutableStateOf(false) }
+    val heartScale by animateFloatAsState(
+        targetValue = if (animateHeart) 1.3f else 1f,
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+        finishedListener = {
+            animateHeart = false
+        }
+    )
 
     if (viewModel.post != null) {
         Column {
@@ -366,7 +400,7 @@ fun PostComposable(
                                     .size(28.dp)
                                     .clickable {
                                         viewModel.unlikePost(viewModel.post!!.id)
-                                    },
+                                    }.scale(heartScale),
                                 contentDescription = "",
                                 tint = Color(0xFFDD2E44)
                             )
@@ -376,6 +410,7 @@ fun PostComposable(
                                 modifier = Modifier
                                     .size(28.dp)
                                     .clickable {
+                                        animateHeart = true
                                         viewModel.likePost(viewModel.post!!.id)
                                     },
                                 contentDescription = ""
@@ -426,15 +461,18 @@ fun PostComposable(
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.rotate(boostRotation)
                                 )
                             }
                         } else {
                             IconButton(onClick = {
+                                animateBoost = true
                                 viewModel.reblogPost(viewModel.post!!.id)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Cached, contentDescription = ""
+                                    imageVector = Icons.Outlined.Cached,
+                                    contentDescription = "",
                                 )
                             }
                         }
@@ -669,9 +707,7 @@ fun PostImage(
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
                 GifPlayer(mediaAttachment) { imageLoaded = true }
             } else {
-                VideoPlayer(uri = Uri.parse(mediaAttachment.url),
-                    viewModel,
-                    { imageLoaded = true })
+                VideoPlayer(uri = Uri.parse(mediaAttachment.url), viewModel, { imageLoaded = true })
             }
         }
 
