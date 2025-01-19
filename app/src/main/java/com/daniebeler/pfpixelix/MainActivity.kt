@@ -106,7 +106,7 @@ class MainActivity : ComponentActivity() {
                     repository.deleteAuthV1Data()
                     updateAuthToV2(this@MainActivity, oldBaseurl, oldAccessToken)
                 } else {
-                    gotoLoginActivity(this@MainActivity)
+                    gotoLoginActivity(this@MainActivity, false)
                 }
             } else {
                 if (loginData.accessToken.isNotEmpty()) {
@@ -187,8 +187,14 @@ fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
     context.startActivity(intent)
 }
 
-fun gotoLoginActivity(context: Context) {
-    val intent = Intent(context, LoginActivity::class.java)
+fun gotoLoginActivity(context: Context, isAbleToGotBack: Boolean) {
+    val intent = if (isAbleToGotBack) {
+        Intent(context, LoginActivity::class.java)
+    } else {
+        Intent(context, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+    }
     context.startActivity(intent)
 }
 
@@ -222,8 +228,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable(Destinations.ProfileByUsername.route) { navBackStackEntry ->
             val username = navBackStackEntry.arguments?.getString("username")
 
-            username?.let { username ->
-                OtherProfileComposable(navController, userId = "", byUsername = username)
+            username?.let {
+                OtherProfileComposable(navController, userId = "", byUsername = it)
             }
         }
 
@@ -298,16 +304,20 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(
-            "${Destinations.SinglePost.route}?refresh={refresh}",
+            "${Destinations.SinglePost.route}?refresh={refresh}&openReplies={openReplies}",
             arguments = listOf(navArgument("refresh") {
+                defaultValue = false
+            }, navArgument("openReplies") {
                 defaultValue = false
             })
         ) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
             val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
+            val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")
             Log.d("refresh", refresh!!.toString())
+            Log.d("openReplies", openReplies!!.toString())
             uId?.let { id ->
-                SinglePostComposable(navController, postId = id, refresh)
+                SinglePostComposable(navController, postId = id, refresh, openReplies)
             }
         }
 
@@ -368,7 +378,8 @@ fun BottomBar(navController: NavHostController) {
             },
                 selected = currentRoute == screen.route,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.inverseSurface, indicatorColor = Color.Transparent
+                    selectedIconColor = MaterialTheme.colorScheme.inverseSurface,
+                    indicatorColor = Color.Transparent
                 ),
                 onClick = {
                     Navigate.navigateWithPopUp(screen.route, navController)

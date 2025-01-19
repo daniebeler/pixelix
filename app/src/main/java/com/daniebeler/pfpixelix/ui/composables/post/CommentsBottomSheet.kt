@@ -62,7 +62,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -90,14 +89,26 @@ fun CommentsBottomSheet(
         ) {
             item {
                 if (post.content.isNotEmpty()) {
-                    val ownDescription = Reply(
+                    val ownDescription = Post(
                         "0",
-                        post.content,
-                        post.mentions,
-                        post.account,
-                        post.createdAt,
-                        post.replyCount,
-                        post.likedBy
+                        content = post.content,
+                        mentions = post.mentions,
+                        account = post.account,
+                        createdAt = post.createdAt,
+                        replyCount = post.replyCount,
+                        likedBy = post.likedBy,
+                        mediaAttachments = emptyList(),
+                        favouritesCount = 0,
+                        tags = emptyList(),
+                        url = "",
+                        reblogged = false,
+                        sensitive = false,
+                        bookmarked = false,
+                        favourited = false,
+                        visibility = "",
+                        spoilerText = "",
+                        place = null,
+                        inReplyToId = null
                     )
                     ReplyElement(reply = ownDescription,
                         true,
@@ -178,7 +189,7 @@ fun CommentsBottomSheet(
                 }
             }
 
-            if (!viewModel.repliesState.isLoading && viewModel.repliesState.replies.isEmpty()) {
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isBlank() && viewModel.repliesState.replies.isEmpty()) {
                 item {
                     Row(
                         modifier = Modifier
@@ -190,6 +201,13 @@ fun CommentsBottomSheet(
                     }
                 }
             }
+
+            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isNotBlank() && viewModel.repliesState.replies.isEmpty()) {
+                item {
+                     ErrorComposable(viewModel.repliesState.error)
+                }
+            }
+
             item {
                 Spacer(modifier = Modifier.height(18.dp))
                 Spacer(
@@ -206,7 +224,7 @@ fun CommentsBottomSheet(
 
 @Composable
 private fun ReplyElement(
-    reply: Reply,
+    reply: Post,
     postDescription: Boolean,
     navController: NavController,
     deleteReply: () -> Unit,
@@ -312,7 +330,7 @@ private fun ReplyElement(
 
             if (replyCount != 0 && viewModel.repliesState.replies.isEmpty()) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                    TextButton(onClick = { viewModel.loadReplies(reply.account.id, reply.id) }) {
+                    TextButton(onClick = { viewModel.loadReplies(reply.id) }) {
                         Text(
                             text = if (replyCount == 1) {
                                 "view $replyCount reply"

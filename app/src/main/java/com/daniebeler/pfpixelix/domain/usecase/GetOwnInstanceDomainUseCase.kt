@@ -6,6 +6,10 @@ class GetOwnInstanceDomainUseCase(
     private val repository: AuthRepository
 ) {
     suspend operator fun invoke(): String {
-        return repository.getCurrentLoginData()!!.baseUrl.substringAfter("https://")
+        val currentLoginData = repository.getCurrentLoginData()
+        currentLoginData?.let {
+            return repository.getCurrentLoginData()!!.baseUrl.substringAfter("https://")
+        }
+        return ("https://err.or")
     }
 }

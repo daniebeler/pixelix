@@ -5,10 +5,14 @@ import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetCollectionsUseCase(
+
+class UpdateCollectionUseCase(
     private val collectionRepository: CollectionRepository
 ) {
-    operator fun invoke(accountId: String, page: Int): Flow<Resource<List<Collection>>> {
-        return collectionRepository.getCollections(accountId, page)
+    operator fun invoke(
+        collectionId: String, title: String, description: String, visibility: String
+    ): Flow<Resource<Collection>> {
+        return collectionRepository.updateCollection(collectionId, title, description, visibility)
     }
 }
+

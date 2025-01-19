@@ -43,10 +43,10 @@ class Module {
     @Singleton
     fun provideOKHttpClient(hostSelectionInterceptor: HostSelectionInterceptorInterface): OkHttpClient {
 
-        var loggi = HttpLoggingInterceptor()
+        val loggi = HttpLoggingInterceptor()
         loggi.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        return OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor).addInterceptor(loggi)
+        return OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor).addInterceptor(loggi).addInterceptor(HtmlEntityDecodingInterceptor())
             .build()
     }
 

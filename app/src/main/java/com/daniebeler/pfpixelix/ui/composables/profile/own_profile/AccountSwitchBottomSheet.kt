@@ -83,7 +83,7 @@ fun AccountSwitchBottomSheet(
             modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth()
-                .clickable { gotoLoginActivity(context) },
+                .clickable { gotoLoginActivity(context, true) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(

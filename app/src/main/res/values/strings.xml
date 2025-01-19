@@ -15,8 +15,8 @@
     <string name="mute_this_profile">Mute this profile</string>
     <string name="unmute_this_profile">Unmute this profile</string>
     <string name="load_more">Load More</string>
-    <string name="follow">follow</string>
-    <string name="unfollow">unfollow</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="followers">Followers</string>
     <string name="following">Following</string>
     <string name="posts">Posts</string>
@@ -72,7 +72,7 @@
     <string name="unmute">unmute</string>
     <string name="media_description">Media Description</string>
     <string name="no_posts_yet">No posts yet</string>
-    <string name="mentioned_you_in_a_post">mentioned you in a post</string>
+    <string name="mentioned_you_in_a_post">mentioned you</string>
     <string name="no_bookmarked_posts">No bookmarked posts</string>
     <string name="nothing_to_show">Nothing to show</string>
     <string name="new_post">New post</string>
@@ -209,4 +209,5 @@
     <string name="bio">Bio</string>
     <string name="website">Website</string>
     <string name="location">Location</string>
+    <string name="mentions">Mentions</string>
 </resources>

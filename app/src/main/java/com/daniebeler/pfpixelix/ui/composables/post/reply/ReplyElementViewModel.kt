@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.model.Reply
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
@@ -30,15 +30,15 @@ class ReplyElementViewModel @Inject constructor(
     var likedReply by mutableStateOf(false)
     var newReplyState by mutableStateOf(OwnReplyState())
 
-    fun onInit(reply: Reply, myAccountId: String) {
+    fun onInit(reply: Post, myAccountId: String) {
         likedReply = reply.likedBy?.id == myAccountId
     }
 
-    fun loadReplies(accountId: String, replyId: String) {
-        getRepliesUseCase(accountId, replyId).onEach { result ->
+    fun loadReplies(replyId: String) {
+        getRepliesUseCase(replyId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
-                    RepliesState(replies = result.data ?: emptyList())
+                    RepliesState(replies = result.data?.descendants ?: emptyList())
                 }
 
                 is Resource.Error -> {
@@ -57,7 +57,7 @@ class ReplyElementViewModel @Inject constructor(
             createReplyUseCase(replyId, replyText).onEach { result ->
                 newReplyState = when (result) {
                     is Resource.Success -> {
-                        loadReplies(myAccountId, replyId)
+                        loadReplies(replyId)
                         OwnReplyState(reply = result.data)
                     }
 

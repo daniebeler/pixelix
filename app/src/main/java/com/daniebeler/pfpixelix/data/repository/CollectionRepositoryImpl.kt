@@ -17,10 +17,10 @@ class CollectionRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi
 ) : CollectionRepository {
 
-    override fun getCollections(userId: String): Flow<Resource<List<Collection>>> {
+    override fun getCollections(userId: String, page: Int): Flow<Resource<List<Collection>>> {
         return NetworkCall<Collection, CollectionDto>().makeCallList(
             pixelfedApi.getCollectionsByUserId(
-                userId
+                userId, page
             )
         )
     }
@@ -77,5 +77,13 @@ class CollectionRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
+    }
+
+    override fun updateCollection(collectionId: String, title: String, description: String, visibility: String): Flow<Resource<Collection>> {
+        return NetworkCall<Collection, CollectionDto>().makeCall(
+            pixelfedApi.updateCollection(
+                collectionId, title, description, visibility
+            )
+        )
     }
 }

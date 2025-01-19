@@ -17,8 +17,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 22
-        versionName = "3.2.0"
+        versionCode = 23
+        versionName = "3.2.1"
         
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -137,6 +137,7 @@ dependencies {
 
     implementation(libs.hilt.naviation)
     implementation(libs.dagger.hilt)
+    implementation(libs.jsoup)
     ksp(libs.dagger.hilt.compiler)
 
 }

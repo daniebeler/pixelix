@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.data.remote
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.data.remote.dto.AccessTokenDto
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
-import com.daniebeler.pfpixelix.data.remote.dto.ApiReplyElementDto
 import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
 import com.daniebeler.pfpixelix.data.remote.dto.CollectionDto
@@ -16,6 +15,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.NotificationDto
 import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
+import com.daniebeler.pfpixelix.data.remote.dto.PostContextDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
@@ -129,7 +129,7 @@ interface PixelfedApi {
     // Accounts
 
 
-    @GET("api/v1/accounts/{accountid}")
+    @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(
         @Path("accountid") accountId: String
     ): Call<AccountDto>
@@ -259,7 +259,8 @@ interface PixelfedApi {
 
     @GET("api/v1.1/collections/accounts/{userId}")
     fun getCollectionsByUserId(
-        @Path("userId") userId: String
+        @Path("userId") userId: String,
+        @Query("page") page: Int
     ): Call<List<CollectionDto>>
 
     @GET("api/v1.1/collections/view/{collectionid}")
@@ -283,6 +284,15 @@ interface PixelfedApi {
         @Query("collection_id") collectionId: String,
         @Query("post_id") postId: String
     ): Call<String>
+
+    @FormUrlEncoded
+    @POST("/api/v1.1/collections/update/{collectionId}")
+    fun updateCollection(
+        @Path("collectionId") collectionId: String,
+        @Field("title") title: String,
+        @Field("description") description: String,
+        @Field("visibility") visibility: String
+    ): Call<CollectionDto>
 
     // Tags
 
@@ -328,10 +338,10 @@ interface PixelfedApi {
     @GET("api/v1/bookmarks?limit=12")
     fun getBookmarkedPosts(): Call<List<PostDto>>
 
-    @GET("api/v2/comments/{userid}/status/{postid}")
+    @GET("api/v1/statuses/{postid}/context?_pe=1")
     fun getReplies(
-        @Path("userid") userid: String, @Path("postid") postid: String
-    ): Call<ApiReplyElementDto>
+        @Path("postid") postid: String
+    ): Call<PostContextDto>
 
     @GET("api/v1/instance")
     fun getInstance(): Call<InstanceDto>

@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateCollectionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,4 +42,9 @@ class CollectionUseCaseModule {
     @Singleton
     fun provideAddPostsOfCollectionUseCase(repository: CollectionRepository): AddPostOfCollectionUseCase =
         AddPostOfCollectionUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateCollectionUseCase(repository: CollectionRepository): UpdateCollectionUseCase =
+        UpdateCollectionUseCase(repository)
 }

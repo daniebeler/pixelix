@@ -9,7 +9,7 @@ data class InstanceDto(
     @SerializedName("short_description") val shortDescription: String,
     @SerializedName("description") val description: String,
     @SerializedName("thumbnail") val thumbnailUrl: String,
-    @SerializedName("contact_account") val admin: AccountDto,
+    @SerializedName("contact_account") val admin: AccountDto?,
     @SerializedName("stats") val stats: InstanceStatsDto,
     @SerializedName("version") val version: String,
     @SerializedName("configuration") val configuration: ConfigurationDto
@@ -22,7 +22,7 @@ data class InstanceDto(
             shortDescription = shortDescription,
             thumbnailUrl = thumbnailUrl,
             description = description,
-            admin = admin.toModel(),
+            admin = admin?.toModel() ?: null,
             stats = stats.toModel(),
             version = version,
             configuration = configuration.toModel()

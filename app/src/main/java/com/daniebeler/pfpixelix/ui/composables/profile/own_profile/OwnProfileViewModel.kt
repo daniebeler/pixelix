@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
@@ -51,7 +52,7 @@ class OwnProfileViewModel @Inject constructor(
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
     var context = application
     var view by mutableStateOf(ViewEnum.Loading)
-
+    private var collectionPage by mutableIntStateOf(1)
     var appIcon by mutableStateOf<ImageBitmap?>(null)
 
     var collectionsState by mutableStateOf(CollectionsState())
@@ -99,7 +100,8 @@ class OwnProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val currentLoginData = getCurrentLoginDataUseCase()
             currentLoginData?.let {
-                getCollections(it.accountId)
+                collectionsState = collectionsState.copy(endReached = false)
+                getCollections(it.accountId, false)
             }
         }
     }
@@ -165,19 +167,31 @@ class OwnProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getCollections(userId: String) {
-        getCollectionsUseCase(userId).onEach { result ->
-            collectionsState = when (result) {
+    fun getCollections(userId: String, paginated: Boolean) {
+        if (collectionsState.endReached) {
+            return
+        }
+        if (!paginated) {
+            collectionPage = 1
+        } else {
+            collectionPage++
+        }
+        getCollectionsUseCase(userId, collectionPage).onEach { result ->
+            when (result) {
                 is Resource.Success -> {
-                    CollectionsState(collections = result.data ?: emptyList())
-                }
+                    collectionsState = if (!paginated) {
+                        CollectionsState(collections = result.data ?: emptyList())
+                    } else {
+                        val endReached = result.data!!.isEmpty()
+                        CollectionsState(collections = collectionsState.collections + result.data, endReached = endReached)
+                    }                }
 
                 is Resource.Error -> {
-                    CollectionsState(error = result.message ?: "An unexpected error occurred")
+                    collectionsState = CollectionsState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    CollectionsState(
+                    collectionsState = CollectionsState(
                         isLoading = true, collections = collectionsState.collections
                     )
                 }

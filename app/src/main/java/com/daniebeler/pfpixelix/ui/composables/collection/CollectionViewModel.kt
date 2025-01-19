@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
+import com.daniebeler.pfpixelix.domain.usecase.UpdateCollectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,6 +26,7 @@ class CollectionViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val removePostOfCollectionUseCase: RemovePostOfCollectionUseCase,
     private val addPostOfCollectionUseCase: AddPostOfCollectionUseCase,
+    private val updateCollectionUseCase: UpdateCollectionUseCase,
     private val getOwnPostsUseCase: GetOwnPostsUseCase
 ) : ViewModel() {
 
@@ -138,6 +140,30 @@ class CollectionViewModel @Inject constructor(
                 it
             )
         }
+        if (editState.name != collectionState.collection!!.title) {
+            updateCollection(editState.name)
+        }
+        collectionState = collectionState.copy(collection = collectionState.collection!!.copy(title = editState.name))
+    }
+
+    private fun updateCollection(newName: String) {
+        if (collectionState.id != null && collectionState.collection != null) {
+            updateCollectionUseCase(collectionState.id!!, newName, collectionState.collection!!.description, collectionState.collection!!.visibility).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        getCollection()
+                    }
+
+                    is Resource.Error -> {
+
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     private fun addPostsOfCollection(postId: String) {
@@ -186,6 +212,7 @@ class CollectionViewModel @Inject constructor(
             newEditState.addedIds = emptyList()
             newEditState.removedIds = emptyList()
             newEditState.editPosts = collectionPostsState.posts
+            newEditState.name = collectionState.collection?.title ?: ""
         }
         newEditState.editMode = !newEditState.editMode
         editState = newEditState

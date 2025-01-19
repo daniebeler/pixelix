@@ -2,8 +2,10 @@ package com.daniebeler.pfpixelix.ui.composables.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,6 +68,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -123,13 +126,24 @@ fun PostComposable(
     navController: NavController,
     postGetsDeleted: (postId: String) -> Unit,
     setZindex: (zIndex: Float) -> Unit,
+    openReplies: Boolean = false,
     viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableIntStateOf(0) }
+    var showBottomSheet by remember {
+        mutableIntStateOf(
+            if (openReplies) {
+                1
+            } else {
+                0
+            }
+        )
+    }
+
+
 
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
@@ -154,9 +168,35 @@ fun PostComposable(
         }
     }
 
+    LaunchedEffect(openReplies) {
+        if (openReplies) {
+            viewModel.loadReplies(post.id)
+        }
+    }
+
     val mediaAttachmentsCount = post.mediaAttachments.count()
 
     val pagerState = rememberPagerState(pageCount = { mediaAttachmentsCount })
+
+    var animateBoost by remember { mutableStateOf(false) }
+    val boostRotation by animateFloatAsState(
+        label = "StarRotation", targetValue = if (animateBoost) {
+            720f
+        } else {
+            0f
+        },
+        animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+    )
+
+
+    var animateHeart by remember { mutableStateOf(false) }
+    val heartScale by animateFloatAsState(
+        targetValue = if (animateHeart) 1.3f else 1f,
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+        finishedListener = {
+            animateHeart = false
+        }
+    )
 
     if (viewModel.post != null) {
         Column {
@@ -360,7 +400,7 @@ fun PostComposable(
                                     .size(28.dp)
                                     .clickable {
                                         viewModel.unlikePost(viewModel.post!!.id)
-                                    },
+                                    }.scale(heartScale),
                                 contentDescription = "",
                                 tint = Color(0xFFDD2E44)
                             )
@@ -370,6 +410,7 @@ fun PostComposable(
                                 modifier = Modifier
                                     .size(28.dp)
                                     .clickable {
+                                        animateHeart = true
                                         viewModel.likePost(viewModel.post!!.id)
                                     },
                                 contentDescription = ""
@@ -393,7 +434,7 @@ fun PostComposable(
                                 .size(28.dp)
                                 .clickable {
                                     viewModel.loadReplies(
-                                        viewModel.post!!.account.id, viewModel.post!!.id
+                                        viewModel.post!!.id
                                     )
                                     showBottomSheet = 1
                                 },
@@ -420,15 +461,18 @@ fun PostComposable(
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.rotate(boostRotation)
                                 )
                             }
                         } else {
                             IconButton(onClick = {
+                                animateBoost = true
                                 viewModel.reblogPost(viewModel.post!!.id)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Cached, contentDescription = ""
+                                    imageVector = Icons.Outlined.Cached,
+                                    contentDescription = "",
                                 )
                             }
                         }
@@ -505,7 +549,7 @@ fun PostComposable(
                     ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.clickable {
-                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
+                            viewModel.loadReplies(viewModel.post!!.id)
                             showBottomSheet = 1
                         })
                 }
@@ -593,6 +637,7 @@ fun PostImage(
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
+    var imageLoaded by remember { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
             delay(1000)
@@ -614,15 +659,17 @@ fun PostImage(
             mediaAttachment.blurHash,
         )
 
-        if (blurHashAsDrawable.bitmap != null) {
-            Image(
-                blurHashAsDrawable.bitmap.asImageBitmap(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+        if (!imageLoaded) {
+            if (blurHashAsDrawable.bitmap != null) {
+                Image(
+                    blurHashAsDrawable.bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.aspectRatio(
+                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+                    )
                 )
-            )
+            }
         }
 
         val zoomState = rememberZoomState()
@@ -654,17 +701,13 @@ fun PostImage(
                     5
                 ) != ".webp"
             ) {
-                ImageWrapper(
-                    mediaAttachment
-                ) { zoomState.setContentSize(it.painter.intrinsicSize) }
+                ImageWrapper(mediaAttachment,
+                    { zoomState.setContentSize(it.painter.intrinsicSize) },
+                    { imageLoaded = true })
             } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
-                GifPlayer(mediaAttachment)
+                GifPlayer(mediaAttachment) { imageLoaded = true }
             } else {
-                VideoPlayer(
-                    uri = Uri.parse(mediaAttachment.url),
-                    mediaAttachment = mediaAttachment,
-                    viewModel
-                )
+                VideoPlayer(uri = Uri.parse(mediaAttachment.url), viewModel, { imageLoaded = true })
             }
         }
 
@@ -724,41 +767,37 @@ fun PostImage(
 @Composable
 private fun ImageWrapper(
     mediaAttachment: MediaAttachment,
-    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit
+    setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
+    onSuccess: () -> Unit
 ) {
-
     AsyncImage(model = mediaAttachment.url,
         contentDescription = "",
         Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
         onSuccess = { state ->
             setContentSize(state)
+            onSuccess()
         })
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun GifPlayer(mediaAttachment: MediaAttachment) {
+private fun GifPlayer(mediaAttachment: MediaAttachment, onSuccess: () -> Unit) {
+    LaunchedEffect(Unit) {
+        onSuccess()
+    }
     GlideImage(
         model = mediaAttachment.url,
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
-        modifier = if (mediaAttachment.meta?.original != null) {
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta.original.aspect.toFloat() ?: 1.5f
-                )
-        } else {
-            Modifier.fillMaxWidth()
-        }
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
 @Composable
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun VideoPlayer(
-    uri: Uri, mediaAttachment: MediaAttachment, viewModel: PostViewModel
+    uri: Uri, viewModel: PostViewModel, onSuccess: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -780,6 +819,13 @@ private fun VideoPlayer(
                                 }
                             }
                         }
+                    }
+                }
+            })
+            addListener(object : Player.Listener {
+                override fun onIsLoadingChanged(isLoading: Boolean) {
+                    if (!isLoading) {
+                        onSuccess()
                     }
                 }
             })
@@ -816,9 +862,11 @@ private fun VideoPlayer(
                 Lifecycle.Event.ON_PAUSE -> {
                     exoPlayer.pause()
                 }
+
                 Lifecycle.Event.ON_RESUME -> {
                     exoPlayer.play()
                 }
+
                 else -> {}
             }
         }
@@ -871,19 +919,17 @@ private fun VideoPlayer(
                 }
             }
         }) {
-            DisposableEffect(key1 = AndroidView(factory = { ctx ->
+            AndroidView(factory = { ctx ->
                 PlayerView(ctx).apply {
                     player = exoPlayer
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
                     setShowPreviousButton(false)
                     useController = false
                 }
             }, modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1.5f
-                )
-                .onGloballyPositioned { }), effect = {
+                .onGloballyPositioned { })
+            DisposableEffect(key1 = Unit, effect = {
                 onDispose {
                     exoPlayer.release()
                 }

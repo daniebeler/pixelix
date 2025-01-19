@@ -9,7 +9,7 @@ data class PostDto(
     @SerializedName("application") val application: ApplicationDto,
     @SerializedName("comments_disabled") val commentsDisabled: Boolean,
     @SerializedName("content") val content: String,
-    @SerializedName("content_text") val contentText: String,
+    @SerializedName("content_text") val contentText: String?,
     @SerializedName("created_at") val createdAt: String,
     @SerializedName("edited_at") val editedAt: Any,
     @SerializedName("emojis") val emojis: List<Any>,
@@ -17,7 +17,7 @@ data class PostDto(
     @SerializedName("favourites_count") val favouritesCount: Int,
     @SerializedName("id") val id: String,
     @SerializedName("in_reply_to_account_id") val inReplyToAccountId: Any,
-    @SerializedName("in_reply_to_id") val inReplyToId: Any,
+    @SerializedName("in_reply_to_id") val inReplyToId: String?,
     @SerializedName("label") val label: LabelDto,
     @SerializedName("language") val language: Any,
     @SerializedName("liked_by") val likedBy: LikedByDto?,
@@ -44,7 +44,7 @@ data class PostDto(
     @SerializedName("url") val url: String,
     @SerializedName("_v") val v: Int,
     @SerializedName("visibility") val visibility: String,
-    @SerializedName("bookmarked") val bookmarked: Boolean
+    @SerializedName("bookmarked") val bookmarked: Boolean,
 ) : DtoInterface<Post> {
     override fun toModel(): Post {
         return Post(
@@ -65,7 +65,8 @@ data class PostDto(
             mentions = mentions.map { it.toModel() },
             place = place?.toModel(),
             likedBy = likedBy?.toModel(),
-            visibility = visibility
+            visibility = visibility,
+            inReplyToId = inReplyToId
         )
     }
 }

@@ -5,16 +5,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,17 +38,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun CollectionsComposable(
     collectionsState: CollectionsState,
+    getMoreCollections: () -> Unit,
     navController: NavController,
     addNewButton: Boolean = false,
     instanceDomain: String,
     openUrl: (url: String) -> Unit
 ) {
-
+    val lazyListState = rememberLazyListState()
     var showAddCollectionDialog = remember {
         mutableStateOf(false)
     }
@@ -60,7 +66,7 @@ fun CollectionsComposable(
                 modifier = Modifier.padding(start = 12.dp)
             )
 
-            LazyRow {
+            LazyRow(state = lazyListState) {
                 items(collectionsState.collections) {
                     Column(
                         Modifier
@@ -82,6 +88,16 @@ fun CollectionsComposable(
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = it.title)
+                    }
+                }
+                if (collectionsState.isLoading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .height(96.dp)
+                                .wrapContentSize(Alignment.Center)
+                        )
                     }
                 }
                 if (addNewButton) {
@@ -114,6 +130,10 @@ fun CollectionsComposable(
                     }
                 }
             }
+        }
+
+        InfiniteListHandler(lazyListState) {
+            getMoreCollections()
         }
 
         if (showAddCollectionDialog.value) {

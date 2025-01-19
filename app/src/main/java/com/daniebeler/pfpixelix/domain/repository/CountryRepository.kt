@@ -8,8 +8,8 @@ import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.model.Relationship
-import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
@@ -27,7 +27,7 @@ interface CountryRepository {
 
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
 
-    fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>>
+    fun getReplies(postId: String): Flow<Resource<PostContext>>
 
     fun getInstance(): Flow<Resource<Instance>>
 

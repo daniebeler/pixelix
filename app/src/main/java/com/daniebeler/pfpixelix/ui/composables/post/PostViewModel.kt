@@ -149,11 +149,11 @@ class PostViewModel @Inject constructor(
         timeAgoString = TimeAgo.convertTimeToText(createdAt)
     }
 
-    fun loadReplies(accountId: String, postId: String) {
-        getRepliesUseCase(accountId, postId).onEach { result ->
+    fun loadReplies(postId: String) {
+        getRepliesUseCase(postId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
-                    RepliesState(replies = result.data ?: emptyList())
+                    RepliesState(replies = result.data?.descendants ?: emptyList())
                 }
 
                 is Resource.Error -> {
@@ -173,7 +173,7 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        loadReplies(post!!.account.id, postId)
+                        loadReplies(postId)
                     }
 
                     is Resource.Error -> {
@@ -239,12 +239,12 @@ class PostViewModel @Inject constructor(
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(
-                                favourited = result.data?.favourited ?: false, favouritesCount = result.data?.favouritesCount ?: 0
+                                favourited = result.data?.favourited ?: true, favouritesCount = result.data?.favouritesCount ?: 0
                             )
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(favourited = false)
+                            post = post?.copy(favourited = false, favouritesCount = result.data?.favouritesCount?.minus(1) ?: 0)
                         }
 
                         is Resource.Loading -> {

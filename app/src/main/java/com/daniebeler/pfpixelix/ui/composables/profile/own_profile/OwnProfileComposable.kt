@@ -165,7 +165,7 @@ fun OwnProfileComposable(
                                     contentPadding = PaddingValues(12.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        contentColor = MaterialTheme.colorScheme.onSurface
                                     )
                                 ) {
                                     Text(text = stringResource(id = R.string.edit_profile))
@@ -175,6 +175,14 @@ fun OwnProfileComposable(
 
                         CollectionsComposable(
                             collectionsState = viewModel.collectionsState,
+                            getMoreCollections = {
+                                viewModel.accountState.account?.let {
+                                    viewModel.getCollections(
+                                        it.id,
+                                        true
+                                    )
+                                }
+                            },
                             navController = navController,
                             addNewButton = true,
                             instanceDomain = viewModel.ownDomain,
@@ -206,7 +214,9 @@ fun OwnProfileComposable(
                 FullscreenErrorComposable(message = viewModel.postsState.error)
             }
         }
+
     }
+    //ToTopButton(listState = lazyGridState)
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()
