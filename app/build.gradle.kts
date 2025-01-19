@@ -137,6 +137,7 @@ dependencies {
 
     implementation(libs.hilt.naviation)
     implementation(libs.dagger.hilt)
+    implementation(libs.jsoup)
     ksp(libs.dagger.hilt.compiler)
 
 }

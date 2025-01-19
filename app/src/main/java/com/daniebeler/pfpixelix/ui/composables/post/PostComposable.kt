@@ -392,7 +392,7 @@ fun PostComposable(
                                 .size(28.dp)
                                 .clickable {
                                     viewModel.loadReplies(
-                                        viewModel.post!!.account.id, viewModel.post!!.id
+                                        viewModel.post!!.id
                                     )
                                     showBottomSheet = 1
                                 },
@@ -504,7 +504,7 @@ fun PostComposable(
                     ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.clickable {
-                            viewModel.loadReplies(viewModel.post!!.account.id, viewModel.post!!.id)
+                            viewModel.loadReplies(viewModel.post!!.id)
                             showBottomSheet = 1
                         })
                 }

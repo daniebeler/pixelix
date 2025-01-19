@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
+import com.daniebeler.pfpixelix.data.remote.dto.PostContextDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
@@ -25,8 +26,8 @@ import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.model.Relationship
-import com.daniebeler.pfpixelix.domain.model.Reply
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.WellKnownDomains
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
@@ -68,19 +69,10 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getReplies(userid: String, postId: String): Flow<Resource<List<Reply>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = pixelfedApi.getReplies(userid, postId).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()?.data?.map { it.toModel() } ?: emptyList()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Error"))
-            }
-        } catch (exception: Exception) {
-            emit(Resource.Error(exception.message ?: "Error"))
-        }
+    override fun getReplies(postId: String): Flow<Resource<PostContext>> {
+        return NetworkCall<PostContext, PostContextDto>().makeCall(
+            pixelfedApi.getReplies(postId)
+        )
     }
 
 
