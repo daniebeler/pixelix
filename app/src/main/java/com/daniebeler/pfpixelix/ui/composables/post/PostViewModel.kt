@@ -244,7 +244,7 @@ class PostViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(favourited = false, favouritesCount = result.data!!.favouritesCount.minus(1))
+                            post = post?.copy(favourited = false, favouritesCount = result.data?.favouritesCount?.minus(1) ?: 0)
                         }
 
                         is Resource.Loading -> {

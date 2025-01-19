@@ -786,6 +786,13 @@ private fun VideoPlayer(
                     }
                 }
             })
+            addListener(object : Player.Listener {
+                override fun onIsLoadingChanged(isLoading: Boolean) {
+                    if (!isLoading) {
+                        onSuccess()
+                    }
+                }
+            })
         }
     }
 
@@ -822,10 +829,6 @@ private fun VideoPlayer(
 
                 Lifecycle.Event.ON_RESUME -> {
                     exoPlayer.play()
-                }
-
-                Lifecycle.Event.ON_CREATE -> {
-                    onSuccess()
                 }
 
                 else -> {}
