@@ -1,7 +1,6 @@
-"project_id": "756287"
-"api_token": "8bb60d319d9de859e36ae0e7eb21f88edcefc3da0f7fa7bda559670491177d2d457bc6daafdf3dd7"
+"project_id_env": "CROWDIN_PROJECT_ID"
+"api_token_env": "CROWDIN_PERSONAL_TOKEN"
 "base_path": "./app/src/main/res"
-"base_url": "https://api.crowdin.com"
 
 "preserve_hierarchy": true
 
