@@ -114,7 +114,7 @@ fun OwnProfileComposable(
                 showBottomSheet = 1
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                    imageVector = Icons.Outlined.MoreVert, contentDescription = "preferences"
                 )
             }
         })

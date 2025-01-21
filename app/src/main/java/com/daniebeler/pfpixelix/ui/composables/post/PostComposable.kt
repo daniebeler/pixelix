@@ -401,7 +401,7 @@ fun PostComposable(
                                     .clickable {
                                         viewModel.unlikePost(viewModel.post!!.id)
                                     }.scale(heartScale),
-                                contentDescription = "",
+                                contentDescription = "unlike post",
                                 tint = Color(0xFFDD2E44)
                             )
                         } else {
@@ -413,7 +413,7 @@ fun PostComposable(
                                         animateHeart = true
                                         viewModel.likePost(viewModel.post!!.id)
                                     },
-                                contentDescription = ""
+                                contentDescription = "like post"
                             )
 
                         }
@@ -438,7 +438,7 @@ fun PostComposable(
                                     )
                                     showBottomSheet = 1
                                 },
-                            contentDescription = ""
+                            contentDescription = "comments of post"
                         )
 
                         Spacer(Modifier.width(4.dp))
@@ -460,7 +460,7 @@ fun PostComposable(
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
-                                    contentDescription = "",
+                                    contentDescription = "undo reblog post",
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.rotate(boostRotation)
                                 )
@@ -472,7 +472,7 @@ fun PostComposable(
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
-                                    contentDescription = "",
+                                    contentDescription = "reblog post",
                                 )
                             }
                         }
@@ -484,7 +484,7 @@ fun PostComposable(
                                 viewModel.unBookmarkPost(post.id)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Filled.Bookmark, contentDescription = ""
+                                    imageVector = Icons.Filled.Bookmark, contentDescription = "unbookmark post"
                                 )
                             }
                         } else {
@@ -493,7 +493,7 @@ fun PostComposable(
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.BookmarkBorder,
-                                    contentDescription = ""
+                                    contentDescription = "bookmark post"
                                 )
                             }
                         }
