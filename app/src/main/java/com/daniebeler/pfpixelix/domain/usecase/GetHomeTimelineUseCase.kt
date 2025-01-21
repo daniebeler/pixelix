@@ -12,10 +12,10 @@ class GetHomeTimelineUseCase(
     private val timelineRepository: TimelineRepository,
     private val storageRepository: StorageRepository
 ) {
-    operator fun invoke(maxPostId: String = ""): Flow<Resource<List<Post>>> = flow {
+    operator fun invoke(maxPostId: String = "", enableReblogs: Boolean = false): Flow<Resource<List<Post>>> = flow {
         emit(Resource.Loading())
         val hideSensitiveContent = storageRepository.getHideSensitiveContent().first()
-        timelineRepository.getHomeTimeline(maxPostId).collect { timeline ->
+        timelineRepository.getHomeTimeline(maxPostId, enableReblogs).collect { timeline ->
             if (timeline is Resource.Success && hideSensitiveContent) {
                 val res: List<Post> = timeline.data?.filter { s -> !s.sensitive } ?: emptyList()
                 emit(Resource.Success(res))

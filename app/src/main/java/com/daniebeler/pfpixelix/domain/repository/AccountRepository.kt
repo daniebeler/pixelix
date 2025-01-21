@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
+import com.daniebeler.pfpixelix.domain.model.Settings
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 
@@ -22,4 +23,5 @@ interface AccountRepository {
     fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
     fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
     fun updateAccount(body: RequestBody): Flow<Resource<Account>>
+    fun getAccountSettings(): Flow<Resource<Settings>>
 }

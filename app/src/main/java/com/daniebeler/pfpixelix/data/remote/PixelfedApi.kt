@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelatedHashtagDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
+import com.daniebeler.pfpixelix.data.remote.dto.SettingsDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
@@ -86,11 +87,12 @@ interface PixelfedApi {
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    fun getHomeTimeline(): Call<List<PostDto>>
+    fun getHomeTimeline(@Query("include_reblogs") includeReblogs: Boolean): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
     fun getHomeTimeline(
-        @Query("max_id") maxPostId: String
+        @Query("max_id") maxPostId: String,
+        @Query("include_reblogs") includeReblogs: Boolean
     ): Call<List<PostDto>>
 
     @GET("api/v1/timelines/home?_pe=1")
@@ -259,8 +261,7 @@ interface PixelfedApi {
 
     @GET("api/v1.1/collections/accounts/{userId}")
     fun getCollectionsByUserId(
-        @Path("userId") userId: String,
-        @Query("page") page: Int
+        @Path("userId") userId: String, @Query("page") page: Int
     ): Call<List<CollectionDto>>
 
     @GET("api/v1.1/collections/view/{collectionid}")
@@ -275,14 +276,12 @@ interface PixelfedApi {
 
     @POST("api/v1.1/collections/remove")
     fun removePostOfCollection(
-        @Query("collection_id") collectionId: String,
-        @Query("post_id") postId: String
+        @Query("collection_id") collectionId: String, @Query("post_id") postId: String
     ): Call<String>
 
     @POST("api/v1.1/collections/add")
     fun addPostOfCollection(
-        @Query("collection_id") collectionId: String,
-        @Query("post_id") postId: String
+        @Query("collection_id") collectionId: String, @Query("post_id") postId: String
     ): Call<String>
 
     @FormUrlEncoded
@@ -386,14 +385,16 @@ interface PixelfedApi {
 
     @PUT("/api/v1/statuses/{id}")
     suspend fun updatePost(
-        @Path("id") postId: String,
-        @Body updatePostDto: UpdatePostDto
+        @Path("id") postId: String, @Body updatePostDto: UpdatePostDto
     ): Response<Unit>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deletePost(
         @Path("id") postid: String
     ): Call<PostDto>
+
+    @GET("/api/pixelfed/v1/web/settings")
+    fun getSettings(): Call<SettingsDto>
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>
