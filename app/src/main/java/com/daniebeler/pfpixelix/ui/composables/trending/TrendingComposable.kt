@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.trending
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -51,7 +49,7 @@ import com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags.Trendi
 import com.daniebeler.pfpixelix.ui.composables.trending.trending_posts.TrendingPostsComposable
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingComposable(navController: NavController, page: String) {
 
@@ -75,7 +73,7 @@ fun TrendingComposable(navController: NavController, page: String) {
             }, actions = {
                 if (pagerState.currentPage == 0) {
                     IconButton(onClick = { expanded = !expanded }) {
-                        Icon(imageVector = Icons.Outlined.DateRange, contentDescription = null)
+                        Icon(imageVector = Icons.Outlined.DateRange, contentDescription = "date range")
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.daily)) },
@@ -115,7 +113,7 @@ fun TrendingComposable(navController: NavController, page: String) {
                 }
 
                 IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = "help")
                 }
             })
 

@@ -49,7 +49,7 @@ private fun InnerErrorComposable(message: String) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = Icons.Outlined.WarningAmber,
-            contentDescription = "",
+            contentDescription = "Warning icon",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(64.dp)
         )

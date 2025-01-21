@@ -63,16 +63,16 @@ fun HomeComposable(navController: NavController) {
             Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         },navigationIcon = {
             IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = "Help")
             }
         }, actions = {
             Row {
 
                 IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = "Conversations")
                 }
                 IconButton(onClick = { Navigate.navigate("preferences_screen", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
                 }
             }
         })

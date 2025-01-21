@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -366,13 +367,13 @@ fun BottomBar(navController: NavHostController) {
                     Icon(
                         imageVector = screen.activeIcon!!,
                         modifier = Modifier.size(32.dp),
-                        contentDescription = ""
+                        contentDescription = stringResource(screen.label)
                     )
                 } else {
                     Icon(
                         imageVector = screen.icon!!,
                         modifier = Modifier.size(32.dp),
-                        contentDescription = ""
+                        contentDescription = stringResource(screen.label)
                     )
                 }
             },
