@@ -74,7 +74,7 @@ fun CustomNotification(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth().clickable {
-            if (notification.type == "mention" && (viewModel.ancestor == null || viewModel.ancestor?.mediaAttachments?.isEmpty() == true) && notification.post != null) {
+            if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
                 Navigate.navigate("mention/" + notification.post.id, navController)
             }
         },

@@ -56,7 +56,7 @@ fun MentionComposable(
             val index = viewModel.postContextState.postContext!!.ancestors.size + 1
             Log.d("index", index.toString())
             coroutineScope.launch {
-                lazyListState.animateScrollToItem(index, scrollOffset = 0)  // Adjust index based on where the target item is
+                lazyListState.scrollToItem(index)
             }
         }
     }
