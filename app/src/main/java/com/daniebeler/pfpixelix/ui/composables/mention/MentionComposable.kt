@@ -1,31 +1,27 @@
 package com.daniebeler.pfpixelix.ui.composables.mention
 
+import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,6 +36,7 @@ import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,10 +45,20 @@ fun MentionComposable(
     navController: NavController,
     viewModel: MentionViewModel = hiltViewModel(key = "mention$mentionId")
 ) {
-    val scrollState = rememberScrollState()
-
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         viewModel.loadData(mentionId)
+    }
+
+    LaunchedEffect(viewModel.postState.post, viewModel.postContextState.postContext) {
+        if (viewModel.postState.post != null && viewModel.postContextState.postContext != null) {
+            val index = viewModel.postContextState.postContext!!.ancestors.size + 1
+            Log.d("index", index.toString())
+            coroutineScope.launch {
+                lazyListState.animateScrollToItem(index, scrollOffset = 0)  // Adjust index based on where the target item is
+            }
+        }
     }
 
     Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
@@ -81,20 +88,34 @@ fun MentionComposable(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
+            LazyColumn(
+                state = lazyListState,
+            ) {
                 viewModel.postContextState.postContext?.ancestors?.let { ancestors ->
-                    SubPosts(ancestors, navController)
+                    item {
+                        SubPosts(ancestors, navController)
+                    }
                 }
-                Spacer(Modifier.height(32.dp))
+                item { Spacer(Modifier.height(32.dp)) }
                 viewModel.postState.post?.let { post ->
-                    PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
-                        Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
-                    }, setZindex = { }, openReplies = false, showReplies = false
-                    )
+                    item {
+                        PostComposable(
+                            post,
+                            navController,
+                            postGetsDeleted = {
+                                Navigate.navigateAndDeleteBackStack("own_profile_screen", navController)
+                            },
+                            setZindex = { },
+                            openReplies = false,
+                            showReplies = false
+                        )
+                    }
                 }
-                Spacer(Modifier.height(32.dp))
+                item { Spacer(Modifier.height(32.dp)) }
                 viewModel.postContextState.postContext?.descendants?.let { descendants ->
-                    SubPosts(descendants, navController)
+                    item {
+                        SubPosts(descendants, navController)
+                    }
                 }
             }
 
@@ -106,25 +127,23 @@ fun MentionComposable(
 
 @Composable
 private fun SubPosts(posts: List<Post>, navController: NavController) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .padding(start = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Column(
+        Modifier.padding(start = 20.dp),
     ) {
-        VerticalDivider(color = MaterialTheme.colorScheme.secondary)
-        Column {
-            posts.map { ancestor ->
-                PostComposable(ancestor, navController, postGetsDeleted = {
+        posts.map { ancestor ->
+            PostComposable(ancestor,
+                navController,
+                postGetsDeleted = {
                     Navigate.navigateAndDeleteBackStack(
                         "own_profile_screen", navController
                     )
-                }, setZindex = { }, openReplies = false, showReplies = false, modifier = Modifier.clickable {
+                },
+                setZindex = { },
+                openReplies = false,
+                showReplies = false,
+                modifier = Modifier.clickable {
                     Navigate.navigate("mention/" + ancestor.id, navController)
                 })
-            }
         }
-
     }
 }
