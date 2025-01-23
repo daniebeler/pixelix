@@ -1,16 +1,21 @@
 package com.daniebeler.pfpixelix.ui.composables.mention
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -24,6 +29,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -127,23 +135,60 @@ fun MentionComposable(
 
 @Composable
 private fun SubPosts(posts: List<Post>, navController: NavController) {
-    Column(
-        Modifier.padding(start = 20.dp),
-    ) {
-        posts.map { ancestor ->
-            PostComposable(ancestor,
-                navController,
-                postGetsDeleted = {
-                    Navigate.navigateAndDeleteBackStack(
-                        "own_profile_screen", navController
-                    )
-                },
-                setZindex = { },
-                openReplies = false,
-                showReplies = false,
-                modifier = Modifier.clickable {
-                    Navigate.navigate("mention/" + ancestor.id, navController)
-                })
+    Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        posts.forEach { ancestor ->
+            CustomLayoutWithDivider {
+                PostComposable(
+                    ancestor,
+                    navController,
+                    postGetsDeleted = {
+                        Navigate.navigateAndDeleteBackStack(
+                            "own_profile_screen", navController
+                        )
+                    },
+                    setZindex = { },
+                    openReplies = false,
+                    showReplies = false,
+                    modifier = Modifier.clickable {
+                        Navigate.navigate("mention/" + ancestor.id, navController)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomLayoutWithDivider(content: @Composable () -> Unit) {
+    Layout(
+        content = {
+            Box(
+                modifier = Modifier
+                    .width(2.dp)
+                    .padding(vertical = 20.dp)
+                    .fillMaxHeight()  // Ensure the divider takes full height
+                    .background(Color.Gray)
+                    .clip(RoundedCornerShape(10.dp))
+            )
+            Box{ content() }  // Wrap the content in a Box to ensure it's passed correctly
+        }
+    ) { measurables, constraints ->
+        if (measurables.size < 2) {
+            throw IllegalStateException("Expected exactly 2 children: divider and content")
+        }
+
+        val dividerMeasurable = measurables[0]
+        val contentMeasurable = measurables[1]
+
+        // Measure the content first to determine its height
+        val contentPlaceable = contentMeasurable.measure(constraints)
+        val dividerPlaceable = dividerMeasurable.measure(
+            constraints.copy(minHeight = contentPlaceable.height)
+        )
+
+        layout(contentPlaceable.width + 10.dp.roundToPx() + dividerPlaceable.width, contentPlaceable.height) {
+            dividerPlaceable.placeRelative(0, 0)  // Place divider at the start
+            contentPlaceable.placeRelative(dividerPlaceable.width + 8.dp.roundToPx(), 0)  // Place content next to it
         }
     }
 }
