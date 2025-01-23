@@ -9,21 +9,35 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.UnfoldMore
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -54,6 +68,7 @@ import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.search.SearchComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceComposable
@@ -71,7 +86,10 @@ import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -98,6 +116,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -131,11 +150,16 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
+
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
 
                 Scaffold(bottomBar = {
-                    BottomBar(navController = navController, avatar = avatar)
+                    BottomBar(navController = navController,
+                        avatar = avatar,
+                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true })
                 }) { paddingValues ->
                     Box(
                         modifier = Modifier.padding(paddingValues)
@@ -183,10 +207,22 @@ class MainActivity : ComponentActivity() {
 
 
                 }
+                if (showAccountSwitchBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            showAccountSwitchBottomSheet = false
+                        }, sheetState = sheetState
+                    ) {
+                        AccountSwitchBottomSheet(closeBottomSheet = {
+                            showAccountSwitchBottomSheet = false
+                        }, null)
+                    }
+                }
             }
         }
     }
 }
+
 
 fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
     val intent = Intent(context, LoginActivity::class.java)
@@ -360,8 +396,11 @@ fun NavigationGraph(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomBar(navController: NavHostController, avatar: String) {
+fun BottomBar(
+    navController: NavHostController, avatar: String, openAccountSwitchBottomSheet: () -> Unit
+) {
     val screens = listOf(
         Destinations.HomeScreen,
         Destinations.Search,
@@ -373,19 +412,44 @@ fun BottomBar(navController: NavHostController, avatar: String) {
     NavigationBar(Modifier.height(90.dp)) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-
         screens.forEach { screen ->
+            val interactionSource = remember { MutableInteractionSource() }
+            val coroutineScope = rememberCoroutineScope()
+            var isLongPress by remember { mutableStateOf(false) }
 
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect { interaction ->
+                    when (interaction) {
+                        is PressInteraction.Press -> {
+                            isLongPress = false // Reset flag before starting detection
+                            coroutineScope.launch {
+                                delay(500L) // Long-press threshold
+                                if (screen.route == Destinations.OwnProfile.route) {
+                                    openAccountSwitchBottomSheet()
+                                }
+                                isLongPress = true
+                            }
+                        }
+
+                        is PressInteraction.Release, is PressInteraction.Cancel -> {
+                            coroutineScope.coroutineContext.cancelChildren()
+                        }
+                    }
+                }
+            }
             NavigationBarItem(icon = {
                 if (screen.route == Destinations.OwnProfile.route && avatar.isNotBlank()) {
-                    AsyncImage(
-                        model = avatar,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(30.dp)
-                            .width(30.dp)
-                            .clip(CircleShape)
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AsyncImage(
+                            model = avatar,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .height(30.dp)
+                                .width(30.dp)
+                                .clip(CircleShape)
+                        )
+                        Icon(Icons.Outlined.UnfoldMore, contentDescription = "long press to switch account")
+                    }
                 } else if (currentRoute == screen.route) {
                     Icon(
                         imageVector = screen.activeIcon!!,
@@ -405,8 +469,11 @@ fun BottomBar(navController: NavHostController, avatar: String) {
                     selectedIconColor = MaterialTheme.colorScheme.inverseSurface,
                     indicatorColor = Color.Transparent
                 ),
+                interactionSource = interactionSource,
                 onClick = {
-                    Navigate.navigateWithPopUp(screen.route, navController)
+                    if (!isLongPress) {
+                        Navigate.navigateWithPopUp(screen.route, navController)
+                    }
                 })
         }
     }
