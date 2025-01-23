@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -127,6 +128,8 @@ fun PostComposable(
     postGetsDeleted: (postId: String) -> Unit,
     setZindex: (zIndex: Float) -> Unit,
     openReplies: Boolean = false,
+    showReplies: Boolean = true,
+    modifier: Modifier = Modifier,
     viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
 ) {
 
@@ -199,7 +202,7 @@ fun PostComposable(
     )
 
     if (viewModel.post != null) {
-        Column {
+        Column(modifier = modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -265,122 +268,137 @@ fun PostComposable(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            if (viewModel.post!!.sensitive && !viewModel.showPost) {
+            if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
+                if (viewModel.post!!.sensitive && !viewModel.showPost) {
 
-                Box {
-                    val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
-                        LocalContext.current.resources,
-                        viewModel.post!!.mediaAttachments[0].blurHash
-                    )
+                    Box {
+                        val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
+                            LocalContext.current.resources,
+                            viewModel.post!!.mediaAttachments[0].blurHash
+                        )
 
-                    if (blurHashAsDrawable.bitmap != null) {
-                        Image(
-                            blurHashAsDrawable.bitmap.asImageBitmap(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.aspectRatio(
+                        if (blurHashAsDrawable.bitmap != null) {
+                            Image(
+                                blurHashAsDrawable.bitmap.asImageBitmap(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.aspectRatio(
+                                    viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
+                                        ?: 1.5f
+                                )
+                            )
+                        }
+
+
+                        Column(
+                            Modifier.aspectRatio(
                                 viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
                                     ?: 1.5f
-                            )
-                        )
-                    }
+                            ),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            if (viewModel.post!!.spoilerText.isNotEmpty()) {
+                                Text(text = viewModel.post!!.spoilerText)
+                            } else {
+                                Text(text = "This post may contain sensitive content.")
+                            }
 
 
-                    Column(
-                        Modifier.aspectRatio(
-                            viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
-                                ?: 1.5f
-                        ),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        if (viewModel.post!!.spoilerText.isNotEmpty()) {
-                            Text(text = viewModel.post!!.spoilerText)
-                        } else {
-                            Text(text = "This post may contain sensitive content.")
-                        }
-
-
-                        Button(onClick = {
-                            viewModel.toggleShowPost()
-                        }) {
-                            Text(text = "Show post")
+                            Button(onClick = {
+                                viewModel.toggleShowPost()
+                            }) {
+                                Text(text = "Show post")
+                            }
                         }
                     }
-                }
 
-            } else {
-                if (viewModel.post!!.mediaAttachments.count() > 1) {
-                    Box(
+                } else {
+                    if (viewModel.post!!.mediaAttachments.count() > 1) {
+                        Box(
 
-                    ) {
-                        HorizontalPager(
-                            state = pagerState, modifier = Modifier.zIndex(50f)
-                        ) { page ->
+                        ) {
+                            HorizontalPager(
+                                state = pagerState, modifier = Modifier.zIndex(50f)
+                            ) { page ->
+                                Box(
+                                    modifier = Modifier
+                                        .zIndex(10f)
+                                        .padding(start = 12.dp, end = 12.dp)
+                                ) {
+                                    PostImage(
+                                        mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                        viewModel.post!!.id,
+                                        setZindex = { setZindex(it) },
+                                        viewModel
+                                    )
+                                }
+                            }
+
                             Box(
                                 modifier = Modifier
-                                    .zIndex(10f)
-                                    .padding(start = 12.dp, end = 12.dp)
+                                    .align(Alignment.TopEnd)
+                                    .zIndex(51f)
+                                    .padding(top = 16.dp, end = 28.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                                    .padding(vertical = 3.dp, horizontal = 12.dp)
                             ) {
-                                PostImage(
-                                    mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                                    viewModel.post!!.id,
-                                    setZindex = { setZindex(it) },
-                                    viewModel
+                                Text(
+                                    text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
+                                    fontSize = 14.sp
                                 )
                             }
                         }
 
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Row(
+                            Modifier
+                                .wrapContentHeight()
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            repeat(pagerState.pageCount) { iteration ->
+                                val color =
+                                    if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                                Box(
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                        .clip(CircleShape)
+                                        .background(color)
+                                        .size(8.dp)
+                                )
+                            }
+                        }
+                    } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
                         Box(
                             modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .zIndex(51f)
-                                .padding(top = 16.dp, end = 28.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                                .padding(vertical = 3.dp, horizontal = 12.dp)
+                                .zIndex(10f)
+                                .padding(start = 12.dp, end = 12.dp)
                         ) {
-                            Text(
-                                text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
-                                fontSize = 14.sp
+                            PostImage(
+                                mediaAttachment = viewModel.post!!.mediaAttachments[0],
+                                viewModel.post!!.id,
+                                setZindex = { setZindex(it) },
+                                viewModel
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Row(
-                        Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 8.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        repeat(pagerState.pageCount) { iteration ->
-                            val color =
-                                if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                            Box(
-                                modifier = Modifier
-                                    .padding(2.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .size(8.dp)
-                            )
-                        }
-                    }
-                } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .zIndex(10f)
-                            .padding(start = 12.dp, end = 12.dp)
-                    ) {
-                        PostImage(
-                            mediaAttachment = viewModel.post!!.mediaAttachments[0],
-                            viewModel.post!!.id,
-                            setZindex = { setZindex(it) },
-                            viewModel
-                        )
+                }
+            } else {
+                if (viewModel.post!!.content.isNotBlank()) {
+                    Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
+                        HorizontalDivider()
+                        HashtagsMentionsTextView(text = viewModel.post!!.content,
+                            mentions = viewModel.post!!.mentions,
+                            navController = navController,
+                            textSize = 18.sp,
+                            openUrl = { url -> viewModel.openUrl(context, url) },
+                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+                        HorizontalDivider()
                     }
                 }
             }
@@ -533,14 +551,16 @@ fun PostComposable(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                if (viewModel.post!!.content.isNotBlank()) {
-                    HashtagsMentionsTextView(text = viewModel.post!!.content,
-                        mentions = viewModel.post!!.mentions,
-                        navController = navController,
-                        openUrl = { url -> viewModel.openUrl(context, url) })
+                if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
+                    if (viewModel.post!!.content.isNotBlank()) {
+                        HashtagsMentionsTextView(text = viewModel.post!!.content,
+                            mentions = viewModel.post!!.mentions,
+                            navController = navController,
+                            openUrl = { url -> viewModel.openUrl(context, url) })
+                    }
                 }
 
-                if (viewModel.post!!.replyCount > 0) {
+                if (viewModel.post!!.replyCount > 0 && showReplies) {
 
                     Spacer(modifier = Modifier.height(6.dp))
 

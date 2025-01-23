@@ -73,7 +73,11 @@ fun CustomNotification(
     Row(
         Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth().clickable {
+            if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
+                Navigate.navigate("mention/" + notification.post.id, navController)
+            }
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(model = notification.account.avatar,
@@ -87,10 +91,10 @@ fun CustomNotification(
                 })
         Spacer(modifier = Modifier.width(10.dp))
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-                Navigate.navigate("profile_screen/" + notification.account.id, navController)
-            }) {
-                Text(text = notification.account.username, fontWeight = FontWeight.Bold)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = notification.account.username, fontWeight = FontWeight.Bold, modifier = Modifier.clickable {
+                    Navigate.navigate("profile_screen/" + notification.account.id, navController)
+                })
 
                 Text(text = text, overflow = TextOverflow.Ellipsis)
             }

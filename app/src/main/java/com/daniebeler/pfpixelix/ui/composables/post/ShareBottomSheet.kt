@@ -54,8 +54,13 @@ fun ShareBottomSheet(
         mutableStateOf("")
     }
 
-    val mediaAttachment: MediaAttachment? =
-        viewModel.post?.mediaAttachments?.get(currentMediaAttachmentNumber)
+    val mediaAttachment: MediaAttachment? = viewModel.post?.mediaAttachments?.let { attachments ->
+        if (attachments.isNotEmpty() && currentMediaAttachmentNumber in attachments.indices) {
+            attachments[currentMediaAttachmentNumber]
+        } else {
+            null
+        }
+    }
 
     LaunchedEffect(Unit) {
         humanReadableVisibility = if (post.visibility == Constants.AUDIENCE_PUBLIC) {

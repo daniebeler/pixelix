@@ -10,6 +10,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Account
@@ -26,6 +27,7 @@ fun HashtagsMentionsTextView(
     mentions: List<Account>?,
     navController: NavController,
     openUrl: (url: String) -> Unit,
+    textSize: TextUnit? = null,
     viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = "hashtags-mentions-tv$text")
 ) {
 
@@ -33,7 +35,8 @@ fun HashtagsMentionsTextView(
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
-    val hashtags = Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)?(?:\\/\\w+)*|https?:\\/\\/\\S+")
+    val hashtags =
+        Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)?(?:\\/\\w+)*|https?:\\/\\/\\S+")
 
     val annotatedStringList = remember {
 
@@ -59,7 +62,7 @@ fun HashtagsMentionsTextView(
                 annotatedStringList.add(
                     AnnotatedString.Range(string, start, end, "tag")
                 )
-            } else if (string.startsWith("@")){
+            } else if (string.startsWith("@")) {
                 annotatedStringList.add(
                     AnnotatedString.Range(string, start, end, "account")
                 )
@@ -96,10 +99,12 @@ fun HashtagsMentionsTextView(
         }
     }
 
-    ClickableText(text = annotatedString,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = modifier,
-        onClick = { position ->
+    ClickableText(text = annotatedString, style = if (textSize != null) {
+        MaterialTheme.typography.bodyMedium.copy(fontSize = textSize)
+    } else {
+        MaterialTheme.typography.bodyMedium
+    },
+        modifier = modifier, onClick = { position ->
             CoroutineScope(Dispatchers.Default).launch {
                 val annotatedStringRange =
                     annotatedStringList.firstOrNull { it.start <= position && position < it.end }
@@ -115,7 +120,8 @@ fun HashtagsMentionsTextView(
                                 var account =
                                     mentions.find { account: Account -> account.acct == newItem }
                                 if (account == null) {
-                                    account = mentions.find { account: Account -> account.username == newItem }
+                                    account =
+                                        mentions.find { account: Account -> account.username == newItem }
                                 }
                                 if (account != null) {
                                     //get my account id and check if it is mine account

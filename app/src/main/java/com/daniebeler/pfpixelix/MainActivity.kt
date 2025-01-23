@@ -45,6 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.Con
 import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
+import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
@@ -341,6 +342,13 @@ fun NavigationGraph(navController: NavHostController) {
             val uId = navBackStackEntry.arguments?.getString("userid")
             uId?.let { id ->
                 ChatComposable(navController = navController, accountId = id)
+            }
+        }
+
+        composable(Destinations.Mention.route) { navBackStackEntry ->
+            val mentionId = navBackStackEntry.arguments?.getString("mentionid")
+            mentionId?.let { id ->
+                MentionComposable(navController = navController, mentionId = id)
             }
         }
     }
