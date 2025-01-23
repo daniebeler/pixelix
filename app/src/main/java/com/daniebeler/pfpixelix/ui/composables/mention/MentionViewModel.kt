@@ -23,12 +23,12 @@ class MentionViewModel @Inject constructor(
     var postState by mutableStateOf(SinglePostState())
     var postContextState by mutableStateOf(PostContextState())
 
-    fun loadData(postId: String) {
-        getPost(postId)
-        getPostContext(postId)
+    fun loadData(postId: String, refreshing: Boolean = false) {
+        getPost(postId, refreshing)
+        getPostContext(postId, refreshing)
     }
 
-    private fun getPost(postId: String) {
+    private fun getPost(postId: String, refreshing: Boolean) {
         getPostUseCase(postId).onEach { result ->
             postState = when (result) {
                 is Resource.Success -> {
@@ -40,13 +40,13 @@ class MentionViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    SinglePostState(isLoading = true)
+                    SinglePostState(isLoading = true, refreshing)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostContext(postId: String) {
+    private fun getPostContext(postId: String, refreshing: Boolean) {
         getRepliesUseCase(postId).onEach { result ->
             postContextState = when (result) {
                 is Resource.Success -> {
@@ -58,7 +58,7 @@ class MentionViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostContextState(isLoading = true)
+                    PostContextState(isLoading = true, refreshing)
                 }
             }
         }.launchIn(viewModelScope)
