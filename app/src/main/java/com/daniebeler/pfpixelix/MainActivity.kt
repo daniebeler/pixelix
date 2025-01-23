@@ -10,8 +10,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -22,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
 import com.daniebeler.pfpixelix.domain.model.LoginData
@@ -98,7 +103,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
+        var avatar = ""
         runBlocking {
             val loginData: LoginData? = currentLoginDataUseCase()
             if (loginData == null || loginData.accessToken.isBlank() || loginData.baseUrl.isBlank()) {
@@ -121,6 +126,7 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                 }
+                avatar = loginData.avatar
             }
         }
 
@@ -129,7 +135,7 @@ class MainActivity : ComponentActivity() {
                 val navController: NavHostController = rememberNavController()
 
                 Scaffold(bottomBar = {
-                    BottomBar(navController = navController)
+                    BottomBar(navController = navController, avatar = avatar)
                 }) { paddingValues ->
                     Box(
                         modifier = Modifier.padding(paddingValues)
@@ -355,7 +361,7 @@ fun NavigationGraph(navController: NavHostController) {
 }
 
 @Composable
-fun BottomBar(navController: NavHostController) {
+fun BottomBar(navController: NavHostController, avatar: String) {
     val screens = listOf(
         Destinations.HomeScreen,
         Destinations.Search,
@@ -364,23 +370,32 @@ fun BottomBar(navController: NavHostController) {
         Destinations.OwnProfile
     )
 
-    NavigationBar {
+    NavigationBar(Modifier.height(90.dp)) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
         screens.forEach { screen ->
 
             NavigationBarItem(icon = {
-                if (currentRoute == screen.route) {
+                if (screen.route == Destinations.OwnProfile.route && avatar.isNotBlank()) {
+                    AsyncImage(
+                        model = avatar,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .height(30.dp)
+                            .width(30.dp)
+                            .clip(CircleShape)
+                    )
+                } else if (currentRoute == screen.route) {
                     Icon(
                         imageVector = screen.activeIcon!!,
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(30.dp),
                         contentDescription = stringResource(screen.label)
                     )
                 } else {
                     Icon(
                         imageVector = screen.icon!!,
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(30.dp),
                         contentDescription = stringResource(screen.label)
                     )
                 }

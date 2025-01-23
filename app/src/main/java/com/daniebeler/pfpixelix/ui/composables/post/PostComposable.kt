@@ -417,7 +417,7 @@ fun PostComposable(
                             Icon(
                                 imageVector = Icons.Filled.Favorite,
                                 modifier = Modifier
-                                    .size(28.dp)
+                                    .size(24.dp)
                                     .clickable {
                                         viewModel.unlikePost(viewModel.post!!.id)
                                     }.scale(heartScale),
@@ -428,7 +428,7 @@ fun PostComposable(
                             Icon(
                                 imageVector = Icons.Outlined.FavoriteBorder,
                                 modifier = Modifier
-                                    .size(28.dp)
+                                    .size(24.dp)
                                     .clickable {
                                         animateHeart = true
                                         viewModel.likePost(viewModel.post!!.id)
@@ -451,7 +451,7 @@ fun PostComposable(
                         Icon(
                             imageVector = Icons.Outlined.ChatBubbleOutline,
                             modifier = Modifier
-                                .size(28.dp)
+                                .size(24.dp)
                                 .clickable {
                                     viewModel.loadReplies(
                                         viewModel.post!!.id
