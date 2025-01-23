@@ -331,7 +331,8 @@ fun PostComposable(
                                         mediaAttachment = viewModel.post!!.mediaAttachments[page],
                                         viewModel.post!!.id,
                                         setZindex = { setZindex(it) },
-                                        viewModel
+                                        viewModel,
+                                        like = {animateHeart = true}
                                     )
                                 }
                             }
@@ -383,7 +384,8 @@ fun PostComposable(
                                 mediaAttachment = viewModel.post!!.mediaAttachments[0],
                                 viewModel.post!!.id,
                                 setZindex = { setZindex(it) },
-                                viewModel
+                                viewModel,
+                                like = {animateHeart = true}
                             )
                         }
                     }
@@ -653,7 +655,8 @@ fun PostImage(
     mediaAttachment: MediaAttachment,
     postId: String,
     setZindex: (zIndex: Float) -> Unit,
-    viewModel: PostViewModel
+    viewModel: PostViewModel,
+    like: () -> Unit
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -713,6 +716,7 @@ fun PostImage(
                 detectTapGestures(onDoubleTap = {
                     CoroutineScope(Dispatchers.Default).launch {
                         viewModel.likePost(postId)
+                        like()
                         showHeart = true
                     }
                 })
