@@ -1,8 +1,11 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 
+import android.util.Log
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.google.gson.annotations.SerializedName
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 data class PostDto(
     @SerializedName("account") val account: AccountDto,
@@ -53,7 +56,7 @@ data class PostDto(
             account = account.toModel(),
             tags = tags.map { it.toModel() },
             favouritesCount = favouritesCount,
-            content = contentText ?: "",
+            content = contentText ?: htmlToText(content),
             replyCount = replyCount,
             createdAt = createdAt,
             url = url,
@@ -69,4 +72,17 @@ data class PostDto(
             inReplyToId = inReplyToId
         )
     }
+}
+
+private fun htmlToText(html: String): String {
+    val document = Jsoup.parse(html)
+    document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
+    document.select("br").append("\\n") // Replace <br> with newlines
+    document.select("p").prepend("\\n\\n") // Add double newline for paragraphs
+
+    val text = document.text().replace("\\n", "\n")
+    val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
+
+    Log.d("htmlToText", cleanedText)
+    return cleanedText.trim()
 }

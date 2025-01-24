@@ -146,12 +146,12 @@ interface PixelfedApi {
         @Body body: RequestBody
     ): Call<AccountDto>
 
-    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?pe=1")
     fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("limit") limit: Int
     ): Call<List<PostDto>>
 
-    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?pe=1")
     fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Query("max_id") maxId: String,
