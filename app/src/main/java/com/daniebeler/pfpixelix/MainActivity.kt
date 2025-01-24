@@ -9,11 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -82,7 +82,6 @@ import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAcco
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
-import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import dagger.hilt.android.AndroidEntryPoint
@@ -156,7 +155,7 @@ class MainActivity : ComponentActivity() {
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
 
-                Scaffold(bottomBar = {
+                Scaffold(contentWindowInsets = WindowInsets(0.dp),bottomBar = {
                     BottomBar(navController = navController,
                         avatar = avatar,
                         openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true })
@@ -164,10 +163,8 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier.padding(paddingValues)
                     ) {
-
-
                         NavigationGraph(
-                            navController = navController
+                            navController = navController,
                         )
                         val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
                         if (destination.isNotBlank()) {
@@ -250,10 +247,6 @@ fun NavigationGraph(navController: NavHostController) {
         exitTransition = { ExitTransition.None }) {
         composable(Destinations.HomeScreen.route) {
             HomeComposable(navController)
-        }
-        composable(Destinations.TrendingScreen.route) { navBackStackEntry ->
-            val page = navBackStackEntry.arguments?.getString("page") ?: "posts"
-            TrendingComposable(navController, page)
         }
 
         composable(Destinations.NotificationsScreen.route) {
@@ -396,7 +389,6 @@ fun NavigationGraph(navController: NavHostController) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomBar(
     navController: NavHostController, avatar: String, openAccountSwitchBottomSheet: () -> Unit
@@ -404,7 +396,6 @@ fun BottomBar(
     val screens = listOf(
         Destinations.HomeScreen,
         Destinations.Search,
-        Destinations.TrendingScreen,
         Destinations.NotificationsScreen,
         Destinations.OwnProfile
     )

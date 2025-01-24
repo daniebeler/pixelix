@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
-import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
+import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,6 @@ class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val savedSearchesRepository: SavedSearchesRepository
 ) : ViewModel() {
-    var textInput: String by mutableStateOf("")
     var searchState by mutableStateOf(SearchState())
     var savedSearches: SavedSearches by mutableStateOf(SavedSearches())
 
@@ -78,7 +77,6 @@ class SearchViewModel @Inject constructor(
     }
 
     fun textInputChange(text: String) {
-        textInput = text
         searchDebounced(text)
     }
 

@@ -3,98 +3,115 @@ package com.daniebeler.pfpixelix.ui.composables.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Tag
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchComposable(
     navController: NavController,
     viewModel: SearchViewModel = hiltViewModel(key = "search-viewmodel-key")
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    Scaffold(contentWindowInsets = WindowInsets(0.dp)) { paddingValues ->
-        Column(
+    var textFieldState = rememberTextFieldState()
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Box(Modifier
+        .fillMaxSize()
+        .semantics { isTraversalGroup = true }) {
+        SearchBar(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            Box(Modifier.padding(12.dp, 0.dp)) {
-                OutlinedTextField(
-                    value = viewModel.textInput,
-                    onValueChange = { viewModel.textInputChange(it) },
-                    label = { Text(stringResource(R.string.search)) },
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                    trailingIcon = {
-                        Box(modifier = Modifier.clickable {
-                            viewModel.textInput = ""
-                            viewModel.searchState = SearchState()
-                        }) { Icon(Icons.Filled.Clear, contentDescription = null) }
+                .align(Alignment.TopCenter)
+                .semantics { traversalIndex = 0f },
+            inputField = {
+                SearchBarDefaults.InputField(state = textFieldState,
+                    onSearch = {
+                        viewModel.onSearch(it)
+                        viewModel.saveSearch(it)
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.background
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        viewModel.onSearch(viewModel.textInput)
-                        viewModel.saveSearch(viewModel.textInput)
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    placeholder = { Text("Explore") },
+                    leadingIcon = {
+                        if (!expanded) {
+                            Icon(Icons.Default.Search, contentDescription = null)
+                        } else {
+                            Icon(Icons.Outlined.ArrowBackIosNew,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    expanded = false
+                                    textFieldState.clearText()
+                                })
+                        }
+                    },
+                    trailingIcon = {
+                        if (textFieldState.text.isNotBlank()) {
+                            Icon(Icons.Outlined.Clear,
+                                contentDescription = "clear search query",
+                                modifier = Modifier.clickable { textFieldState.clearText() })
+                        }
                     })
-                )
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+        ) {
+
+            LaunchedEffect(textFieldState.text) {
+                viewModel.textInputChange(textFieldState.text.toString())
             }
-            if (viewModel.textInput.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
+
+            if (textFieldState.text.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
                 LazyColumn {
                     items(viewModel.savedSearches.pastSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
@@ -137,6 +154,15 @@ fun SearchComposable(
             if (viewModel.searchState.isLoading) {
                 FullscreenLoadingComposable()
             }
+        }
+
+        Box(
+            Modifier
+                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))
+                .semantics { traversalIndex = 1f }
+                .padding(top = 80.dp),
+        ) {
+            TrendingComposable(navController)
         }
     }
 }
