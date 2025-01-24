@@ -121,7 +121,7 @@ fun NewPostComposable(
             Column(
                 Modifier
                     .padding(paddingValues)
-                    .imeAwareInsets(context, 100.dp)
+                    .imeAwareInsets(context, 90.dp)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)

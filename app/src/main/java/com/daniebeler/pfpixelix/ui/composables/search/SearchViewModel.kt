@@ -72,7 +72,7 @@ class SearchViewModel @Inject constructor(
 
     fun onSearch(text: String) {
         if (text.isNotBlank()) {
-            textInputChange(text)
+            getSearchResults(text, 10)
         }
     }
 
@@ -87,13 +87,13 @@ class SearchViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             delay(500)
             if (searchText.isNotBlank()) {
-                getSearchResults(searchText)
+                getSearchResults(searchText, 5)
             }
         }
     }
 
-    private fun getSearchResults(text: String) {
-        searchUseCase(text).onEach { result ->
+    private fun getSearchResults(text: String, limit: Int) {
+        searchUseCase(text, limit = limit).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)

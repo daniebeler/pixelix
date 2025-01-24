@@ -70,7 +70,7 @@ import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsCompos
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
-import com.daniebeler.pfpixelix.ui.composables.search.SearchComposable
+import com.daniebeler.pfpixelix.ui.composables.search.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
@@ -366,7 +366,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(Destinations.Search.route) {
-            SearchComposable(navController)
+            ExploreComposable(navController)
         }
 
         composable(Destinations.Conversation.route) {

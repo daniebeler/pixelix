@@ -121,7 +121,7 @@ fun ChatComposable(
             isRefreshing = viewModel.chatState.isRefreshing,
             onRefresh = { viewModel.getChat(accountId, true) },
             modifier = Modifier
-                .imeAwareInsets(context, 100.dp)
+                .imeAwareInsets(context, 90.dp)
                 .padding(paddingValues)
         ) {
             Column(

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.search
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
@@ -43,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -57,14 +60,17 @@ import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.imeAwareInsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchComposable(
+fun ExploreComposable(
     navController: NavController,
     viewModel: SearchViewModel = hiltViewModel(key = "search-viewmodel-key")
 ) {
-    var textFieldState = rememberTextFieldState()
+    val context: Context = LocalContext.current
+
+    val textFieldState = rememberTextFieldState()
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Box(Modifier
@@ -77,6 +83,7 @@ fun SearchComposable(
             inputField = {
                 SearchBarDefaults.InputField(state = textFieldState,
                     onSearch = {
+                        expanded = false
                         viewModel.onSearch(it)
                         viewModel.saveSearch(it)
                     },
@@ -112,7 +119,7 @@ fun SearchComposable(
             }
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
-                LazyColumn {
+                LazyColumn(modifier = Modifier.imeAwareInsets(context, 90.dp)) {
                     items(viewModel.savedSearches.pastSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
@@ -122,17 +129,18 @@ fun SearchComposable(
                                     { viewModel.deleteSavedSearch(it) })
                             }
                         } else {
-                            PastSearchItem(item = it,
-                                navController,
-                                { text -> viewModel.onSearch(text) },
-                                { viewModel.deleteSavedSearch(it) })
+                            PastSearchItem(item = it, navController, { text ->
+                                expanded = false
+                                textFieldState.setTextAndPlaceCursorAtEnd(text)
+                                viewModel.onSearch(text)
+                            }, { viewModel.deleteSavedSearch(it) })
                         }
                     }
                 }
             }
-            LazyColumn(content = {
-                if (viewModel.searchState.searchResult != null) {
-                    items(viewModel.searchState.searchResult!!.accounts) {
+            viewModel.searchState.searchResult?.let { searchResult ->
+                LazyColumn(modifier = Modifier.imeAwareInsets(context, 90.dp), content = {
+                    items(searchResult.accounts) {
                         CustomAccount(
                             account = it,
                             relationship = null,
@@ -141,29 +149,52 @@ fun SearchComposable(
                         )
                     }
                     item { HorizontalDivider(Modifier.padding(12.dp)) }
-                    items(viewModel.searchState.searchResult!!.tags) {
+                    items(searchResult.tags) {
                         CustomHashtag(
                             hashtag = it,
                             onClick = { viewModel.saveHashtag(it.name) },
                             navController = navController
                         )
                     }
-                }
-            })
+                })
+            }
 
             if (viewModel.searchState.isLoading) {
                 FullscreenLoadingComposable()
             }
         }
-
         Box(
             Modifier
                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))
                 .semantics { traversalIndex = 1f }
                 .padding(top = 80.dp),
         ) {
-            TrendingComposable(navController)
+            if (textFieldState.text.isNotBlank() && viewModel.searchState.searchResult != null) {
+                LazyColumn(content = {
+                    if (viewModel.searchState.searchResult != null) {
+                        items(viewModel.searchState.searchResult!!.accounts) {
+                            CustomAccount(
+                                account = it,
+                                relationship = null,
+                                onClick = { viewModel.saveAccount(it.username, it) },
+                                navController = navController
+                            )
+                        }
+                        item { HorizontalDivider(Modifier.padding(12.dp)) }
+                        items(viewModel.searchState.searchResult!!.tags) {
+                            CustomHashtag(
+                                hashtag = it,
+                                onClick = { viewModel.saveHashtag(it.name) },
+                                navController = navController
+                            )
+                        }
+                    }
+                })
+            } else {
+                TrendingComposable(navController)
+            }
         }
+
     }
 }
 
