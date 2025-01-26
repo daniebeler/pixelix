@@ -82,18 +82,18 @@
     <string name="sensitive_nsfw_media">Sensible/Contenido NSFW</string>
     <string name="content_warning_or_spoiler_text">aviso de contenido o texto de spoiler</string>
     <string name="audience">Audiencia</string>
-    <string name="unlisted">unlisted</string>
-    <string name="followers_only">followers only</string>
-    <string name="audience_public">public</string>
+    <string name="unlisted">no incluido</string>
+    <string name="followers_only">seguidores solo</string>
+    <string name="audience_public">público</string>
     <string name="no_followed_hashtags">No followed hashtags</string>
-    <string name="no_muted_accounts">No muted accounts</string>
-    <string name="visibility_x">Visibility: %1$s</string>
-    <string name="clear_cache">Clear cache</string>
-    <string name="preferences">Preferences</string>
-    <string name="hide_sensitive_content">Hide sensitive content</string>
-    <string name="about_x">About %1$s</string>
-    <string name="more_settings">More settings</string>
-    <string name="use_in_app_browser">Use in-app-browser</string>
+    <string name="no_muted_accounts">Ninguna cuenta silenciada</string>
+    <string name="visibility_x">Notoriedad: %1$s</string>
+    <string name="clear_cache">Borrar caché</string>
+    <string name="preferences">Ajustes</string>
+    <string name="hide_sensitive_content">Ocultar contenido sensible</string>
+    <string name="about_x">Acerca de %1$s</string>
+    <string name="more_settings">Más ajustes</string>
+    <string name="use_in_app_browser">Utilizar el navegador de la aplicación</string>
     <string name="no_trending_profiles">No trending profiles</string>
     <string name="no_trending_hashtags">No trending Hashtags</string>
     <string name="no_trending_posts">No trending posts</string>
@@ -192,7 +192,7 @@
     <string name="download_image">Download image</string>
     <string name="profile">Profile</string>
     <string name="alerts">Inbox</string>
-    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account?</string>
     <string name="remove_account">Remove Account?</string>
     <string name="remove">Remove</string>
     <string name="sure_update_post">Are you sure, you want to update this post?</string>
@@ -210,4 +210,6 @@
     <string name="website">Website</string>
     <string name="location">Location</string>
     <string name="mentions">Mentions</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>

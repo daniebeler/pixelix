@@ -210,4 +210,6 @@
     <string name="website">Website</string>
     <string name="location">Standort</string>
     <string name="mentions">Erwähnungen</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>

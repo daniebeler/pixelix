@@ -192,7 +192,7 @@
     <string name="download_image">Stáhnout obrázek</string>
     <string name="profile">Profil</string>
     <string name="alerts">Doručená pošta</string>
-    <string name="are_you_sure_you_want_to_remove_this_account">Jste si jisti že chcete odebrat tento účet</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Jste si jisti že chcete odebrat tento účet?</string>
     <string name="remove_account">Odebrat účet?</string>
     <string name="remove">Odebrat</string>
     <string name="sure_update_post">Jste si jisti že chcete aktualizovat tento příspěvek?</string>
@@ -210,4 +210,6 @@
     <string name="website">Webová stránka</string>
     <string name="location">Poloha</string>
     <string name="mentions">Označení</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>
