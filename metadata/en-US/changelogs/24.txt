@@ -1,0 +1,35 @@
+New Features:
+  - Explore Page Implementation (#139)
+    - Added a dedicated Explore page to discover trending accounts and hashtags.
+    - Introduced animation for the search bar clear button.
+    - Implemented paginated search results for improved navigation between accounts and hashtags.
+
+  - Account Switcher Feature (#110)
+    - Long-clicking the profile icon in the bottom bar now opens an account switch bottom sheet.
+
+  - Reposts in Home Timeline (#127)
+    - Reblogged posts now display in the home-timeline and show the "Reblogged by" username.
+
+Improvements:
+  - Bottom Navigation Bar Enhancements (#110, #138)
+    - The bottom bar has been resized to take up less space.
+    - Avatar picture has replaced the profile icon in the bottom bar.
+    - Navigation bar insets are now accounted for better UI alignment.
+
+  - Coil Image Caching Optimization (#138)
+    - Updated Coil caching settings:
+    - Memory cache: Max 20%
+    - Disk cache: Max 50MB
+
+  - Default avatar images will now be displayed when an avatar image fails to load.
+
+  - Localization Updates
+     - Added new translations via Crowdin for improved multilingual support.
+
+Bug Fixes:
+  - Content Handling Improvements (#136)
+    - Improved the route to fetch posts by account.
+    - Ensured correct handling of contentText and contentHtml fields.
+
+Miscellaneous:
+  - Various UI improvements and minor optimizations.
