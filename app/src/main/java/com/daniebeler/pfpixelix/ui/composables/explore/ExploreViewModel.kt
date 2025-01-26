@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.search
+package com.daniebeler.pfpixelix.ui.composables.explore
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
-import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
+import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,11 +21,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(
+class ExploreViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val savedSearchesRepository: SavedSearchesRepository
 ) : ViewModel() {
-    var textInput: String by mutableStateOf("")
     var searchState by mutableStateOf(SearchState())
     var savedSearches: SavedSearches by mutableStateOf(SavedSearches())
 
@@ -73,12 +72,11 @@ class SearchViewModel @Inject constructor(
 
     fun onSearch(text: String) {
         if (text.isNotBlank()) {
-            textInputChange(text)
+            getSearchResults(text, 20)
         }
     }
 
     fun textInputChange(text: String) {
-        textInput = text
         searchDebounced(text)
     }
 
@@ -89,13 +87,13 @@ class SearchViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             delay(500)
             if (searchText.isNotBlank()) {
-                getSearchResults(searchText)
+                getSearchResults(searchText, 5)
             }
         }
     }
 
-    private fun getSearchResults(text: String) {
-        searchUseCase(text).onEach { result ->
+    private fun getSearchResults(text: String, limit: Int) {
+        searchUseCase(text, limit = limit).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)

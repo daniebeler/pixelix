@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.trending.trending_posts
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts
 
 import com.daniebeler.pfpixelix.domain.model.Post
 

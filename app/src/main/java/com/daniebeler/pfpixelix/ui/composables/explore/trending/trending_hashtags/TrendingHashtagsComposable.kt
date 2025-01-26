@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn

@@ -33,7 +33,7 @@ interface CountryRepository {
 
     fun getNotifications(maxNotificationId: String = ""): Flow<Resource<List<Notification>>>
 
-    fun search(searchText: String, type: String?): Flow<Resource<Search>>
+    fun search(searchText: String, type: String?, limit: Int): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String): Flow<Resource<List<Place>>>
 
