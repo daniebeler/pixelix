@@ -24,5 +24,6 @@ Post(
     val likedBy: LikedBy?,
     val visibility: String,
     val inReplyToId: String?,
-    val rebloggedBy: Account? = null
+    val rebloggedBy: Account? = null,
+    val reblogId: String? = null
 )

@@ -174,7 +174,15 @@ fun PostComposable(
 
     LaunchedEffect(openReplies) {
         if (openReplies) {
-            viewModel.loadReplies(post.id)
+            if (viewModel.post!!.rebloggedBy != null) {
+                viewModel.loadReplies(
+                    viewModel.post?.reblogId ?: ""
+                )
+            } else {
+                viewModel.loadReplies(
+                    viewModel.post!!.id
+                )
+            }
         }
     }
 
@@ -473,9 +481,15 @@ fun PostComposable(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable {
-                                    viewModel.loadReplies(
-                                        viewModel.post!!.id
-                                    )
+                                    if (viewModel.post!!.rebloggedBy != null) {
+                                        viewModel.loadReplies(
+                                            viewModel.post?.reblogId ?: ""
+                                        )
+                                    } else {
+                                        viewModel.loadReplies(
+                                            viewModel.post!!.id
+                                        )
+                                    }
                                     showBottomSheet = 1
                                 },
                             contentDescription = "comments of post"
@@ -591,7 +605,15 @@ fun PostComposable(
                     ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.clickable {
-                            viewModel.loadReplies(viewModel.post!!.id)
+                            if (viewModel.post!!.rebloggedBy != null) {
+                                viewModel.loadReplies(
+                                    viewModel.post?.reblogId ?: ""
+                                )
+                            } else {
+                                viewModel.loadReplies(
+                                    viewModel.post!!.id
+                                )
+                            }
                             showBottomSheet = 1
                         })
                 }

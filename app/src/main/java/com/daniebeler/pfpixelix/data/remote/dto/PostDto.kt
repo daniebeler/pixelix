@@ -54,6 +54,7 @@ data class PostDto(
             return Post(
                 rebloggedBy = account.toModel(),
                 id = id,
+                reblogId = reblog.id,
                 mediaAttachments = reblog.mediaAttachments.map { it.toModel() },
                 account = reblog.account.toModel(),
                 tags = reblog.tags.map { it.toModel() },
