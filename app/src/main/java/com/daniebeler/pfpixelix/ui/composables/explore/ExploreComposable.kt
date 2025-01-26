@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.search
+package com.daniebeler.pfpixelix.ui.composables.explore
 
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -36,19 +39,23 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -56,14 +63,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.trending.TrendingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,31 +191,86 @@ fun ExploreComposable(
                 .padding(top = 80.dp),
         ) {
             if (textFieldState.text.isNotBlank() && viewModel.searchState.searchResult != null) {
-                LazyColumn(content = {
-                    if (viewModel.searchState.searchResult != null) {
-                        items(viewModel.searchState.searchResult!!.accounts) {
-                            CustomAccount(
-                                account = it,
-                                relationship = null,
-                                onClick = { viewModel.saveAccount(it.username, it) },
-                                navController = navController
-                            )
-                        }
-                        item { HorizontalDivider(Modifier.padding(12.dp)) }
-                        items(viewModel.searchState.searchResult!!.tags) {
-                            CustomHashtag(
-                                hashtag = it,
-                                onClick = { viewModel.saveHashtag(it.name) },
-                                navController = navController
-                            )
-                        }
-                    }
-                })
+                SearchResultComposable(
+                    searchState = viewModel.searchState,
+                    saveAccount = {username, account -> viewModel.saveAccount(username, account)},
+                    saveHashtag = {hashtag -> viewModel.saveHashtag(hashtag)},
+                    navController = navController
+                )
             } else {
                 TrendingComposable(navController)
             }
         }
 
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchResultComposable(searchState: SearchState, saveAccount: (String, Account) -> Unit, saveHashtag: (String) -> Unit, navController: NavController) {
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
+    val scope = rememberCoroutineScope()
+    Column {
+
+        PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
+            Tab(text = { Text(stringResource(id = R.string.accounts)) },
+                selected = pagerState.currentPage == 0,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+
+                })
+
+            Tab(text = { Text(stringResource(R.string.hashtags)) },
+                selected = pagerState.currentPage == 1,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                })
+        }
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .weight(1f)
+                .background(MaterialTheme.colorScheme.background)
+        ) { tabIndex ->
+            when (tabIndex) {
+                0 -> Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(content = {
+                        if (searchState.searchResult != null) {
+                            items(searchState.searchResult.accounts) {
+                                CustomAccount(
+                                    account = it,
+                                    relationship = null,
+                                    onClick = { saveAccount(it.username, it) },
+                                    navController = navController
+                                )
+                            }
+                        }
+                    })
+                }
+
+                1 -> Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(content = {
+                        if (searchState.searchResult != null) {
+                            items(searchState.searchResult.tags) {
+                                CustomHashtag(
+                                    hashtag = it,
+                                    onClick = { saveHashtag(it.name) },
+                                    navController = navController
+                                )
+                            }
+                        }
+                    })
+                }
+            }
+        }
     }
 }
 

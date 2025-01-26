@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.trending
+package com.daniebeler.pfpixelix.ui.composables.explore.trending
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
-import com.daniebeler.pfpixelix.ui.composables.trending.trending_accounts.TrendingAccountsComposable
-import com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags.TrendingHashtagsComposable
-import com.daniebeler.pfpixelix.ui.composables.trending.trending_posts.TrendingPostsComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagsComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.TrendingPostsComposable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

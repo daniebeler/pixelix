@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.trending.trending_hashtags
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags
 
 import com.daniebeler.pfpixelix.domain.model.Tag
 

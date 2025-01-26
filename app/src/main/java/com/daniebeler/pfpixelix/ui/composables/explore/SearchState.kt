@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.search
+package com.daniebeler.pfpixelix.ui.composables.explore
 
 import com.daniebeler.pfpixelix.domain.model.Search
 

@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.search
+package com.daniebeler.pfpixelix.ui.composables.explore
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +72,7 @@ class ExploreViewModel @Inject constructor(
 
     fun onSearch(text: String) {
         if (text.isNotBlank()) {
-            getSearchResults(text, 10)
+            getSearchResults(text, 20)
         }
     }
 
