@@ -107,10 +107,10 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
 
-    override fun search(searchText: String, type: String?): Flow<Resource<Search>> = flow {
+    override fun search(searchText: String, type: String?, limit: Int): Flow<Resource<Search>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getSearch(searchText, type).awaitResponse()
+            val response = pixelfedApi.getSearch(searchText, type, limit).awaitResponse()
             if (response.isSuccessful) {
                 val res = response.body()!!.toModel()
                 emit(Resource.Success(res))

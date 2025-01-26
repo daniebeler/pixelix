@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniebeler.pfpixelix.R
-import com.daniebeler.pfpixelix.ui.composables.CustomLoader
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +57,7 @@ fun DomainSoftwareComposable(
 
     if (viewModel.statsState.fediSoftware?.icon != null) {
         Image(painterResource(id = viewModel.statsState.fediSoftware!!.icon!!),
-            contentDescription = "",
+            contentDescription = viewModel.statsState.fediSoftware!!.name,
             modifier = Modifier
                 .height(24.dp)
                 .clickable { showBottomSheet = true })

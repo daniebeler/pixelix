@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,6 @@ import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnBlockAccountAlert
-import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnMuteAccountAlert
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
@@ -41,6 +41,7 @@ fun CustomBlockedAccountRow(
         }) {
             AsyncImage(
                 model = account.avatar,
+                error = painterResource(id = R.drawable.default_avatar),
                 contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)

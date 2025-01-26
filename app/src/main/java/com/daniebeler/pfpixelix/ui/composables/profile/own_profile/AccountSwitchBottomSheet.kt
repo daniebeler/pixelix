@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AccountSwitchBottomSheet(
     closeBottomSheet: () -> Unit,
-    ownProfileViewModel: OwnProfileViewModel,
+    ownProfileViewModel: OwnProfileViewModel?,
     viewModel: AccountSwitchViewModel = hiltViewModel(key = "account_switcher_viewmodel")
 ) {
     val context = LocalContext.current
@@ -68,7 +68,9 @@ fun AccountSwitchBottomSheet(
             viewModel.otherAccounts.otherAccounts.map { otherAccount ->
                 Box(Modifier.clickable {
                     viewModel.switchAccount(otherAccount) {
-                        ownProfileViewModel.updateAccountSwitch()
+                        ownProfileViewModel?.let {
+                            ownProfileViewModel.updateAccountSwitch()
+                        }
                         closeBottomSheet()
                     }
                 }) {

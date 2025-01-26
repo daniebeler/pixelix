@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -58,21 +61,21 @@ fun HomeComposable(navController: NavController) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    Scaffold(contentWindowInsets = WindowInsets(0.dp), topBar = {
-        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),topBar = {
+        CenterAlignedTopAppBar(title = {
             Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         },navigationIcon = {
             IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = "Help")
             }
         }, actions = {
             Row {
 
                 IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = "Conversations")
                 }
                 IconButton(onClick = { Navigate.navigate("preferences_screen", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
                 }
             }
         })

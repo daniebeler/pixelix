@@ -13,15 +13,15 @@ class TimelineRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi
 ): TimelineRepository {
 
-    override fun getHomeTimeline(maxPostId: String): Flow<Resource<List<Post>>> {
+    override fun getHomeTimeline(maxPostId: String, enableReblogs: Boolean): Flow<Resource<List<Post>>> {
         return if (maxPostId.isNotEmpty()) {
             NetworkCall<Post, PostDto>().makeCallList(
                 pixelfedApi.getHomeTimeline(
-                    maxPostId
+                    maxPostId, enableReblogs
                 )
             )
         } else {
-            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getHomeTimeline())
+            NetworkCall<Post, PostDto>().makeCallList(pixelfedApi.getHomeTimeline(enableReblogs))
         }
     }
 

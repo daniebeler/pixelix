@@ -1,14 +1,17 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 
+import android.util.Log
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.google.gson.annotations.SerializedName
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 data class PostDto(
     @SerializedName("account") val account: AccountDto,
     @SerializedName("application") val application: ApplicationDto,
     @SerializedName("comments_disabled") val commentsDisabled: Boolean,
-    @SerializedName("content") val content: String,
+    @SerializedName("content") val content: String?,
     @SerializedName("content_text") val contentText: String?,
     @SerializedName("created_at") val createdAt: String,
     @SerializedName("edited_at") val editedAt: Any,
@@ -29,7 +32,7 @@ data class PostDto(
     @SerializedName("pf_type") val pfType: String,
     @SerializedName("place") val place: PlaceDto?,
     @SerializedName("poll") val poll: Any,
-    @SerializedName("reblog") val reblog: Any,
+    @SerializedName("reblog") val reblog: PostDto?,
     @SerializedName("reblogged") val reblogged: Boolean,
     @SerializedName("reblogs_count") val reblogsCount: Int,
     @SerializedName("replies") val replies: List<Any>,
@@ -47,26 +50,67 @@ data class PostDto(
     @SerializedName("bookmarked") val bookmarked: Boolean,
 ) : DtoInterface<Post> {
     override fun toModel(): Post {
-        return Post(
-            id = id,
-            mediaAttachments = mediaAttachments.map { it.toModel() },
-            account = account.toModel(),
-            tags = tags.map { it.toModel() },
-            favouritesCount = favouritesCount,
-            content = contentText ?: "",
-            replyCount = replyCount,
-            createdAt = createdAt,
-            url = url,
-            sensitive = sensitive,
-            spoilerText = spoilerText ?: "",
-            favourited = favourited,
-            reblogged = reblogged,
-            bookmarked = bookmarked,
-            mentions = mentions.map { it.toModel() },
-            place = place?.toModel(),
-            likedBy = likedBy?.toModel(),
-            visibility = visibility,
-            inReplyToId = inReplyToId
-        )
+        if (reblog != null) {
+            return Post(
+                rebloggedBy = account.toModel(),
+                id = id,
+                reblogId = reblog.id,
+                mediaAttachments = reblog.mediaAttachments.map { it.toModel() },
+                account = reblog.account.toModel(),
+                tags = reblog.tags.map { it.toModel() },
+                favouritesCount = reblog.favouritesCount,
+                content = reblog.contentText?.let { it.takeIf { it.isNotEmpty() } }
+                    ?: reblog.content?.let { htmlToText(it) } ?: "",
+                replyCount = reblog.replyCount,
+                createdAt = reblog.createdAt,
+                url = reblog.url,
+                sensitive = reblog.sensitive,
+                spoilerText = reblog.spoilerText ?: "",
+                favourited = reblog.favourited,
+                reblogged = reblog.reblogged,
+                bookmarked = reblog.bookmarked,
+                mentions = reblog.mentions.map { it.toModel() },
+                place = reblog.place?.toModel(),
+                likedBy = reblog.likedBy?.toModel(),
+                visibility = reblog.visibility,
+                inReplyToId = reblog.inReplyToId
+            )
+        } else {
+            return Post(
+                id = id,
+                mediaAttachments = mediaAttachments.map { it.toModel() },
+                account = account.toModel(),
+                tags = tags.map { it.toModel() },
+                favouritesCount = favouritesCount,
+                content = contentText?.let { it.takeIf { it.isNotEmpty() } }
+                    ?: content?.let { htmlToText(it) } ?: "",
+                replyCount = replyCount,
+                createdAt = createdAt,
+                url = url,
+                sensitive = sensitive,
+                spoilerText = spoilerText ?: "",
+                favourited = favourited,
+                reblogged = reblogged,
+                bookmarked = bookmarked,
+                mentions = mentions.map { it.toModel() },
+                place = place?.toModel(),
+                likedBy = likedBy?.toModel(),
+                visibility = visibility,
+                inReplyToId = inReplyToId
+            )
+        }
     }
+}
+
+private fun htmlToText(html: String): String {
+    val document = Jsoup.parse(html)
+    document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
+    document.select("br").append("\\n") // Replace <br> with newlines
+    document.select("p").prepend("\\n\\n") // Add double newline for paragraphs
+
+    val text = document.text().replace("\\n", "\n")
+    val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
+
+    Log.d("htmlToText", cleanedText)
+    return cleanedText.trim()
 }

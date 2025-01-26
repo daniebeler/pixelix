@@ -2,8 +2,11 @@ package com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -38,8 +41,8 @@ fun FollowedHashtagsComposable(
     navController: NavController,
     viewModel: FollowedHashtagsViewModel = hiltViewModel(key = "followed-hashtags-key")
 ) {
-    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        CenterAlignedTopAppBar(title = {
             Text(stringResource(id = R.string.followed_hashtags), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {

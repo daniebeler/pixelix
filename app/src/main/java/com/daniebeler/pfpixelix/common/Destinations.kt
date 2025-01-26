@@ -156,4 +156,9 @@ sealed class Destinations(
         route = "chat/{userid}", icon = Icons.Outlined.Home,
         activeIcon = Icons.Filled.AccountCircle
     )
+
+    data object Mention : Destinations(
+        route = "mention/{mentionid}", icon = Icons.Outlined.Home,
+        activeIcon = Icons.Filled.AccountCircle
+    )
 }

@@ -2,11 +2,12 @@ package com.daniebeler.pfpixelix.ui.composables.settings.liked_posts
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -15,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,8 +33,8 @@ fun LikedPostsComposable(
     viewModel: LikedPostsViewModel = hiltViewModel(key = "likey-posts-key")
 ) {
 
-    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        CenterAlignedTopAppBar(title = {
             Text(stringResource(id = R.string.liked_posts), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {

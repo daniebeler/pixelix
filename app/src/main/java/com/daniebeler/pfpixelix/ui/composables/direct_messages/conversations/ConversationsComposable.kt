@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -76,7 +79,7 @@ fun ConversationsComposable(
 
     val lazyListState = rememberLazyListState()
 
-    Scaffold(contentWindowInsets = WindowInsets(0.dp), floatingActionButton = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), floatingActionButton = {
         FloatingActionButton(onClick = {
             showNewChatDialog.value = true
         }) {
@@ -84,7 +87,7 @@ fun ConversationsComposable(
         }
 
     }, topBar = {
-        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+        CenterAlignedTopAppBar(title = {
             Text(stringResource(R.string.conversations), fontWeight = FontWeight.Bold)
 
         }, navigationIcon = {

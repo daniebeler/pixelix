@@ -4,8 +4,10 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
 import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
+import com.daniebeler.pfpixelix.data.remote.dto.SettingsDto
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
+import com.daniebeler.pfpixelix.domain.model.Settings
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import kotlinx.coroutines.flow.Flow
@@ -47,6 +49,12 @@ class AccountRepositoryImpl @Inject constructor(
             pixelfedApi.updateAccount(
                 body
             )
+        )
+    }
+
+    override fun getAccountSettings(): Flow<Resource<Settings>> {
+        return NetworkCall<Settings, SettingsDto>().makeCall(
+            pixelfedApi.getSettings()
         )
     }
 

@@ -3,8 +3,11 @@ package com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -35,8 +38,8 @@ fun BlockedAccountsComposable(
     navController: NavController,
     viewModel: BlockedAccountsViewModel = hiltViewModel(key = "blocked-accounts-key")
 ) {
-    Scaffold(contentWindowInsets = WindowInsets(0), topBar = {
-        CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0), title = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        CenterAlignedTopAppBar(title = {
             Text(
                 text = stringResource(id = R.string.blocked_accounts), fontWeight = FontWeight.Bold
             )
