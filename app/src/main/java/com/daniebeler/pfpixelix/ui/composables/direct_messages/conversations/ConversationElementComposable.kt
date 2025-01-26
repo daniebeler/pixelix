@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -36,6 +38,7 @@ fun ConversationElementComposable(conversation: Conversation, navController: Nav
         verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
             model = conversation.accounts.first().avatar,
+            error = painterResource(id = R.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier
                 .height(46.dp)

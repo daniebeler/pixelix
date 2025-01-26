@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -158,10 +159,12 @@ class MainActivity : ComponentActivity() {
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
 
-                Scaffold(contentWindowInsets = WindowInsets(0.dp),bottomBar = {
-                    BottomBar(navController = navController,
+                Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
+                    BottomBar(
+                        navController = navController,
                         avatar = avatar,
-                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true }, context = this
+                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true },
+                        context = this
                     )
                 }) { paddingValues ->
                     Box(
@@ -395,7 +398,10 @@ fun NavigationGraph(navController: NavHostController) {
 
 @Composable
 fun BottomBar(
-    navController: NavHostController, avatar: String, openAccountSwitchBottomSheet: () -> Unit, context: Context
+    navController: NavHostController,
+    avatar: String,
+    openAccountSwitchBottomSheet: () -> Unit,
+    context: Context
 ) {
     val screens = listOf(
         Destinations.HomeScreen,
@@ -403,12 +409,12 @@ fun BottomBar(
         Destinations.NotificationsScreen,
         Destinations.OwnProfile
     )
-    val systemNavigationBarHeight = WindowInsets.navigationBars.asPaddingValues(Density(context)).calculateBottomPadding()
+    val systemNavigationBarHeight =
+        WindowInsets.navigationBars.asPaddingValues(Density(context)).calculateBottomPadding()
 
     NavigationBar(
-        modifier = Modifier
-            .height(60.dp + systemNavigationBarHeight)
-    ){
+        modifier = Modifier.height(60.dp + systemNavigationBarHeight)
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         screens.forEach { screen ->
@@ -441,13 +447,17 @@ fun BottomBar(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
                             model = avatar,
+                            error = painterResource(id = R.drawable.default_avatar),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
                                 .width(30.dp)
                                 .clip(CircleShape)
                         )
-                        Icon(Icons.Outlined.UnfoldMore, contentDescription = "long press to switch account")
+                        Icon(
+                            Icons.Outlined.UnfoldMore,
+                            contentDescription = "long press to switch account"
+                        )
                     }
                 } else if (currentRoute == screen.route) {
                     Icon(

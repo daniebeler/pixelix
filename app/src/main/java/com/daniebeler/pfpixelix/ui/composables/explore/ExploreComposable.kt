@@ -55,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -302,6 +303,7 @@ private fun PastSearchItem(
         if (item.savedSearchType == SavedSearchType.Account) {
             AsyncImage(
                 model = item.account!!.avatar,
+                error = painterResource(id = R.drawable.default_avatar),
                 contentDescription = "",
                 modifier = Modifier
                     .height(46.dp)
