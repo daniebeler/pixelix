@@ -14,7 +14,9 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -63,6 +66,7 @@ import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposab
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
@@ -70,7 +74,6 @@ import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsCompos
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
-import com.daniebeler.pfpixelix.ui.composables.explore.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsComposable
@@ -158,7 +161,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(contentWindowInsets = WindowInsets(0.dp),bottomBar = {
                     BottomBar(navController = navController,
                         avatar = avatar,
-                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true })
+                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true }, context = this
+                    )
                 }) { paddingValues ->
                     Box(
                         modifier = Modifier.padding(paddingValues)
@@ -391,7 +395,7 @@ fun NavigationGraph(navController: NavHostController) {
 
 @Composable
 fun BottomBar(
-    navController: NavHostController, avatar: String, openAccountSwitchBottomSheet: () -> Unit
+    navController: NavHostController, avatar: String, openAccountSwitchBottomSheet: () -> Unit, context: Context
 ) {
     val screens = listOf(
         Destinations.HomeScreen,
@@ -399,8 +403,12 @@ fun BottomBar(
         Destinations.NotificationsScreen,
         Destinations.OwnProfile
     )
+    val systemNavigationBarHeight = WindowInsets.navigationBars.asPaddingValues(Density(context)).calculateBottomPadding()
 
-    NavigationBar(Modifier.height(90.dp)) {
+    NavigationBar(
+        modifier = Modifier
+            .height(60.dp + systemNavigationBarHeight)
+    ){
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         screens.forEach { screen ->
