@@ -102,7 +102,7 @@ fun ExploreComposable(
                     },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
-                    placeholder = { Text("Explore") },
+                    placeholder = { Text(stringResource(R.string.explore)) },
                     leadingIcon = {
                         if (!expanded) {
                             Icon(Icons.Default.Search, contentDescription = null)
