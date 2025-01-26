@@ -192,7 +192,7 @@
     <string name="download_image">Download image</string>
     <string name="profile">Profile</string>
     <string name="alerts">Inbox</string>
-    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Account?</string>
     <string name="remove_account">Remove Account?</string>
     <string name="remove">Remove</string>
     <string name="sure_update_post">Are you sure, you want to update this post?</string>
@@ -200,14 +200,16 @@
     <string name="license">License: %1$s</string>
     <string name="hide_alt_text_button">Hide Alt-text button</string>
     <string name="instances">Instances:</string>
-    <string name="total_posts">Total posts:</string>
-    <string name="total_users">Total users:</string>
-    <string name="active_users">Active users:</string>
-    <string name="server_version">%1$s version %2$s</string>
-    <string name="visit_url">Visit %1$s</string>
+    <string name="total_posts">Total posturi:</string>
+    <string name="total_users">Total utilizatori:</string>
+    <string name="active_users">Utilizatori activi:</string>
+    <string name="server_version">%1$s Versiune %2$s</string>
+    <string name="visit_url">Vizitați %1$s</string>
     <string name="displayname">Displayname</string>
     <string name="bio">Bio</string>
     <string name="website">Website</string>
     <string name="location">Location</string>
     <string name="mentions">Mentions</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>

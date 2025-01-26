@@ -192,7 +192,7 @@
     <string name="download_image">Télécharger l’image</string>
     <string name="profile">Profil</string>
     <string name="alerts">Boîte de réception</string>
-    <string name="are_you_sure_you_want_to_remove_this_account">Êtes-vous sûr de vouloir retirer ce compte</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Êtes-vous sûr de vouloir retirer ce compte?</string>
     <string name="remove_account">Retirer le compte ?</string>
     <string name="remove">Retirer</string>
     <string name="sure_update_post">Êtes-vous sûr de vouloir mettre à jour cette publication ?</string>
@@ -210,4 +210,6 @@
     <string name="website">Site Internet</string>
     <string name="location">Localisation</string>
     <string name="mentions">Mentions</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>

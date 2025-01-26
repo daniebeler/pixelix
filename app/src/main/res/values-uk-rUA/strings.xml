@@ -210,4 +210,6 @@
     <string name="website">Веб-сайт</string>
     <string name="location">Місцезнаходження</string>
     <string name="mentions">Згадування</string>
+    <string name="explore">Explore</string>
+    <string name="reblogged_by">reblogged by %1$s</string>
 </resources>
