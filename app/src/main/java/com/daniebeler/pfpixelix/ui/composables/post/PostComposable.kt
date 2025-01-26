@@ -81,6 +81,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -203,6 +204,24 @@ fun PostComposable(
 
     if (viewModel.post != null) {
         Column(modifier = modifier) {
+
+            post.rebloggedBy?.let {reblogAccount ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 12.dp)
+                        .clickable(onClick = {
+                            Navigate.navigate(
+                                "profile_screen/" + reblogAccount.id, navController
+                            )
+                        })
+                ) {
+                    Icon(Icons.Outlined.Cached, contentDescription = "reblogged by")
+                    Text("reblogged by ${reblogAccount.displayname}", fontSize = 12.sp)
+                }
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -215,6 +234,7 @@ fun PostComposable(
             ) {
                 AsyncImage(
                     model = viewModel.post!!.account.avatar,
+                    error = painterResource(id = R.drawable.default_avatar),
                     contentDescription = "",
                     modifier = Modifier
                         .height(36.dp)

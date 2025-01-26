@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,8 +20,8 @@ class HomeTimelineViewModel @Inject constructor(
     private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
-    var homeTimelineState by mutableStateOf(HomeTimelineState())
-    var accountSettings by mutableStateOf<Settings?>(null)
+    var homeTimelineState by mutableStateOf(HomeTimelineState(isLoading = true))
+    private var accountSettings by mutableStateOf<Settings?>(null)
 
     init {
         getSettings()
@@ -32,12 +31,13 @@ class HomeTimelineViewModel @Inject constructor(
         getSettingsUseCase().onEach { result ->
             accountSettings = when (result) {
                 is Resource.Success -> {
-                    getItemsFirstLoad(false)
+                    accountSettings = result.data
+                    getItemsFirstLoad(false, result.data!!.enableReblogs)
                     result.data
                 }
 
                 is Resource.Error -> {
-                    getItemsFirstLoad(false)
+                    getItemsFirstLoad(false, enableReblogs = false)
                     null
                 }
 
@@ -46,13 +46,11 @@ class HomeTimelineViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-
     }
 
-    private fun getItemsFirstLoad(refreshing: Boolean) {
-        Log.d("reblogs", accountSettings?.enableReblogs.toString())
+    private fun getItemsFirstLoad(refreshing: Boolean, enableReblogs: Boolean) {
         getHomeTimelineUseCase(
-            enableReblogs = accountSettings?.enableReblogs ?: false
+            enableReblogs = enableReblogs
         ).onEach { result ->
             homeTimelineState = when (result) {
                 is Resource.Success -> {
@@ -123,7 +121,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     fun refresh() {
-        getItemsFirstLoad(true)
+        getItemsFirstLoad(true, accountSettings?.enableReblogs ?: false)
     }
 
     fun postGetsDeleted(postId: String) {

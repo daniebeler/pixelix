@@ -23,5 +23,6 @@ Post(
     val place: Place?,
     val likedBy: LikedBy?,
     val visibility: String,
-    val inReplyToId: String?
+    val inReplyToId: String?,
+    val rebloggedBy: Account? = null
 )
