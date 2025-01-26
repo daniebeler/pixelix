@@ -99,6 +99,7 @@ fun ExploreComposable(
                                 modifier = Modifier.clickable {
                                     expanded = false
                                     textFieldState.clearText()
+                                    viewModel.searchState = SearchState()
                                 })
                         }
                     },
@@ -106,7 +107,10 @@ fun ExploreComposable(
                         if (textFieldState.text.isNotBlank()) {
                             Icon(Icons.Outlined.Clear,
                                 contentDescription = "clear search query",
-                                modifier = Modifier.clickable { textFieldState.clearText() })
+                                modifier = Modifier.clickable {
+                                    textFieldState.clearText()
+                                    viewModel.searchState = SearchState()
+                                })
                         }
                     })
             },
