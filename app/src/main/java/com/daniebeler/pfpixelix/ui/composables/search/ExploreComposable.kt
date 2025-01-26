@@ -1,6 +1,9 @@
 package com.daniebeler.pfpixelix.ui.composables.search
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -66,7 +69,7 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 @Composable
 fun ExploreComposable(
     navController: NavController,
-    viewModel: SearchViewModel = hiltViewModel(key = "search-viewmodel-key")
+    viewModel: ExploreViewModel = hiltViewModel(key = "search-viewmodel-key")
 ) {
     val context: Context = LocalContext.current
 
@@ -104,7 +107,11 @@ fun ExploreComposable(
                         }
                     },
                     trailingIcon = {
-                        if (textFieldState.text.isNotBlank()) {
+                        AnimatedVisibility(
+                            visible = textFieldState.text.isNotBlank(),
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
                             Icon(Icons.Outlined.Clear,
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {

@@ -40,7 +40,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrendingComposable(navController: NavController) {
 
-   // val pageId = if (page == "accounts") 1 else if (page == "hashtags") 2 else 0
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
 
     val scope = rememberCoroutineScope()
