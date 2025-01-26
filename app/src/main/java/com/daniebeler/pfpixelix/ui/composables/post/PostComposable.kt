@@ -218,7 +218,7 @@ fun PostComposable(
                         })
                 ) {
                     Icon(Icons.Outlined.Cached, contentDescription = "reblogged by")
-                    Text("reblogged by ${reblogAccount.displayname}", fontSize = 12.sp)
+                    Text(stringResource(R.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username), fontSize = 12.sp)
                 }
             }
 
