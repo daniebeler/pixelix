@@ -136,6 +136,8 @@ fun PostComposable(
 
     val context = LocalContext.current
 
+    var postId  by remember { mutableStateOf(post.id) }
+
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {
         mutableIntStateOf(
@@ -147,14 +149,15 @@ fun PostComposable(
         )
     }
 
-
-
     DisposableEffect(post.createdAt) {
         viewModel.convertTime(post.createdAt)
         onDispose {}
     }
 
     LaunchedEffect(Unit) {
+        if (post.reblogId != null) {
+            postId = post.reblogId
+        }
         if (viewModel.post == null) {
             viewModel.updatePost(post)
         }
@@ -174,15 +177,10 @@ fun PostComposable(
 
     LaunchedEffect(openReplies) {
         if (openReplies) {
-            if (viewModel.post!!.rebloggedBy != null) {
-                viewModel.loadReplies(
-                    viewModel.post?.reblogId ?: ""
-                )
-            } else {
-                viewModel.loadReplies(
-                    viewModel.post!!.id
-                )
-            }
+            viewModel.loadReplies(
+                postId
+            )
+
         }
     }
 
@@ -196,24 +194,21 @@ fun PostComposable(
             720f
         } else {
             0f
-        },
-        animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+        }, animationSpec = tween(durationMillis = 800, easing = EaseInOut)
     )
 
 
     var animateHeart by remember { mutableStateOf(false) }
-    val heartScale by animateFloatAsState(
-        targetValue = if (animateHeart) 1.3f else 1f,
+    val heartScale by animateFloatAsState(targetValue = if (animateHeart) 1.3f else 1f,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
         finishedListener = {
             animateHeart = false
-        }
-    )
+        })
 
     if (viewModel.post != null) {
         Column(modifier = modifier) {
 
-            post.rebloggedBy?.let {reblogAccount ->
+            post.rebloggedBy?.let { reblogAccount ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -226,7 +221,12 @@ fun PostComposable(
                         })
                 ) {
                     Icon(Icons.Outlined.Cached, contentDescription = "reblogged by")
-                    Text(stringResource(R.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username), fontSize = 12.sp)
+                    Text(
+                        stringResource(
+                            R.string.reblogged_by,
+                            reblogAccount.displayname ?: reblogAccount.username
+                        ), fontSize = 12.sp
+                    )
                 }
             }
 
@@ -355,13 +355,11 @@ fun PostComposable(
                                         .zIndex(10f)
                                         .padding(start = 12.dp, end = 12.dp)
                                 ) {
-                                    PostImage(
-                                        mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                                        viewModel.post!!.id,
+                                    PostImage(mediaAttachment = viewModel.post!!.mediaAttachments[page],
+                                        postId,
                                         setZindex = { setZindex(it) },
                                         viewModel,
-                                        like = {animateHeart = true}
-                                    )
+                                        like = { animateHeart = true })
                                 }
                             }
 
@@ -408,13 +406,11 @@ fun PostComposable(
                                 .zIndex(10f)
                                 .padding(start = 12.dp, end = 12.dp)
                         ) {
-                            PostImage(
-                                mediaAttachment = viewModel.post!!.mediaAttachments[0],
-                                viewModel.post!!.id,
+                            PostImage(mediaAttachment = viewModel.post!!.mediaAttachments[0],
+                                postId,
                                 setZindex = { setZindex(it) },
                                 viewModel,
-                                like = {animateHeart = true}
-                            )
+                                like = { animateHeart = true })
                         }
                     }
                 }
@@ -422,12 +418,14 @@ fun PostComposable(
                 if (viewModel.post!!.content.isNotBlank()) {
                     Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
                         HorizontalDivider()
-                        HashtagsMentionsTextView(text = viewModel.post!!.content,
+                        HashtagsMentionsTextView(
+                            text = viewModel.post!!.content,
                             mentions = viewModel.post!!.mentions,
                             navController = navController,
                             textSize = 18.sp,
                             openUrl = { url -> viewModel.openUrl(context, url) },
-                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                        )
                         HorizontalDivider()
                     }
                 }
@@ -442,16 +440,15 @@ fun PostComposable(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (viewModel.post!!.favourited) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
+                            Icon(imageVector = Icons.Filled.Favorite,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
-                                        viewModel.unlikePost(viewModel.post!!.id)
-                                    }.scale(heartScale),
+                                        viewModel.unlikePost(postId)
+                                    }
+                                    .scale(heartScale),
                                 contentDescription = "unlike post",
-                                tint = Color(0xFFDD2E44)
-                            )
+                                tint = Color(0xFFDD2E44))
                         } else {
                             Icon(
                                 imageVector = Icons.Outlined.FavoriteBorder,
@@ -459,7 +456,7 @@ fun PostComposable(
                                     .size(24.dp)
                                     .clickable {
                                         animateHeart = true
-                                        viewModel.likePost(viewModel.post!!.id)
+                                        viewModel.likePost(postId)
                                     },
                                 contentDescription = "like post"
                             )
@@ -481,15 +478,9 @@ fun PostComposable(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable {
-                                    if (viewModel.post!!.rebloggedBy != null) {
-                                        viewModel.loadReplies(
-                                            viewModel.post?.reblogId ?: ""
-                                        )
-                                    } else {
-                                        viewModel.loadReplies(
-                                            viewModel.post!!.id
-                                        )
-                                    }
+                                    viewModel.loadReplies(
+                                        postId
+                                    )
                                     showBottomSheet = 1
                                 },
                             contentDescription = "comments of post"
@@ -510,7 +501,7 @@ fun PostComposable(
 
                         if (viewModel.post!!.reblogged) {
                             IconButton(onClick = {
-                                viewModel.unreblogPost(viewModel.post!!.id)
+                                viewModel.unreblogPost(postId)
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
@@ -522,7 +513,7 @@ fun PostComposable(
                         } else {
                             IconButton(onClick = {
                                 animateBoost = true
-                                viewModel.reblogPost(viewModel.post!!.id)
+                                viewModel.reblogPost(postId)
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Cached,
@@ -535,15 +526,16 @@ fun PostComposable(
 
                         if (viewModel.post!!.bookmarked) {
                             IconButton(onClick = {
-                                viewModel.unBookmarkPost(post.id)
+                                viewModel.unBookmarkPost(postId)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Filled.Bookmark, contentDescription = "unbookmark post"
+                                    imageVector = Icons.Filled.Bookmark,
+                                    contentDescription = "unbookmark post"
                                 )
                             }
                         } else {
                             IconButton(onClick = {
-                                viewModel.bookmarkPost(post.id)
+                                viewModel.bookmarkPost(postId)
                             }) {
                                 Icon(
                                     imageVector = Icons.Outlined.BookmarkBorder,
@@ -576,7 +568,7 @@ fun PostComposable(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.clickable {
-                                    viewModel.loadLikedBy(post.id)
+                                    viewModel.loadLikedBy(postId)
                                     showBottomSheet = 3
                                 })
                         }
@@ -605,15 +597,9 @@ fun PostComposable(
                     ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.clickable {
-                            if (viewModel.post!!.rebloggedBy != null) {
-                                viewModel.loadReplies(
-                                    viewModel.post?.reblogId ?: ""
-                                )
-                            } else {
-                                viewModel.loadReplies(
-                                    viewModel.post!!.id
-                                )
-                            }
+                            viewModel.loadReplies(
+                                postId
+                            )
                             showBottomSheet = 1
                         })
                 }

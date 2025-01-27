@@ -175,7 +175,7 @@
     <string name="blocked">letiltott</string>
     <string name="message">Üzenet</string>
     <string name="all">Mind</string>
-    <string name="likes_">Kedvencek</string>
+    <string name="likes_">Kedvelések</string>
     <string name="reposts">Megosztások</string>
     <string name="edit_post">Bejegyzés szerkesztése</string>
     <string name="notification_widget_description">Légy naprakész a legfrissebb Pixelfed értesítéseiddel a kezdőképernyőn</string>
@@ -211,5 +211,5 @@
     <string name="location">Helyszín</string>
     <string name="mentions">Említések</string>
     <string name="explore">Felfedezés</string>
-    <string name="reblogged_by">reblogged by %1$s</string>
+    <string name="reblogged_by">megosztotta %1$s</string>
 </resources>

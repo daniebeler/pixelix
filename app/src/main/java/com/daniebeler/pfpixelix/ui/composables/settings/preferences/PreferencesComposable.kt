@@ -88,8 +88,7 @@ fun PreferencesComposable(
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(windowInsets = WindowInsets(0, 0, 0, 0),
-                scrollBehavior = scrollBehavior,
+            CenterAlignedTopAppBar(scrollBehavior = scrollBehavior,
                 title = {
                     Text(text = stringResource(R.string.settings), fontWeight = FontWeight.Bold)
                 },
