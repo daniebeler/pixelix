@@ -74,6 +74,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -83,6 +84,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -440,7 +442,7 @@ fun PostComposable(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (viewModel.post!!.favourited) {
-                            Icon(imageVector = Icons.Filled.Favorite,
+                            Icon(imageVector = ImageVector.vectorResource(R.drawable.heart),
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
@@ -451,7 +453,7 @@ fun PostComposable(
                                 tint = Color(0xFFDD2E44))
                         } else {
                             Icon(
-                                imageVector = Icons.Outlined.FavoriteBorder,
+                                imageVector = ImageVector.vectorResource(R.drawable.heart_outline),
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
@@ -474,7 +476,7 @@ fun PostComposable(
                         Spacer(Modifier.width(32.dp))
 
                         Icon(
-                            imageVector = Icons.Outlined.ChatBubbleOutline,
+                            imageVector = ImageVector.vectorResource(R.drawable.chatbubble_outline),
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable {
@@ -504,7 +506,7 @@ fun PostComposable(
                                 viewModel.unreblogPost(postId)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Cached,
+                                    imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
                                     contentDescription = "undo reblog post",
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.rotate(boostRotation)
@@ -516,7 +518,7 @@ fun PostComposable(
                                 viewModel.reblogPost(postId)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Cached,
+                                    imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
                                     contentDescription = "reblog post",
                                 )
                             }
@@ -529,7 +531,7 @@ fun PostComposable(
                                 viewModel.unBookmarkPost(postId)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Filled.Bookmark,
+                                    imageVector = ImageVector.vectorResource(R.drawable.bookmark),
                                     contentDescription = "unbookmark post"
                                 )
                             }
@@ -538,7 +540,7 @@ fun PostComposable(
                                 viewModel.bookmarkPost(postId)
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.BookmarkBorder,
+                                    imageVector = ImageVector.vectorResource(R.drawable.bookmark_outline),
                                     contentDescription = "bookmark post"
                                 )
                             }
