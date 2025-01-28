@@ -6,15 +6,15 @@
 
 "files": [
   {
-    "source": "./app/src/main/res/values/strings.xml",
-    "translation": "./app/src/main/res/values-%android_code%/strings.xml"
+    "source": "/app/src/main/res/values/strings.xml",
+    "translation": "/app/src/main/res/values-%android_code%/strings.xml"
   },
   {
-    "source": "./metadata/%locale%/full_description.txt",
-    "translation": "./metadata/%locale%/full_description.txt"
+    "source": "/metadata/%locale%/full_description.txt",
+    "translation": "/metadata/%locale%/full_description.txt"
   },
   {
-    "source": "./metadata/%locale%/short_description.txt",
-    "translation": "./metadata/%locale%/short_description.txt"
+    "source": "/metadata/%locale%/short_description.txt",
+    "translation": "/metadata/%locale%/short_description.txt"
   },
 ]
