@@ -21,8 +21,8 @@ sealed class Destinations(
 
     data object NotificationsScreen : Destinations(
         route = "notifications_screen",
-        icon = R.drawable.heart_outline,
-        activeIcon = R.drawable.heart,
+        icon = R.drawable.notifications_outline,
+        activeIcon = R.drawable.notifications,
         label = R.string.alerts
     )
 

@@ -43,8 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -110,7 +112,7 @@ fun CollectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
+                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         }, actions = {
@@ -200,7 +202,7 @@ fun CollectionComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                    ButtonRowElement(icon = R.drawable.open_outline, text = stringResource(
                         R.string.open_in_browser
                     ), onClick = {
                         if (viewModel.collectionState.collection != null) {
@@ -210,7 +212,7 @@ fun CollectionComposable(
                         }
                     })
 
-                    ButtonRowElement(icon = Icons.Outlined.Share,
+                    ButtonRowElement(icon = R.drawable.share_social_outline,
                         text = stringResource(R.string.share_this_collection),
                         onClick = {
                             if (viewModel.collectionState.collection != null) {

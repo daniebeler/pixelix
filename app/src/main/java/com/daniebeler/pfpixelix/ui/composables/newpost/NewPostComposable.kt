@@ -52,8 +52,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -186,7 +188,7 @@ fun NewPostComposable(
                             viewModel.deleteMedia(image.id, image.imageUri)
                         }) {
                             Icon(
-                                imageVector = Icons.Outlined.Delete,
+                                imageVector = ImageVector.vectorResource(R.drawable.add_outline),
                                 contentDescription = "delete Image",
                                 tint = MaterialTheme.colorScheme.error
                             )
@@ -205,7 +207,7 @@ fun NewPostComposable(
                             }
                             .height(50.dp)
                             .width(50.dp),
-                        imageVector = Icons.Filled.Add,
+                        imageVector = ImageVector.vectorResource(R.drawable.add_outline),
                         contentDescription = null,
                     )
                 }

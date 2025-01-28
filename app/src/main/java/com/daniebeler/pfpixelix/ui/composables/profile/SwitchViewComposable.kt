@@ -60,7 +60,11 @@ fun SwitchViewComposable(
                         }
                     )) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.grid_outline),
+                        imageVector = if(viewType == ViewEnum.Grid) {
+                            ImageVector.vectorResource(R.drawable.grid)
+                        } else {
+                            ImageVector.vectorResource(R.drawable.grid_outline)
+                        },
                         modifier = Modifier.size(24.dp),
                         contentDescription = "grid view"
                     )
@@ -76,7 +80,11 @@ fun SwitchViewComposable(
                         }
                     )) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.reorder_four_outline),
+                        imageVector = if(viewType == ViewEnum.Grid) {
+                            ImageVector.vectorResource(R.drawable.reorder_four_outline)
+                        } else {
+                            ImageVector.vectorResource(R.drawable.reorder_four)
+                        },
                         contentDescription = "timeline view"
                     )
                 }

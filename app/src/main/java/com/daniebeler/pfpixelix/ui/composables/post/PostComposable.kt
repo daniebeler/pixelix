@@ -289,8 +289,7 @@ fun PostComposable(
                     showBottomSheet = 2
                 }) {
                     Icon(
-                        imageVector = Icons.Outlined.MoreHoriz,
-                        modifier = Modifier.size(32.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ellipsis_vertical),
                         contentDescription = ""
                     )
                 }
