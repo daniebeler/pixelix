@@ -21,7 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Public
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -129,8 +132,25 @@ fun AboutPixelixComposable(
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(icon = Icons.Outlined.StarRate,
-                text = stringResource(id = R.string.rate_us),
+                text = "Rate Pixelix on Google Play Store",
                 onClick = { viewModel.rateApp(context) })
+
+            HorizontalDivider(Modifier.padding(12.dp))
+
+            ButtonRowElement(icon = Icons.Outlined.Public,
+                text = "Homepage",
+                smallText = "https://app.pixelix.social",
+                onClick = { viewModel.openUrl(context, "https://app.pixelix.social") })
+
+            ButtonRowElement(icon = Icons.Outlined.Shield,
+                text = "Privacy Policy",
+                smallText = "https://app.pixelix.social/privacy",
+                onClick = { viewModel.openUrl(context, "https://app.pixelix.social/privacy") })
+
+            ButtonRowElement(icon = Icons.Outlined.Code,
+                text = "Source Code",
+                smallText = "https://github.com/daniebeler/pixelix",
+                onClick = { viewModel.openUrl(context, "https://github.com/daniebeler/pixelix") })
 
 
             HorizontalDivider(Modifier.padding(12.dp))
