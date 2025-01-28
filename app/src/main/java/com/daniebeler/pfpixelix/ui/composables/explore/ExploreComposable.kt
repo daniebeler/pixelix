@@ -209,7 +209,7 @@ fun ExploreComposable(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchResultComposable(searchState: SearchState, saveAccount: (String, Account) -> Unit, saveHashtag: (String) -> Unit, navController: NavController) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val scope = rememberCoroutineScope()
     Column {
 
