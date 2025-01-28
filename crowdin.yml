@@ -11,10 +11,10 @@
   },
   {
     "source": "./metadata/%locale%/full_description.txt",
-    "translation": "./metadata/%locale%.yml/full_description.txt"
+    "translation": "./metadata/%locale%/full_description.txt"
   },
   {
     "source": "./metadata/%locale%/short_description.txt",
-    "translation": "./metadata/%locale%.yml/short_description.txt"
+    "translation": "./metadata/%locale%/short_description.txt"
   },
 ]
