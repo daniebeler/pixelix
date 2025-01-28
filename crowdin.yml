@@ -1,6 +1,6 @@
 "project_id_env": "CROWDIN_PROJECT_ID"
 "api_token_env": "CROWDIN_PERSONAL_TOKEN"
-"base_path": "./app/src/main/res"
+"base_path": "."
 
 "preserve_hierarchy": true
 
@@ -10,11 +10,11 @@
     "translation": "./app/src/main/res/values-%android_code%/strings.xml"
   },
   {
-    "source": "metadata/%locale%/full_description.txt",
-    "translation": "metadata/%locale%.yml/full_description.txt"
+    "source": "./metadata/%locale%/full_description.txt",
+    "translation": "./metadata/%locale%.yml/full_description.txt"
   },
   {
-    "source": "metadata/%locale%/short_description.txt",
-    "translation": "metadata/%locale%.yml/short_description.txt"
+    "source": "./metadata/%locale%/short_description.txt",
+    "translation": "./metadata/%locale%.yml/short_description.txt"
   },
 ]
