@@ -122,12 +122,6 @@ fun OwnProfileComposable(
             }
         })
 
-    }, floatingActionButton = {
-        FloatingActionButton(onClick = {
-            Navigate.navigate("new_post_screen", navController)
-        }) {
-            Icon(Icons.Default.Add, contentDescription = "Add")
-        }
     }
 
     ) { paddingValues ->

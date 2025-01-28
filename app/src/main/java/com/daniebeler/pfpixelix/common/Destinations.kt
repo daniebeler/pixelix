@@ -4,10 +4,13 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
@@ -111,8 +114,8 @@ sealed class Destinations(
     )
 
     data object NewPost : Destinations(
-        route = "new_post_screen", icon = Icons.Outlined.Settings,
-        activeIcon = Icons.Filled.AccountCircle
+        route = "new_post_screen", icon = Icons.Outlined.AddCircleOutline,
+        activeIcon = Icons.Filled.AddCircle
     )
 
     data object EditPost : Destinations(

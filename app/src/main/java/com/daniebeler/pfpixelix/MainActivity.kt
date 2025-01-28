@@ -406,6 +406,7 @@ fun BottomBar(
     val screens = listOf(
         Destinations.HomeScreen,
         Destinations.Search,
+        Destinations.NewPost,
         Destinations.NotificationsScreen,
         Destinations.OwnProfile
     )
