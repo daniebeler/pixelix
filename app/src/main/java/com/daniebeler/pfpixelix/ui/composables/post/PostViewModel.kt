@@ -177,7 +177,7 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        loadReplies(postId)
+                        repliesState = repliesState.copy(replies = repliesState.replies + result.data!!)
                     }
 
                     is Resource.Error -> {
