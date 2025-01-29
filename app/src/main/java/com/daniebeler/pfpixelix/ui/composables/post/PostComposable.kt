@@ -32,14 +32,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Cached
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
@@ -549,14 +545,14 @@ fun PostComposable(
                 }
 
                 Row {
-                    if (post.likedBy?.username?.isNotBlank() == true) {
+                    if (viewModel.post!!.likedBy?.username?.isNotBlank() == true) {
                         Text(text = stringResource(id = R.string.liked_by) + " ", fontSize = 14.sp)
-                        Text(text = post.likedBy.username,
+                        Text(text = viewModel.post!!.likedBy!!.username!!,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.clickable {
                                 Navigate.navigate(
-                                    "profile_screen/" + post.likedBy.id, navController
+                                    "profile_screen/" + viewModel.post!!.likedBy!!.id, navController
                                 )
                             })
                         if (post.favouritesCount > 1) {
@@ -564,7 +560,7 @@ fun PostComposable(
                                 text = " " + stringResource(id = R.string.and) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(
+                            Text(text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
                                 id = R.string.others
                             ),
                                 fontWeight = FontWeight.Bold,
