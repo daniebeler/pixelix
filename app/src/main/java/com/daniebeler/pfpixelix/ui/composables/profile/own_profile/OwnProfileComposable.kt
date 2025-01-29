@@ -96,16 +96,6 @@ fun OwnProfileComposable(
                     )
                 }
             }
-        }, navigationIcon = {
-            IconButton(onClick = {
-                showBottomSheet = 2
-            }) {
-                Icon(
-                    imageVector = Icons.Outlined.SwitchAccount,
-                    contentDescription = "account switch dropdown",
-                    Modifier.size(24.dp)
-                )
-            }
         }, actions = {
             if (viewModel.ownDomain.isNotEmpty()) {
                 DomainSoftwareComposable(
@@ -213,7 +203,6 @@ fun OwnProfileComposable(
         }
 
     }
-    //ToTopButton(listState = lazyGridState)
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated()

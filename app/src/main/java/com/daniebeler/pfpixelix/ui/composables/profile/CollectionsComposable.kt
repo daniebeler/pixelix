@@ -30,8 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,14 +53,13 @@ fun CollectionsComposable(
     openUrl: (url: String) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
-    var showAddCollectionDialog = remember {
+    val showAddCollectionDialog = remember {
         mutableStateOf(false)
     }
 
     if (addNewButton || collectionsState.collections.isNotEmpty()) {
         Column {
-            HorizontalDivider(Modifier.padding(12.dp))
-
+            Spacer(Modifier.height(12.dp))
             Text(
                 text = stringResource(R.string.collections),
                 fontWeight = FontWeight.Bold,
@@ -87,7 +88,7 @@ fun CollectionsComposable(
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = it.title)
+                        Text(text = it.title, fontSize = 14.sp)
                     }
                 }
                 if (collectionsState.isLoading) {
@@ -118,14 +119,14 @@ fun CollectionsComposable(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Add,
+                                    imageVector = ImageVector.vectorResource(R.drawable.add_outline),
                                     contentDescription = "add collection",
                                     Modifier.size(32.dp)
                                 )
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = stringResource(R.string.new_))
+                            Text(text = stringResource(R.string.new_), fontSize = 14.sp)
                         }
                     }
                 }
@@ -160,7 +161,6 @@ fun CollectionsComposable(
             })
         }
     }
-
 
 
 }
