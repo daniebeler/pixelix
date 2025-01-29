@@ -23,6 +23,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.UnfoldMore
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -161,12 +165,15 @@ class MainActivity : ComponentActivity() {
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
 
-                Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
+                val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+
+                Scaffold(contentWindowInsets = WindowInsets(0.dp),modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), bottomBar = {
                     BottomBar(
                         navController = navController,
                         avatar = avatar,
                         openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true },
-                        context = this
+                        context = this,
+                        scrollBehavior
                     )
                 }) { paddingValues ->
                     Box(
@@ -398,12 +405,14 @@ fun NavigationGraph(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomBar(
     navController: NavHostController,
     avatar: String,
     openAccountSwitchBottomSheet: () -> Unit,
-    context: Context
+    context: Context,
+    scrollBehavior: BottomAppBarScrollBehavior
 ) {
     val screens = listOf(
         Destinations.HomeScreen,
@@ -415,11 +424,13 @@ fun BottomBar(
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues(Density(context)).calculateBottomPadding()
 
-    NavigationBar(
-        modifier = Modifier.height(60.dp + systemNavigationBarHeight)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    BottomAppBar(
+        scrollBehavior = if (currentRoute == Destinations.HomeScreen.route ) {scrollBehavior} else {null},
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+
         screens.forEach { screen ->
             val interactionSource = remember { MutableInteractionSource() }
             val coroutineScope = rememberCoroutineScope()
