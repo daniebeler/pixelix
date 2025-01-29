@@ -22,9 +22,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -49,7 +46,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -83,7 +82,7 @@ fun ConversationsComposable(
         FloatingActionButton(onClick = {
             showNewChatDialog.value = true
         }) {
-            Icon(Icons.Default.Add, contentDescription = "Add")
+            Icon(ImageVector.vectorResource(R.drawable.add_outline), contentDescription = "Add")
         }
 
     }, topBar = {
@@ -95,7 +94,7 @@ fun ConversationsComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
+                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         }, actions = {
@@ -147,7 +146,7 @@ fun ConversationsComposable(
             if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
                 FullscreenEmptyStateComposable(
                     EmptyState(
-                        icon = Icons.Outlined.Email, heading = stringResource(
+                        icon = ImageVector.vectorResource(R.drawable.mail_outline), heading = stringResource(
                             R.string.you_don_t_have_any_notifications
                         )
                     )

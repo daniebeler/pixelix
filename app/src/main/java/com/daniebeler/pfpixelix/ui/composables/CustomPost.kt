@@ -20,13 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -138,7 +141,7 @@ fun CustomPost(
                             .align(Alignment.TopEnd)
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Collections,
+                            imageVector = ImageVector.vectorResource(R.drawable.stack),
                             tint = Color.White,
                             contentDescription = null,
                         )
