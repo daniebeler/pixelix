@@ -8,6 +8,7 @@ object Constants {
     const val BASE_URL_DATASTORE_KEY = "base_url"
     const val SHOW_SENSITIVE_CONTENT_DATASTORE_KEY = "show_sensitive_content"
     const val SHOW_ALT_TEXT_BUTTON = "show_alt_text_button"
+    const val IS_FOCUS_MODE_ENABLED = "is_focus_mode_enabled"
     const val USE_IN_APP_BROWSER_DATASTORE_KEY = "use_in_app_browser"
     const val VOLUME_DATASTORE_KEY = "volume"
     const val VIEW_DATASTORE_KEY = "view"

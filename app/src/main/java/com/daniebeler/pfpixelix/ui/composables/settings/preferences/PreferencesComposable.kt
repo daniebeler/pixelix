@@ -125,6 +125,12 @@ fun PreferencesComposable(
             ) { checked -> viewModel.storeHideAltTextButton(checked) }
 
             SwitchRowItem(
+                R.drawable.square_outline,
+                "Enable Focus Mode",
+                viewModel.isFocusModeEnabled
+            ) { checked -> viewModel.storeIsFocusModeEnabled(checked) }
+
+            SwitchRowItem(
                 R.drawable.browsers_outline,
                 stringResource(R.string.use_in_app_browser),
                 viewModel.isUsingInAppBrowser

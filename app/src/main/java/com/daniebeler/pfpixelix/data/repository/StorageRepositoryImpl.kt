@@ -37,6 +37,16 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getIsFocusModeEnabled(): Flow<Boolean> = storage.data.map { preferences ->
+        preferences[booleanPreferencesKey(Constants.IS_FOCUS_MODE_ENABLED)] ?: false
+    }
+
+    override suspend fun storeIsFocusModeEnabled(focusModeEnabled: Boolean) {
+        storage.edit { preferences ->
+            preferences[booleanPreferencesKey(Constants.IS_FOCUS_MODE_ENABLED)] = focusModeEnabled
+        }
+    }
+
     override fun getUseInAppBrowser(): Flow<Boolean> = storage.data.map { preferences ->
         preferences[booleanPreferencesKey(Constants.USE_IN_APP_BROWSER_DATASTORE_KEY)] ?: true
     }

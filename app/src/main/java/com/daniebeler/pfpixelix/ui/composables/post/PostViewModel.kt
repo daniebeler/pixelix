@@ -25,6 +25,7 @@ import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
@@ -68,7 +69,8 @@ class PostViewModel @Inject constructor(
     private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
-    private val setVolumeUseCase: SetVolumeUseCase
+    private val setVolumeUseCase: SetVolumeUseCase,
+    private val getIsFocusModeEnabledUseCase: GetIsFocusModeEnabledUseCase
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -90,6 +92,7 @@ class PostViewModel @Inject constructor(
 
 
     var isAltTextButtonHidden by mutableStateOf(false)
+    var isInFocusMode by mutableStateOf(false)
 
     var volume by mutableStateOf(false)
 
@@ -102,6 +105,12 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             getHideAltTextButtonUseCase().collect { res ->
                 isAltTextButtonHidden = res
+            }
+        }
+
+        viewModelScope.launch {
+            getIsFocusModeEnabledUseCase().collect { res ->
+                isInFocusMode = res
             }
         }
     }
