@@ -10,6 +10,8 @@ Pixelix is a powerful and feature-rich [Pixelfed](https://pixelfed.org/) client 
 
 <a href="https://www.buymeacoffee.com/daniebeler" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+<a href="https://en.liberapay.com/pixelix/" target="_blank"><img src="https://github.com/liberapay/liberapay.com/blob/master/www/assets/liberapay/logo-v2_black-on-yellow.svg" alt="Liberapay" style="height: 60px !important;"></a>
+
 ## Features
 * Direct Messages
 * Material Theme support
