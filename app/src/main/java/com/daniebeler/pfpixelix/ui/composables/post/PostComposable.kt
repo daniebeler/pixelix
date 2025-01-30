@@ -774,8 +774,8 @@ fun PostImage(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .zIndex(3f)
-                    .padding(12.dp)
-                    .clip(CircleShape)
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     .clickable {
                         altText = mediaAttachment.description

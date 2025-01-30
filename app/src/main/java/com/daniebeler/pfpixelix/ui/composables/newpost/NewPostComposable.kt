@@ -199,7 +199,7 @@ fun NewPostComposable(
                             viewModel.deleteMedia(image.id, image.imageUri)
                         }) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.trash_outline),
+                                imageVector = ImageVector.vectorResource(R.drawable.paper_plane_right),
                                 contentDescription = "delete Image",
                                 tint = MaterialTheme.colorScheme.error
                             )
