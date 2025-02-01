@@ -15,7 +15,6 @@ import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
@@ -114,11 +113,6 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideStoreThemeUseCase(repository: StorageRepository): StoreThemeUseCase =
         StoreThemeUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideGetThemeUseCase(repository: StorageRepository): GetThemeUseCase =
-        GetThemeUseCase(repository)
 
     @Provides
     @Singleton
