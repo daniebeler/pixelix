@@ -562,7 +562,7 @@ fun BottomBar(
                             contentDescription = "long press to switch account"
                         )
                     }
-                } else if (currentRoute == screen.route) {
+                } else if (currentRoute?.startsWith(screen.route) == true) {
                     Icon(
                         imageVector = ImageVector.vectorResource(screen.activeIcon),
                         modifier = Modifier.size(30.dp),
