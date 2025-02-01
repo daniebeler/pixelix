@@ -282,7 +282,7 @@ private fun LazyListScope.PostsListInScope(
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
-            Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
+            Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(bottom = 12.dp)) {
                 PostComposable(post = item,
                     postGetsDeleted = { postGetsDeleted(it) },
                     navController = navController,
