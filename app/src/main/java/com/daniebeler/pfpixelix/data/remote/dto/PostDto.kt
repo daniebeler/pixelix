@@ -1,11 +1,9 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 
-import android.util.Log
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.utils.HtmlToText.htmlToText
 import com.google.gson.annotations.SerializedName
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 
 data class PostDto(
     @SerializedName("account") val account: AccountDto,
@@ -100,15 +98,3 @@ data class PostDto(
     }
 }
 
-private fun htmlToText(html: String): String {
-    val document = Jsoup.parse(html)
-    document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
-    document.select("br").append("\\n") // Replace <br> with newlines
-    document.select("p").prepend("\\n\\n") // Add double newline for paragraphs
-
-    val text = document.text().replace("\\n", "\n")
-    val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
-
-    Log.d("htmlToText", cleanedText)
-    return cleanedText.trim()
-}

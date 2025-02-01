@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.data.remote.dto
 
 
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.utils.HtmlToText.htmlToText
 import com.google.gson.annotations.SerializedName
 
 data class AccountDto(
@@ -38,7 +39,7 @@ data class AccountDto(
             followingCount = followingCount,
             postsCount = statusesCount,
             website = website,
-            note = noteText ?: "",
+            note =  htmlToText(note),
             url = url,
             locked = locked,
             createdAt = createdAt,
