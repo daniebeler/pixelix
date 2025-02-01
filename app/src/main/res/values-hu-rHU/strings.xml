@@ -14,7 +14,7 @@
     <string name="unblock_this_profile">Profil feloldása</string>
     <string name="mute_this_profile">Profil némítása</string>
     <string name="unmute_this_profile">Némítás feloldása</string>
-    <string name="load_more">Még több betöltése</string>
+    <string name="load_more">Továbbiak betöltése</string>
     <string name="follow">Követés</string>
     <string name="unfollow">Követés vége</string>
     <string name="followers">Követő</string>
@@ -55,7 +55,7 @@
     <string name="monthly">havi</string>
     <string name="daily">napi</string>
     <string name="i_don_t_have_an_account">Még nincs fiókom</string>
-    <string name="server_url">Szerver URL</string>
+    <string name="server_url">Kiszolgáló webcíme</string>
     <string name="are_you_sure_you_want_to_log_out">Biztosan ki akarsz jelentkezni?</string>
     <string name="logout_questionmark">Kijelentkezés?</string>
     <string name="view_comments">%1$s hozzászólás mutatása</string>
@@ -64,7 +64,7 @@
     <string name="no_likes_yet">Még nem kedveli senki</string>
     <string name="no_liked_posts">nincs kedvelt bejegyzés</string>
     <string name="local">Helyi</string>
-    <string name="global">Föderációs</string>
+    <string name="global">Globális</string>
     <string name="home">Kezdőlap</string>
     <string name="likes">%1$s kedvelés</string>
     <string name="search">Keresés</string>
@@ -89,9 +89,9 @@
     <string name="no_muted_accounts">Nincs elnémított fiók</string>
     <string name="visibility_x">Láthatóság: %1$s</string>
     <string name="clear_cache">Gyorsítótár ürítése</string>
-    <string name="preferences">Testreszabás</string>
+    <string name="preferences">Beállítások</string>
     <string name="hide_sensitive_content">Érzékeny tartalmak elrejtése</string>
-    <string name="about_x">%1$s névjegye</string>
+    <string name="about_x">A %1$s névjegye</string>
     <string name="more_settings">További beállítások</string>
     <string name="use_in_app_browser">Alkalmazáson belüli böngésző</string>
     <string name="no_trending_profiles">Nincs felkapott profil</string>
