@@ -11,12 +11,14 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
+import com.daniebeler.pfpixelix.domain.usecase.StoreIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,7 +29,9 @@ class PreferencesViewModel @Inject constructor(
     private val storeHideSensitiveContentUseCase: StoreHideSensitiveContentUseCase,
     private val getHideSensitiveContentUseCase: GetHideSensitiveContentUseCase,
     private val storeHideAltTextButtonUseCase: StoreHideAltTextButtonUseCase,
+    private val storeIsFocusModeEnabledUseCase: StoreIsFocusModeEnabledUseCase,
     private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
+    private val getIsFocusModeEnabledUseCase: GetIsFocusModeEnabledUseCase,
     private val getUseInAppBrowserUseCase: GetUseInAppBrowserUseCase,
     private val storeUseInAppBrowserUseCase: StoreUseInAppBrowserUseCase,
     private val logoutUseCase: LogoutUseCase,
@@ -38,6 +42,7 @@ class PreferencesViewModel @Inject constructor(
 
     var isSensitiveContentHidden by mutableStateOf(true)
     var isAltTextButtonHidden by mutableStateOf(false)
+    var isFocusModeEnabled by mutableStateOf(false)
     var isUsingInAppBrowser by mutableStateOf(true)
     var appIcon by mutableStateOf<ImageBitmap?>(null)
 
@@ -55,6 +60,12 @@ class PreferencesViewModel @Inject constructor(
         viewModelScope.launch {
             getHideAltTextButtonUseCase().collect { res ->
                 isAltTextButtonHidden = res
+            }
+        }
+
+        viewModelScope.launch {
+            getIsFocusModeEnabledUseCase().collect { res ->
+                isFocusModeEnabled = res
             }
         }
 
@@ -95,6 +106,13 @@ class PreferencesViewModel @Inject constructor(
         isAltTextButtonHidden = value
         viewModelScope.launch {
             storeHideAltTextButtonUseCase(value)
+        }
+    }
+
+    fun storeIsFocusModeEnabled(value: Boolean) {
+        isFocusModeEnabled = value
+        viewModelScope.launch {
+            storeIsFocusModeEnabledUseCase(value)
         }
     }
 

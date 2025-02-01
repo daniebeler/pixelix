@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
@@ -82,7 +84,7 @@ fun ShareBottomSheet(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
-                imageVector = Icons.Outlined.Visibility,
+                imageVector = ImageVector.vectorResource(R.drawable.eye_outline),
                 contentDescription = "",
                 Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
             )
@@ -92,7 +94,7 @@ fun ShareBottomSheet(
             Text(text = stringResource(R.string.visibility_x, humanReadableVisibility))
         }
         if (mediaAttachment?.license != null) {
-            ButtonRowElement(icon = Icons.Outlined.Description, text = stringResource(
+            ButtonRowElement(icon = R.drawable.document_text_outline, text = stringResource(
                 R.string.license, mediaAttachment.license.title
             ), onClick = {
                 viewModel.openUrl(context, mediaAttachment.license.url)
@@ -101,20 +103,20 @@ fun ShareBottomSheet(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+        ButtonRowElement(icon = R.drawable.open_outline, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
             viewModel.openUrl(context, url)
         })
 
-        ButtonRowElement(icon = Icons.Outlined.Share,
+        ButtonRowElement(icon = R.drawable.share_social_outline,
             text = stringResource(R.string.share_this_post),
             onClick = {
                 Share.shareText(context, url)
             })
 
         if (mediaAttachment != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mediaAttachment.type == "image") {
-            ButtonRowElement(icon = Icons.Outlined.Download,
+            ButtonRowElement(icon = R.drawable.cloud_download_outline,
                 text = stringResource(R.string.download_image),
                 onClick = {
 
@@ -130,14 +132,14 @@ fun ShareBottomSheet(
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(
-                icon = Icons.Outlined.Edit,
+                icon = R.drawable.pencil_outline,
                 text = stringResource(R.string.edit_post),
                 onClick = {
                     Navigate.navigate("edit_post_screen/${post.id}", navController = navController)
                 }
             )
             ButtonRowElement(
-                icon = Icons.Outlined.Delete,
+                icon = R.drawable.trash_outline,
                 text = stringResource(R.string.delete_this_post),
                 onClick = {
                     viewModel.deleteDialog = post.id

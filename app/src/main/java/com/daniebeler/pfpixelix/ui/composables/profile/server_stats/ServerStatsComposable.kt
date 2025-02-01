@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,9 +15,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -171,7 +178,11 @@ fun DomainSoftwareComposable(
 
                     if (viewModel.statsState.fediSoftware!!.website.isNotEmpty()) {
                         TextButton(
-                            onClick = { viewModel.openUrl(viewModel.statsState.fediSoftware!!.website, context) },
+                            onClick = {
+                                viewModel.openUrl(
+                                    viewModel.statsState.fediSoftware!!.website, context
+                                )
+                            },
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
@@ -216,7 +227,61 @@ fun DomainSoftwareComposable(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    if (viewModel.statsState.fediServer!!.location.city != null || viewModel.statsState.fediServer!!.location.country != null) {
+                        Row {
+                            Text(
+                                "Server location:"
+                            )
+                            Spacer(Modifier.width(8.dp))
+
+                            if (viewModel.statsState.fediServer!!.location.city != null && viewModel.statsState.fediServer!!.location.country != null) {
+                                Text(
+                                    text = viewModel.statsState.fediServer!!.location.city.toString() + ", " + viewModel.statsState.fediServer!!.location.country.toString(),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else if (viewModel.statsState.fediServer!!.location.country != null) {
+                                Text(
+                                    text = viewModel.statsState.fediServer!!.location.country.toString(),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Text(
+                                    text = viewModel.statsState.fediServer!!.location.city.toString(),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    if (viewModel.statsState.fediServer!!.openRegistration != null) {
+                        Row {
+                            Text(
+                                "Open registration:"
+                            )
+                            Spacer(Modifier.width(8.dp))
+
+                            if (viewModel.statsState.fediServer!!.openRegistration!!) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    tint = Color.Green,
+                                    contentDescription = "true",
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    tint = Color.Red,
+                                    contentDescription = "false",
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
 
                     Row {
                         Text(stringResource(R.string.total_posts))
@@ -262,7 +327,11 @@ fun DomainSoftwareComposable(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     TextButton(
-                        onClick = { viewModel.openUrl("https://" + viewModel.statsState.fediServer!!.domain, context) },
+                        onClick = {
+                            viewModel.openUrl(
+                                "https://" + viewModel.statsState.fediServer!!.domain, context
+                            )
+                        },
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {

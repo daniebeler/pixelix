@@ -210,6 +210,6 @@
     <string name="website">Webová stránka</string>
     <string name="location">Poloha</string>
     <string name="mentions">Označení</string>
-    <string name="explore">Explore</string>
-    <string name="reblogged_by">reblogged by %1$s</string>
+    <string name="explore">Prozkoumat</string>
+    <string name="reblogged_by">rebloggováno %1$s</string>
 </resources>

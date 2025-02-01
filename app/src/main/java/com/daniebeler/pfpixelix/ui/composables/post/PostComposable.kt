@@ -32,14 +32,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Cached
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
@@ -74,6 +70,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -83,6 +80,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -136,7 +134,7 @@ fun PostComposable(
 
     val context = LocalContext.current
 
-    var postId  by remember { mutableStateOf(post.id) }
+    var postId by remember { mutableStateOf(post.id) }
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {
@@ -287,8 +285,7 @@ fun PostComposable(
                     showBottomSheet = 2
                 }) {
                     Icon(
-                        imageVector = Icons.Outlined.MoreHoriz,
-                        modifier = Modifier.size(32.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ellipsis_vertical),
                         contentDescription = ""
                     )
                 }
@@ -431,185 +428,194 @@ fun PostComposable(
                 }
             }
 
-            Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            if (!viewModel.isInFocusMode) {
+                Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (viewModel.post!!.favourited) {
-                            Icon(imageVector = Icons.Filled.Favorite,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickable {
-                                        viewModel.unlikePost(postId)
-                                    }
-                                    .scale(heartScale),
-                                contentDescription = "unlike post",
-                                tint = Color(0xFFDD2E44))
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.FavoriteBorder,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickable {
-                                        animateHeart = true
-                                        viewModel.likePost(postId)
-                                    },
-                                contentDescription = "like post"
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (viewModel.post!!.favourited) {
+                                Icon(imageVector = ImageVector.vectorResource(R.drawable.heart),
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clickable {
+                                            viewModel.unlikePost(postId)
+                                        }
+                                        .scale(heartScale),
+                                    contentDescription = "unlike post",
+                                    tint = Color(0xFFDD2E44))
+                            } else {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.heart_outline),
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clickable {
+                                            animateHeart = true
+                                            viewModel.likePost(postId)
+                                        },
+                                    contentDescription = "like post"
+                                )
+
+                            }
+
+                            Spacer(Modifier.width(4.dp))
+
+                            Text(
+                                text = viewModel.post!!.favouritesCount.toString(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
                             )
+
+                            Spacer(Modifier.width(32.dp))
+
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.chatbubble_outline),
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable {
+                                        viewModel.loadReplies(
+                                            postId
+                                        )
+                                        showBottomSheet = 1
+                                    },
+                                contentDescription = "comments of post"
+                            )
+
+                            Spacer(Modifier.width(4.dp))
+
+                            Text(
+                                text = viewModel.post!!.replyCount.toString(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
 
                         }
 
-                        Spacer(Modifier.width(4.dp))
+                        Row {
 
-                        Text(
-                            text = viewModel.post!!.favouritesCount.toString(),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(Modifier.width(32.dp))
-
-                        Icon(
-                            imageVector = Icons.Outlined.ChatBubbleOutline,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable {
-                                    viewModel.loadReplies(
-                                        postId
+                            if (viewModel.post!!.reblogged) {
+                                IconButton(onClick = {
+                                    viewModel.unreblogPost(postId)
+                                }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
+                                        contentDescription = "undo reblog post",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.rotate(boostRotation)
                                     )
-                                    showBottomSheet = 1
-                                },
-                            contentDescription = "comments of post"
-                        )
+                                }
+                            } else {
+                                IconButton(onClick = {
+                                    animateBoost = true
+                                    viewModel.reblogPost(postId)
+                                }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
+                                        contentDescription = "reblog post",
+                                    )
+                                }
+                            }
 
-                        Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(14.dp))
 
-                        Text(
-                            text = viewModel.post!!.replyCount.toString(),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-
+                            if (viewModel.post!!.bookmarked) {
+                                IconButton(onClick = {
+                                    viewModel.unBookmarkPost(postId)
+                                }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.bookmark),
+                                        contentDescription = "unbookmark post"
+                                    )
+                                }
+                            } else {
+                                IconButton(onClick = {
+                                    viewModel.bookmarkPost(postId)
+                                }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.bookmark_outline),
+                                        contentDescription = "bookmark post"
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     Row {
-
-                        if (viewModel.post!!.reblogged) {
-                            IconButton(onClick = {
-                                viewModel.unreblogPost(postId)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Cached,
-                                    contentDescription = "undo reblog post",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.rotate(boostRotation)
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                animateBoost = true
-                                viewModel.reblogPost(postId)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Cached,
-                                    contentDescription = "reblog post",
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.width(14.dp))
-
-                        if (viewModel.post!!.bookmarked) {
-                            IconButton(onClick = {
-                                viewModel.unBookmarkPost(postId)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Bookmark,
-                                    contentDescription = "unbookmark post"
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                viewModel.bookmarkPost(postId)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.BookmarkBorder,
-                                    contentDescription = "bookmark post"
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Row {
-                    if (post.likedBy?.username?.isNotBlank() == true) {
-                        Text(text = stringResource(id = R.string.liked_by) + " ", fontSize = 14.sp)
-                        Text(text = post.likedBy.username,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable {
-                                Navigate.navigate(
-                                    "profile_screen/" + post.likedBy.id, navController
-                                )
-                            })
-                        if (post.favouritesCount > 1) {
+                        if (viewModel.post!!.likedBy?.username?.isNotBlank() == true) {
                             Text(
-                                text = " " + stringResource(id = R.string.and) + " ",
+                                text = stringResource(id = R.string.liked_by) + " ",
                                 fontSize = 14.sp
                             )
-                            Text(text = (post.favouritesCount - 1).toString() + " " + stringResource(
-                                id = R.string.others
-                            ),
-                                fontWeight = FontWeight.Bold,
+                            Text(text = viewModel.post!!.likedBy!!.username!!,
                                 fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.clickable {
-                                    viewModel.loadLikedBy(postId)
-                                    showBottomSheet = 3
+                                    Navigate.navigate(
+                                        "profile_screen/" + viewModel.post!!.likedBy!!.id,
+                                        navController
+                                    )
                                 })
-                        }
-                    } else {
-                        Text(text = stringResource(id = R.string.no_likes_yet), fontSize = 14.sp)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                    if (viewModel.post!!.content.isNotBlank()) {
-                        HashtagsMentionsTextView(text = viewModel.post!!.content,
-                            mentions = viewModel.post!!.mentions,
-                            navController = navController,
-                            openUrl = { url -> viewModel.openUrl(context, url) })
-                    }
-                }
-
-                if (viewModel.post!!.replyCount > 0 && showReplies) {
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(text = stringResource(
-                        R.string.view_comments, viewModel.post!!.replyCount
-                    ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.clickable {
-                            viewModel.loadReplies(
-                                postId
+                            if (post.favouritesCount > 1) {
+                                Text(
+                                    text = " " + stringResource(id = R.string.and) + " ",
+                                    fontSize = 14.sp
+                                )
+                                Text(text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
+                                    id = R.string.others
+                                ),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.clickable {
+                                        viewModel.loadLikedBy(postId)
+                                        showBottomSheet = 3
+                                    })
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(id = R.string.no_likes_yet), fontSize = 14.sp
                             )
-                            showBottomSheet = 1
-                        })
-                }
+                        }
+                    }
 
-                Text(
-                    text = viewModel.timeAgoString,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
+                        if (viewModel.post!!.content.isNotBlank()) {
+                            HashtagsMentionsTextView(text = viewModel.post!!.content,
+                                mentions = viewModel.post!!.mentions,
+                                navController = navController,
+                                openUrl = { url -> viewModel.openUrl(context, url) })
+                        }
+                    }
+
+                    if (viewModel.post!!.replyCount > 0 && showReplies) {
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(text = stringResource(
+                            R.string.view_comments, viewModel.post!!.replyCount
+                        ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.clickable {
+                                viewModel.loadReplies(
+                                    postId
+                                )
+                                showBottomSheet = 1
+                            })
+                    }
+
+                    Text(
+                        text = viewModel.timeAgoString,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
+
         }
     }
 
@@ -768,8 +774,8 @@ fun PostImage(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .zIndex(3f)
-                    .padding(12.dp)
-                    .clip(CircleShape)
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     .clickable {
                         altText = mediaAttachment.description

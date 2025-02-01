@@ -1,0 +1,1 @@
+Pixelix: przyjazny dla użytkownika Klient Pixelfed do przesyłania zdjęć, przeglądania i udostępniania.
