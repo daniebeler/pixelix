@@ -17,8 +17,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 25
-        versionName = "3.3.1"
+        versionCode = 26
+        versionName = "3.4.0"
         
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
