@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.theme.themeMode
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
@@ -20,6 +21,7 @@ import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
 import com.daniebeler.pfpixelix.utils.rememberPrefIntState
 
+@Preview
 @Composable
 fun ThemePref() {
     var themeModeValue by rememberPrefIntState(KEY_NIGHT_MODE, FOLLOW_SYSTEM)

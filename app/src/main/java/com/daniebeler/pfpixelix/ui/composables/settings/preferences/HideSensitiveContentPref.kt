@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.utils.globalContext
 
@@ -18,6 +19,7 @@ object HideSensitiveContentPrefUtil {
     }
 }
 
+@Preview
 @Composable
 fun HideSensitiveContentPref() {
     SwitchIntPref(
