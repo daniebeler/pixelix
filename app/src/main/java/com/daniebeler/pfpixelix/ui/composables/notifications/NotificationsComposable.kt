@@ -190,24 +190,23 @@ fun NotificationsComposable(
                             }
                         }
                     })
+
+                    if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
+                        FullscreenEmptyStateComposable(
+                            EmptyState(
+                                icon = Icons.Outlined.Email, heading = stringResource(
+                                    R.string.you_don_t_have_any_notifications
+                                )
+                            )
+                        )
+                    }
+
+                    if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
+                        LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
+                    }
+                    ErrorComposable(message = viewModel.notificationsState.error)
                 }
             }
-
-
-            if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                FullscreenEmptyStateComposable(
-                    EmptyState(
-                        icon = ImageVector.vectorResource(R.drawable.mail_outline), heading = stringResource(
-                            R.string.you_don_t_have_any_notifications
-                        )
-                    )
-                )
-            }
-
-            if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
-                LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
-            }
-            ErrorComposable(message = viewModel.notificationsState.error)
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {
