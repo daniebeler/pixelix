@@ -1,0 +1,1 @@
+Pixelix: felhasználóbarát Pixelfed kliens fényképek feltöltéséhez, böngészéséhez és megosztásához.
