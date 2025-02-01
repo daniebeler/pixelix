@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -96,7 +99,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -175,6 +184,72 @@ class MainActivity : ComponentActivity() {
                         NavigationGraph(
                             navController = navController,
                         )
+
+                        val intent = intent
+                        val action = intent.action
+                        val type = intent.type
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                        var imageUris: List<Uri>? = null
+                        when {
+                            Intent.ACTION_SEND == action && type != null -> {
+                                if (type.startsWith("image/") || type.startsWith("video/")) {
+                                    val singleUri =
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            intent.getParcelableExtra(
+                                                Intent.EXTRA_STREAM, Uri::class.java
+                                            )
+                                        } else {
+                                            @Suppress("DEPRECATION") intent.getParcelableExtra(
+                                                Intent.EXTRA_STREAM
+                                            ) as? Uri
+                                        }
+                                    singleUri?.let { uri ->
+                                        val cachedUri =
+                                            saveUriToCache(uri, contentResolver, cacheDir)
+                                        imageUris =
+                                            cachedUri?.let { listOf(it) } // Wrap single image in a list
+                                    }
+                                }
+                            }
+
+                            Intent.ACTION_SEND_MULTIPLE == action && type != null -> {
+                                if (type.startsWith("image/") || type.startsWith("video/")) {
+                                    val receivedUris =
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            intent.getParcelableArrayListExtra(
+                                                Intent.EXTRA_STREAM, Uri::class.java
+                                            )
+                                        } else {
+                                            @Suppress("DEPRECATION") intent.getParcelableArrayListExtra(
+                                                Intent.EXTRA_STREAM
+                                            )
+                                        }
+                                    imageUris = receivedUris?.mapNotNull {
+                                        saveUriToCache(
+                                            it, contentResolver, cacheDir
+                                        )
+                                    } // Convert URIs to cached URIs
+                                }
+                            }
+                        }
+
+                        imageUris?.let {
+                            imageUris?.forEach { uri ->
+                                try {
+                                    contentResolver.takePersistableUriPermission(
+                                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    )
+                                } catch (e: SecurityException) {
+                                    e.printStackTrace() // Handle permission denial gracefully
+                                }
+                            }
+                            if (it.isNotEmpty()) {
+                                val urisJson = Json.encodeToString(it.map { uri -> uri.toString() })
+                                Navigate.navigate("new_post_screen?uris=$urisJson", navController)
+                            }
+                        }
+
                         val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
                         if (destination.isNotBlank()) {
                             // Delay the navigation action to ensure the graph is set
@@ -229,6 +304,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir: File): Uri? {
+    try {
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        inputStream?.use { input ->
+            val file = File(cacheDir, "shared_image_${System.currentTimeMillis()}.jpg")
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+            return Uri.fromFile(file) // Return the new cached URI
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return null
+}
 
 fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
     val intent = Intent(context, LoginActivity::class.java)
@@ -298,8 +388,12 @@ fun NavigationGraph(navController: NavHostController) {
             IconSelectionComposable(navController)
         }
 
-        composable(Destinations.NewPost.route) {
-            NewPostComposable(navController)
+        composable("${Destinations.NewPost.route}?uris={uris}") { navBackStackEntry ->
+            val urisJson = navBackStackEntry.arguments?.getString("uris")
+            val imageUris: List<Uri>? = urisJson?.let { json ->
+                Json.decodeFromString<List<String>>(json).map { Uri.parse(it) }
+            }
+            NewPostComposable(navController, imageUris)
         }
 
         composable(Destinations.EditPost.route) { navBackStackEntry ->
