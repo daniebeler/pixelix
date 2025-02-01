@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
@@ -35,7 +36,7 @@ fun ModalBottomSheetContent(
     ) {
 
         ButtonRowElement(
-            icon = Icons.Outlined.Settings,
+            icon = R.drawable.settings_outline,
             text = stringResource(R.string.settings),
             onClick = {
                 closeBottomSheet()
@@ -44,35 +45,35 @@ fun ModalBottomSheetContent(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElement(icon = Icons.Outlined.FavoriteBorder,
+        ButtonRowElement(icon = R.drawable.heart_outline,
             text = stringResource(R.string.liked_posts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("liked_posts_screen", navController)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.Bookmarks,
+        ButtonRowElement(icon = R.drawable.bookmarks_outline,
             text = stringResource(R.string.bookmarked_posts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("bookmarked_posts_screen", navController)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.Tag,
+        ButtonRowElement(icon = R.drawable.hash,
             text = stringResource(R.string.followed_hashtags),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("followed_hashtags_screen", navController)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.DoNotDisturbOn,
+        ButtonRowElement(icon = R.drawable.remove_circle_outline,
             text = stringResource(R.string.muted_accounts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("muted_accounts_screen", navController)
             })
 
-        ButtonRowElement(icon = Icons.Outlined.Block,
+        ButtonRowElement(icon = R.drawable.remove_circle_outline,
             text = stringResource(R.string.blocked_accounts),
             onClick = {
                 closeBottomSheet()
@@ -81,7 +82,7 @@ fun ModalBottomSheetContent(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElement(icon = R.drawable.pixelfed_logo,
+        ButtonRowElementWithRoundedImage(icon = R.drawable.pixelfed_logo,
             text = stringResource(R.string.about_x, instanceDomain),
             onClick = {
                 closeBottomSheet()
@@ -89,7 +90,7 @@ fun ModalBottomSheetContent(
             })
 
         if (appIcon == null) {
-            ButtonRowElement(icon = R.drawable.pixelix_logo,
+            ButtonRowElementWithRoundedImage(icon = R.drawable.pixelix_logo,
                 text = stringResource(id = R.string.about_pixelix),
                 onClick = {
                     closeBottomSheet()

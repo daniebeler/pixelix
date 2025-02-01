@@ -43,9 +43,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +58,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.ui.composables.SwitchRowItem
 import com.daniebeler.pfpixelix.ui.composables.ThemeViewModel
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -97,7 +100,7 @@ fun PreferencesComposable(
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                            imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline),
                             contentDescription = ""
                         )
                     }
@@ -110,32 +113,43 @@ fun PreferencesComposable(
                 .verticalScroll(state = rememberScrollState())
         ) {
             SwitchRowItem(
-                Icons.Outlined.NoAdultContent,
-                stringResource(R.string.hide_sensitive_content),
-                viewModel.isSensitiveContentHidden
+                icon = R.drawable.eye_off_outline,
+                text = stringResource(R.string.hide_sensitive_content),
+                isChecked = viewModel.isSensitiveContentHidden
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
             SwitchRowItem(
-                Icons.Outlined.Description,
-                stringResource(R.string.hide_alt_text_button),
-                viewModel.isAltTextButtonHidden
+                icon = R.drawable.document_text_outline,
+                text = stringResource(R.string.hide_alt_text_button),
+                isChecked = viewModel.isAltTextButtonHidden
             ) { checked -> viewModel.storeHideAltTextButton(checked) }
 
             SwitchRowItem(
-                Icons.Outlined.OpenInBrowser,
-                stringResource(R.string.use_in_app_browser),
-                viewModel.isUsingInAppBrowser
+                icon = R.drawable.square_outline,
+                text = stringResource(R.string.focus_mode),
+                smallText = stringResource(R.string.focus_mode_description),
+                isChecked = viewModel.isFocusModeEnabled
+            ) { checked -> viewModel.storeIsFocusModeEnabled(checked) }
+
+            SwitchRowItem(
+                icon = R.drawable.browsers_outline,
+                text =  stringResource(R.string.use_in_app_browser),
+                isChecked = viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
+
+            ButtonRowElement(icon = R.drawable.sync_outline,
+                text = stringResource(R.string.repost_settings),
+                onClick = { viewModel.openRepostSettings(context) })
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = Icons.Outlined.Palette,
+            ButtonRowElement(icon = R.drawable.color_palette_outline,
                 text = stringResource(R.string.app_theme),
                 smallText = getThemeString(themeViewModel.currentTheme.theme),
                 onClick = { showThemeDialog.value = true })
 
             if (viewModel.appIcon == null) {
-                ButtonRowElement(
+                ButtonRowElementWithRoundedImage(
                     icon = R.drawable.pixelix_logo,
                     text = stringResource(R.string.customize_app_icon),
                     onClick = {
@@ -152,21 +166,21 @@ fun PreferencesComposable(
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = Icons.Outlined.Save,
+            ButtonRowElement(icon = R.drawable.save_outline,
                 text = stringResource(R.string.clear_cache),
                 smallText = viewModel.cacheSize,
                 onClick = {
                     deleteCache(context, viewModel = viewModel)
                 })
 
-            ButtonRowElement(icon = Icons.Outlined.Settings,
+            ButtonRowElement(icon = R.drawable.settings_outline,
                 text = stringResource(R.string.more_settings),
                 onClick = {
                     viewModel.openMoreSettingsPage(context)
                 })
 
             ButtonRowElement(
-                icon = Icons.AutoMirrored.Outlined.Logout, text = stringResource(
+                icon = R.drawable.log_out_outline, text = stringResource(
                     R.string.logout
                 ), onClick = {
                     showLogoutDialog.value = true

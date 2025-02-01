@@ -21,7 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Public
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,9 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -75,7 +80,7 @@ fun AboutPixelixComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
+                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })
@@ -128,9 +133,26 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = Icons.Outlined.StarRate,
-                text = stringResource(id = R.string.rate_us),
+            ButtonRowElement(icon = R.drawable.star_outline,
+                text = "Rate Pixelix on Google Play Store",
                 onClick = { viewModel.rateApp(context) })
+
+            HorizontalDivider(Modifier.padding(12.dp))
+
+            ButtonRowElement(icon = R.drawable.browsers_outline,
+                text = "Homepage",
+                smallText = "https://app.pixelix.social",
+                onClick = { viewModel.openUrl(context, "https://app.pixelix.social") })
+
+            ButtonRowElement(icon = R.drawable.shield_outline,
+                text = "Privacy Policy",
+                smallText = "https://app.pixelix.social/privacy",
+                onClick = { viewModel.openUrl(context, "https://app.pixelix.social/privacy") })
+
+            ButtonRowElement(icon = R.drawable.code_slash_outline,
+                text = "Source Code",
+                smallText = "https://github.com/daniebeler/pixelix",
+                onClick = { viewModel.openUrl(context, "https://github.com/daniebeler/pixelix") })
 
 
             HorizontalDivider(Modifier.padding(12.dp))

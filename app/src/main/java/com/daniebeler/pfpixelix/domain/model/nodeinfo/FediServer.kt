@@ -5,7 +5,8 @@ data class FediServer(
     val description: String,
     val domain: String,
     val id: Int,
-    val openRegistration: Boolean,
+    val openRegistration: Boolean?,
     val software: SoftwareSmall,
-    val stats: ServerStats
+    val stats: ServerStats,
+    val location: ServerLocation
 )

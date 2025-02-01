@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -18,11 +17,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun ToTopButton(listState: LazyListState) {
+fun ToTopButton(listState: LazyListState, refresh: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     val visible by remember {
@@ -36,9 +38,12 @@ fun ToTopButton(listState: LazyListState) {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
                     listState.animateScrollToItem(0, 0)
+                }.invokeOnCompletion {
+                    refresh()
                 }
-            }) {
-                Icon(Icons.Outlined.ArrowUpward, contentDescription = "")
+            },
+                containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                Icon(ImageVector.vectorResource(R.drawable.chevron_up_outline), contentDescription = "")
             }
         }
     }

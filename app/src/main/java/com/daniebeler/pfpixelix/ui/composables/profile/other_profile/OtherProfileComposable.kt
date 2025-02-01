@@ -21,13 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.VolumeOff
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,10 +49,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -132,7 +129,7 @@ fun OtherProfileComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
+                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         }, actions = {
@@ -283,7 +280,7 @@ fun OtherProfileComposable(
         }
     }
 
-    ToTopButton(listState = lazyGridState)
+    ToTopButton(listState = lazyGridState, refresh = {viewModel.loadData(userId, true)})
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)
@@ -300,7 +297,7 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        ButtonRowElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
+                        ButtonRowElement(icon = R.drawable.remove_circle_outline,
                             text = stringResource(
                                 R.string.unmute_this_profile
                             ),
@@ -308,7 +305,7 @@ fun OtherProfileComposable(
                                 showUnMuteAlert = true
                             })
                     } else {
-                        ButtonRowElement(icon = Icons.AutoMirrored.Outlined.VolumeOff,
+                        ButtonRowElement(icon = R.drawable.remove_circle_outline,
                             text = stringResource(
                                 R.string.mute_this_profile
                             ),
@@ -318,13 +315,13 @@ fun OtherProfileComposable(
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
-                        ButtonRowElement(icon = Icons.Outlined.Block, text = stringResource(
+                        ButtonRowElement(icon = R.drawable.remove_circle_outline, text = stringResource(
                             R.string.unblock_this_profile
                         ), onClick = {
                             showUnBlockAlert = true
                         })
                     } else {
-                        ButtonRowElement(icon = Icons.Outlined.Block, text = stringResource(
+                        ButtonRowElement(icon = R.drawable.remove_circle_outline, text = stringResource(
                             R.string.block_this_profile
                         ), onClick = {
                             showBlockAlert = true
@@ -334,13 +331,13 @@ fun OtherProfileComposable(
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                ButtonRowElement(icon = Icons.Outlined.OpenInBrowser, text = stringResource(
+                ButtonRowElement(icon = R.drawable.browsers_outline, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
                     viewModel.openUrl(context, viewModel.accountState.account!!.url)
                 })
 
-                ButtonRowElement(icon = Icons.Outlined.Share,
+                ButtonRowElement(icon = R.drawable.share_social_outline,
                     text = stringResource(R.string.share_this_profile),
                     onClick = {
                         Share.shareText(context, viewModel.accountState.account!!.url)

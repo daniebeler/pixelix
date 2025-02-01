@@ -65,11 +65,11 @@
     <string name="no_liked_posts">Noch keine gelikten Beiträge</string>
     <string name="local">Lokal</string>
     <string name="global">Global</string>
-    <string name="home">Home</string>
+    <string name="home">Start</string>
     <string name="likes">%1$s Likes</string>
     <string name="search">Suchen</string>
     <string name="unmute_caps">Aufheben</string>
-    <string name="unmute">unmute</string>
+    <string name="unmute">entstummen</string>
     <string name="media_description">Bildbeschreibung</string>
     <string name="no_posts_yet">Noch keine Beiträge</string>
     <string name="mentioned_you_in_a_post">hat dich erwähnt</string>
@@ -81,7 +81,7 @@
     <string name="caption">Beschreibung</string>
     <string name="sensitive_nsfw_media">Enthält sensible Inhalte</string>
     <string name="content_warning_or_spoiler_text">Inhaltswarnung</string>
-    <string name="audience">Audienz</string>
+    <string name="audience">Publikum</string>
     <string name="unlisted">Nur erwähnte Profile</string>
     <string name="followers_only">Nur Follower</string>
     <string name="audience_public">Öffentlich</string>
@@ -89,7 +89,7 @@
     <string name="no_muted_accounts">Keine stummgeschalteten Benutzer</string>
     <string name="visibility_x">Sichtbarkeit: %1$s</string>
     <string name="clear_cache">Cache löschen</string>
-    <string name="preferences">Preferences</string>
+    <string name="preferences">Einstellungen</string>
     <string name="hide_sensitive_content">Sensible Inhalte verbergen</string>
     <string name="about_x">Über %1$s</string>
     <string name="more_settings">Mehr Einstellungen</string>
@@ -132,7 +132,7 @@
     <string name="mute_consequence_2">• Du siehst keine Reposts von Beiträgen des Benutzers</string>
     <string name="mute_consequence_3">• Du siehst keine Beiträge, die den Benutzer erwähnen</string>
     <string name="mute_consequence_4">• Du sieht den Benutzer nicht in den öffentlichen Timelines</string>
-    <string name="mute_consequence_5">Der Benutzer kann nicht erkennen, dass du ihn stummgeschalten hast.</string>
+    <string name="mute_consequence_5">Der Benutzer kann nicht erkennen, dass du ihn stummgeschaltet hast.</string>
     <string name="block_consequence_1">• Du siehst den Benutzer nicht in deinem Home-Feed</string>
     <string name="block_consequence_2">• Du siehst keine Reposts von Beiträgen des Benutzers</string>
     <string name="block_consequence_3">• Du siehts keine Beiträge, die den Benutzer erwähnen</string>
@@ -167,15 +167,15 @@
     <string name="share_this_collection">Sammlung teilen</string>
     <string name="by">Von %1$s</string>
     <string name="new_collection">Neue Sammlung</string>
-    <string name="collection_create_not_supported_explanation">Sammlungen zu erstellen, wird von der Pixelfed API noch nicht unterstützt, aber Sammlungen können auf der Web-Oberfläche von Pixelfed erstellt werden:</string>
+    <string name="collection_create_not_supported_explanation">Sammlungen zu erstellen, wird von der Pixelfed-API noch nicht unterstützt, aber Sammlungen können auf der Web-Oberfläche von Pixelfed erstellt werden:</string>
     <string name="new_">Neu</string>
     <string name="collections">Sammlungen</string>
     <string name="follows_you">folgt dir</string>
-    <string name="muted">stummgeschalten</string>
+    <string name="muted">stummgeschaltet</string>
     <string name="blocked">blockiert</string>
     <string name="message">Nachricht</string>
     <string name="all">Alle</string>
-    <string name="likes_">Likes</string>
+    <string name="likes_">Favoriten</string>
     <string name="reposts">Reposts</string>
     <string name="edit_post">Beitrag bearbeiten</string>
     <string name="notification_widget_description">Bleiben Sie mit Ihren neuesten Benachrichtigungen von Pixelfed direkt auf Ihrem Startbildschirm auf dem Laufenden.</string>
@@ -191,7 +191,7 @@
     <string name="add_pixelfed_account">Pixelfed-Account hinzufügen</string>
     <string name="download_image">Bild herunterladen</string>
     <string name="profile">Profil</string>
-    <string name="alerts">Inbox</string>
+    <string name="alerts">Postfach</string>
     <string name="are_you_sure_you_want_to_remove_this_account">Bist du dir sicher, dass du diesen Account entfernen willst?</string>
     <string name="remove_account">Account entfernen</string>
     <string name="remove">Entfernen</string>
@@ -210,6 +210,9 @@
     <string name="website">Website</string>
     <string name="location">Standort</string>
     <string name="mentions">Erwähnungen</string>
-    <string name="explore">Explore</string>
-    <string name="reblogged_by">reblogged by %1$s</string>
+    <string name="explore">Entdecken</string>
+    <string name="reblogged_by">geteilt von %1$s</string>
+    <string name="focus_mode">Focus Mode</string>
+    <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
+    <string name="repost_settings">Repost settings</string>
 </resources>

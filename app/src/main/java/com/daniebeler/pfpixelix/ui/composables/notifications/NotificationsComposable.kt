@@ -40,8 +40,10 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,7 +75,7 @@ fun NotificationsComposable(
             IconButton(onClick = {
                 pinWidget(context)
             }) {
-                Icon(imageVector = Icons.Outlined.Widgets, contentDescription = "add widget")
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.extension_puzzle_outline), contentDescription = "add widget")
             }
         })
     }) { paddingValues ->
@@ -188,24 +190,23 @@ fun NotificationsComposable(
                             }
                         }
                     })
+
+                    if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
+                        FullscreenEmptyStateComposable(
+                            EmptyState(
+                                icon = Icons.Outlined.Email, heading = stringResource(
+                                    R.string.you_don_t_have_any_notifications
+                                )
+                            )
+                        )
+                    }
+
+                    if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
+                        LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
+                    }
+                    ErrorComposable(message = viewModel.notificationsState.error)
                 }
             }
-
-
-            if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                FullscreenEmptyStateComposable(
-                    EmptyState(
-                        icon = Icons.Outlined.Email, heading = stringResource(
-                            R.string.you_don_t_have_any_notifications
-                        )
-                    )
-                )
-            }
-
-            if (!viewModel.notificationsState.isRefreshing && viewModel.notificationsState.notifications.isEmpty()) {
-                LoadingComposable(isLoading = viewModel.notificationsState.isLoading)
-            }
-            ErrorComposable(message = viewModel.notificationsState.error)
         }
 
         InfiniteListHandler(lazyListState = lazyListState) {

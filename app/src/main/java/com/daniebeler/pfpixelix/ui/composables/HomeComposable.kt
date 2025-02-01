@@ -16,10 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Mail
-import androidx.compose.material.icons.outlined.QuestionMark
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,7 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,20 +64,19 @@ fun HomeComposable(navController: NavController) {
             Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         },navigationIcon = {
             IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Outlined.QuestionMark, contentDescription = "Help")
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.help_outline), contentDescription = "Help")
             }
         }, actions = {
             Row {
 
                 IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Mail, contentDescription = "Conversations")
+                    Icon(imageVector = ImageVector.vectorResource(R.drawable.mail_outline), contentDescription = "Conversations")
                 }
                 IconButton(onClick = { Navigate.navigate("preferences_screen", navController) }) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                    Icon(imageVector = ImageVector.vectorResource(R.drawable.settings_outline), contentDescription = "Settings")
                 }
             }
         })
-
     }) { paddingValues ->
         Column(
             Modifier

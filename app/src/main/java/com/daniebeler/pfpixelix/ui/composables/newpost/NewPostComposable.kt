@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,16 +21,15 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,21 +38,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -79,6 +83,7 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 @Composable
 fun NewPostComposable(
     navController: NavController,
+    uris: List<Uri>? = null,
     viewModel: NewPostViewModel = hiltViewModel(key = "new-post-viewmodel-key")
 ) {
     val context = LocalContext.current
@@ -97,17 +102,17 @@ fun NewPostComposable(
         mutableStateOf(false)
     }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            Text(text = stringResource(R.string.new_post), fontWeight = FontWeight.Bold)
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = ""
-                )
+    LaunchedEffect(uris) {
+        uris?.let {
+            uris.forEach {
+                viewModel.addImage(it, context)
             }
+        }
+    }
+
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        CenterAlignedTopAppBar(title = {
+            Text(text = stringResource(R.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
             Button(
                 onClick = { showReleaseAlert = true },
@@ -166,10 +171,17 @@ fun NewPostComposable(
                         }
                         Spacer(Modifier.width(10.dp))
 
-                        OutlinedTextField(
+                        TextField(
                             value = image.text,
                             onValueChange = { viewModel.updateAltTextVariable(index, it) },
                             modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
                             label = { Text(stringResource(R.string.alt_text)) },
                         )
 
@@ -193,14 +205,12 @@ fun NewPostComposable(
                             viewModel.deleteMedia(image.id, image.imageUri)
                         }) {
                             Icon(
-                                imageVector = Icons.Outlined.Delete,
+                                imageVector = ImageVector.vectorResource(R.drawable.trash_outline),
                                 contentDescription = "delete Image",
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
-
                     }
-
                 }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Icon(
@@ -212,7 +222,7 @@ fun NewPostComposable(
                             }
                             .height(50.dp)
                             .width(50.dp),
-                        imageVector = Icons.Filled.Add,
+                        imageVector = ImageVector.vectorResource(R.drawable.add_outline),
                         contentDescription = null,
                     )
                 }
@@ -226,19 +236,7 @@ fun NewPostComposable(
                     imeAction = ImeAction.Default,
                     suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
                     submitButton = null
-                )/*OutlinedTextField(
-                    value = viewModel.caption,
-                    onValueChange = { viewModel.caption = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text(stringResource(R.string.caption)) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedBorderColor = Color.Transparent,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                )*/
+                )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth(),
@@ -249,11 +247,18 @@ fun NewPostComposable(
                         onCheckedChange = { viewModel.sensitive = it })
                 }
                 if (viewModel.sensitive) {
-                    OutlinedTextField(
+                    TextField(
                         value = viewModel.sensitiveText,
                         onValueChange = { viewModel.sensitiveText = it },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
                 }
                 Row(

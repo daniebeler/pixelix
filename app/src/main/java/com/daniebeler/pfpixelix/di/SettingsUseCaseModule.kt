@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.usecase.GetBookmarkedPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
@@ -20,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideAltTextButtonUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
+import com.daniebeler.pfpixelix.domain.usecase.StoreIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.Module
@@ -51,6 +53,16 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideGetHideAltTextButtonUseCase(repository: StorageRepository): GetHideAltTextButtonUseCase =
         GetHideAltTextButtonUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideStoreIsInFocusModeUseCase(repository: StorageRepository): StoreIsFocusModeEnabledUseCase =
+        StoreIsFocusModeEnabledUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetIsInFocusModeUseCase(repository: StorageRepository): GetIsFocusModeEnabledUseCase =
+        GetIsFocusModeEnabledUseCase(repository)
 
     @Provides
     @Singleton

@@ -54,9 +54,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -106,7 +108,7 @@ fun ExploreComposable(
                     placeholder = { Text(stringResource(R.string.explore)) },
                     leadingIcon = {
                         if (!expanded) {
-                            Icon(Icons.Default.Search, contentDescription = null)
+                            Icon(ImageVector.vectorResource(R.drawable.search_outline), contentDescription = null)
                         } else {
                             Icon(Icons.Outlined.ArrowBackIosNew,
                                 contentDescription = null,
@@ -209,7 +211,7 @@ fun ExploreComposable(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchResultComposable(searchState: SearchState, saveAccount: (String, Account) -> Unit, saveHashtag: (String) -> Unit, navController: NavController) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val scope = rememberCoroutineScope()
     Column {
 

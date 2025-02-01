@@ -17,5 +17,7 @@ data class FediServerDto(
     @SerializedName("software")
     val software: SoftwareSmallDto?,
     @SerializedName("stats")
-    val stats: ServerStatsDto?
+    val stats: ServerStatsDto?,
+    @SerializedName("location")
+    val location: ServerLocationDto?
 )

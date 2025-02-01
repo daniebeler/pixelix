@@ -17,6 +17,7 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
@@ -24,6 +25,7 @@ import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
@@ -67,7 +69,8 @@ class PostViewModel @Inject constructor(
     private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
-    private val setVolumeUseCase: SetVolumeUseCase
+    private val setVolumeUseCase: SetVolumeUseCase,
+    private val getIsFocusModeEnabledUseCase: GetIsFocusModeEnabledUseCase
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -85,19 +88,29 @@ class PostViewModel @Inject constructor(
     var showPost: Boolean by mutableStateOf(false)
 
     var myAccountId: String? = null
+    var myUsername: String? = null
+
 
     var isAltTextButtonHidden by mutableStateOf(false)
+    var isInFocusMode by mutableStateOf(false)
 
     var volume by mutableStateOf(false)
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
             myAccountId = currentLoginDataUseCase()!!.accountId
+            myUsername = currentLoginDataUseCase()!!.username
         }
 
         viewModelScope.launch {
             getHideAltTextButtonUseCase().collect { res ->
                 isAltTextButtonHidden = res
+            }
+        }
+
+        viewModelScope.launch {
+            getIsFocusModeEnabledUseCase().collect { res ->
+                isInFocusMode = res
             }
         }
     }
@@ -173,7 +186,7 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        loadReplies(postId)
+                        repliesState = repliesState.copy(replies = repliesState.replies + result.data!!)
                     }
 
                     is Resource.Error -> {
@@ -230,21 +243,31 @@ class PostViewModel @Inject constructor(
     fun likePost(postId: String) {
         if (post?.favourited == false) {
             post = post?.copy(
-                favourited = true, favouritesCount = post?.favouritesCount?.plus(
-                    1
-                ) ?: 0
+                favourited = true,
+                favouritesCount = post!!.favouritesCount + 1,
+                likedBy = post!!.likedBy?.copy(
+                    totalCount = post!!.likedBy!!.totalCount + 1,
+                    others = true,
+                    username = post!!.likedBy!!.username ?: myUsername
+                ) ?: LikedBy(
+                    totalCount = 1, others = true, username = myUsername, id = myAccountId
+                )
             )
             CoroutineScope(Dispatchers.Default).launch {
                 likePostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(
-                                favourited = result.data?.favourited ?: true, favouritesCount = result.data?.favouritesCount ?: 0
+                                favourited = result.data?.favourited ?: true,
+                                favouritesCount = result.data?.favouritesCount ?: 0,
                             )
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(favourited = false, favouritesCount = result.data?.favouritesCount?.minus(1) ?: 0)
+                            post = post?.copy(
+                                favourited = false,
+                                favouritesCount = result.data?.favouritesCount?.minus(1) ?: 0
+                            )
                         }
 
                         is Resource.Loading -> {
@@ -256,23 +279,33 @@ class PostViewModel @Inject constructor(
     }
 
     fun unlikePost(postId: String) {
-        if (post?.favourited == true) {
-            CoroutineScope(Dispatchers.Default).launch {
-                unlikePostUseCase(postId).onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            post = post?.copy(favourited = result.data?.favourited ?: false)
-                        }
+        if (!post!!.favourited) {
+            return
+        }
+        post = post?.copy(
+            favourited = false, favouritesCount = post?.favouritesCount?.minus(
+                1
+            ) ?: 0
+        )
 
-                        is Resource.Error -> {
-                            post = post?.copy(favourited = true)
-                        }
-
-                        is Resource.Loading -> {
-                        }
+        CoroutineScope(Dispatchers.Default).launch {
+            unlikePostUseCase(postId).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        post = post?.copy(favourited = result.data?.favourited ?: false)
                     }
-                }.launchIn(viewModelScope)
-            }
+
+                    is Resource.Error -> {
+                        post = post?.copy(
+                            favourited = true,
+                            favouritesCount = result.data?.favouritesCount?.plus(1) ?: 0
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
