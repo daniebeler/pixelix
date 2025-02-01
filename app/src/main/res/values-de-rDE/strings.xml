@@ -212,4 +212,7 @@
     <string name="mentions">Erwähnungen</string>
     <string name="explore">Entdecken</string>
     <string name="reblogged_by">geteilt von %1$s</string>
+    <string name="focus_mode">Focus Mode</string>
+    <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
+    <string name="repost_settings">Repost settings</string>
 </resources>

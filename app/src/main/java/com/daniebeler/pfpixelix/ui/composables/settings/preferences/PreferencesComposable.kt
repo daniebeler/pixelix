@@ -113,28 +113,33 @@ fun PreferencesComposable(
                 .verticalScroll(state = rememberScrollState())
         ) {
             SwitchRowItem(
-                R.drawable.eye_off_outline,
-                stringResource(R.string.hide_sensitive_content),
-                viewModel.isSensitiveContentHidden
+                icon = R.drawable.eye_off_outline,
+                text = stringResource(R.string.hide_sensitive_content),
+                isChecked = viewModel.isSensitiveContentHidden
             ) { checked -> viewModel.storeHideSensitiveContent(checked) }
 
             SwitchRowItem(
-                R.drawable.document_text_outline,
-                stringResource(R.string.hide_alt_text_button),
-                viewModel.isAltTextButtonHidden
+                icon = R.drawable.document_text_outline,
+                text = stringResource(R.string.hide_alt_text_button),
+                isChecked = viewModel.isAltTextButtonHidden
             ) { checked -> viewModel.storeHideAltTextButton(checked) }
 
             SwitchRowItem(
-                R.drawable.square_outline,
-                "Enable Focus Mode",
-                viewModel.isFocusModeEnabled
+                icon = R.drawable.square_outline,
+                text = stringResource(R.string.focus_mode),
+                smallText = stringResource(R.string.focus_mode_description),
+                isChecked = viewModel.isFocusModeEnabled
             ) { checked -> viewModel.storeIsFocusModeEnabled(checked) }
 
             SwitchRowItem(
-                R.drawable.browsers_outline,
-                stringResource(R.string.use_in_app_browser),
-                viewModel.isUsingInAppBrowser
+                icon = R.drawable.browsers_outline,
+                text =  stringResource(R.string.use_in_app_browser),
+                isChecked = viewModel.isUsingInAppBrowser
             ) { checked -> viewModel.storeUseInAppBrowser(checked) }
+
+            ButtonRowElement(icon = R.drawable.sync_outline,
+                text = stringResource(R.string.repost_settings),
+                onClick = { viewModel.openRepostSettings(context) })
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -134,11 +135,11 @@ fun ButtonRowElement(
         }
     }
 }
-
 @Composable
 fun SwitchRowItem(
     @DrawableRes icon: Int,
     text: String,
+    smallText: String = "",
     isChecked: Boolean,
     onCheckedChange: (checked: Boolean) -> Unit
 ) {
@@ -149,10 +150,27 @@ fun SwitchRowItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(imageVector = ImageVector.vectorResource(icon), contentDescription = null)
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = text)
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (smallText.isNotBlank()) {
+                    Text(
+                        text = smallText,
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
         Switch(checked = isChecked, onCheckedChange = { onCheckedChange(it) })
     }

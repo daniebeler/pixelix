@@ -130,4 +130,12 @@ class PreferencesViewModel @Inject constructor(
             openExternalUrlUseCase(context, moreSettingUrl)
         }
     }
+
+    fun openRepostSettings(context: Context) {
+        viewModelScope.launch {
+            val domain = getOwnInstanceDomainUseCase()
+            val moreSettingUrl = "https://$domain/settings/timeline"
+            openExternalUrlUseCase(context, moreSettingUrl)
+        }
+    }
 }
