@@ -21,13 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.VolumeOff
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -285,7 +280,7 @@ fun OtherProfileComposable(
         }
     }
 
-    ToTopButton(listState = lazyGridState)
+    ToTopButton(listState = lazyGridState, refresh = {viewModel.loadData(userId, true)})
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)

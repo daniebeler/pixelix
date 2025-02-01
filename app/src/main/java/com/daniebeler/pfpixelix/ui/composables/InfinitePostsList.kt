@@ -109,7 +109,7 @@ fun InfinitePostsList(
             FullscreenErrorComposable(message = error)
         }
 
-        ToTopButton(lazyListState)
+        ToTopButton(lazyListState, {onRefresh()})
     }
 
     InfiniteListHandler(lazyListState = lazyListState) {
