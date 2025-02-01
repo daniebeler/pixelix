@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,9 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -66,7 +62,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateCompos
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationsComposable(
     navController: NavController,
@@ -79,14 +75,14 @@ fun ConversationsComposable(
 
     val lazyListState = rememberLazyListState()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), /*floatingActionButton = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), floatingActionButton = {
         FloatingActionButton(onClick = {
             showNewChatDialog.value = true
         }) {
             Icon(ImageVector.vectorResource(R.drawable.add_outline), contentDescription = "Add")
         }
 
-    }, */topBar = {
+    }, topBar = {
         CenterAlignedTopAppBar(title = {
             Text(stringResource(R.string.conversations), fontWeight = FontWeight.Bold)
 
@@ -98,25 +94,17 @@ fun ConversationsComposable(
                     imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
-        }/*, actions = {
+        }, actions = {
             IconButton(onClick = { showBottomSheet = true }) {
                 Icon(
-                    imageVector = Icons.Outlined.QuestionMark,
+                    imageVector = ImageVector.vectorResource(R.drawable.help_outline),
                     tint = MaterialTheme.colorScheme.error,
                     contentDescription = null
                 )
             }
-        }*/)
+        })
     }) { paddingValues ->
-
-
-        Box(Modifier.padding(paddingValues).fillMaxHeight().padding(12.dp), contentAlignment = Alignment.Center) {
-            Text("Due to privacy concerns the direct messages were disabled in Pixelix. It will be available as soon as the privacy situation changes.")
-        }
-
-
-
-        /*PullToRefreshBox(
+        PullToRefreshBox(
             isRefreshing = viewModel.conversationsState.isRefreshing,
             onRefresh = { viewModel.refresh() },
             modifier = Modifier
@@ -207,7 +195,7 @@ fun ConversationsComposable(
                     viewModel.newConversationState = NewConversationState()
                 }, viewModel, navController
             )
-        }*/
+        }
     }
 }
 

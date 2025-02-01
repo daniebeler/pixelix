@@ -64,7 +64,7 @@ fun HomeComposable(navController: NavController) {
             Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
         },navigationIcon = {
             IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = ImageVector.vectorResource(R.drawable.help_circle_outline), contentDescription = "Help")
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.help_outline), contentDescription = "Help")
             }
         }, actions = {
             Row {
