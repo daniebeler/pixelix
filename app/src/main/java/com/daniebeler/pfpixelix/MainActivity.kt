@@ -130,6 +130,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -163,6 +164,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        val imageUris = handleSharePhotoIntent(intent, contentResolver, cacheDir)
+
+
         setContent {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
@@ -185,57 +189,8 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                         )
 
-                        val intent = intent
-                        val action = intent.action
-                        val type = intent.type
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                        var imageUris: List<Uri>? = null
-                        when {
-                            Intent.ACTION_SEND == action && type != null -> {
-                                if (type.startsWith("image/") || type.startsWith("video/")) {
-                                    val singleUri =
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                            intent.getParcelableExtra(
-                                                Intent.EXTRA_STREAM, Uri::class.java
-                                            )
-                                        } else {
-                                            @Suppress("DEPRECATION") intent.getParcelableExtra(
-                                                Intent.EXTRA_STREAM
-                                            ) as? Uri
-                                        }
-                                    singleUri?.let { uri ->
-                                        val cachedUri =
-                                            saveUriToCache(uri, contentResolver, cacheDir)
-                                        imageUris =
-                                            cachedUri?.let { listOf(it) } // Wrap single image in a list
-                                    }
-                                }
-                            }
-
-                            Intent.ACTION_SEND_MULTIPLE == action && type != null -> {
-                                if (type.startsWith("image/") || type.startsWith("video/")) {
-                                    val receivedUris =
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                            intent.getParcelableArrayListExtra(
-                                                Intent.EXTRA_STREAM, Uri::class.java
-                                            )
-                                        } else {
-                                            @Suppress("DEPRECATION") intent.getParcelableArrayListExtra(
-                                                Intent.EXTRA_STREAM
-                                            )
-                                        }
-                                    imageUris = receivedUris?.mapNotNull {
-                                        saveUriToCache(
-                                            it, contentResolver, cacheDir
-                                        )
-                                    } // Convert URIs to cached URIs
-                                }
-                            }
-                        }
-
-                        imageUris?.let {
-                            imageUris?.forEach { uri ->
+                        LaunchedEffect(imageUris) {
+                            imageUris.forEach { uri ->
                                 try {
                                     contentResolver.takePersistableUriPermission(
                                         uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -244,9 +199,12 @@ class MainActivity : ComponentActivity() {
                                     e.printStackTrace() // Handle permission denial gracefully
                                 }
                             }
-                            if (it.isNotEmpty()) {
-                                val urisJson = Json.encodeToString(it.map { uri -> uri.toString() })
-                                Navigate.navigate("new_post_screen?uris=$urisJson", navController)
+                            if (imageUris.isNotEmpty()) {
+                                val urisJson =
+                                    Json.encodeToString(imageUris.map { uri -> uri.toString() })
+                                Navigate.navigate(
+                                    "new_post_screen?uris=$urisJson", navController
+                                )
                             }
                         }
 
@@ -318,6 +276,54 @@ fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir: File): 
         e.printStackTrace()
     }
     return null
+}
+
+private fun handleSharePhotoIntent(
+    intent: Intent, contentResolver: ContentResolver, cacheDir: File
+): List<Uri> {
+    val action = intent.action
+    val type = intent.type
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+    var imageUris: List<Uri> = emptyList()
+    when {
+        Intent.ACTION_SEND == action && type != null -> {
+            if (type.startsWith("image/") || type.startsWith("video/")) {
+                val singleUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(
+                        Intent.EXTRA_STREAM, Uri::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION") intent.getParcelableExtra(
+                        Intent.EXTRA_STREAM
+                    ) as? Uri
+                }
+                singleUri?.let { uri ->
+                    val cachedUri = saveUriToCache(uri, contentResolver, cacheDir)
+                    imageUris =
+                        cachedUri?.let { listOf(it) } ?: emptyList() // Wrap single image in a list
+                }
+            }
+        }
+
+        Intent.ACTION_SEND_MULTIPLE == action && type != null -> {
+            val receivedUris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableArrayListExtra(
+                    Intent.EXTRA_STREAM, Uri::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION") intent.getParcelableArrayListExtra(
+                    Intent.EXTRA_STREAM
+                )
+            }
+            imageUris = receivedUris?.mapNotNull {
+                saveUriToCache(
+                    it, contentResolver, cacheDir
+                )
+            } ?: emptyList()
+        }
+    }
+    return imageUris
 }
 
 fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
