@@ -61,7 +61,7 @@ class AccountUseCaseModule {
     @Singleton
     fun provideGetPostsOfAccountUseCase(
         postRepository: PostRepository, storageRepository: StorageRepository
-    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(postRepository, storageRepository)
+    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(postRepository)
 
     @Provides
     @Singleton

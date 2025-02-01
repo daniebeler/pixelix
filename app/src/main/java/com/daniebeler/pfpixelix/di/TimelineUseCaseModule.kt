@@ -21,23 +21,23 @@ class TimelineUseCaseModule {
     @Singleton
     fun provideGetHomeTimelineUseCase(
         timelineRepository: TimelineRepository, storageRepository: StorageRepository
-    ): GetHomeTimelineUseCase = GetHomeTimelineUseCase(timelineRepository, storageRepository)
+    ): GetHomeTimelineUseCase = GetHomeTimelineUseCase(timelineRepository)
 
     @Provides
     @Singleton
     fun provideGetLocalTimelineUseCase(
         timelineRepository: TimelineRepository, storageRepository: StorageRepository
-    ): GetLocalTimelineUseCase = GetLocalTimelineUseCase(timelineRepository, storageRepository)
+    ): GetLocalTimelineUseCase = GetLocalTimelineUseCase(timelineRepository)
 
     @Provides
     @Singleton
     fun provideGetGlobalTimelineUseCase(
         timelineRepository: TimelineRepository, storageRepository: StorageRepository
-    ): GetGlobalTimelineUseCase = GetGlobalTimelineUseCase(timelineRepository, storageRepository)
+    ): GetGlobalTimelineUseCase = GetGlobalTimelineUseCase(timelineRepository)
 
     @Provides
     @Singleton
     fun provideGetHashtagTimelineUseCase(
         timelineRepository: TimelineRepository, storageRepository: StorageRepository
-    ): GetHashtagTimelineUseCase = GetHashtagTimelineUseCase(timelineRepository, storageRepository)
+    ): GetHashtagTimelineUseCase = GetHashtagTimelineUseCase(timelineRepository)
 }

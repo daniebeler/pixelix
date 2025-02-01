@@ -94,11 +94,13 @@ fun PreferencesComposable(
                 .fillMaxSize()
                 .verticalScroll(state = rememberScrollState())
         ) {
-            SwitchRowItem(
+            /*SwitchRowItem(
                 icon = R.drawable.eye_off_outline,
                 text = stringResource(R.string.hide_sensitive_content),
                 isChecked = viewModel.isSensitiveContentHidden
-            ) { checked -> viewModel.storeHideSensitiveContent(checked) }
+            ) { checked -> viewModel.storeHideSensitiveContent(checked) }*/
+
+            HideSensitiveContentPref()
 
             SwitchRowItem(
                 icon = R.drawable.document_text_outline,

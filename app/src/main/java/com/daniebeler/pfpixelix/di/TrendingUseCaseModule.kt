@@ -22,7 +22,7 @@ class TrendingUseCaseModule {
     @Singleton
     fun provideGetTrendingPostsUseCase(
         postRepository: PostRepository, storageRepository: StorageRepository
-    ): GetTrendingPostsUseCase = GetTrendingPostsUseCase(postRepository, storageRepository)
+    ): GetTrendingPostsUseCase = GetTrendingPostsUseCase(postRepository)
 
     @Provides
     @Singleton

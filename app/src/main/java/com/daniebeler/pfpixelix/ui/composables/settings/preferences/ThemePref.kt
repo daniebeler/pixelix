@@ -20,10 +20,10 @@ import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
 import com.daniebeler.pfpixelix.utils.rememberPrefIntState
 
-
 @Composable
 fun ThemePref() {
     var themeModeValue by rememberPrefIntState(KEY_NIGHT_MODE, FOLLOW_SYSTEM)
+
     val onOptionClick = click@{ mode: Int ->
         if (themeModeValue == mode) {
             return@click
@@ -31,7 +31,7 @@ fun ThemePref() {
         themeModeValue = mode
         themeMode = themeModeValue
         var appCompatMode = mode
-        if (appCompatMode == AMOLED) {
+       if (appCompatMode == AMOLED) {
             appCompatMode = DARK
         }
         AppCompatDelegate.setDefaultNightMode(appCompatMode)
