@@ -1,12 +1,13 @@
 ![Preview of App](https://github.com/daniebeler/pixelix/blob/59fa74d084bb78aea16d5a7ef5321b10bd8ff352/github-image.png)
 
-Pixelix is a powerful and feature-rich [Pixelfed](https://pixelfed.org/) client for Android, designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
+Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
+It's designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
 
-[![](https://github.com/daniebeler/pixelix/blob/bd442110c6dbcf53ab1f21a242b43dc00e72cfee/google-play-button.png)](https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix)
+<a href="https://f-droid.org/packages/com.daniebeler.pfpixelix"><img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="60" align="middle"></a>
+<a href="https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60" align="middle"></a>
+<a href="https://apt.izzysoft.de/fdroid/index/apk/com.daniebeler.pfpixelix"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it from IzzyOnDroid" height="60" align="middle"></a>
 
-<a href="https://apt.izzysoft.de/fdroid/index/apk/com.daniebeler.pfpixelix" target="_blank">
-  <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Badge" width="250">
-</a>
+## Please donate
 
 <a href="https://www.buymeacoffee.com/daniebeler" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
@@ -18,3 +19,7 @@ Pixelix is a powerful and feature-rich [Pixelfed](https://pixelfed.org/) client 
 * Widgets
 * Customizable app icon
 * Showing fediverse software of user
+
+## Contribution
+For translations use the [Crowdin](https://crowdin.com/project/pixelix).
+
