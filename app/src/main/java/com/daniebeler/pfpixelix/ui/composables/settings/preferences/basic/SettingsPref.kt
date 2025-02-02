@@ -232,10 +232,15 @@ fun SettingPref(
     SettingPref(
         leadingIcon = {
             Box(Modifier.padding(start = 14.dp)) {
-                Icon(
+                textColor?.let {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(leadingIcon),
+                        contentDescription = title,
+                        tint = textColor
+                    )
+                } ?: Icon(
                     imageVector = ImageVector.vectorResource(leadingIcon),
                     contentDescription = title,
-                    tint = textColor ?: Color.Unspecified
                 )
             }
         },
