@@ -21,5 +21,4 @@ interface StorageRepository {
     suspend fun storeView(view: ViewEnum)
     fun getStoredView(): Flow<ViewEnum>
     suspend fun storeTheme(theme: String)
-    fun getStoreTheme(): Flow<String>
 }

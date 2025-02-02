@@ -169,7 +169,7 @@ fun OtherProfileComposable(
                                 relationship = viewModel.relationshipState.accountRelationship,
                                 navController,
                                 openUrl = { url ->
-                                    viewModel.openUrl(context, url)
+                                    viewModel.openUrl(url, context)
                                 })
                         }
 
@@ -253,7 +253,7 @@ fun OtherProfileComposable(
                             getMoreCollections = {viewModel.getCollections(viewModel.accountState.account!!.id, true)},
                             navController = navController,
                             instanceDomain = viewModel.domain,
-                            openUrl = { url -> viewModel.openUrl(context, url) })
+                            openUrl = { url -> viewModel.openUrl(url, context) })
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
@@ -334,7 +334,7 @@ fun OtherProfileComposable(
                 ButtonRowElement(icon = R.drawable.browsers_outline, text = stringResource(
                     R.string.open_in_browser
                 ), onClick = {
-                    viewModel.openUrl(context, viewModel.accountState.account!!.url)
+                    viewModel.openUrl(viewModel.accountState.account!!.url, context)
                 })
 
                 ButtonRowElement(icon = R.drawable.share_social_outline,

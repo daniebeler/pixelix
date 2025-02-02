@@ -17,6 +17,16 @@
         android:theme="@style/Theme.Pixelix"
         tools:ignore="Instantiatable"
         tools:targetApi="31">
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.daniebeler.pfpixelix.utils.ApplicationInitializer"
+                android:value="androidx.startup" />
+        </provider>
       
         <activity
             android:name=".MainActivity"

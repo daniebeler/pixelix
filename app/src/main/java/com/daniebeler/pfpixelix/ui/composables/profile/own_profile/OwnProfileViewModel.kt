@@ -199,8 +199,8 @@ class OwnProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun openUrl(context: Context, url: String) {
-        openExternalUrlUseCase(context, url)
+    fun openUrl(url: String, context: Context) {
+        openExternalUrlUseCase(url, context)
     }
 
     fun changeView(newView: ViewEnum) {

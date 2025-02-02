@@ -419,7 +419,7 @@ fun PostComposable(
                             mentions = viewModel.post!!.mentions,
                             navController = navController,
                             textSize = 18.sp,
-                            openUrl = { url -> viewModel.openUrl(context, url) },
+                            openUrl = { url -> viewModel.openUrl(url, context) },
                             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
                         )
                         HorizontalDivider()

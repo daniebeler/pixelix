@@ -1,15 +1,16 @@
 package com.daniebeler.pfpixelix.di
 
+import android.content.Context
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
-import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetTrendingAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetTrendingHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetTrendingPostsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -21,8 +22,8 @@ class TrendingUseCaseModule {
     @Provides
     @Singleton
     fun provideGetTrendingPostsUseCase(
-        postRepository: PostRepository, storageRepository: StorageRepository
-    ): GetTrendingPostsUseCase = GetTrendingPostsUseCase(postRepository, storageRepository)
+        postRepository: PostRepository, @ApplicationContext context: Context
+    ): GetTrendingPostsUseCase = GetTrendingPostsUseCase(postRepository, context)
 
     @Provides
     @Singleton

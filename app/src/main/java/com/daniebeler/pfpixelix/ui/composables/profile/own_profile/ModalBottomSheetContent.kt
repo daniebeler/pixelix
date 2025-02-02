@@ -5,13 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.Bookmarks
-import androidx.compose.material.icons.outlined.DoNotDisturbOn
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +19,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 
 @Composable
 fun ModalBottomSheetContent(
-    navController: NavController, instanceDomain: String, appIcon: ImageBitmap?, closeBottomSheet: () -> Unit
+    navController: NavController, instanceDomain: String, appIcon: ImageBitmap?, closeBottomSheet: () -> Unit, openPreferencesDrawer: () -> Unit
 ) {
     Column(
         Modifier
@@ -40,7 +33,7 @@ fun ModalBottomSheetContent(
             text = stringResource(R.string.settings),
             onClick = {
                 closeBottomSheet()
-                Navigate.navigate("preferences_screen", navController)
+                openPreferencesDrawer()
             })
 
         HorizontalDivider(Modifier.padding(12.dp))

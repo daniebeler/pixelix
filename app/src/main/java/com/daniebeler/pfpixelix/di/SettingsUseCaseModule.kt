@@ -10,20 +10,13 @@ import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBlockedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetBookmarkedPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetHideSensitiveContentUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetThemeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetUseInAppBrowserUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreHideAltTextButtonUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreHideSensitiveContentUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
-import com.daniebeler.pfpixelix.domain.usecase.StoreUseInAppBrowserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,33 +29,8 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideStoreHideSensitiveContentUseCase(repository: StorageRepository): StoreHideSensitiveContentUseCase =
-        StoreHideSensitiveContentUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideGetHideSensitiveContentUseCase(repository: StorageRepository): GetHideSensitiveContentUseCase =
-        GetHideSensitiveContentUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideStoreHideAltTextButtonUseCase(repository: StorageRepository): StoreHideAltTextButtonUseCase =
-        StoreHideAltTextButtonUseCase(repository)
-
-    @Provides
-    @Singleton
     fun provideGetHideAltTextButtonUseCase(repository: StorageRepository): GetHideAltTextButtonUseCase =
         GetHideAltTextButtonUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideStoreIsInFocusModeUseCase(repository: StorageRepository): StoreIsFocusModeEnabledUseCase =
-        StoreIsFocusModeEnabledUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideGetIsInFocusModeUseCase(repository: StorageRepository): GetIsFocusModeEnabledUseCase =
-        GetIsFocusModeEnabledUseCase(repository)
 
     @Provides
     @Singleton
@@ -97,13 +65,8 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideOpenExternalUrlUseCase(repository: StorageRepository): OpenExternalUrlUseCase =
-        OpenExternalUrlUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideStoreUseInAppBrowserUseCase(repository: StorageRepository): StoreUseInAppBrowserUseCase =
-        StoreUseInAppBrowserUseCase(repository)
+    fun provideOpenExternalUrlUseCase(): OpenExternalUrlUseCase =
+        OpenExternalUrlUseCase()
 
     @Provides
     @Singleton
@@ -114,11 +77,6 @@ class SettingsUseCaseModule {
     @Singleton
     fun provideStoreThemeUseCase(repository: StorageRepository): StoreThemeUseCase =
         StoreThemeUseCase(repository)
-
-    @Provides
-    @Singleton
-    fun provideGetThemeUseCase(repository: StorageRepository): GetThemeUseCase =
-        GetThemeUseCase(repository)
 
     @Provides
     @Singleton
