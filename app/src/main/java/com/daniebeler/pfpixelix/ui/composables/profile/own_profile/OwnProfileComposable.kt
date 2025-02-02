@@ -11,22 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material.icons.outlined.SwitchAccount
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -66,6 +62,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun OwnProfileComposable(
     navController: NavController,
+    openPreferencesDrawer: () -> Unit,
     viewModel: OwnProfileViewModel = hiltViewModel(key = "own-profile-key")
 ) {
 
@@ -133,7 +130,7 @@ fun OwnProfileComposable(
                                 relationship = null,
                                 navController,
                                 openUrl = { url ->
-                                    viewModel.openUrl(context, url)
+                                    viewModel.openUrl(url, context)
                                 })
 
                             Row(
@@ -173,7 +170,7 @@ fun OwnProfileComposable(
                             navController = navController,
                             addNewButton = true,
                             instanceDomain = viewModel.ownDomain,
-                        ) { url -> viewModel.openUrl(context, url) }
+                        ) { url -> viewModel.openUrl(url, context) }
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
@@ -220,7 +217,7 @@ fun OwnProfileComposable(
                     appIcon = viewModel.appIcon,
                     closeBottomSheet = {
                         showBottomSheet = 0
-                    })
+                    }, openPreferencesDrawer)
             } else if (showBottomSheet == 2) {
                 AccountSwitchBottomSheet(closeBottomSheet = {
                     showBottomSheet = 0

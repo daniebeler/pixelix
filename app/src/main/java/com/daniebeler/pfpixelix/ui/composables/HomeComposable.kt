@@ -50,34 +50,51 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeComposable(navController: NavController) {
-
+fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Unit) {
     val pagerState = rememberPagerState { 3 }
-
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
-        },navigationIcon = {
-            IconButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = ImageVector.vectorResource(R.drawable.help_outline), contentDescription = "Help")
-            }
-        }, actions = {
-            Row {
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        topBar = {
+            CenterAlignedTopAppBar(title = {
+                Text(stringResource(id = R.string.app_name), fontWeight = FontWeight.Bold)
+            }, navigationIcon = {
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.help_outline),
+                        contentDescription = "Help"
+                    )
+                }
+            }, actions = {
+                Row {
 
-                IconButton(onClick = { Navigate.navigate("conversations", navController) }) {
-                    Icon(imageVector = ImageVector.vectorResource(R.drawable.mail_outline), contentDescription = "Conversations")
+                    IconButton(onClick = {
+                        Navigate.navigate(
+                            "conversations",
+                            navController
+                        )
+                    }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.mail_outline),
+                            contentDescription = "Conversations"
+                        )
+                    }
+                    IconButton(onClick = {
+                        openPreferencesDrawer()
+                    }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.settings_outline),
+                            contentDescription = "Settings"
+                        )
+                    }
                 }
-                IconButton(onClick = { Navigate.navigate("preferences_screen", navController) }) {
-                    Icon(imageVector = ImageVector.vectorResource(R.drawable.settings_outline), contentDescription = "Settings")
-                }
-            }
-        })
-    }) { paddingValues ->
+            })
+        }) { paddingValues ->
+
         Column(
             Modifier
                 .fillMaxSize()
@@ -136,38 +153,37 @@ fun HomeComposable(navController: NavController) {
                 }
             }
         }
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 12.dp)
-                ) {
-                    Column {
-                        Spacer(modifier = Modifier.height(18.dp))
+                Column {
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                        SheetItem(
-                            header = stringResource(id = R.string.home),
-                            description = stringResource(R.string.home_timeline_explained)
-                        )
+                    SheetItem(
+                        header = stringResource(id = R.string.home),
+                        description = stringResource(R.string.home_timeline_explained)
+                    )
 
-                        SheetItem(
-                            header = stringResource(id = R.string.local),
-                            description = stringResource(R.string.local_timeline_explained)
-                        )
+                    SheetItem(
+                        header = stringResource(id = R.string.local),
+                        description = stringResource(R.string.local_timeline_explained)
+                    )
 
-                        SheetItem(
-                            header = stringResource(id = R.string.global),
-                            description = stringResource(R.string.global_timeline_explained)
-                        )
-                    }
+                    SheetItem(
+                        header = stringResource(id = R.string.global),
+                        description = stringResource(R.string.global_timeline_explained)
+                    )
                 }
             }
         }

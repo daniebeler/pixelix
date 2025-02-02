@@ -36,13 +36,13 @@ class AboutPixelixViewModel @Inject constructor(
 
     fun rateApp(context: Context) {
         openExternalUrlUseCase(
-            context, "https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"
+             "https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix", context
         )
     }
 
-    fun openUrl(context: Context, url: String) {
+    fun openUrl(url: String, context: Context) {
         openExternalUrlUseCase(
-            context, url
+            url,context
         )
     }
 }

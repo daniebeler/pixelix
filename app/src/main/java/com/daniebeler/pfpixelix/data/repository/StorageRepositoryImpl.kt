@@ -76,10 +76,6 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStoreTheme(): Flow<String> = storage.data.map { preferences ->
-        preferences[stringPreferencesKey(Constants.THEME_DATASTORE_KEY)] ?: "system"
-    }
-
     override suspend fun storeView(view: ViewEnum) {
         storage.edit { preferences ->
             preferences[stringPreferencesKey(Constants.VIEW_DATASTORE_KEY)] = view.toString()

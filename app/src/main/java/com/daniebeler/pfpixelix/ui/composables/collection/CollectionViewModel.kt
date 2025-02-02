@@ -230,7 +230,7 @@ class CollectionViewModel @Inject constructor(
         getPostsFirstLoad(true)
     }
 
-    fun openUrl(context: Context, url: String) {
-        openExternalUrlUseCase(context, url)
+    fun openUrl(url: String, context: Context) {
+        openExternalUrlUseCase(url, context)
     }
 }

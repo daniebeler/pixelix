@@ -115,7 +115,7 @@ fun CommentsBottomSheet(
                         navController = navController,
                         {},
                         viewModel.myAccountId,
-                        { url -> viewModel.openUrl(context, url) })
+                        { url -> viewModel.openUrl(url, context) })
                 }
 
                 TextFieldMentionsComposable(submit = { text ->
@@ -175,7 +175,7 @@ fun CommentsBottomSheet(
                     navController = navController,
                     { viewModel.deleteReply(reply.id) },
                     viewModel.myAccountId,
-                    { url -> viewModel.openUrl(context, url) })
+                    { url -> viewModel.openUrl(url, context) })
             }
 
             if (viewModel.repliesState.isLoading) {

@@ -57,10 +57,6 @@ sealed class Destinations(
         route = "edit_profile_screen"
     )
 
-    data object Preferences : Destinations(
-        route = "preferences_screen"
-    )
-
     data object IconSelection : Destinations(
         route = "icon_selection_screen"
     )
