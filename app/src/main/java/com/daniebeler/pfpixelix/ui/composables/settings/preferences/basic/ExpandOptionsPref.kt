@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -46,7 +47,7 @@ import com.daniebeler.pfpixelix.utils.top
 
 @Composable
 fun ExpandOptionsPref(
-    leadingIcon: ImageVector,
+    @DrawableRes leadingIcon: Int,
     title: String,
     desc: String? = null,
     initializeExpanded: Boolean = false,

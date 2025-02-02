@@ -174,7 +174,7 @@ fun AboutInstanceComposable(
                         .clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
+                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy", context
                                 )
                             }
                         })
@@ -197,7 +197,7 @@ fun AboutInstanceComposable(
                         .clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
+                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms", context
                                 )
                             }
                         })

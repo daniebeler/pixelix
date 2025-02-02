@@ -37,7 +37,6 @@ import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -420,7 +419,7 @@ fun PostComposable(
                             mentions = viewModel.post!!.mentions,
                             navController = navController,
                             textSize = 18.sp,
-                            openUrl = { url -> viewModel.openUrl(url) },
+                            openUrl = { url -> viewModel.openUrl(url, context) },
                             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
                         )
                         HorizontalDivider()
@@ -588,7 +587,7 @@ fun PostComposable(
                             HashtagsMentionsTextView(text = viewModel.post!!.content,
                                 mentions = viewModel.post!!.mentions,
                                 navController = navController,
-                                openUrl = { url -> viewModel.openUrl(url) })
+                                openUrl = { url -> viewModel.openUrl(url, context) })
                         }
                     }
 

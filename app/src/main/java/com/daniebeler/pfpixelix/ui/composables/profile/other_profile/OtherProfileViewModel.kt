@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -379,8 +380,8 @@ class OtherProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun openUrl(url: String) {
-        openExternalUrlUseCase(url)
+    fun openUrl(url: String, context: Context) {
+        openExternalUrlUseCase(url, context)
     }
 
     fun changeView(newView: ViewEnum) {

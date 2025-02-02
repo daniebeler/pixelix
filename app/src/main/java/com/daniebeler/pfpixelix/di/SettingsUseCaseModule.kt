@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.di
 
-import android.content.Context
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
@@ -21,7 +20,6 @@ import com.daniebeler.pfpixelix.domain.usecase.StoreThemeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -67,8 +65,8 @@ class SettingsUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideOpenExternalUrlUseCase(@ApplicationContext context: Context): OpenExternalUrlUseCase =
-        OpenExternalUrlUseCase(context)
+    fun provideOpenExternalUrlUseCase(): OpenExternalUrlUseCase =
+        OpenExternalUrlUseCase()
 
     @Provides
     @Singleton

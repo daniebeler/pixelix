@@ -204,7 +204,7 @@ fun CollectionComposable(
                     ), onClick = {
                         if (viewModel.collectionState.collection != null) {
                             viewModel.openUrl(
-                                viewModel.collectionState.collection!!.url
+                                viewModel.collectionState.collection!!.url, context
                             )
                         }
                     })

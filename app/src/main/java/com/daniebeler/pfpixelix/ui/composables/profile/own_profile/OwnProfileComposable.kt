@@ -129,7 +129,7 @@ fun OwnProfileComposable(
                                 relationship = null,
                                 navController,
                                 openUrl = { url ->
-                                    viewModel.openUrl(url)
+                                    viewModel.openUrl(url, context)
                                 })
 
                             Row(
@@ -169,7 +169,7 @@ fun OwnProfileComposable(
                             navController = navController,
                             addNewButton = true,
                             instanceDomain = viewModel.ownDomain,
-                        ) { url -> viewModel.openUrl(url) }
+                        ) { url -> viewModel.openUrl(url, context) }
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,

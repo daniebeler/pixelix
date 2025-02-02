@@ -25,9 +25,6 @@ class PreferencesViewModel @Inject constructor(
 ) : ViewModel() {
 
     var appIcon by mutableStateOf<ImageBitmap?>(null)
-
-    var cacheSize by mutableStateOf("")
-
     var versionName by mutableStateOf("")
 
     fun getAppIcon(context: Context) {
@@ -49,19 +46,19 @@ class PreferencesViewModel @Inject constructor(
         }
     }
 
-    fun openMoreSettingsPage() {
+    fun openMoreSettingsPage(context: Context) {
         viewModelScope.launch {
             val domain = getOwnInstanceDomainUseCase()
             val moreSettingUrl = "https://$domain/settings/home"
-            openExternalUrlUseCase(moreSettingUrl)
+            openExternalUrlUseCase(moreSettingUrl, context)
         }
     }
 
-    fun openRepostSettings() {
+    fun openRepostSettings(context: Context) {
         viewModelScope.launch {
             val domain = getOwnInstanceDomainUseCase()
             val moreSettingUrl = "https://$domain/settings/timeline"
-            openExternalUrlUseCase(moreSettingUrl)
+            openExternalUrlUseCase(moreSettingUrl, context)
         }
     }
 }

@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.utils.rememberPrefBoolState
 import com.daniebeler.pfpixelix.utils.rememberPrefIntState
@@ -17,7 +15,7 @@ import com.daniebeler.pfpixelix.utils.rememberPrefIntState
 @Composable
 fun SwitchPref(
     key: String,
-    leadingIcon: ImageVector,
+    @DrawableRes leadingIcon: Int,
     title: String,
     desc: String? = null,
     default: Boolean = false,
@@ -54,7 +52,7 @@ fun SwitchIntPref(
 ) {
     var intState by rememberPrefIntState(key, default)
     SettingPref(
-        leadingIcon = ImageVector.vectorResource(leadingIcon),
+        leadingIcon = leadingIcon,
         title = title,
         desc = desc,
         trailingContent = {

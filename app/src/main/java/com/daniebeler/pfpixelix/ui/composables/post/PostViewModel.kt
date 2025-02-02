@@ -389,8 +389,8 @@ class PostViewModel @Inject constructor(
 
     }
 
-    fun openUrl(url: String) {
-        openExternalUrlUseCase(url)
+    fun openUrl(url: String, context: Context) {
+        openExternalUrlUseCase(url, context)
     }
 
 

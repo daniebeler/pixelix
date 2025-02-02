@@ -89,7 +89,7 @@ fun ShareBottomSheet(
             ButtonRowElement(icon = R.drawable.document_text_outline, text = stringResource(
                 R.string.license, mediaAttachment.license.title
             ), onClick = {
-                viewModel.openUrl(mediaAttachment.license.url)
+                viewModel.openUrl(mediaAttachment.license.url, context)
             })
         }
 
@@ -98,7 +98,7 @@ fun ShareBottomSheet(
         ButtonRowElement(icon = R.drawable.open_outline, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
-            viewModel.openUrl(url)
+            viewModel.openUrl(url, context)
         })
 
         ButtonRowElement(icon = R.drawable.share_social_outline,

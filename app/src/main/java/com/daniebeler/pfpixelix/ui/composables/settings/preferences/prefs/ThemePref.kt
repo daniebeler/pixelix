@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BrightnessAuto
-import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Contrast
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
@@ -45,7 +44,7 @@ fun ThemePref() {
     }
 
     ExpandOptionsPref(
-        leadingIcon = Icons.Rounded.Brush,
+        leadingIcon = R.drawable.color_palette_outline,
         title = stringResource(R.string.app_theme),
     ) {
         ValueOption(

@@ -1,12 +1,17 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -16,8 +21,13 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -40,46 +50,124 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingPref(
-    leadingIcon: ImageVector,
+    leadingIcon: ImageBitmap,
     title: String,
     desc: String? = null,
-    trailingContent: ImageVector,
+    @DrawableRes trailingContent: Int?,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
-    content: @Composable ColumnScope.() -> Unit = {},
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {}
 ) {
     SettingPref(
         leadingIcon = leadingIcon,
         title = title,
         desc = desc,
         trailingContent = {
-            Box(modifier = Modifier.padding(end = 12.dp)) {
-                Icon(
-                    imageVector = trailingContent,
-                    contentDescription = null,
-                )
+            trailingContent?.let {
+                Box(modifier = Modifier.padding(end = 12.dp)) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(trailingContent),
+                        contentDescription = null,
+                    )
+                }
             }
         },
         onClick = onClick,
         shape = shape,
-        content = content,
+        textColor = textColor,
+        content = content
     )
 }
 
 @Composable
 fun SettingPref(
-    leadingIcon: ImageVector,
+    leadingIcon: Painter,
+    title: String,
+    desc: String? = null,
+    @DrawableRes trailingContent: Int?,
+    onClick: () -> Unit = {},
+    shape: Shape = MaterialTheme.shapes.medium,
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {}
+) {
+    SettingPref(
+        leadingIcon = leadingIcon,
+        title = title,
+        desc = desc,
+        trailingContent = {
+            trailingContent?.let {
+                Box(modifier = Modifier.padding(end = 12.dp)) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(trailingContent),
+                        contentDescription = null,
+                    )
+                }
+            }
+        },
+        onClick = onClick,
+        shape = shape,
+        textColor = textColor,
+        content = content
+    )
+}
+
+@Composable
+fun SettingPref(
+    @DrawableRes leadingIcon: Int,
+    title: String,
+    desc: String? = null,
+    @DrawableRes trailingContent: Int?,
+    onClick: () -> Unit = {},
+    shape: Shape = MaterialTheme.shapes.medium,
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {}
+) {
+    SettingPref(
+        leadingIcon = leadingIcon,
+        title = title,
+        desc = desc,
+        trailingContent = {
+            trailingContent?.let {
+                Box(modifier = Modifier.padding(end = 12.dp)) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(trailingContent),
+                        contentDescription = null,
+                    )
+                }
+            }
+        },
+        onClick = onClick,
+        shape = shape,
+        textColor = textColor,
+        content = content
+    )
+}
+
+@Composable
+fun SettingPref(
+    leadingIcon: ImageBitmap,
     title: String,
     desc: String? = null,
     trailingContent: @Composable () -> Unit = {},
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
+    textColor: Color? = null,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     SettingPref(
         leadingIcon = {
             Box(Modifier.padding(start = 14.dp)) {
-                Icon(imageVector = leadingIcon, contentDescription = title)
+                Image(
+                    leadingIcon,
+                    contentDescription = "",
+                    Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                        .clip(
+                            CircleShape
+                        )
+                )
             }
         },
         title = title,
@@ -87,6 +175,76 @@ fun SettingPref(
         trailingContent = trailingContent,
         onClick = onClick,
         shape = shape,
+        textColor = textColor,
+        content = content
+    )
+}
+
+@Composable
+fun SettingPref(
+    leadingIcon: Painter,
+    title: String,
+    desc: String? = null,
+    trailingContent: @Composable () -> Unit = {},
+    onClick: () -> Unit = {},
+    shape: Shape = MaterialTheme.shapes.medium,
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {},
+) {
+    SettingPref(
+        leadingIcon = {
+            Box(Modifier.padding(start = 14.dp)) {
+                Image(
+                    leadingIcon,
+                    contentDescription = "",
+                    Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                        .clip(
+                            CircleShape
+                        )
+                )
+            }
+        },
+        title = title,
+        desc = desc,
+        trailingContent = trailingContent,
+        onClick = onClick,
+        shape = shape,
+        textColor = textColor,
+        content = content
+    )
+}
+
+
+
+@Composable
+fun SettingPref(
+    @DrawableRes leadingIcon: Int,
+    title: String,
+    desc: String? = null,
+    trailingContent: @Composable () -> Unit = {},
+    onClick: () -> Unit = {},
+    shape: Shape = MaterialTheme.shapes.medium,
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {},
+) {
+    SettingPref(
+        leadingIcon = {
+            Box(Modifier.padding(start = 14.dp)) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(leadingIcon),
+                    contentDescription = title,
+                    tint = textColor ?: Color.Unspecified
+                )
+            }
+        },
+        title = title,
+        desc = desc,
+        trailingContent = trailingContent,
+        onClick = onClick,
+        shape = shape,
+        textColor = textColor,
         content = content
     )
 }
@@ -99,7 +257,8 @@ fun SettingPref(
     trailingContent: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
-    content: @Composable ColumnScope.() -> Unit = {},
+    textColor: Color? = null,
+    content: @Composable ColumnScope.() -> Unit = {}
 ) {
     val cardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
@@ -129,7 +288,8 @@ fun SettingPref(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        color = textColor ?: Color.Unspecified
                     )
                     if (desc != null) {
                         Text(
@@ -137,7 +297,8 @@ fun SettingPref(
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(top = 2.dp),
                             maxLines = 5,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            color = textColor ?: Color.Unspecified
                         )
                     }
                 }
