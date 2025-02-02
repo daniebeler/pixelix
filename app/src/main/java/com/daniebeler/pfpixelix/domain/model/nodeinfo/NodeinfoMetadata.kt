@@ -1,11 +1,13 @@
 package com.daniebeler.pfpixelix.domain.model.nodeinfo
 
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NodeinfoMetadata(
-    @SerializedName("nodeDescription")
+    @SerialName("nodeDescription")
     val nodeDescription: String,
-    @SerializedName("nodeName")
+    @SerialName("nodeName")
     val nodeName: String
 )

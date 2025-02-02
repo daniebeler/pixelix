@@ -1,10 +1,12 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.Configuration
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class ConfigurationDto(
-    @SerializedName("media_attachments") val mediaAttachmentsConfigurations: MediaAttachmentConfigurationDto
+    @SerialName("media_attachments") val mediaAttachmentsConfigurations: MediaAttachmentConfigurationDto
 ) : DtoInterface<Configuration> {
     override fun toModel(): Configuration {
         return Configuration(

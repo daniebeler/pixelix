@@ -2,13 +2,15 @@ package com.daniebeler.pfpixelix.data.remote.dto
 
 
 import com.daniebeler.pfpixelix.domain.model.Original
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class OriginalDto(
-    @SerializedName("aspect") val aspect: Double,
-    @SerializedName("height") val height: Int,
-    @SerializedName("size") val size: String,
-    @SerializedName("width") val width: Int
+    @SerialName("aspect") val aspect: Double,
+    @SerialName("height") val height: Int?,
+    @SerialName("size") val size: String?,
+    @SerialName("width") val width: Int?
 ) : DtoInterface<Original> {
     override fun toModel(): Original {
         return Original(

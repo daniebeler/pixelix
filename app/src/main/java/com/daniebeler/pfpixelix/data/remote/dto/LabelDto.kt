@@ -1,8 +1,10 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LabelDto(
-    @SerializedName("covid") val covid: Boolean
+    @SerialName("covid") val covid: Boolean?
 )

@@ -1,13 +1,15 @@
 package com.daniebeler.pfpixelix.domain.model.nodeinfo
 
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NodeinfoUsers(
-    @SerializedName("activeHalfyear")
+    @SerialName("activeHalfyear")
     val activeHalfyear: Int,
-    @SerializedName("activeMonth")
+    @SerialName("activeMonth")
     val activeMonth: Int,
-    @SerializedName("total")
+    @SerialName("total")
     val total: Int
 )

@@ -72,10 +72,9 @@ dependencies {
 
 
     implementation(libs.volley)
-    implementation(libs.gson)
 
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    implementation(libs.retrofit.json)
     implementation(libs.logging.interceptor)
 
     implementation(libs.androidx.runtime.livedata)

@@ -1,21 +1,23 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.Collection
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CollectionDto(
-    @SerializedName("avatar") val avatar: String,
-    @SerializedName("description") val description: String?,
-    @SerializedName("id") val id: String,
-    @SerializedName("pid") val pid: String,
-    @SerializedName("post_count") val postCount: Int,
-    @SerializedName("published_at") val publishedAt: String,
-    @SerializedName("thumb") val thumb: String,
-    @SerializedName("title") val title: String?,
-    @SerializedName("updated_at") val updatedAt: String,
-    @SerializedName("url") val url: String,
-    @SerializedName("username") val username: String,
-    @SerializedName("visibility") val visibility: String
+    @SerialName("avatar") val avatar: String?,
+    @SerialName("description") val description: String?,
+    @SerialName("id") val id: String,
+    @SerialName("pid") val pid: String?,
+    @SerialName("post_count") val postCount: Int,
+    @SerialName("published_at") val publishedAt: String?,
+    @SerialName("thumb") val thumb: String,
+    @SerialName("title") val title: String?,
+    @SerialName("updated_at") val updatedAt: String?,
+    @SerialName("url") val url: String,
+    @SerialName("username") val username: String,
+    @SerialName("visibility") val visibility: String
 ) : DtoInterface<Collection> {
     override fun toModel(): Collection {
         return Collection(

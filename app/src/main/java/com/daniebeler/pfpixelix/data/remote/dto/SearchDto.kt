@@ -2,12 +2,14 @@ package com.daniebeler.pfpixelix.data.remote.dto
 
 
 import com.daniebeler.pfpixelix.domain.model.Search
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchDto(
-    @SerializedName("accounts") val accounts: List<AccountDto>,
-    @SerializedName("statuses") val posts: List<PostDto>,
-    @SerializedName("hashtags") val hashtags: List<TagDto>
+    @SerialName("accounts") val accounts: List<AccountDto>,
+    @SerialName("statuses") val posts: List<PostDto>,
+    @SerialName("hashtags") val hashtags: List<TagDto>
 ) : DtoInterface<Search> {
     override fun toModel(): Search {
         return Search(accounts = accounts.map { accountDto -> accountDto.toModel() },

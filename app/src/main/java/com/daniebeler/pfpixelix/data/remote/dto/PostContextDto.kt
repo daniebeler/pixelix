@@ -1,11 +1,13 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.PostContext
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PostContextDto(
-    @SerializedName("ancestors") val ancestors: List<PostDto>,
-    @SerializedName("descendants") val descendants: List<PostDto>,
+    @SerialName("ancestors") val ancestors: List<PostDto>,
+    @SerialName("descendants") val descendants: List<PostDto>,
 ) : DtoInterface<PostContext> {
     override fun toModel(): PostContext {
         return PostContext(ancestors = ancestors.map { post -> post.toModel() },
