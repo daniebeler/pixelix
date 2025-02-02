@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
 
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
-                ReverseModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+                ReverseModalNavigationDrawer(gesturesEnabled = drawerState.isOpen, drawerState = drawerState, drawerContent = {
                     ModalDrawerSheet(
                         drawerState = drawerState,
                         drawerShape = shapes.extraLarge.end(0.dp),
