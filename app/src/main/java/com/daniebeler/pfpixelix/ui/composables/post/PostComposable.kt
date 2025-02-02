@@ -587,7 +587,7 @@ fun PostComposable(
                             HashtagsMentionsTextView(text = viewModel.post!!.content,
                                 mentions = viewModel.post!!.mentions,
                                 navController = navController,
-                                openUrl = { url -> viewModel.openUrl(context, url) },
+                                openUrl = { url -> viewModel.openUrl(url, context) },
                                 maximumLines = 4
                             )
                         }
