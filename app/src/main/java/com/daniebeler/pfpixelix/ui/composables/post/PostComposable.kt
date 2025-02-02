@@ -37,7 +37,6 @@ import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -588,7 +587,9 @@ fun PostComposable(
                             HashtagsMentionsTextView(text = viewModel.post!!.content,
                                 mentions = viewModel.post!!.mentions,
                                 navController = navController,
-                                openUrl = { url -> viewModel.openUrl(context, url) })
+                                openUrl = { url -> viewModel.openUrl(context, url) },
+                                maximumLines = 4
+                            )
                         }
                     }
 

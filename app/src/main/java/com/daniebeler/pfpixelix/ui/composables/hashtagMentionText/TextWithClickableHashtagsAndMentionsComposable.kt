@@ -1,14 +1,24 @@
 package com.daniebeler.pfpixelix.ui.composables.hashtagMentionText
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,8 +38,12 @@ fun HashtagsMentionsTextView(
     navController: NavController,
     openUrl: (url: String) -> Unit,
     textSize: TextUnit? = null,
+    maximumLines: Int = Int.MAX_VALUE,
     viewModel: TextWithClickableHashtagsAndMentionsViewModel = hiltViewModel(key = "hashtags-mentions-tv$text")
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    val maxLines = if (expanded) Int.MAX_VALUE else maximumLines
+    var showReadMoreButtonState by remember { mutableStateOf(false) }
 
     val colorScheme = MaterialTheme.colorScheme
     val textStyle = SpanStyle(color = colorScheme.onBackground)
@@ -99,53 +113,73 @@ fun HashtagsMentionsTextView(
         }
     }
 
-    ClickableText(text = annotatedString, style = if (textSize != null) {
-        MaterialTheme.typography.bodyMedium.copy(fontSize = textSize)
-    } else {
-        MaterialTheme.typography.bodyMedium
-    },
-        modifier = modifier, onClick = { position ->
-            CoroutineScope(Dispatchers.Default).launch {
-                val annotatedStringRange =
-                    annotatedStringList.firstOrNull { it.start <= position && position < it.end }
-                if (annotatedStringRange != null) {
-                    if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
-                        val newItem = annotatedStringRange.item.drop(1)
-                        val route = if (annotatedStringRange.tag == "tag") {
-                            "hashtag_timeline_screen/$newItem"
-                        } else {
-                            if (mentions == null) {
-                                "profile_screen/byUsername/${annotatedStringRange.item.drop(1)}"
+    Column(modifier = Modifier.animateContentSize()) {
+        ClickableText(text = annotatedString, style = if (textSize != null) {
+            MaterialTheme.typography.bodyMedium.copy(fontSize = textSize)
+        } else {
+            MaterialTheme.typography.bodyMedium
+        },
+            overflow = TextOverflow.Ellipsis,
+            maxLines = maxLines,
+            onTextLayout = { textLayoutResult: TextLayoutResult ->
+                if (textLayoutResult.lineCount > maxLines -1) {           //Adding this check to avoid ArrayIndexOutOfBounds Exception
+                    if (textLayoutResult.isLineEllipsized(maxLines-1)) showReadMoreButtonState = true
+                }
+            },
+            modifier = modifier, onClick = { position ->
+                CoroutineScope(Dispatchers.Default).launch {
+                    val annotatedStringRange =
+                        annotatedStringList.firstOrNull { it.start <= position && position < it.end }
+                    if (annotatedStringRange != null) {
+                        if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
+                            val newItem = annotatedStringRange.item.drop(1)
+                            val route = if (annotatedStringRange.tag == "tag") {
+                                "hashtag_timeline_screen/$newItem"
                             } else {
-                                var account =
-                                    mentions.find { account: Account -> account.acct == newItem }
-                                if (account == null) {
-                                    account =
-                                        mentions.find { account: Account -> account.username == newItem }
-                                }
-                                if (account != null) {
-                                    //get my account id and check if it is mine account
-                                    val myAccountId = viewModel.getMyAccountId()
-                                    if (account.id == myAccountId) {
-                                        "own_profile_screen"
-                                    } else {
-                                        "profile_screen/${account.id}"
-                                    }
+                                if (mentions == null) {
+                                    "profile_screen/byUsername/${annotatedStringRange.item.drop(1)}"
                                 } else {
-                                    ""
+                                    var account =
+                                        mentions.find { account: Account -> account.acct == newItem }
+                                    if (account == null) {
+                                        account =
+                                            mentions.find { account: Account -> account.username == newItem }
+                                    }
+                                    if (account != null) {
+                                        //get my account id and check if it is mine account
+                                        val myAccountId = viewModel.getMyAccountId()
+                                        if (account.id == myAccountId) {
+                                            "own_profile_screen"
+                                        } else {
+                                            "profile_screen/${account.id}"
+                                        }
+                                    } else {
+                                        ""
+                                    }
+                                }
+
+                            }
+                            withContext(Dispatchers.Main) {
+                                if (route.isNotBlank() && route.isNotEmpty()) {
+                                    Navigate.navigate(route, navController)
                                 }
                             }
-
+                        } else if (annotatedStringRange.tag == "link") {
+                            openUrl(annotatedStringRange.item)
                         }
-                        withContext(Dispatchers.Main) {
-                            if (route.isNotBlank() && route.isNotEmpty()) {
-                                Navigate.navigate(route, navController)
-                            }
-                        }
-                    } else if (annotatedStringRange.tag == "link") {
-                        openUrl(annotatedStringRange.item)
                     }
                 }
-            }
-        })
+            })
+        if (showReadMoreButtonState) {
+            Text(
+                text = if (expanded) "Read Less" else "Read More",
+                color = Color.Gray,
+                modifier = Modifier.clickable {
+                    expanded = !expanded
+                },
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+
 }
