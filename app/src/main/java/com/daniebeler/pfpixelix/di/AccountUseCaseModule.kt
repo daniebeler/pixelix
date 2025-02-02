@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.di
 
+import android.content.Context
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
@@ -27,6 +28,7 @@ import com.daniebeler.pfpixelix.domain.usecase.UpdateAccountUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -60,8 +62,8 @@ class AccountUseCaseModule {
     @Provides
     @Singleton
     fun provideGetPostsOfAccountUseCase(
-        postRepository: PostRepository, storageRepository: StorageRepository
-    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(postRepository)
+        postRepository: PostRepository, @ApplicationContext context: Context
+    ): GetPostsOfAccountUseCase = GetPostsOfAccountUseCase(postRepository, context)
 
     @Provides
     @Singleton

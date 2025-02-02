@@ -9,7 +9,7 @@ class ApplicationInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         val application = context.applicationContext as Application
         // apply compat style
-    //    ThemePrefUtil.apply(application)
+        ThemePrefUtil.apply(application)
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = listOf(

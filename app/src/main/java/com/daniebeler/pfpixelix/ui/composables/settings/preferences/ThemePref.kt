@@ -33,7 +33,7 @@ fun ThemePref() {
         themeModeValue = mode
         themeMode = themeModeValue
         var appCompatMode = mode
-       if (appCompatMode == AMOLED) {
+        if (appCompatMode == AMOLED) {
             appCompatMode = DARK
         }
         AppCompatDelegate.setDefaultNightMode(appCompatMode)

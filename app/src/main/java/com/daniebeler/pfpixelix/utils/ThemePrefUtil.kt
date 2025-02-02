@@ -17,4 +17,12 @@ object ThemePrefUtil {
     fun getThemeModeValue(context: Context): Int {
         return context.pref.getInt(KEY_NIGHT_MODE, FOLLOW_SYSTEM)
     }
+
+    fun apply(context: Context) {
+        var mode = getThemeModeValue(context)
+        if (mode == AMOLED) {
+            mode = DARK
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
 }
