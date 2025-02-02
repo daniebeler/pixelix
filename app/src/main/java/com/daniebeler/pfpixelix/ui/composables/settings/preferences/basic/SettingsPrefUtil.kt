@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
 import android.content.Context
 import com.daniebeler.pfpixelix.utils.pref

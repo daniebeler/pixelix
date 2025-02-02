@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.collection
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -230,7 +229,7 @@ class CollectionViewModel @Inject constructor(
         getPostsFirstLoad(true)
     }
 
-    fun openUrl(context: Context, url: String) {
-        openExternalUrlUseCase(context, url)
+    fun openUrl(url: String) {
+        openExternalUrlUseCase(url)
     }
 }

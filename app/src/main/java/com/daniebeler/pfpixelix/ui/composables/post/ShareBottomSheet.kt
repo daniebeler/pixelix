@@ -8,14 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.OpenInBrowser
-import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -97,7 +89,7 @@ fun ShareBottomSheet(
             ButtonRowElement(icon = R.drawable.document_text_outline, text = stringResource(
                 R.string.license, mediaAttachment.license.title
             ), onClick = {
-                viewModel.openUrl(context, mediaAttachment.license.url)
+                viewModel.openUrl(mediaAttachment.license.url)
             })
         }
 
@@ -106,7 +98,7 @@ fun ShareBottomSheet(
         ButtonRowElement(icon = R.drawable.open_outline, text = stringResource(
             R.string.open_in_browser
         ), onClick = {
-            viewModel.openUrl(context, url)
+            viewModel.openUrl(url)
         })
 
         ButtonRowElement(icon = R.drawable.share_social_outline,

@@ -1,15 +1,13 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.server_stats
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
+import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -90,8 +88,8 @@ class ServerStatsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun openUrl(url: String, context: Context) {
-        openExternalUrlUseCase(context, url)
+    fun openUrl(url: String) {
+        openExternalUrlUseCase(url)
     }
 
 }

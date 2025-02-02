@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -43,7 +44,11 @@ import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
-import com.daniebeler.pfpixelix.ui.composables.SwitchRowItem
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAltTextButtonPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSensitiveContentPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ThemePref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInAppBrowserPref
 import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,7 +97,8 @@ fun PreferencesComposable(
                 .padding(paddingValues)
                 .padding(horizontal = 18.dp)
                 .fillMaxSize()
-                .verticalScroll(state = rememberScrollState())
+                .verticalScroll(state = rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             /*SwitchRowItem(
                 icon = R.drawable.eye_off_outline,
@@ -102,28 +108,15 @@ fun PreferencesComposable(
 
             HideSensitiveContentPref()
 
-            SwitchRowItem(
-                icon = R.drawable.document_text_outline,
-                text = stringResource(R.string.hide_alt_text_button),
-                isChecked = viewModel.isAltTextButtonHidden
-            ) { checked -> viewModel.storeHideAltTextButton(checked) }
+            HideAltTextButtonPref()
 
-            SwitchRowItem(
-                icon = R.drawable.square_outline,
-                text = stringResource(R.string.focus_mode),
-                smallText = stringResource(R.string.focus_mode_description),
-                isChecked = viewModel.isFocusModeEnabled
-            ) { checked -> viewModel.storeIsFocusModeEnabled(checked) }
+            FocusModePref()
 
-            SwitchRowItem(
-                icon = R.drawable.browsers_outline,
-                text =  stringResource(R.string.use_in_app_browser),
-                isChecked = viewModel.isUsingInAppBrowser
-            ) { checked -> viewModel.storeUseInAppBrowser(checked) }
+            UseInAppBrowserPref()
 
             ButtonRowElement(icon = R.drawable.sync_outline,
                 text = stringResource(R.string.repost_settings),
-                onClick = { viewModel.openRepostSettings(context) })
+                onClick = { viewModel.openRepostSettings() })
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
@@ -162,7 +155,7 @@ fun PreferencesComposable(
             ButtonRowElement(icon = R.drawable.settings_outline,
                 text = stringResource(R.string.more_settings),
                 onClick = {
-                    viewModel.openMoreSettingsPage(context)
+                    viewModel.openMoreSettingsPage()
                 })
 
             ButtonRowElement(

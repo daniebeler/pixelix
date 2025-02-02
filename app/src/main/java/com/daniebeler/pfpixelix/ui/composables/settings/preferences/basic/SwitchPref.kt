@@ -1,5 +1,6 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Switch
@@ -8,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.utils.rememberPrefBoolState
 import com.daniebeler.pfpixelix.utils.rememberPrefIntState
@@ -44,7 +46,7 @@ fun SwitchPref(
 @Composable
 fun SwitchIntPref(
     key: String,
-    leadingIcon: ImageVector,
+    @DrawableRes leadingIcon: Int,
     title: String,
     desc: String? = null,
     default: Int = SettingPrefUtil.OFF,
@@ -52,7 +54,7 @@ fun SwitchIntPref(
 ) {
     var intState by rememberPrefIntState(key, default)
     SettingPref(
-        leadingIcon = leadingIcon,
+        leadingIcon = ImageVector.vectorResource(leadingIcon),
         title = title,
         desc = desc,
         trailingContent = {

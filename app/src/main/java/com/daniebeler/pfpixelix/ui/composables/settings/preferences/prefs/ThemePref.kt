@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
@@ -13,6 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ExpandOptionsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.OptionShapes
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
 import com.daniebeler.pfpixelix.ui.theme.themeMode
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK

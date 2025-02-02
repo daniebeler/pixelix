@@ -17,8 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -176,7 +174,6 @@ fun AboutInstanceComposable(
                         .clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    context = context,
                                     url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
                                 )
                             }
@@ -200,7 +197,6 @@ fun AboutInstanceComposable(
                         .clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    context = context,
                                     url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
                                 )
                             }

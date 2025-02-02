@@ -129,7 +129,6 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-
 var themeMode by mutableIntStateOf(ThemePrefUtil.getThemeModeValue(globalContext))
 var currentColorScheme: ColorScheme = lightScheme
     private set

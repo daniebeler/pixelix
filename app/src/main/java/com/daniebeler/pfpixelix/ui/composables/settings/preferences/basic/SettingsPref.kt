@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box

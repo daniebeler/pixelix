@@ -20,12 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.Public
-import androidx.compose.material.icons.outlined.Shield
-import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -135,24 +130,24 @@ fun AboutPixelixComposable(
 
             ButtonRowElement(icon = R.drawable.star_outline,
                 text = "Rate Pixelix on Google Play Store",
-                onClick = { viewModel.rateApp(context) })
+                onClick = { viewModel.rateApp() })
 
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(icon = R.drawable.browsers_outline,
                 text = "Homepage",
                 smallText = "https://app.pixelix.social",
-                onClick = { viewModel.openUrl(context, "https://app.pixelix.social") })
+                onClick = { viewModel.openUrl("https://app.pixelix.social") })
 
             ButtonRowElement(icon = R.drawable.shield_outline,
                 text = "Privacy Policy",
                 smallText = "https://app.pixelix.social/privacy",
-                onClick = { viewModel.openUrl(context, "https://app.pixelix.social/privacy") })
+                onClick = { viewModel.openUrl("https://app.pixelix.social/privacy") })
 
             ButtonRowElement(icon = R.drawable.code_slash_outline,
                 text = "Source Code",
                 smallText = "https://github.com/daniebeler/pixelix",
-                onClick = { viewModel.openUrl(context, "https://github.com/daniebeler/pixelix") })
+                onClick = { viewModel.openUrl("https://github.com/daniebeler/pixelix") })
 
 
             HorizontalDivider(Modifier.padding(12.dp))
@@ -196,7 +191,7 @@ fun AboutPixelixComposable(
                             .width(32.dp)
                             .height(32.dp)
                             .clickable {
-                                viewModel.openUrl(context, "https://techhub.social/@Hiebeler05")
+                                viewModel.openUrl("https://techhub.social/@Hiebeler05")
                             })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -207,7 +202,7 @@ fun AboutPixelixComposable(
                         Modifier
                             .size(32.dp)
                             .clickable {
-                                viewModel.openUrl(context, "https://emanuelhiebeler.me")
+                                viewModel.openUrl("https://emanuelhiebeler.me")
                             },
                         tint = Color(0xFF4793FF)
                     )
@@ -243,7 +238,7 @@ fun AboutPixelixComposable(
                             .width(32.dp)
                             .height(32.dp)
                             .clickable {
-                                viewModel.openUrl(context, "https://techhub.social/@daniebeler")
+                                viewModel.openUrl("https://techhub.social/@daniebeler")
                             })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -254,7 +249,7 @@ fun AboutPixelixComposable(
                         Modifier
                             .size(32.dp)
                             .clickable {
-                                viewModel.openUrl(context, "https://daniebeler.com")
+                                viewModel.openUrl("https://daniebeler.com")
                             },
                         tint = Color(0xFF4793FF)
                     )

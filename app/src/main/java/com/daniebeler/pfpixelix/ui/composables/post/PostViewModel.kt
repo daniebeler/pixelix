@@ -24,8 +24,6 @@ import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetHideAltTextButtonUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetIsFocusModeEnabledUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
@@ -37,8 +35,11 @@ import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePrefUtil
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAltTextButtonPrefUtil
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -55,6 +56,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val getRepliesUseCase: GetRepliesUseCase,
     private val createReplyUseCase: CreateReplyUseCase,
     private val likePostUseCase: LikePostUseCase,
@@ -66,11 +68,9 @@ class PostViewModel @Inject constructor(
     private val deletePostUseCase: DeletePostUseCase,
     private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
     private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
-    private val getHideAltTextButtonUseCase: GetHideAltTextButtonUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val setVolumeUseCase: SetVolumeUseCase,
-    private val getIsFocusModeEnabledUseCase: GetIsFocusModeEnabledUseCase
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -102,17 +102,9 @@ class PostViewModel @Inject constructor(
             myUsername = currentLoginDataUseCase()!!.username
         }
 
-        viewModelScope.launch {
-            getHideAltTextButtonUseCase().collect { res ->
-                isAltTextButtonHidden = res
-            }
-        }
+        isAltTextButtonHidden = HideAltTextButtonPrefUtil.isEnable(context)
 
-        viewModelScope.launch {
-            getIsFocusModeEnabledUseCase().collect { res ->
-                isInFocusMode = res
-            }
-        }
+        isInFocusMode = FocusModePrefUtil.isEnable(context)
     }
 
     fun toggleVolume(newVolume: Boolean) {
@@ -397,8 +389,8 @@ class PostViewModel @Inject constructor(
 
     }
 
-    fun openUrl(context: Context, url: String) {
-        openExternalUrlUseCase(context, url)
+    fun openUrl(url: String) {
+        openExternalUrlUseCase(url)
     }
 
 

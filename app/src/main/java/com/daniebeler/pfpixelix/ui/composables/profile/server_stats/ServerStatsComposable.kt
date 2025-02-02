@@ -180,7 +180,7 @@ fun DomainSoftwareComposable(
                         TextButton(
                             onClick = {
                                 viewModel.openUrl(
-                                    viewModel.statsState.fediSoftware!!.website, context
+                                    viewModel.statsState.fediSoftware!!.website
                                 )
                             },
                             shape = RoundedCornerShape(12.dp),
@@ -329,7 +329,7 @@ fun DomainSoftwareComposable(
                     TextButton(
                         onClick = {
                             viewModel.openUrl(
-                                "https://" + viewModel.statsState.fediServer!!.domain, context
+                                "https://" + viewModel.statsState.fediServer!!.domain
                             )
                         },
                         shape = RoundedCornerShape(12.dp),

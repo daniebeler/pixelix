@@ -49,7 +49,7 @@ fun TrendingAccountElement(
                 text = account.note,
                 mentions = null,
                 navController = navController,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), openUrl = { url -> viewModel.openUrl(context, url) }
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), openUrl = { url -> viewModel.openUrl(url) }
             )
         }
 
