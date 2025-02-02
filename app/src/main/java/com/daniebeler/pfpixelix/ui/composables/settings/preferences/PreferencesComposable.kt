@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -49,10 +51,12 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInA
 @Composable
 fun PreferencesComposable(
     navController: NavController,
+    closePreferencesDrawer: () -> Unit,
     viewModel: PreferencesViewModel = hiltViewModel(key = "preferences-viewmodel-key")
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val context = LocalContext.current
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     LaunchedEffect(Unit) {
         viewModel.getVersionName(context)
@@ -66,7 +70,7 @@ fun PreferencesComposable(
                 Text(text = stringResource(R.string.settings), fontWeight = FontWeight.Bold)
             }, navigationIcon = {
                 IconButton(onClick = {
-                    navController.popBackStack()
+                    closePreferencesDrawer()
                 }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline),

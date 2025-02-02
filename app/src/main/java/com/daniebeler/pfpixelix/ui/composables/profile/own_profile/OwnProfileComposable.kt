@@ -62,6 +62,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun OwnProfileComposable(
     navController: NavController,
+    openPreferencesDrawer: () -> Unit,
     viewModel: OwnProfileViewModel = hiltViewModel(key = "own-profile-key")
 ) {
 
@@ -216,7 +217,7 @@ fun OwnProfileComposable(
                     appIcon = viewModel.appIcon,
                     closeBottomSheet = {
                         showBottomSheet = 0
-                    })
+                    }, openPreferencesDrawer)
             } else if (showBottomSheet == 2) {
                 AccountSwitchBottomSheet(closeBottomSheet = {
                     showBottomSheet = 0

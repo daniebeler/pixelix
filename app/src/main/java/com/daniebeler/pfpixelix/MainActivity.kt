@@ -26,14 +26,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.UnfoldMore
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +71,7 @@ import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
+import com.daniebeler.pfpixelix.ui.composables.ReverseModalNavigationDrawer
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
@@ -93,6 +98,7 @@ import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.end
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
@@ -168,83 +174,100 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+            val scope = rememberCoroutineScope()
+            val drawerState = rememberDrawerState(DrawerValue.Open)
+
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
 
             PixelixTheme {
                 val navController: NavHostController = rememberNavController()
-
-                Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
-                    BottomBar(
-                        navController = navController,
-                        avatar = avatar,
-                        openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true },
-                        context = this
-                    )
-                }) { paddingValues ->
-                    Box(
-                        modifier = Modifier.padding(paddingValues)
+                ReverseModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+                    ModalDrawerSheet(
+                        drawerState = drawerState,
+                        drawerShape = shapes.extraLarge.end(0.dp),
+                        windowInsets = WindowInsets(0, 0, 0, 0)
                     ) {
-                        NavigationGraph(
-                            navController = navController,
-                        )
-
-                        LaunchedEffect(imageUris) {
-                            imageUris.forEach { uri ->
-                                try {
-                                    contentResolver.takePersistableUriPermission(
-                                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                    )
-                                } catch (e: SecurityException) {
-                                    e.printStackTrace() // Handle permission denial gracefully
-                                }
-                            }
-                            if (imageUris.isNotEmpty()) {
-                                val urisJson =
-                                    Json.encodeToString(imageUris.map { uri -> uri.toString() })
-                                Navigate.navigate(
-                                    "new_post_screen?uris=$urisJson", navController
-                                )
-                            }
-                        }
-
-                        val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
-                        if (destination.isNotBlank()) {
-                            // Delay the navigation action to ensure the graph is set
-                            LaunchedEffect(Unit) {
-                                when (destination) {
-                                    StartNavigation.Notifications.toString() -> Navigate.navigate(
-                                        "notifications_screen", navController
-                                    )
-
-                                    StartNavigation.Profile.toString() -> {
-                                        val accountId: String = intent.extras?.getString(
-                                            KEY_DESTINATION_PARAM
-                                        ) ?: ""
-                                        if (accountId.isNotBlank()) {
-                                            Navigate.navigate(
-                                                "profile_screen/$accountId", navController
-                                            )
-                                        }
-                                    }
-
-                                    StartNavigation.Post.toString() -> {
-                                        val postId: String = intent.extras?.getString(
-                                            KEY_DESTINATION_PARAM
-                                        ) ?: ""
-                                        if (postId.isNotBlank()) {
-                                            Navigate.navigate(
-                                                "single_post_screen/$postId", navController
-                                            )
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        PreferencesComposable(navController, {scope.launch {
+                            drawerState.close()
+                        }})
                     }
+                }) {
+
+                    Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
+                        BottomBar(
+                            navController = navController,
+                            avatar = avatar,
+                            openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true },
+                            context = this
+                        )
+                    }) { paddingValues ->
+                        Box(
+                            modifier = Modifier.padding(paddingValues)
+                        ) {
+                            NavigationGraph(navController = navController, {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            } )
+
+                            LaunchedEffect(imageUris) {
+                                imageUris.forEach { uri ->
+                                    try {
+                                        contentResolver.takePersistableUriPermission(
+                                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        )
+                                    } catch (e: SecurityException) {
+                                        e.printStackTrace() // Handle permission denial gracefully
+                                    }
+                                }
+                                if (imageUris.isNotEmpty()) {
+                                    val urisJson =
+                                        Json.encodeToString(imageUris.map { uri -> uri.toString() })
+                                    Navigate.navigate(
+                                        "new_post_screen?uris=$urisJson", navController
+                                    )
+                                }
+                            }
+
+                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+                            if (destination.isNotBlank()) {
+                                // Delay the navigation action to ensure the graph is set
+                                LaunchedEffect(Unit) {
+                                    when (destination) {
+                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                            "notifications_screen", navController
+                                        )
+
+                                        StartNavigation.Profile.toString() -> {
+                                            val accountId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (accountId.isNotBlank()) {
+                                                Navigate.navigate(
+                                                    "profile_screen/$accountId", navController
+                                                )
+                                            }
+                                        }
+
+                                        StartNavigation.Post.toString() -> {
+                                            val postId: String = intent.extras?.getString(
+                                                KEY_DESTINATION_PARAM
+                                            ) ?: ""
+                                            if (postId.isNotBlank()) {
+                                                Navigate.navigate(
+                                                    "single_post_screen/$postId", navController
+                                                )
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
 
+                    }
                 }
                 if (showAccountSwitchBottomSheet) {
                     ModalBottomSheet(
@@ -345,13 +368,16 @@ fun gotoLoginActivity(context: Context, isAbleToGotBack: Boolean) {
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(
+    navController: NavHostController,
+    openPreferencesDrawer: () -> Unit
+) {
     NavHost(navController,
         startDestination = Destinations.HomeScreen.route,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }) {
         composable(Destinations.HomeScreen.route) {
-            HomeComposable(navController)
+            HomeComposable(navController, openPreferencesDrawer)
         }
 
         composable(Destinations.NotificationsScreen.route) {
@@ -384,10 +410,6 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(Destinations.EditProfile.route) {
             EditProfileComposable(navController)
-        }
-
-        composable(Destinations.Preferences.route) {
-            PreferencesComposable(navController)
         }
 
         composable(Destinations.IconSelection.route) {
@@ -438,7 +460,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(Destinations.OwnProfile.route) {
-            OwnProfileComposable(navController)
+            OwnProfileComposable(navController, openPreferencesDrawer)
         }
 
         composable(Destinations.Followers.route) { navBackStackEntry ->
