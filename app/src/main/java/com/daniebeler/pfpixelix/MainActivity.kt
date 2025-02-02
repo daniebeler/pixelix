@@ -175,7 +175,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val drawerState = rememberDrawerState(DrawerValue.Open)
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
 
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
