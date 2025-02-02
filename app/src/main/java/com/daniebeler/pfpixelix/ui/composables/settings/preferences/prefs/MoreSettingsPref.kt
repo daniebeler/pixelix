@@ -11,7 +11,7 @@ fun MoreSettingsPref(openUrl: () -> Unit) {
     SettingPref(
         leadingIcon = R.drawable.settings_outline,
         title = stringResource(id = R.string.more_settings),
-        trailingContent = R.drawable.chevron_back_outline,
+        trailingContent = R.drawable.open_outline,
         onClick = openUrl
     )
 }

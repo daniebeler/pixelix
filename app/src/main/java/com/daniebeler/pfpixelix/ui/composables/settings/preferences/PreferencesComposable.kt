@@ -70,7 +70,7 @@ fun PreferencesComposable(
                     closePreferencesDrawer()
                 }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline),
+                        imageVector = ImageVector.vectorResource(R.drawable.close_outline),
                         contentDescription = ""
                     )
                 }

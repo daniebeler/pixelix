@@ -16,7 +16,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, @DrawableRes logo: Int) {
     SettingPref(leadingIcon = painterResource(logo),
         title = stringResource(id = R.string.customize_app_icon),
-        trailingContent = R.drawable.chevron_back_outline,
+        trailingContent = R.drawable.chevron_forward_outline,
         onClick = {
             closePreferenceDrawer()
             Navigate.navigate("icon_selection_screen", navController)
@@ -27,7 +27,7 @@ fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: ()
 fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, logo: ImageBitmap) {
     SettingPref(leadingIcon = logo,
         title = stringResource(id = R.string.customize_app_icon),
-        trailingContent = R.drawable.chevron_back_outline,
+        trailingContent = R.drawable.chevron_forward_outline,
         onClick = {
             closePreferenceDrawer()
             Navigate.navigate("icon_selection_screen", navController)

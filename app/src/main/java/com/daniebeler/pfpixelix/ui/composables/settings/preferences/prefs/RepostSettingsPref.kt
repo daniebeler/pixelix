@@ -12,7 +12,7 @@ fun RepostSettingsPref(openUrl: () -> Unit) {
     SettingPref(
         leadingIcon = R.drawable.sync_outline,
         title = stringResource(id = R.string.repost_settings),
-        trailingContent = R.drawable.chevron_back_outline,
+        trailingContent = R.drawable.open_outline,
         onClick = openUrl
     )
 }
