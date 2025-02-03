@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.net.ParseException
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -35,7 +34,7 @@ object TimeAgo {
             } else if (day < 7) {
                 convTime = "$day days $suffix"
             }
-        } catch (e: ParseException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
         return convTime
