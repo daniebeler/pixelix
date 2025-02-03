@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import co.touchlab.kermit.Logger
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -480,10 +480,10 @@ fun NavigationGraph(
             })
         ) { navBackStackEntry ->
             val uId = navBackStackEntry.arguments?.getString("postid")
-            val refresh = navBackStackEntry.arguments?.getBoolean("refresh")
-            val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")
-            Log.d("refresh", refresh!!.toString())
-            Log.d("openReplies", openReplies!!.toString())
+            val refresh = navBackStackEntry.arguments?.getBoolean("refresh")!!
+            val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")!!
+            Logger.d("refresh") { refresh.toString() }
+            Logger.d("openReplies") { openReplies.toString() }
             uId?.let { id ->
                 SinglePostComposable(navController, postId = id, refresh, openReplies)
             }

@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
+import co.touchlab.kermit.Logger
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -91,7 +91,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun loadDataByUsername(username: String, refreshing: Boolean) {
-        Log.d("byUsername", "load data by username")
+        Logger.d("byUsername") { "load data by username" }
         getAccountByUsername(username, refreshing)
     }
 

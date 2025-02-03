@@ -30,6 +30,7 @@ workRuntimeKtx = "2.9.1"
 kotlin = "2.0.0"
 agp = "8.7.1"
 ksoup = "0.2.0"
+kermit = "2.0.4"
 
 [libraries]
 
@@ -80,6 +81,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-json = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
 ksoup = {module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup"}
+kermit = {module = "co.touchlab:kermit", version.ref = "kermit"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import android.util.Log
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
@@ -28,7 +28,7 @@ class GetRepliesUseCase(
 
     private fun htmlToText(html: String): String {
         val text = Ksoup.parse(html).text()
-        Log.d("htmlToText", text)
+        Logger.d("htmlToText") { text }
         return text
     }
 }
