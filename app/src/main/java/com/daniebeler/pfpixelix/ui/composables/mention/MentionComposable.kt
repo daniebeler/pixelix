@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.mention
 
-import android.util.Log
+import co.touchlab.kermit.Logger
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,7 +67,7 @@ fun MentionComposable(
     LaunchedEffect(viewModel.postState.post, viewModel.postContextState.postContext) {
         if (viewModel.postState.post != null && viewModel.postContextState.postContext != null) {
             val index = viewModel.postContextState.postContext!!.ancestors.size + 1
-            Log.d("index", index.toString())
+            Logger.d("index") { index.toString() }
             coroutineScope.launch {
                 lazyListState.scrollToItem(index)
             }

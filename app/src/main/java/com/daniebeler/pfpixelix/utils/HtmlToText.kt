@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.util.Log
+import co.touchlab.kermit.Logger
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Document
 
@@ -14,7 +14,7 @@ object HtmlToText {
         val text = document.text().replace("\\n", "\n")
         val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
 
-        Log.d("htmlToText", cleanedText)
+        Logger.d("htmlToText") { cleanedText }
         return cleanedText.trim()
     }
 

@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.domain.usecase
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
@@ -30,7 +30,7 @@ class UpdateAccountUseCase(
                 val fileRequestBody = inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
                 builder.addFormDataPart("avatar", "avatar", fileRequestBody!!)
             } catch (e: Exception) {
-                Log.e("UpdateAccountUseCase", e.message!!)
+                Logger.e("UpdateAccountUseCase") { e.message!! }
             }
 
 

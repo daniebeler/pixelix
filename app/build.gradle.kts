@@ -139,4 +139,5 @@ dependencies {
     implementation(libs.ksoup)
     ksp(libs.dagger.hilt.compiler)
 
+    implementation(libs.kermit)
 }
