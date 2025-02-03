@@ -7,9 +7,9 @@ import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.executeWithResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
@@ -68,28 +68,24 @@ class PostRepositoryImpl @Inject constructor(
     override fun getLikedPosts(maxId: String): Flow<Resource<LikedPostsWithNext>> = flow {
         try {
             emit(Resource.Loading())
-            val response = if (maxId.isNotBlank()) {
-                pixelfedApi.getLikedPosts(maxId).awaitResponse()
+            val (response, data) = if (maxId.isNotBlank()) {
+                pixelfedApi.getLikedPosts(maxId).executeWithResponse()
             } else {
-                pixelfedApi.getLikedPosts().awaitResponse()
+                pixelfedApi.getLikedPosts().executeWithResponse()
             }
 
-            if (response.isSuccessful) {
 
-                val linkHeader = response.headers()["link"] ?: ""
+                val linkHeader = response.headers["link"] ?: ""
 
                 val onlyLink =
                     linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
 
                 val nextMinId = onlyLink.substringAfter("min_id=", "")
 
-                val res = response.body()?.map { it.toModel() } ?: emptyList()
+                val res = data.map { it.toModel() }
 
                 val result = LikedPostsWithNext(res, nextMinId)
                 emit(Resource.Success(result))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }

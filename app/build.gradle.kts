@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ktorfit)
 }
 
 
@@ -73,9 +74,14 @@ dependencies {
 
     implementation(libs.volley)
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.json)
-    implementation(libs.logging.interceptor)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.serialization.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktorfit)
+    implementation(libs.ktorfit.call)
 
     implementation(libs.androidx.runtime.livedata)
 

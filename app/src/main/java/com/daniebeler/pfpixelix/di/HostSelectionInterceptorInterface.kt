@@ -1,8 +1,13 @@
 package com.daniebeler.pfpixelix.di
 
-import okhttp3.Interceptor
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.plugins.Sender
+import io.ktor.client.request.HttpRequestBuilder
 
-interface HostSelectionInterceptorInterface: Interceptor {
+interface HostSelectionInterceptorInterface {
 
-    fun setHost(host: String?)fun setToken(token: String?)
+    fun setHost(host: String?)
+    fun setToken(token: String?)
+
+    suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall
 }

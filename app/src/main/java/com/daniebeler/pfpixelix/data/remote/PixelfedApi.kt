@@ -27,19 +27,18 @@ import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.WrapperDto
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.Url
+import de.jensklingenberg.ktorfit.Call
+import de.jensklingenberg.ktorfit.http.Body
+import de.jensklingenberg.ktorfit.http.DELETE
+import de.jensklingenberg.ktorfit.http.Field
+import de.jensklingenberg.ktorfit.http.FormUrlEncoded
+import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.POST
+import de.jensklingenberg.ktorfit.http.PUT
+import de.jensklingenberg.ktorfit.http.Path
+import de.jensklingenberg.ktorfit.http.Query
+import de.jensklingenberg.ktorfit.http.Url
+import io.ktor.client.request.forms.MultiPartFormDataContent
 
 interface PixelfedApi {
 
@@ -143,7 +142,7 @@ interface PixelfedApi {
 
     @POST("api/v1/accounts/update_credentials?_pe=1")
     fun updateAccount(
-        @Body body: RequestBody
+        @Body body: MultiPartFormDataContent
     ): Call<AccountDto>
 
     @GET("api/v1/accounts/{accountid}/statuses?pe=1")
@@ -363,7 +362,7 @@ interface PixelfedApi {
 
     @POST("/api/v2/media")
     fun uploadMedia(
-        @Body body: RequestBody
+        @Body body: MultiPartFormDataContent
     ): Call<MediaAttachmentDto>
 
     @FormUrlEncoded
@@ -376,7 +375,7 @@ interface PixelfedApi {
     @POST("/api/v1/statuses")
     suspend fun createPost(
         @Body createPostDto: CreatePostDto
-    ): Response<PostDto>
+    ): Call<PostDto>
 
     @POST("/api/v1/statuses")
     fun createReply(
@@ -386,7 +385,7 @@ interface PixelfedApi {
     @PUT("/api/v1/statuses/{id}")
     suspend fun updatePost(
         @Path("id") postId: String, @Body updatePostDto: UpdatePostDto
-    ): Response<Unit>
+    ): Call<Unit>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deletePost(

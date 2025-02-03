@@ -13,21 +13,20 @@ import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pfpixelix.data.remote.dto.PostDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.domain.model.MediaAttachmentConfiguration
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
 import com.daniebeler.pfpixelix.utils.GetFile
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.execute
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.awaitResponse
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
@@ -48,35 +47,31 @@ class PostEditorRepositoryImpl @Inject constructor(
             //val pixelfedApi = buildPixelFedApi(true)
 
             val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
-
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val fileRequestBody =
-                inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
-
+            val bytes = context.contentResolver.openInputStream(uri)?.readBytes()
             val file = GetFile.getFile(uri, context) ?: return@flow
 
-            val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            builder.addFormDataPart("description", description)
-                .addFormDataPart("file", file.name, fileRequestBody!!)
+            val thumbnailBitmap = if (fileType.take(5) != "image" || fileType == "image/gif") {
+                getThumbnail(uri, context)
+            } else null
 
-            if (fileType.take(5) != "image" || fileType == "image/gif") {
-                val thumbnailBitmap = getThumbnail(uri, context)
+            val data = MultiPartFormDataContent(formData {
+                append("file", bytes!!, Headers.build {
+                    append(HttpHeaders.ContentType, fileType)
+                    append(HttpHeaders.ContentDisposition, file.name)
+                })
                 if (thumbnailBitmap != null) {
                     bitmapToBytes(thumbnailBitmap)?.let {
-                        builder.addFormDataPart(
-                            "thumbnail", "thumbnail", it.toRequestBody()
-                        )
+                        append("thumbnail", it, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "thumbnail")
+                        })
                     }
                 }
-            }
+            })
 
-            val requestBody: RequestBody = builder.build()
-            val response = pixelfedApi.uploadMedia(requestBody
-            ).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toModel()
+            try {
+                val res = pixelfedApi.uploadMedia(data).execute().toModel()
                 emit(Resource.Success(res))
-            } else {
+            } catch (e: Exception) {
                 emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {
@@ -113,13 +108,8 @@ class PostEditorRepositoryImpl @Inject constructor(
     override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.createPost(createPostDto)
-            if (response != null) {
-                val res = response.body()!!.toModel()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            val res = pixelfedApi.createPost(createPostDto).execute().toModel()
+            emit(Resource.Success(res))
         } catch (exception: Exception) {
             if (exception.message != null) {
                 emit(Resource.Error(exception.message!!))
@@ -132,12 +122,8 @@ class PostEditorRepositoryImpl @Inject constructor(
     override fun updatePost(postId: String, updatePostDto: UpdatePostDto): Flow<Resource<Post?>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.updatePost(postId, updatePostDto)
-            if (response.code() == 200) {
-                emit(Resource.Success(null))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            pixelfedApi.updatePost(postId, updatePostDto).execute()
+            emit(Resource.Success(null))
         } catch (exception: Exception) {
             if (exception.message != null) {
                 emit(Resource.Error(exception.message!!))

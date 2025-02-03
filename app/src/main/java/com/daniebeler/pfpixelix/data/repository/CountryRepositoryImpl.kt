@@ -35,10 +35,10 @@ import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeInfo
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.execute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import retrofit2.awaitResponse
 import javax.inject.Inject
 
 
@@ -81,17 +81,13 @@ class CountryRepositoryImpl @Inject constructor(
             try {
                 emit(Resource.Loading())
                 val response = if (maxNotificationId.isNotEmpty()) {
-                    pixelfedApi.getNotifications(maxNotificationId).awaitResponse()
+                    pixelfedApi.getNotifications(maxNotificationId).execute()
                 } else {
-                    pixelfedApi.getNotifications().awaitResponse()
+                    pixelfedApi.getNotifications().execute()
                 }
 
-                if (response.isSuccessful) {
-                    val res = response.body()?.map { it.toModel() } ?: emptyList()
-                    emit(Resource.Success(res))
-                } else {
-                    emit(Resource.Error("Unknown Error"))
-                }
+                val res = response.map { it.toModel() }
+                emit(Resource.Success(res))
             } catch (exception: Exception) {
                 emit(Resource.Error(exception.message ?: "Unknown Error"))
             }
@@ -110,13 +106,8 @@ class CountryRepositoryImpl @Inject constructor(
     override fun search(searchText: String, type: String?, limit: Int): Flow<Resource<Search>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.getSearch(searchText, type, limit).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()!!.toModel()
-                emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            val response = pixelfedApi.getSearch(searchText, type, limit).execute().toModel()
+            emit(Resource.Success(response))
         } catch (exception: Exception) {
             emit(Resource.Error("Unknown Error"))
         }
@@ -144,12 +135,7 @@ class CountryRepositoryImpl @Inject constructor(
 
     override suspend fun createApplication(): Application? {
         return try {
-            val response = pixelfedApi.createApplication().awaitResponse()
-            if (response.isSuccessful) {
-                response.body()?.toModel()
-            } else {
-                null
-            }
+            pixelfedApi.createApplication().execute().toModel()
         } catch (exception: Exception) {
             null
         }
