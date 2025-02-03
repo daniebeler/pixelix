@@ -57,7 +57,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -230,7 +230,7 @@ private fun ReplyElement(
     deleteReply: () -> Unit,
     myAccountId: String?,
     openUrl: (url: String) -> Unit,
-    viewModel: ReplyElementViewModel = hiltViewModel(key = reply.id)
+    viewModel: ReplyElementViewModel = injectViewModel(key = reply.id) { replyElementViewModel }
 ) {
 
     var timeAgo: String by remember { mutableStateOf("") }

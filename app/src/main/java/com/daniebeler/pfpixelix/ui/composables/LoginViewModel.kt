@@ -11,10 +11,8 @@ import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.utils.Navigate
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: CountryRepository,
     private val newLoginDataUseCase: AddNewLoginUseCase,

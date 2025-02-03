@@ -14,12 +14,10 @@ import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateCollectionUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class CollectionViewModel @Inject constructor(
     private val getCollectionUseCase: GetCollectionUseCase,
     private val getPostsOfCollectionUseCase: GetPostsOfCollectionUseCase,

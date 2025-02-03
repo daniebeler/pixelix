@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetOwnInstanceDomainUseCase(
     private val repository: AuthRepository
 ) {

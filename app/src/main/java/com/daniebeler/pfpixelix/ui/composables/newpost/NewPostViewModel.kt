@@ -22,15 +22,13 @@ import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
 import com.daniebeler.pfpixelix.utils.GetFile
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 
-@HiltViewModel
 class NewPostViewModel @Inject constructor(
     private val uploadMediaUseCase: UploadMediaUseCase,
     private val updateMediaUseCase: UpdateMediaUseCase,

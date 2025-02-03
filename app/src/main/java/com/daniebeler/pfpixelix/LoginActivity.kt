@@ -15,7 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.di.EntryPointComponent
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FinishLoginUseCase
@@ -25,35 +27,17 @@ import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.LoginComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-
-    @Inject
     lateinit var obtainTokenUseCase: ObtainTokenUseCase
-
-    @Inject
     lateinit var verifyTokenUseCase: VerifyTokenUseCase
-
-    @Inject
     lateinit var updateLoginDataUseCase: UpdateLoginDataUseCase
-
-    @Inject
     lateinit var finishLoginUseCase: FinishLoginUseCase
-
-    @Inject
     lateinit var newLoginDataUseCase: AddNewLoginUseCase
-
-
-    @Inject
     lateinit var getOngoingLoginUseCase: GetOngoingLoginUseCase
-
-    @Inject
     lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
 
 
@@ -61,6 +45,16 @@ class LoginActivity : ComponentActivity() {
     private var error: String by mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        EntryPointComponent::class.create(MyApplication.appComponent).let {
+            obtainTokenUseCase = it.obtainTokenUseCase
+            verifyTokenUseCase = it.verifyTokenUseCase
+            updateLoginDataUseCase = it.updateLoginDataUseCase
+            finishLoginUseCase = it.finishLoginUseCase
+            newLoginDataUseCase = it.newLoginDataUseCase
+            getOngoingLoginUseCase = it.getOngoingLoginUseCase
+            hostSelectionInterceptorInterface = it.hostSelectionInterceptorInterface
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)

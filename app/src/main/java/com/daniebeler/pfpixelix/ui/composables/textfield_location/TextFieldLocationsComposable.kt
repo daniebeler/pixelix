@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Place
 
 @Composable
@@ -46,7 +46,7 @@ fun TextFieldLocationsComposable(
     modifier: Modifier?,
     imeAction: ImeAction,
     suggestionsBoxColor: Color,
-    viewModel: TextFieldLocationsViewModel = hiltViewModel()
+    viewModel: TextFieldLocationsViewModel = injectViewModel("textFieldLocationsViewModel") { textFieldLocationsViewModel }
 ) {
 
     LaunchedEffect(initialValue) {

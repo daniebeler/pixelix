@@ -10,7 +10,7 @@ import com.daniebeler.pfpixelix.utils.NetworkCall
 import com.daniebeler.pfpixelix.utils.executeWithResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class PostRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi

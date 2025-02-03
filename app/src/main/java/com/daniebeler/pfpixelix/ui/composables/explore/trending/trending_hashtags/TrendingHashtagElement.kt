@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Tag
@@ -38,7 +38,7 @@ import java.util.Locale
 fun TrendingHashtagElement(
     hashtag: Tag,
     navController: NavController,
-    viewModel: TrendingHashtagElementViewModel = hiltViewModel(key = "the" + hashtag.name)
+    viewModel: TrendingHashtagElementViewModel = injectViewModel(key = "the" + hashtag.name) { trendingHashtagElementViewModel }
 ) {
 
     LaunchedEffect(hashtag) {

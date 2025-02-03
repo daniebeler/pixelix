@@ -52,7 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
 fun LoginComposable(
     isLoading: Boolean,
     error: String,
-    viewModel: LoginViewModel = hiltViewModel(key = "login-viewmodel-key")
+    viewModel: LoginViewModel = injectViewModel(key = "login-viewmodel-key") { loginViewModel }
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setSystemBarsColor(

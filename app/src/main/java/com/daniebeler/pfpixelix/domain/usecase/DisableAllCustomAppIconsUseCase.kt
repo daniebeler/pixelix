@@ -4,7 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import com.daniebeler.pfpixelix.common.IconsHolder
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class DisableAllCustomAppIconsUseCase() {
 
     operator fun invoke(context: Context) {

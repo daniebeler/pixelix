@@ -19,6 +19,6 @@ object CustomLatestImageStateDefinition : GlanceStateDefinition<LatestImageStore
     }
 
     private const val fileName = "latest_image_widget_store"
-    private val Context.dataStore: DataStore<LatestImageStore> by dataStore(fileName, LatestImageStoreSerializer())
+    private val Context.dataStore: DataStore<LatestImageStore> by dataStore(fileName, LatestImageStoreSerializer)
 }
 

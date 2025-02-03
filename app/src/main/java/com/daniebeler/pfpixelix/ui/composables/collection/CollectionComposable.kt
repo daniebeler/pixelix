@@ -47,7 +47,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
@@ -60,7 +60,7 @@ import com.daniebeler.pfpixelix.utils.Share
 fun CollectionComposable(
     navController: NavController,
     collectionId: String,
-    viewModel: CollectionViewModel = hiltViewModel(key = "collection-viewmodel-key")
+    viewModel: CollectionViewModel = injectViewModel(key = "collection-viewmodel-key") { collectionViewModel }
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

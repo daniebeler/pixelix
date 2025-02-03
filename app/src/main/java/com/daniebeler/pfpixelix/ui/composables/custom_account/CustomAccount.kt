@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -40,7 +40,7 @@ fun CustomAccount(
     account: Account,
     relationship: Relationship?,
     navController: NavController,
-    viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
+    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     CustomAccountPrivate(
         account = account,
@@ -68,7 +68,7 @@ fun CustomAccount(
     relationship: Relationship?,
     navController: NavController,
     removeSavedSearch: () -> Unit,
-    viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
+    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     CustomAccountPrivate(
         account = account,
@@ -87,7 +87,7 @@ fun CustomAccount(
     relationship: Relationship?,
     onClick: () -> Unit,
     navController: NavController,
-    viewModel: CustomAccountViewModel = hiltViewModel(key = "custom-account" + account.id)
+    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     CustomAccountPrivate(
         account = account,

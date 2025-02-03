@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import javax.annotation.concurrent.Immutable
+import androidx.compose.runtime.Immutable
 
 @Immutable
 data class

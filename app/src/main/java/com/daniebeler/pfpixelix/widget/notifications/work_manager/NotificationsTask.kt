@@ -7,7 +7,6 @@ import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.datastore.core.DataStore
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import coil.imageLoader
@@ -19,13 +18,11 @@ import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
+import me.tatarka.inject.annotations.Inject
 
-@HiltWorker
-class NotificationsTask @AssistedInject constructor(
-    @Assisted private val context: Context,
-    @Assisted workerParams: WorkerParameters,
+class NotificationsTask @Inject constructor(
+    private val context: Context,
+    workerParams: WorkerParameters,
     private val dataStore: DataStore<AuthData>
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {

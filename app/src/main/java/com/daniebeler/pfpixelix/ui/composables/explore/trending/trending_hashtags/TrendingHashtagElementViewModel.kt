@@ -9,12 +9,10 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class TrendingHashtagElementViewModel @Inject constructor(
     private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
     private val getHashtagUseCase: GetHashtagUseCase

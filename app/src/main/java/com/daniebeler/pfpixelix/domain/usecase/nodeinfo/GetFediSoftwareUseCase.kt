@@ -6,7 +6,9 @@ import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetFediSoftwareUseCase(private val countryRepository: CountryRepository) {
     operator fun invoke(domain: String): Flow<Resource<FediSoftware>> = flow {
         emit(Resource.Loading())

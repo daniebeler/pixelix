@@ -58,7 +58,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -82,7 +82,7 @@ fun OtherProfileComposable(
     navController: NavController,
     userId: String,
     byUsername: String?,
-    viewModel: OtherProfileViewModel = hiltViewModel(key = "other-profile$userId$byUsername")
+    viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$byUsername") { otherProfileViewModel }
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

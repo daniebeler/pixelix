@@ -7,7 +7,9 @@ import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSensitiveContentPrefUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetTrendingPostsUseCase(
     private val postRepository: PostRepository,
     private val context: Context

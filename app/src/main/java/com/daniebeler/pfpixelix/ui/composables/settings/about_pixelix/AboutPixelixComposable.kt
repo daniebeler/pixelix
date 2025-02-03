@@ -44,7 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
@@ -54,7 +54,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun AboutPixelixComposable(
     navController: NavController,
-    viewModel: AboutPixelixViewModel = hiltViewModel(key = "about-pixelix-viewmodel-key")
+    viewModel: AboutPixelixViewModel = injectViewModel(key = "about-pixelix-viewmodel-key") { aboutPixelixViewModel }
 ) {
 
     val context = LocalContext.current

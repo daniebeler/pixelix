@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -9,7 +9,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 @Composable
 fun GlobalTimelineComposable(
     navController: NavController,
-    viewModel: GlobalTimelineViewModel = hiltViewModel(key = "global-timeline-key")
+    viewModel: GlobalTimelineViewModel = injectViewModel(key = "global-timeline-key") { globalTimelineViewModel }
 ) {
     InfinitePostsList(items = viewModel.globalTimelineState.globalTimeline,
         isLoading = viewModel.globalTimelineState.isLoading,

@@ -63,7 +63,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -82,7 +82,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ExploreComposable(
     navController: NavController,
-    viewModel: ExploreViewModel = hiltViewModel(key = "search-viewmodel-key")
+    viewModel: ExploreViewModel = injectViewModel(key = "search-viewmodel-key") { exploreViewModel }
 ) {
     val context: Context = LocalContext.current
 

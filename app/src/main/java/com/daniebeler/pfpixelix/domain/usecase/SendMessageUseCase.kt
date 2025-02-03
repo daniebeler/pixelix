@@ -6,7 +6,9 @@ import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.domain.model.Message
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class SendMessageUseCase(
     private val directMessagesRepository: DirectMessagesRepository
 ) {

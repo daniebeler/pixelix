@@ -9,10 +9,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class AboutPixelixViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getActiveAppIconUseCase: GetActiveAppIconUseCase

@@ -8,7 +8,9 @@ import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSensitiveContentPrefUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetHashtagTimelineUseCase(
     private val timelineRepository: TimelineRepository,
     private val context: Context

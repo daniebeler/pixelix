@@ -36,7 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -49,7 +49,7 @@ import java.util.Locale
 @Composable
 fun AboutInstanceComposable(
     navController: NavController,
-    viewModel: AboutInstanceViewModel = hiltViewModel(key = "about-instance-key")
+    viewModel: AboutInstanceViewModel = injectViewModel(key = "about-instance-key") { aboutInstanceViewModel }
 ) {
 
     val lazyListState = rememberLazyListState()

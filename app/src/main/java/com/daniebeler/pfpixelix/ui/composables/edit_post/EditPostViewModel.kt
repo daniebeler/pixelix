@@ -16,15 +16,13 @@ import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdatePostUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class EditPostViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val updatePostUseCase: UpdatePostUseCase,

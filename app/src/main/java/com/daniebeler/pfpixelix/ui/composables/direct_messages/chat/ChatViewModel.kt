@@ -11,12 +11,10 @@ import com.daniebeler.pfpixelix.domain.model.Message
 import com.daniebeler.pfpixelix.domain.usecase.DeleteMessageUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SendMessageUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatUseCase: GetChatUseCase, private val sendMessageUseCase: SendMessageUseCase, private val deleteMessageUseCase: DeleteMessageUseCase
 ) : ViewModel() {

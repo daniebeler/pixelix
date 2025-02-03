@@ -9,12 +9,10 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetTrendingAccountsUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class TrendingAccountsViewModel @Inject constructor(
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val getTrendingAccountsUseCase: GetTrendingAccountsUseCase

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class PostEditorRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi

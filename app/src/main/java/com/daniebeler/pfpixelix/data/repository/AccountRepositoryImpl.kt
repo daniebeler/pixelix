@@ -14,7 +14,7 @@ import com.daniebeler.pfpixelix.utils.execute
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class AccountRepositoryImpl @Inject constructor(
     private val pixelfedApi: PixelfedApi

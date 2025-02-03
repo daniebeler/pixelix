@@ -53,7 +53,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -69,7 +69,7 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 fun ChatComposable(
     navController: NavController,
     accountId: String,
-    viewModel: ChatViewModel = hiltViewModel(key = "chat$accountId")
+    viewModel: ChatViewModel = injectViewModel(key = "chat$accountId") { chatViewModel }
 ) {
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current

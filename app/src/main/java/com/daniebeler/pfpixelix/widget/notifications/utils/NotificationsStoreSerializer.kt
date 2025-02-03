@@ -6,10 +6,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Singleton
 
-@Singleton
-class NotificationsStoreSerializer: Serializer<NotificationsStore> {
+object NotificationsStoreSerializer: Serializer<NotificationsStore> {
     override val defaultValue: NotificationsStore
         get() = NotificationsStore()
 

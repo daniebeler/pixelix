@@ -5,7 +5,7 @@ import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val dataStore: DataStore<AuthData>) :
     AuthRepository {

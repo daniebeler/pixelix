@@ -9,12 +9,10 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.usecase.GetFollowedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class FollowedHashtagsViewModel @Inject constructor(
     private val getFollowedHashtagsUseCase: GetFollowedHashtagsUseCase,
     private val getHashtagUseCase: GetHashtagUseCase

@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
@@ -32,7 +32,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 @Composable
 fun LikedPostsComposable(
     navController: NavController,
-    viewModel: LikedPostsViewModel = hiltViewModel(key = "likey-posts-key")
+    viewModel: LikedPostsViewModel = injectViewModel(key = "likey-posts-key") { likedPostsViewModel }
 ) {
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
