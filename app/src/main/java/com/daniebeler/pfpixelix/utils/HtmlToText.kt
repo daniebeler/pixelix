@@ -1,12 +1,12 @@
 package com.daniebeler.pfpixelix.utils
 
 import android.util.Log
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.Document
 
 object HtmlToText {
     fun htmlToText(html: String): String {
-        val document = Jsoup.parse(html)
+        val document = Ksoup.parse(html)
         document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
         document.select("br").append("\\n") // Replace <br> with newlines
         document.select("p").prepend("\\n\\n") // Add double newline for paragraphs

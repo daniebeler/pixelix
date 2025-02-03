@@ -4,9 +4,9 @@ import android.util.Log
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
+import com.fleeksoft.ksoup.Ksoup
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.jsoup.Jsoup
 
 class GetRepliesUseCase(
     private val repository: CountryRepository
@@ -27,7 +27,7 @@ class GetRepliesUseCase(
     }
 
     private fun htmlToText(html: String): String {
-        val text = Jsoup.parse(html).text()
+        val text = Ksoup.parse(html).text()
         Log.d("htmlToText", text)
         return text
     }

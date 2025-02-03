@@ -1,9 +1,9 @@
 package com.daniebeler.pfpixelix.di
 
+import com.fleeksoft.ksoup.parser.Parser
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.jsoup.parser.Parser
 
 class HtmlEntityDecodingInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

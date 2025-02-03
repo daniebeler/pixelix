@@ -29,7 +29,7 @@ volley = "1.2.1"
 workRuntimeKtx = "2.9.1"
 kotlin = "2.0.0"
 agp = "8.7.1"
-jsoup = "1.18.3"
+ksoup = "0.2.0"
 
 [libraries]
 
@@ -79,7 +79,7 @@ material3 = { module = "androidx.compose.material3:material3", version.ref = "ma
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-json = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
-jsoup = {module = "org.jsoup:jsoup", version.ref = "jsoup"}
+ksoup = {module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
