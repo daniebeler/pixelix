@@ -37,9 +37,9 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.char
 import java.util.Locale
 
 @Composable
@@ -178,10 +178,15 @@ fun ProfileTopSection(
 
             if (account.createdAt.isNotBlank()) {
                 val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
-                val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                val formatted = date.format(formatter)
+                val formatter = LocalDate.Format {
+                    monthName(MonthNames.ENGLISH_ABBREVIATED)
+                    char(' ')
+                    dayOfMonth()
+                    chars(", ")
+                    year()
+                }
                 Text(
-                    text = "Joined $formatted",
+                    text = "Joined ${formatter.format(date)}",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp
                 )
