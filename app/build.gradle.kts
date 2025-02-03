@@ -140,4 +140,6 @@ dependencies {
     ksp(libs.dagger.hilt.compiler)
 
     implementation(libs.kermit)
+
+    implementation(libs.kotlinx.datetime)
 }
