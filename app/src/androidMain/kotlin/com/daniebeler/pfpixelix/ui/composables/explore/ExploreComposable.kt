@@ -97,7 +97,9 @@ fun ExploreComposable(
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = 0f },
             inputField = {
-                SearchBarDefaults.InputField(state = textFieldState,
+                SearchBarDefaults.InputField(
+                    query = textFieldState.text.toString(),
+                    onQueryChange = { textFieldState.setTextAndPlaceCursorAtEnd(it) },
                     onSearch = {
                         expanded = false
                         viewModel.onSearch(it)
