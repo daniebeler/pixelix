@@ -1,10 +1,13 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.Chat
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
+@Serializable
 data class ChatDto(
     val avatar: String,
-    val domain: Any,
+    val domain: JsonElement?,
     val id: String,
     val isLocal: Boolean,
     val messages: List<MessageDto>,

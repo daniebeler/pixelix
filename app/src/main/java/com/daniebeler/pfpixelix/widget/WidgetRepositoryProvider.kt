@@ -8,10 +8,12 @@ import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 class WidgetRepositoryProvider(private val dataStore: DataStore<AuthData>) {
     suspend operator fun invoke(): WidgetRepository? {
@@ -34,8 +36,13 @@ class WidgetRepositoryProvider(private val dataStore: DataStore<AuthData>) {
         val client = OkHttpClient.Builder().addInterceptor(hostSelectionInterceptor)
             .addInterceptor(logging).build()
 
+        val json = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+
         val retrofit: Retrofit = Retrofit.Builder().addConverterFactory(
-            GsonConverterFactory.create()
+            json.asConverterFactory("application/json; charset=UTF8".toMediaType())
         ).client(client).baseUrl("https://err.or/").build()
 
         val service = retrofit.create(PixelfedApi::class.java)

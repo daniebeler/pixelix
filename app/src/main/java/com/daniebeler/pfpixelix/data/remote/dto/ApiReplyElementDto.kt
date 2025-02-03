@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ApiReplyElementDto(
-    @SerializedName("data") val data: List<ReplyDto>
+    @SerialName("data") val data: List<ReplyDto>
 )

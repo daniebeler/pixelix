@@ -3,18 +3,20 @@ package com.daniebeler.pfpixelix.data.remote.dto.nodeinfo
 
 import com.daniebeler.pfpixelix.data.remote.dto.DtoInterface
 import com.daniebeler.pfpixelix.domain.model.nodeinfo.NodeinfoUsers
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class NodeinfoUsersDto(
-    @SerializedName("activeHalfyear") val activeHalfyear: Int?,
-    @SerializedName("activeMonth") val activeMonth: Int?,
-    @SerializedName("total") val total: Int?
+    @SerialName("activeHalfyear") val activeHalfyear: Int?,
+    @SerialName("activeMonth") val activeMonth: Int?,
+    @SerialName("total") val total: Int?
 ) : DtoInterface<NodeinfoUsers> {
     override fun toModel(): NodeinfoUsers {
         return NodeinfoUsers(
-            activeHalfyear = activeHalfyear ?: -1,
-            activeMonth = activeMonth ?: -1,
-            total = total ?: -1
+            activeHalfyear = activeHalfyear ?: 0,
+            activeMonth = activeMonth ?: 0,
+            total = total ?: 0
         )
     }
 }

@@ -1,13 +1,15 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.Conversation
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ConversationDto(
     val id: Int,
     val unread: Boolean,
     val accounts: List<AccountDto>,
-    @SerializedName("last_status") val lastPost: PostDto
+    @SerialName("last_status") val lastPost: PostDto
 ) : DtoInterface<Conversation> {
     override fun toModel(): Conversation {
         return Conversation(

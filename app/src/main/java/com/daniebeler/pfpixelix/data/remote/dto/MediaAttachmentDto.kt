@@ -2,25 +2,28 @@ package com.daniebeler.pfpixelix.data.remote.dto
 
 
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
+@Serializable
 data class MediaAttachmentDto(
-    @SerializedName("blurhash") val blurhash: String,
-    @SerializedName("description") val description: String,
-    @SerializedName("filter_class") val filterClass: Any,
-    @SerializedName("filter_name") val filterName: Any,
-    @SerializedName("id") val id: String,
-    @SerializedName("is_nsfw") val isNsfw: Any,
-    @SerializedName("license") val license: LicenseDto?,
-    @SerializedName("meta") val meta: MetaDto?,
-    @SerializedName("mime") val mime: String?,
-    @SerializedName("optimized_url") val optimizedUrl: String,
-    @SerializedName("orientation") val orientation: String,
-    @SerializedName("preview_url") val previewUrl: String,
-    @SerializedName("remote_url") val remoteUrl: Any,
-    @SerializedName("text_url") val textUrl: Any,
-    @SerializedName("type") val type: String,
-    @SerializedName("url") val url: String
+    @SerialName("blurhash") val blurhash: String?,
+    @SerialName("description") val description: String?,
+    @SerialName("filter_class") val filterClass: JsonElement?,
+    @SerialName("filter_name") val filterName: JsonElement?,
+    @SerialName("id") val id: String,
+    @SerialName("is_nsfw") val isNsfw: JsonElement?,
+    @SerialName("license") val license: LicenseDto?,
+    @SerialName("meta") val meta: MetaDto?,
+    @SerialName("mime") val mime: String?,
+    @SerialName("optimized_url") val optimizedUrl: String?,
+    @SerialName("orientation") val orientation: String?,
+    @SerialName("preview_url") val previewUrl: String,
+    @SerialName("remote_url") val remoteUrl: JsonElement?,
+    @SerialName("text_url") val textUrl: JsonElement?,
+    @SerialName("type") val type: String,
+    @SerialName("url") val url: String?
 ) : DtoInterface<MediaAttachment> {
     override fun toModel(): MediaAttachment {
         return MediaAttachment(

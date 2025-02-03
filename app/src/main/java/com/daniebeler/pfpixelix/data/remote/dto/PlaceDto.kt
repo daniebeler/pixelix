@@ -1,14 +1,16 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.Place
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PlaceDto(
-    @SerializedName("id") val id: String,
-    @SerializedName("slug") val slug: String?,
-    @SerializedName("url") val url: String?,
-    @SerializedName("name") val name: String,
-    @SerializedName("country") val country: String
+    @SerialName("id") val id: String,
+    @SerialName("slug") val slug: String?,
+    @SerialName("url") val url: String?,
+    @SerialName("name") val name: String?,
+    @SerialName("country") val country: String?
 ) : DtoInterface<Place> {
     override fun toModel(): Place {
         return Place(

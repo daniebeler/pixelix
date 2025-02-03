@@ -1,11 +1,13 @@
 package com.daniebeler.pfpixelix.data.remote.dto
 
 import com.daniebeler.pfpixelix.domain.model.AccessToken
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AccessTokenDto(
-    @SerializedName("access_token") val accessToken: String,
-    @SerializedName("created_at") val createdAt: String
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("created_at") val createdAt: String
 ) : DtoInterface<AccessToken> {
     override fun toModel(): AccessToken {
         return AccessToken(
