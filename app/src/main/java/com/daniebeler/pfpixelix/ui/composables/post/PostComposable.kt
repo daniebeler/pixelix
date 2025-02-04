@@ -85,7 +85,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -128,7 +128,7 @@ fun PostComposable(
     openReplies: Boolean = false,
     showReplies: Boolean = true,
     modifier: Modifier = Modifier,
-    viewModel: PostViewModel = hiltViewModel(key = "post" + post.id)
+    viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
 
     val context = LocalContext.current

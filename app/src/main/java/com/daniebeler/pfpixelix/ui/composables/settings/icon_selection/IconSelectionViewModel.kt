@@ -13,10 +13,8 @@ import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.IconsHolder
 import com.daniebeler.pfpixelix.domain.usecase.DisableAllCustomAppIconsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.EnableCustomAppIconUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class IconSelectionViewModel @Inject constructor(
     private val disableAllCustomAppIconsUseCase: DisableAllCustomAppIconsUseCase,
     private val enableCustomAppIconUseCase: EnableCustomAppIconUseCase

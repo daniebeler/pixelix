@@ -14,12 +14,10 @@ import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelatedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowHashtagUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class HashtagTimelineViewModel @Inject constructor(
     private val getHashtagUseCase: GetHashtagUseCase,
     private val followHashtagUseCase: FollowHashtagUseCase,

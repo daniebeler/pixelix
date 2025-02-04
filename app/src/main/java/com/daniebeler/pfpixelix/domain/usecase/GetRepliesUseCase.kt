@@ -7,7 +7,9 @@ import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.fleeksoft.ksoup.Ksoup
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetRepliesUseCase(
     private val repository: CountryRepository
 ) {

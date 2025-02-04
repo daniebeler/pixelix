@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 
@@ -55,7 +55,7 @@ import com.daniebeler.pfpixelix.R
 @Composable
 fun IconSelectionComposable(
     navController: NavController,
-    viewModel: IconSelectionViewModel = hiltViewModel(key = "iconselectionvm")
+    viewModel: IconSelectionViewModel = injectViewModel(key = "iconselectionvm") { iconSelectionViewModel }
 ) {
 
     val context = LocalContext.current

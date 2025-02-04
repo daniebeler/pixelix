@@ -11,13 +11,11 @@ import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.Locale
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ServerStatsViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getFediServerUseCase: GetFediServerUseCase,

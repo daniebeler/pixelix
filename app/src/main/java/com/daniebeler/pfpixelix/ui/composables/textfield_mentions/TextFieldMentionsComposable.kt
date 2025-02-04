@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextAfterSelection
 import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +48,7 @@ fun TextFieldMentionsComposable(
     modifier: Modifier?,
     imeAction: ImeAction,
     suggestionsBoxColor: Color,
-    viewModel: TextFieldMentionsViewModel = hiltViewModel()
+    viewModel: TextFieldMentionsViewModel = injectViewModel("textFieldMentionsViewModel") { textFieldMentionsViewModel }
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current

@@ -58,7 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
@@ -74,7 +74,7 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun EditPostComposable(
-    postId: String, navController: NavController, viewModel: EditPostViewModel = hiltViewModel()
+    postId: String, navController: NavController, viewModel: EditPostViewModel = injectViewModel("editPostViewModel") { editPostViewModel }
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 

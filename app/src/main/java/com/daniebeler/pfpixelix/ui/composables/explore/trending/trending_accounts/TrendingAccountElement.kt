@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
@@ -27,7 +27,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 fun TrendingAccountElement(
     account: Account,
     navController: NavController,
-    viewModel: TrendingAccountElementViewModel = hiltViewModel(key = account.id)
+    viewModel: TrendingAccountElementViewModel = injectViewModel(key = account.id) { trendingAccountElementViewModel }
 ) {
     val context = LocalContext.current
     LaunchedEffect(account) {

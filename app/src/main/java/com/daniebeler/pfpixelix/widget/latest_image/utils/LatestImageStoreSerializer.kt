@@ -6,10 +6,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Singleton
 
-@Singleton
-class LatestImageStoreSerializer: Serializer<LatestImageStore> {
+object LatestImageStoreSerializer: Serializer<LatestImageStore> {
     override val defaultValue: LatestImageStore
         get() = LatestImageStore()
 

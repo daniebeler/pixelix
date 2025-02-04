@@ -10,11 +10,9 @@ import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.RemoveLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateCurrentUserUseCase
 import com.daniebeler.pfpixelix.utils.Navigate
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class AccountSwitchViewModel @Inject constructor(
     private val getAuthDataUseCase: GetAuthDataUseCase,
     private val updateCurrentUserUseCase: UpdateCurrentUserUseCase,

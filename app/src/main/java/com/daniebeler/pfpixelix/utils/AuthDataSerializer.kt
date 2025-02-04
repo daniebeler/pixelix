@@ -6,10 +6,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Singleton
 
-@Singleton
-class AuthDataSerializer: Serializer<AuthData> {
+object AuthDataSerializer: Serializer<AuthData> {
     override val defaultValue: AuthData
         get() = AuthData()
 

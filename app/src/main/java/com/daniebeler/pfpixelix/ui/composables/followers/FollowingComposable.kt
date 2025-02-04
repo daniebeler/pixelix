@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
@@ -30,7 +30,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun FollowingComposable(
     navController: NavController,
-    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
+    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
     val lazyListState = rememberLazyListState()
 

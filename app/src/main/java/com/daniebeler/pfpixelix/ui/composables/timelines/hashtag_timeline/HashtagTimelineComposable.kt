@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
@@ -49,7 +49,7 @@ import java.util.Locale
 fun HashtagTimelineComposable(
     navController: NavController,
     hashtag: String,
-    viewModel: HashtagTimelineViewModel = hiltViewModel(key = "hashtag-timeline$hashtag")
+    viewModel: HashtagTimelineViewModel = injectViewModel(key = "hashtag-timeline$hashtag") { hashtagTimelineViewModel }
 ) {
 
     LaunchedEffect(hashtag) {

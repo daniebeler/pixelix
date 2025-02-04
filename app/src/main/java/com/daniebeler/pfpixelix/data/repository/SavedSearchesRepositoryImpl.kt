@@ -8,10 +8,8 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import kotlinx.coroutines.flow.Flow
 import java.lang.Exception
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
 class SavedSearchesRepositoryImpl @Inject constructor(private val dataStore: DataStore<SavedSearches>) :
     SavedSearchesRepository {
 

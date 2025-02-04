@@ -9,7 +9,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -21,7 +21,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposabl
 @Composable
 fun TrendingHashtagsComposable(
     navController: NavController,
-    viewModel: TrendingHashtagsViewModel = hiltViewModel(key = "trending-hashtags-key")
+    viewModel: TrendingHashtagsViewModel = injectViewModel(key = "trending-hashtags-key") { trendingHashtagsViewModel }
 ) {
     PullToRefreshBox(
         isRefreshing = viewModel.trendingHashtagsState.isRefreshing,

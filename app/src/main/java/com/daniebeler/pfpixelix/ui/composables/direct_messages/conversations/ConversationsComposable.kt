@@ -50,7 +50,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
@@ -66,7 +66,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun ConversationsComposable(
     navController: NavController,
-    viewModel: ConversationsViewModel = hiltViewModel(key = "conversations-viewmodel-key")
+    viewModel: ConversationsViewModel = injectViewModel(key = "conversations-viewmodel-key") { conversationsViewModel }
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

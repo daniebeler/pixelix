@@ -4,7 +4,9 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class UnfollowAccountUseCase(
     private val accountRepository: AccountRepository
 ) {

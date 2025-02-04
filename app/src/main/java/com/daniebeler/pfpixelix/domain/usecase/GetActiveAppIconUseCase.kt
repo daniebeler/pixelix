@@ -8,7 +8,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.daniebeler.pfpixelix.common.IconsHolder
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetActiveAppIconUseCase {
 
     operator fun invoke(context: Context): ImageBitmap? {

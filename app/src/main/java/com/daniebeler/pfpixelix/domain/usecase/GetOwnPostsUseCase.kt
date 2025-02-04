@@ -6,7 +6,9 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetOwnPostsUseCase(
     private val postRepository: PostRepository, private val currentLoginDataUseCase: GetCurrentLoginDataUseCase
 ) {

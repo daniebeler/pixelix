@@ -10,12 +10,10 @@ import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowingUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class FollowersViewModel @Inject constructor(
     private val getAccountsFollowingUseCase: GetAccountsFollowingUseCase,
     private val getAccountsFollowersUseCase: GetAccountsFollowersUseCase,

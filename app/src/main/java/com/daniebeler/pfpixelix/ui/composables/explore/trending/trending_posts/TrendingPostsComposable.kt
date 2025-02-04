@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
@@ -16,7 +16,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 fun TrendingPostsComposable(
     range: String,
     navController: NavController,
-    viewModel: TrendingPostsViewModel = hiltViewModel(key = "trending-posts")
+    viewModel: TrendingPostsViewModel = injectViewModel(key = "trending-posts") { trendingPostsViewModel }
 ) {
 
     DisposableEffect(range) {

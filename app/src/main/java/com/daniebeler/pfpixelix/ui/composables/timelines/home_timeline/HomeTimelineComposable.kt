@@ -7,7 +7,7 @@ import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
@@ -17,7 +17,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 @Composable
 fun HomeTimelineComposable(
     navController: NavController,
-    viewModel: HomeTimelineViewModel = hiltViewModel(key = "home-timeline-key")
+    viewModel: HomeTimelineViewModel = injectViewModel(key = "home-timeline-key") { homeTimelineViewModel }
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,

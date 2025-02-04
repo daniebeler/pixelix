@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import co.touchlab.kermit.Logger
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -63,9 +62,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import co.touchlab.kermit.Logger
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.common.Destinations
+import com.daniebeler.pfpixelix.di.EntryPointComponent
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
@@ -99,7 +101,6 @@ import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.Hashta
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.end
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -110,21 +111,12 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import javax.inject.Inject
 
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
     lateinit var currentLoginDataUseCase: GetCurrentLoginDataUseCase
-
-    @Inject
     lateinit var hostSelectionInterceptorInterface: HostSelectionInterceptorInterface
-
-    @Inject
     lateinit var repository: CountryRepository
-
-    @Inject
     lateinit var verifyTokenUseCase: VerifyTokenUseCase
 
     companion object {
@@ -139,6 +131,12 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        EntryPointComponent::class.create(MyApplication.appComponent).let {
+            currentLoginDataUseCase = it.currentLoginDataUseCase
+            hostSelectionInterceptorInterface = it.hostSelectionInterceptorInterface
+            repository = it.repository
+            verifyTokenUseCase = it.verifyTokenUseCase
+        }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

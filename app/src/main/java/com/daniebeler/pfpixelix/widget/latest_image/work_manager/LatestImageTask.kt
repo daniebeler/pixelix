@@ -7,7 +7,6 @@ import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.datastore.core.DataStore
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import coil.imageLoader
@@ -18,13 +17,11 @@ import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
+import me.tatarka.inject.annotations.Inject
 
-@HiltWorker
-class LatestImageTask @AssistedInject constructor(
-    @Assisted private val context: Context,
-    @Assisted workerParams: WorkerParameters,
+class LatestImageTask @Inject constructor(
+    private val context: Context,
+    workerParams: WorkerParameters,
     private val dataStore: DataStore<AuthData>
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {

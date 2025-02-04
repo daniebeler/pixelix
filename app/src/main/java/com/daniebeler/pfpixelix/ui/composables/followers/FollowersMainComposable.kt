@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
 import kotlinx.coroutines.launch
@@ -47,7 +47,7 @@ fun FollowersMainComposable(
     navController: NavController,
     accountId: String,
     page: String,
-    viewModel: FollowersViewModel = hiltViewModel(key = "followers-viewmodel-key")
+    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
 
     LaunchedEffect(Unit) {

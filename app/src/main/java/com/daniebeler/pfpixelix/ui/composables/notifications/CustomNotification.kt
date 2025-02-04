@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
@@ -36,7 +36,7 @@ import com.daniebeler.pfpixelix.utils.Navigate
 fun CustomNotification(
     notification: Notification,
     navController: NavController,
-    viewModel: CustomNotificationViewModel = hiltViewModel(key = "custom-notification-viewmodel-key${notification.id}")
+    viewModel: CustomNotificationViewModel = injectViewModel(key = "custom-notification-viewmodel-key${notification.id}") { customNotificationViewModel }
 ) {
     var showImage = false
     var text = ""

@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.hilt)
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
@@ -138,14 +137,13 @@ dependencies {
     implementation(libs.androidx.glance.material3)
     // work Manager
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.hilt.work)
 
-    implementation(libs.hilt.naviation)
-    implementation(libs.dagger.hilt)
     implementation(libs.ksoup)
-    ksp(libs.dagger.hilt.compiler)
 
     implementation(libs.kermit)
 
     implementation(libs.kotlinx.datetime)
+
+    ksp(libs.kotlin.inject.compiler.ksp)
+    implementation(libs.kotlin.inject.runtime)
 }

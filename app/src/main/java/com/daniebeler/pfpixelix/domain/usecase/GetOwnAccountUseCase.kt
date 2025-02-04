@@ -5,7 +5,9 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class GetOwnAccountUseCase(
     private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
     private val accountRepository: AccountRepository
