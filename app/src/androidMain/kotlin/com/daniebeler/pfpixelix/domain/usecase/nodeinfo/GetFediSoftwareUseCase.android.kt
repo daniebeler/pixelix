@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class GetFediSoftwareUseCase(private val countryRepository: CountryRepository) {
-    operator fun invoke(domain: String): Flow<Resource<FediSoftware>> = flow {
+actual class GetFediSoftwareUseCase actual constructor(
+    private val countryRepository: CountryRepository
+) {
+    actual operator fun invoke(domain: String): Flow<Resource<FediSoftware>> = flow {
         emit(Resource.Loading())
         countryRepository.getSoftwareFromFediDB(domain).collect { res ->
             if (res is Resource.Error) {
@@ -37,4 +39,3 @@ class GetFediSoftwareUseCase(private val countryRepository: CountryRepository) {
         }
     }
 }
-

@@ -38,6 +38,7 @@ import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.utils.AuthDataSerializer
+import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
@@ -68,7 +69,7 @@ abstract class AppComponent(
 
     @Provides
     @AppSingleton
-    fun provideContext(): Context = androidApp
+    fun provideContext(): KmpContext = androidApp
     
     @Provides
     @AppSingleton
@@ -81,7 +82,7 @@ abstract class AppComponent(
     @Provides
     @AppSingleton
     fun provideUserDataStorePreferences(
-        applicationContext: Context
+        applicationContext: KmpContext
     ): DataStore<Preferences> {
         return applicationContext.dataStore
     }
@@ -135,7 +136,7 @@ abstract class AppComponent(
 
     @Provides
     @AppSingleton
-    fun provideDataStore( context: Context): DataStore<SavedSearches> =
+    fun provideDataStore(context: KmpContext): DataStore<SavedSearches> =
         DataStoreFactory.create(
             serializer = SavedSearchesSerializer,
             produceFile = { context.dataStoreFile("saved_searches.json") }
@@ -143,7 +144,7 @@ abstract class AppComponent(
 
     @Provides
     @AppSingleton
-    fun provideAuthDataStore(context: Context): DataStore<AuthData> =
+    fun provideAuthDataStore(context: KmpContext): DataStore<AuthData> =
         DataStoreFactory.create(
             serializer = AuthDataSerializer,
             produceFile = { context.dataStoreFile("auth_data_datastore.json") }

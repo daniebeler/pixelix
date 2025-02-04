@@ -1,14 +1,13 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.pm.PackageManager
+import com.daniebeler.pfpixelix.utils.KmpContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class EnableCustomAppIconUseCase {
-
-    operator fun invoke(context: Context, name: String) {
+actual class EnableCustomAppIconUseCase {
+    actual operator fun invoke(context: KmpContext, name: String) {
         try {
             val packageManager = context.packageManager
             val componentName = ComponentName(context, name)

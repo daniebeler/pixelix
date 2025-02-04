@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -8,11 +7,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPrefUtil
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchIntPref
+import com.daniebeler.pfpixelix.utils.KmpContext
 
-object HideSensitiveContentPrefUtil {
+actual object HideSensitiveContentPrefUtil {
     const val KEY_HIDE_SESITIVE_CONTENT = "hide_sensitive_content"
 
-    fun isEnable(context: Context): Boolean {
+    actual fun isEnable(context: KmpContext): Boolean {
         return SettingPrefUtil.getValue(
             context, KEY_HIDE_SESITIVE_CONTENT, SettingPrefUtil.ON
         ) == SettingPrefUtil.ON

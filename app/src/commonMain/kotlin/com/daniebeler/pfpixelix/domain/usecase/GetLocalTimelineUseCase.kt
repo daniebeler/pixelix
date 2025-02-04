@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import android.content.Context
+import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class GetHomeTimelineUseCase(
+class GetLocalTimelineUseCase(
     private val timelineRepository: TimelineRepository,
-    private val context: Context
+    private val context: KmpContext
 ) {
-    operator fun invoke(maxPostId: String = "", enableReblogs: Boolean = false): Flow<Resource<List<Post>>> = flow {
+    operator fun invoke(maxPostId: String = ""): Flow<Resource<List<Post>>> = flow {
         emit(Resource.Loading())
         val hideSensitiveContent = HideSensitiveContentPrefUtil.isEnable(context)
-        timelineRepository.getHomeTimeline(maxPostId, enableReblogs).collect { timeline ->
+        timelineRepository.getLocalTimeline(maxPostId).collect { timeline ->
             if (timeline is Resource.Success && hideSensitiveContent) {
                 val res: List<Post> = timeline.data?.filter { s -> !s.sensitive } ?: emptyList()
                 emit(Resource.Success(res))

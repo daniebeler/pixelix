@@ -3,6 +3,7 @@ import io.ktor.client.call.HttpClientCall
 import io.ktor.client.plugins.Sender
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.set
+import kotlin.concurrent.Volatile
 
 /** An interceptor that allows runtime changes to the URL hostname.  */
 class HostSelectionInterceptor : HostSelectionInterceptorInterface {
