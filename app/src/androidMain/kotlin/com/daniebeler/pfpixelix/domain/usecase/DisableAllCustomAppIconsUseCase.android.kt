@@ -1,15 +1,14 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.pm.PackageManager
 import com.daniebeler.pfpixelix.common.IconsHolder
+import com.daniebeler.pfpixelix.utils.KmpContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DisableAllCustomAppIconsUseCase() {
-
-    operator fun invoke(context: Context) {
+actual class DisableAllCustomAppIconsUseCase actual constructor() {
+    actual operator fun invoke(context: KmpContext) {
         try {
             val packageManager = context.packageManager
             IconsHolder.list.forEach {

@@ -37,6 +37,7 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePrefUtil
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAltTextButtonPrefUtil
+import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +54,7 @@ import me.tatarka.inject.annotations.Inject
 
 
 class PostViewModel @Inject constructor(
-    context: Context,
+    context: KmpContext,
     private val getRepliesUseCase: GetRepliesUseCase,
     private val createReplyUseCase: CreateReplyUseCase,
     private val likePostUseCase: LikePostUseCase,

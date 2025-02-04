@@ -1,11 +1,11 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import android.content.Context
-import android.net.Uri
-import android.util.Log
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
+import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.MimeType
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -14,13 +14,17 @@ import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
-
 @Inject
-class UpdateAccountUseCase(
+actual class UpdateAccountUseCase actual constructor(
     private val accountRepository: AccountRepository
 ) {
-    operator fun invoke(
-        displayName: String, note: String, website: String, privateProfile: Boolean, avatarUri: Uri?, context: Context
+    actual operator fun invoke(
+        displayName: String,
+        note: String,
+        website: String,
+        privateProfile: Boolean,
+        avatarUri: KmpUri?,
+        context: KmpContext
     ): Flow<Resource<Account>> {
         val data = MultiPartFormDataContent(formData {
             if (avatarUri != null) {
@@ -33,7 +37,7 @@ class UpdateAccountUseCase(
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
                 } catch (e: Exception) {
-                    Log.e("UpdateAccountUseCase", e.message!!)
+                    Logger.e("UpdateAccountUseCase") { e.message!! }
                 }
             }
 
@@ -46,4 +50,3 @@ class UpdateAccountUseCase(
         return accountRepository.updateAccount(data)
     }
 }
-

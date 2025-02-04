@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import android.content.Context
+import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class GetPostsOfAccountUseCase(
     private val postRepository: PostRepository,
-    private val context: Context
+    private val context: KmpContext
 ) {
     operator fun invoke(
         accountId: String, maxPostId: String = "", limit: Int = Constants.PROFILE_POSTS_LIMIT
