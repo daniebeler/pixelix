@@ -60,17 +60,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.decode.VideoFrameDecoder
-import coil.request.ImageRequest
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.video.VideoFrameDecoder
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -79,7 +77,8 @@ import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class
+)
 @Composable
 fun NewPostComposable(
     navController: NavController,
@@ -148,12 +147,6 @@ fun NewPostComposable(
                                 AsyncImage(
                                     model = model,
                                     contentDescription = "video thumbnail",
-                                    modifier = Modifier.width(100.dp)
-                                )
-                            } else if (type != null && type.takeLast(3) == "gif") {
-                                GlideImage(
-                                    model = image.imageUri,
-                                    contentDescription = null,
                                     modifier = Modifier.width(100.dp)
                                 )
                             } else {

@@ -26,15 +26,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import com.daniebeler.pfpixelix.utils.Navigate
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CustomPost(
     post: Post,
@@ -109,29 +106,16 @@ fun CustomPost(
             ) {
 
                 if (post.mediaAttachments.isNotEmpty()) {
-                    if (post.mediaAttachments[0].url?.takeLast(4) == ".gif") {
-                        GlideImage(
-                            model = post.mediaAttachments[0].url,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(
-                                    1f
-                                )
-                        )
-                    } else {
-                        AsyncImage(
-                            model = if (isFullQuality) {
-                                post.mediaAttachments[0].url
-                            } else {
-                                post.mediaAttachments[0].previewUrl
-                            },
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null,
-                            modifier = Modifier.aspectRatio(1f)
-                        )
-                    }
+                    AsyncImage(
+                        model = if (isFullQuality) {
+                            post.mediaAttachments[0].url
+                        } else {
+                            post.mediaAttachments[0].previewUrl
+                        },
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                        modifier = Modifier.aspectRatio(1f)
+                    )
                 }
 
                 if (post.mediaAttachments.size > 1 && !edit) {
