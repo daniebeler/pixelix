@@ -4,8 +4,8 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.coroutines.flow.Flow
-import okhttp3.RequestBody
 
 interface AccountRepository {
     fun getAccount(accountId: String): Flow<Resource<Account>>
@@ -22,6 +22,6 @@ interface AccountRepository {
     fun getAccountsFollowing(accountId: String, maxId: String = ""): Flow<Resource<List<Account>>>
     fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
     fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
-    fun updateAccount(body: RequestBody): Flow<Resource<Account>>
+    fun updateAccount(body: MultiPartFormDataContent): Flow<Resource<Account>>
     fun getAccountSettings(): Flow<Resource<Settings>>
 }

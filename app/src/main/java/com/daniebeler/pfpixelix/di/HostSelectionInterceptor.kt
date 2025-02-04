@@ -1,9 +1,8 @@
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.plugins.Sender
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.http.set
 
 /** An interceptor that allows runtime changes to the URL hostname.  */
 class HostSelectionInterceptor : HostSelectionInterceptorInterface {
@@ -20,22 +19,13 @@ class HostSelectionInterceptor : HostSelectionInterceptorInterface {
         this.token = token
     }
 
-    @Throws(IOException::class)
-    override fun intercept(chain: Interceptor.Chain): Response {
-        var request: Request = chain.request()
-        val host = host
+    override suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall {
         if (request.url.toString().startsWith("https://err.or")) {
-            if (host != null) {
-                val newUrl = request.url.newBuilder().host(host).build()
-                request = request.newBuilder().url(newUrl).build()
-            }
-
-            val token = token
-            if (token != null) {
-                request = request.newBuilder().addHeader("Authorization", "Bearer $token").build()
+            request.apply {
+                url.set(host = host)
+                headers["Authorization"] = "Bearer $token"
             }
         }
-
-        return chain.proceed(request)
+        return execute(request)
     }
 }

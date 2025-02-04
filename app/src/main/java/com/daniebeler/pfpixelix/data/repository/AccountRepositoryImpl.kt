@@ -10,10 +10,10 @@ import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.execute
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.RequestBody
-import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class AccountRepositoryImpl @Inject constructor(
@@ -44,7 +44,7 @@ class AccountRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun updateAccount(body: RequestBody): Flow<Resource<Account>> {
+    override fun updateAccount(body: MultiPartFormDataContent): Flow<Resource<Account>> {
         return NetworkCall<Account, AccountDto>().makeCall(
             pixelfedApi.updateAccount(
                 body
@@ -142,16 +142,12 @@ class AccountRepositoryImpl @Inject constructor(
         try {
             emit(Resource.Loading())
             val response = if (maxId.isNotEmpty()) {
-                pixelfedApi.getAccountsFollowing(accountId, maxId).awaitResponse()
+                pixelfedApi.getAccountsFollowing(accountId, maxId).execute()
             } else {
-                pixelfedApi.getAccountsFollowing(accountId).awaitResponse()
+                pixelfedApi.getAccountsFollowing(accountId).execute()
             }
-            if (response.isSuccessful) {
-                val res = response.body()?.map { it.toModel() } ?: emptyList()
+                val res = response.map { it.toModel() }
                 emit(Resource.Success(res))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
         } catch (exception: Exception) {
             emit(Resource.Error("Unknown Error"))
         }

@@ -6,17 +6,14 @@ import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
-import com.daniebeler.pfpixelix.data.remote.dto.TagDto
 import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.domain.model.Message
-import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
-import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.execute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class DirectMessagesRepositoryImpl @Inject constructor(
@@ -42,13 +39,8 @@ class DirectMessagesRepositoryImpl @Inject constructor(
     override fun deleteMessage(id: String): Flow<Resource<List<Int>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = pixelfedApi.deleteMessage(id).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()
-                emit(Resource.Success(res!!))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            val response = pixelfedApi.deleteMessage(id).execute()
+            emit(Resource.Success(response))
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }

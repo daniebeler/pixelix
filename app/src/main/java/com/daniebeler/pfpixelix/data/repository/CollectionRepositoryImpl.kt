@@ -8,9 +8,9 @@ import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import com.daniebeler.pfpixelix.utils.NetworkCall
+import com.daniebeler.pfpixelix.utils.execute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.awaitResponse
 import javax.inject.Inject
 
 class CollectionRepositoryImpl @Inject constructor(
@@ -48,13 +48,8 @@ class CollectionRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val response = pixelfedApi.removePostOfCollection(
                 collectionId, postId
-            ).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()
-                emit(Resource.Success(res!!))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            ).execute()
+            emit(Resource.Success(response))
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }
@@ -67,13 +62,8 @@ class CollectionRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val response = pixelfedApi.addPostOfCollection(
                 collectionId, postId
-            ).awaitResponse()
-            if (response.isSuccessful) {
-                val res = response.body()
-                emit(Resource.Success(res!!))
-            } else {
-                emit(Resource.Error("Unknown Error"))
-            }
+            ).execute()
+            emit(Resource.Success(response))
         } catch (exception: Exception) {
             emit(Resource.Error(exception.message ?: "Unknown Error"))
         }

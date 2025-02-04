@@ -2,16 +2,16 @@ package com.daniebeler.pfpixelix.domain.usecase
 
 import android.content.Context
 import android.net.Uri
-import co.touchlab.kermit.Logger
+import android.util.Log
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.utils.MimeType
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 
 class UpdateAccountUseCase(
@@ -20,30 +20,28 @@ class UpdateAccountUseCase(
     operator fun invoke(
         displayName: String, note: String, website: String, privateProfile: Boolean, avatarUri: Uri?, context: Context
     ): Flow<Resource<Account>> {
-        val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
-
-        if (avatarUri != null) {
-            try {
-
-                val fileType = MimeType.getMimeType(avatarUri, context.contentResolver) ?: "image/*"
-                val inputStream = context.contentResolver.openInputStream(avatarUri)
-                val fileRequestBody = inputStream?.readBytes()?.toRequestBody(fileType.toMediaTypeOrNull())
-                builder.addFormDataPart("avatar", "avatar", fileRequestBody!!)
-            } catch (e: Exception) {
-                Logger.e("UpdateAccountUseCase") { e.message!! }
+        val data = MultiPartFormDataContent(formData {
+            if (avatarUri != null) {
+                try {
+                    val fileType = MimeType.getMimeType(avatarUri, context.contentResolver) ?: "image/*"
+                    val fileName = "filename=avatar"
+                    val bytes = context.contentResolver.openInputStream(avatarUri)?.readBytes()
+                    append("avatar", bytes!!, Headers.build {
+                        append(HttpHeaders.ContentType, fileType)
+                        append(HttpHeaders.ContentDisposition, fileName)
+                    })
+                } catch (e: Exception) {
+                    Log.e("UpdateAccountUseCase", e.message!!)
+                }
             }
 
+            append("display_name", displayName)
+            append("note", note)
+            append("website", website)
+            append("locked", privateProfile.toString())
+        })
 
-        }
-
-        builder.addFormDataPart("display_name", displayName)
-        builder.addFormDataPart("note", note)
-        builder.addFormDataPart("website", website)
-        builder.addFormDataPart("locked", privateProfile.toString())
-
-        val requestBody: RequestBody = builder.build()
-
-        return accountRepository.updateAccount(requestBody)
+        return accountRepository.updateAccount(data)
     }
 }
 
