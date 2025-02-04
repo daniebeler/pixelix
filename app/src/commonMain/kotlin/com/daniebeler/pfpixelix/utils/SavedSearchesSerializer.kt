@@ -1,21 +1,21 @@
 package com.daniebeler.pfpixelix.utils
 
-import androidx.datastore.core.Serializer
+import androidx.datastore.core.okio.OkioSerializer
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import java.io.InputStream
-import java.io.OutputStream
+import okio.BufferedSink
+import okio.BufferedSource
 
-object SavedSearchesSerializer: Serializer<SavedSearches> {
+object SavedSearchesSerializer: OkioSerializer<SavedSearches> {
     override val defaultValue: SavedSearches
         get() = SavedSearches()
 
-    override suspend fun readFrom(input: InputStream): SavedSearches {
+    override suspend fun readFrom(source: BufferedSource): SavedSearches {
         return try {
             Json.decodeFromString(
                 deserializer = SavedSearches.serializer(),
-                string = input.readBytes().decodeToString()
+                string = source.readUtf8()
             )
         } catch (e: SerializationException) {
             e.printStackTrace();
@@ -23,8 +23,8 @@ object SavedSearchesSerializer: Serializer<SavedSearches> {
         }
     }
 
-    override suspend fun writeTo(t: SavedSearches, output: OutputStream) {
-        output.write(
+    override suspend fun writeTo(t: SavedSearches, sink: BufferedSink) {
+        sink.write(
             Json.encodeToString(
                 serializer = SavedSearches.serializer(),
                 value = t

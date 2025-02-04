@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
@@ -40,15 +41,13 @@ class OwnProfileViewModel @Inject constructor(
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
     private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase,
-    private val getActiveAppIconUseCase: GetActiveAppIconUseCase,
-    application: android.app.Application
-) : AndroidViewModel(application) {
+    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
+) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
     var domainSoftwareState by mutableStateOf(DomainSoftwareState())
-    var context = application
     var view by mutableStateOf(ViewEnum.Loading)
     private var collectionPage by mutableIntStateOf(1)
     var appIcon by mutableStateOf<ImageBitmap?>(null)
