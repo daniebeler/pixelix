@@ -1,21 +1,21 @@
 package com.daniebeler.pfpixelix.utils
 
-import androidx.datastore.core.Serializer
+import androidx.datastore.core.okio.OkioSerializer
 import com.daniebeler.pfpixelix.domain.model.AuthData
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import java.io.InputStream
-import java.io.OutputStream
+import okio.BufferedSink
+import okio.BufferedSource
 
-object AuthDataSerializer: Serializer<AuthData> {
+object AuthDataSerializer: OkioSerializer<AuthData> {
     override val defaultValue: AuthData
         get() = AuthData()
 
-    override suspend fun readFrom(input: InputStream): AuthData {
+    override suspend fun readFrom(source: BufferedSource): AuthData {
         return try {
             Json.decodeFromString(
                 deserializer = AuthData.serializer(),
-                string = input.readBytes().decodeToString()
+                string = source.readUtf8()
             )
         } catch (e: SerializationException) {
             e.printStackTrace();
@@ -23,8 +23,8 @@ object AuthDataSerializer: Serializer<AuthData> {
         }
     }
 
-    override suspend fun writeTo(t: AuthData, output: OutputStream) {
-        output.write(
+    override suspend fun writeTo(t: AuthData, sink: BufferedSink) {
+        sink.write(
             Json.encodeToString(
                 serializer = AuthData.serializer(),
                 value = t

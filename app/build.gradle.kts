@@ -64,6 +64,9 @@ kotlin {
 
             //annotation
             implementation(libs.androidx.annotation)
+
+            //disk io
+            implementation(libs.okio)
         }
 
         androidMain.dependencies {

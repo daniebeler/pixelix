@@ -1,14 +1,13 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
-import android.app.Application
 import android.content.Context
-import co.touchlab.kermit.Logger
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
@@ -52,9 +51,8 @@ class OtherProfileViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val setViewUseCase: SetViewUseCase,
     private val getCollectionsUseCase: GetCollectionsUseCase,
-    private val getViewUseCase: GetViewUseCase,
-    application: Application
-) : AndroidViewModel(application) {
+    private val getViewUseCase: GetViewUseCase
+) : ViewModel() {
     var userId: String = ""
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
@@ -64,7 +62,6 @@ class OtherProfileViewModel @Inject constructor(
     var collectionsState by mutableStateOf(CollectionsState())
 
     var domain by mutableStateOf("")
-    var context = application
     var view by mutableStateOf(ViewEnum.Timeline)
 
     fun loadData(_userId: String, refreshing: Boolean) {
