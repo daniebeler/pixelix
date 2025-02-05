@@ -11,11 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.utils.rememberPrefBoolState
 import com.daniebeler.pfpixelix.utils.rememberPrefIntState
+import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
 fun SwitchPref(
     key: String,
-    @DrawableRes leadingIcon: Int,
+    leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
     default: Boolean = false,
@@ -44,7 +45,7 @@ fun SwitchPref(
 @Composable
 fun SwitchIntPref(
     key: String,
-    @DrawableRes leadingIcon: Int,
+    leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
     default: Int = SettingPrefUtil.OFF,

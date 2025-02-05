@@ -25,14 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
@@ -54,7 +55,7 @@ fun ProfileTopSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = account.avatar,
-                    error = painterResource(id = R.drawable.default_avatar),
+                    error = painterResource(Res.drawable.default_avatar),
                     contentDescription = "",
                     modifier = Modifier
                         .height(76.dp)
@@ -72,7 +73,7 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = stringResource(R.string.posts), fontSize = 12.sp)
+                        Text(text = stringResource(Res.string.posts), fontSize = 12.sp)
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,7 +87,7 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = stringResource(R.string.followers), fontSize = 12.sp)
+                        Text(text = stringResource(Res.string.followers), fontSize = 12.sp)
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,7 +101,7 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = stringResource(R.string.following), fontSize = 12.sp)
+                        Text(text = stringResource(Res.string.following), fontSize = 12.sp)
                     }
                 }
             }
@@ -124,22 +125,22 @@ fun ProfileTopSection(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (account.isAdmin) {
-                        ProfileBadge(text = stringResource(id = R.string.admin))
+                        ProfileBadge(text = stringResource(Res.string.admin))
                     }
                     if (relationship != null && relationship.followedBy) {
-                        ProfileBadge(text = stringResource(R.string.follows_you))
+                        ProfileBadge(text = stringResource(Res.string.follows_you))
                     }
 
                     if (relationship != null && relationship.muting) {
                         ProfileBadge(
-                            text = stringResource(R.string.muted),
+                            text = stringResource(Res.string.muted),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
 
                     if (relationship != null && relationship.blocking) {
                         ProfileBadge(
-                            text = stringResource(R.string.blocked),
+                            text = stringResource(Res.string.blocked),
                             color = MaterialTheme.colorScheme.error
                         )
                     }

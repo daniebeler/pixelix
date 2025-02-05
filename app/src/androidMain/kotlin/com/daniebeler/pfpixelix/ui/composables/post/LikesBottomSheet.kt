@@ -22,13 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -42,7 +43,7 @@ fun LikesBottomSheet(
             .padding(12.dp)
     ) {
         Text(
-            text = stringResource(R.string.liked_by),
+            text = stringResource(Res.string.liked_by),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -74,7 +75,7 @@ fun LikesBottomSheet(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = stringResource(R.string.no_likes_yet))
+                        Text(text = stringResource(Res.string.no_likes_yet))
                     }
                 }
             }
@@ -104,7 +105,7 @@ private fun LikedByAccountElement(account: Account, navController: NavController
         Column {
             Text(text = "@${account.username}")
             Text(
-                text = "${account.followersCount} " + stringResource(id = R.string.followers),
+                text = "${account.followersCount} " + stringResource(Res.string.followers),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )

@@ -6,10 +6,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -27,9 +28,9 @@ fun HomeTimelineComposable(
             endReached = false,
             navController = navController,
             emptyMessage = EmptyState(icon = Icons.Outlined.PhotoLibrary,
-                heading = stringResource(R.string.no_posts),
-                message = stringResource(R.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
-                buttonText = stringResource(id = R.string.explore_trending_profiles),
+                heading = stringResource(Res.string.no_posts),
+                message = stringResource(Res.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
+                buttonText = stringResource(Res.string.explore_trending_profiles),
                 onClick = {
                     Navigate.navigate("trending_screen/accounts", navController)
                 }),

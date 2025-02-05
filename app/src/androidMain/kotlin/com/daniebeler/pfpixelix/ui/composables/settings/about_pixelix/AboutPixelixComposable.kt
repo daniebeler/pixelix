@@ -37,8 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,9 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.Navigate
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,13 +71,13 @@ fun AboutPixelixComposable(
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(text = stringResource(R.string.about_pixelix), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(Res.string.about_pixelix), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })
@@ -94,7 +96,7 @@ fun AboutPixelixComposable(
             ) {
                 if (viewModel.appIcon == null) {
                     Image(
-                        painter = painterResource(id = R.drawable.pixelix_logo),
+                        painter = painterResource(Res.drawable.pixelix_logo),
                         contentDescription = null,
                         Modifier
                             .width(84.dp)
@@ -128,23 +130,23 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = R.drawable.star_outline,
+            ButtonRowElement(icon = Res.drawable.star_outline,
                 text = "Rate Pixelix on Google Play Store",
                 onClick = { viewModel.rateApp(context) })
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = R.drawable.browsers_outline,
+            ButtonRowElement(icon = Res.drawable.browsers_outline,
                 text = "Homepage",
                 smallText = "https://app.pixelix.social",
                 onClick = { viewModel.openUrl("https://app.pixelix.social", context) })
 
-            ButtonRowElement(icon = R.drawable.shield_outline,
+            ButtonRowElement(icon = Res.drawable.shield_outline,
                 text = "Privacy Policy",
                 smallText = "https://app.pixelix.social/privacy",
                 onClick = { viewModel.openUrl("https://app.pixelix.social/privacy", context) })
 
-            ButtonRowElement(icon = R.drawable.code_slash_outline,
+            ButtonRowElement(icon = Res.drawable.code_slash_outline,
                 text = "Source Code",
                 smallText = "https://github.com/daniebeler/pixelix",
                 onClick = { viewModel.openUrl("https://github.com/daniebeler/pixelix", context) })
@@ -154,7 +156,7 @@ fun AboutPixelixComposable(
 
 
             Text(
-                text = stringResource(R.string.developed_by),
+                text = stringResource(Res.string.developed_by),
                 fontSize = 18.sp,
                 modifier = Modifier
                     .padding(12.dp, 0.dp)
@@ -172,7 +174,7 @@ fun AboutPixelixComposable(
                 Text(text = "Emanuel Hiebeler", fontWeight = FontWeight.Bold)
 
                 Row {
-                    Image(painter = painterResource(id = R.drawable.pixelfed_logo),
+                    Image(painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
@@ -185,7 +187,7 @@ fun AboutPixelixComposable(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(painter = painterResource(id = R.drawable.mastodon_logo),
+                    Image(painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
@@ -219,7 +221,7 @@ fun AboutPixelixComposable(
                 Text(text = "Daniel Hiebeler", fontWeight = FontWeight.Bold)
 
                 Row {
-                    Image(painter = painterResource(id = R.drawable.pixelfed_logo),
+                    Image(painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
@@ -232,7 +234,7 @@ fun AboutPixelixComposable(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(painter = painterResource(id = R.drawable.mastodon_logo),
+                    Image(painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)

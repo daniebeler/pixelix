@@ -26,10 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagsComposable
@@ -55,7 +56,7 @@ fun TrendingComposable(navController: NavController) {
     ) {
 
         PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-            Tab(text = { Text(stringResource(id = R.string.posts)) },
+            Tab(text = { Text(stringResource(Res.string.posts)) },
                 selected = pagerState.currentPage == 0,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -66,7 +67,7 @@ fun TrendingComposable(navController: NavController) {
 
                 })
 
-            Tab(text = { Text(stringResource(R.string.accounts)) },
+            Tab(text = { Text(stringResource(Res.string.accounts)) },
                 selected = pagerState.currentPage == 1,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -76,7 +77,7 @@ fun TrendingComposable(navController: NavController) {
                     }
                 })
 
-            Tab(text = { Text(stringResource(R.string.hashtags)) },
+            Tab(text = { Text(stringResource(Res.string.hashtags)) },
                 selected = pagerState.currentPage == 2,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -127,18 +128,18 @@ fun TrendingComposable(navController: NavController) {
                     Spacer(modifier = Modifier.height(18.dp))
 
                     SheetItem(
-                        header = stringResource(R.string.what_makes_a_post_trend),
-                        description = stringResource(R.string.trending_post_description)
+                        header = stringResource(Res.string.what_makes_a_post_trend),
+                        description = stringResource(Res.string.trending_post_description)
                     )
 
                     SheetItem(
-                        header = stringResource(R.string.what_makes_an_account_trend),
-                        description = stringResource(R.string.trending_account_description)
+                        header = stringResource(Res.string.what_makes_an_account_trend),
+                        description = stringResource(Res.string.trending_account_description)
                     )
 
                     SheetItem(
-                        header = stringResource(R.string.what_makes_a_hashtag_trend),
-                        description = stringResource(R.string.trending_hashtag_description)
+                        header = stringResource(Res.string.what_makes_a_hashtag_trend),
+                        description = stringResource(Res.string.trending_hashtag_description)
                     )
                 }
             }

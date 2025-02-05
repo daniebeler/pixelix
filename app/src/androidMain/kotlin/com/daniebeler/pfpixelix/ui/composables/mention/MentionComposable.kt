@@ -36,20 +36,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,11 +80,11 @@ fun MentionComposable(
         CenterAlignedTopAppBar(title = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = stringResource(id = R.string.post), fontWeight = FontWeight.Bold
+                    text = stringResource(Res.string.post), fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = stringResource(
-                        id = R.string.by, (viewModel.postState.post?.account?.username ?: "")
+                        Res.string.by, (viewModel.postState.post?.account?.username ?: "")
                     ), fontSize = 12.sp, lineHeight = 6.sp
                 )
             }
@@ -91,7 +93,7 @@ fun MentionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })

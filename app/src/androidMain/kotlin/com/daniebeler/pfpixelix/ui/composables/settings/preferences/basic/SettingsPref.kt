@@ -31,6 +31,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.vectorResource
 
 
 //@Composable
@@ -42,7 +44,7 @@ import androidx.compose.ui.unit.dp
 //        contentAlignment = Alignment.Center
 //    ) {
 //        Image(
-//            painter = painterResource(id = R.drawable.ic_wavy_line),
+//            painter = painterResource(Res.drawable.ic_wavy_line),
 //            contentDescription = null
 //        )
 //    }
@@ -53,7 +55,7 @@ fun SettingPref(
     leadingIcon: ImageBitmap,
     title: String,
     desc: String? = null,
-    @DrawableRes trailingContent: Int?,
+    trailingContent: DrawableResource?,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
     textColor: Color? = null,
@@ -67,7 +69,7 @@ fun SettingPref(
             trailingContent?.let {
                 Box(modifier = Modifier.padding(end = 12.dp)) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(trailingContent),
+                        imageVector = vectorResource(trailingContent),
                         contentDescription = null,
                     )
                 }
@@ -85,7 +87,7 @@ fun SettingPref(
     leadingIcon: Painter,
     title: String,
     desc: String? = null,
-    @DrawableRes trailingContent: Int?,
+    trailingContent: DrawableResource?,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
     textColor: Color? = null,
@@ -99,7 +101,7 @@ fun SettingPref(
             trailingContent?.let {
                 Box(modifier = Modifier.padding(end = 12.dp)) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(trailingContent),
+                        imageVector = vectorResource(trailingContent),
                         contentDescription = null,
                     )
                 }
@@ -114,10 +116,10 @@ fun SettingPref(
 
 @Composable
 fun SettingPref(
-    @DrawableRes leadingIcon: Int,
+    leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
-    @DrawableRes trailingContent: Int?,
+    trailingContent: DrawableResource?,
     onClick: () -> Unit = {},
     shape: Shape = MaterialTheme.shapes.medium,
     textColor: Color? = null,
@@ -131,7 +133,7 @@ fun SettingPref(
             trailingContent?.let {
                 Box(modifier = Modifier.padding(end = 12.dp)) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(trailingContent),
+                        imageVector = vectorResource(trailingContent),
                         contentDescription = null,
                     )
                 }
@@ -220,7 +222,7 @@ fun SettingPref(
 
 @Composable
 fun SettingPref(
-    @DrawableRes leadingIcon: Int,
+    leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
     trailingContent: @Composable () -> Unit = {},
@@ -234,12 +236,12 @@ fun SettingPref(
             Box(Modifier.padding(start = 14.dp)) {
                 textColor?.let {
                     Icon(
-                        imageVector = ImageVector.vectorResource(leadingIcon),
+                        imageVector = vectorResource(leadingIcon),
                         contentDescription = title,
                         tint = textColor
                     )
                 } ?: Icon(
-                    imageVector = ImageVector.vectorResource(leadingIcon),
+                    imageVector = vectorResource(leadingIcon),
                     contentDescription = title,
                 )
             }

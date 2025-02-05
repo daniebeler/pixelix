@@ -50,7 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -60,7 +60,8 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
@@ -126,7 +127,7 @@ fun CommentsBottomSheet(
                 },
                     replyText,
                     changeText = { newText -> replyText = newText },
-                    labelStringId = R.string.reply,
+                    labelStringId = Res.string.reply,
                     modifier = null,
                     imeAction = ImeAction.Send,
                     suggestionsBoxColor = MaterialTheme.colorScheme.surface,
@@ -197,7 +198,7 @@ fun CommentsBottomSheet(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = stringResource(R.string.no_comments_yet))
+                        Text(text = stringResource(Res.string.no_comments_yet))
                     }
                 }
             }
@@ -302,7 +303,7 @@ private fun ReplyElement(
                 }
                 TextButton(onClick = { openAddReplyDialog.value = true }) {
                     Text(
-                        text = stringResource(id = R.string.reply),
+                        text = stringResource(Res.string.reply),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -383,22 +384,22 @@ private fun ReplyElement(
                 tint = MaterialTheme.colorScheme.error
             )
         }, title = {
-            Text(text = stringResource(R.string.delete_reply))
+            Text(text = stringResource(Res.string.delete_reply))
         }, text = {
-            Text(text = stringResource(R.string.this_action_cannot_be_undone))
+            Text(text = stringResource(Res.string.this_action_cannot_be_undone))
         }, onDismissRequest = {
             showDeleteReplyDialog.value = false
         }, confirmButton = {
             TextButton(onClick = {
                 deleteReply()
             }) {
-                Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                Text(stringResource(Res.string.delete), color = MaterialTheme.colorScheme.error)
             }
         }, dismissButton = {
             TextButton(onClick = {
                 showDeleteReplyDialog.value = false
             }) {
-                Text(stringResource(id = R.string.cancel))
+                Text(stringResource(Res.string.cancel))
             }
         })
     }
@@ -414,7 +415,7 @@ fun AddReplyDialog(
     AlertDialog(icon = {
         Icon(Icons.Outlined.Edit, contentDescription = "Edit")
     }, title = {
-        Text(text = stringResource(R.string.reply))
+        Text(text = stringResource(Res.string.reply))
     }, text = {
         TextFieldMentionsComposable(
             submit = { text ->
@@ -425,7 +426,7 @@ fun AddReplyDialog(
             },
             text = replyText,
             changeText = { newText -> replyText = newText },
-            R.string.reply,
+            Res.string.reply,
             modifier = null,
             imeAction = ImeAction.Send,
             submitButton = null,

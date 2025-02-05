@@ -56,8 +56,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -66,7 +66,8 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
@@ -77,6 +78,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposabl
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,10 +109,10 @@ fun ExploreComposable(
                     },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
-                    placeholder = { Text(stringResource(R.string.explore)) },
+                    placeholder = { Text(stringResource(Res.string.explore)) },
                     leadingIcon = {
                         if (!expanded) {
-                            Icon(ImageVector.vectorResource(R.drawable.search_outline), contentDescription = null)
+                            Icon(vectorResource(Res.drawable.search_outline), contentDescription = null)
                         } else {
                             Icon(Icons.Outlined.ArrowBackIosNew,
                                 contentDescription = null,
@@ -218,7 +220,7 @@ private fun SearchResultComposable(searchState: SearchState, saveAccount: (Strin
     Column {
 
         PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-            Tab(text = { Text(stringResource(id = R.string.accounts)) },
+            Tab(text = { Text(stringResource(Res.string.accounts)) },
                 selected = pagerState.currentPage == 0,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -229,7 +231,7 @@ private fun SearchResultComposable(searchState: SearchState, saveAccount: (Strin
 
                 })
 
-            Tab(text = { Text(stringResource(R.string.hashtags)) },
+            Tab(text = { Text(stringResource(Res.string.hashtags)) },
                 selected = pagerState.currentPage == 1,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -307,7 +309,7 @@ private fun PastSearchItem(
         if (item.savedSearchType == SavedSearchType.Account) {
             AsyncImage(
                 model = item.account!!.avatar,
-                error = painterResource(id = R.drawable.default_avatar),
+                error = painterResource(Res.drawable.default_avatar),
                 contentDescription = "",
                 modifier = Modifier
                     .height(46.dp)

@@ -22,13 +22,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -66,7 +67,7 @@ fun TrendingHashtagElement(
                     text = "  • " + String.format(
                         Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!
                     ) + " " + stringResource(
-                        id = R.string.posts
+                        Res.string.posts
                     ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
                 )
             }

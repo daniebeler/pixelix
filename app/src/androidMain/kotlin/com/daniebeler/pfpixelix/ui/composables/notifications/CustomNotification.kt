@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -42,25 +43,25 @@ fun CustomNotification(
     var text = ""
     when (notification.type) {
         "follow" -> {
-            text = " " + stringResource(R.string.followed_you)
+            text = " " + stringResource(Res.string.followed_you)
         }
 
         "mention" -> {
-            text = " " + stringResource(R.string.mentioned_you_in_a_post)
+            text = " " + stringResource(Res.string.mentioned_you_in_a_post)
             showImage = true
         }
 
         "direct" -> {
-            text = " " + stringResource(R.string.sent_a_dm)
+            text = " " + stringResource(Res.string.sent_a_dm)
         }
 
         "favourite" -> {
-            text = " " + stringResource(R.string.liked_your_post)
+            text = " " + stringResource(Res.string.liked_your_post)
             showImage = true
         }
 
         "reblog" -> {
-            text = " " + stringResource(R.string.reblogged_your_post)
+            text = " " + stringResource(Res.string.reblogged_your_post)
             showImage = true
         }
     }
@@ -82,7 +83,7 @@ fun CustomNotification(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(model = notification.account.avatar,
-            error = painterResource(id = R.drawable.default_avatar),
+            error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier
                 .height(46.dp)

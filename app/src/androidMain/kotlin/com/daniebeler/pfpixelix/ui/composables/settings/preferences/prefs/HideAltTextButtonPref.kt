@@ -3,9 +3,10 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPrefUtil
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchIntPref
 
@@ -26,8 +27,8 @@ fun HideAltTextButtonPref() {
 
     SwitchIntPref(
         key = HideAltTextButtonPrefUtil.KEY_HIDE_ALT_TEXT_BUTTON,
-        leadingIcon =  R.drawable.document_text_outline,
-        title = stringResource(R.string.hide_alt_text_button),
+        leadingIcon =  Res.drawable.document_text_outline,
+        title = stringResource(Res.string.hide_alt_text_button),
         default = SettingPrefUtil.OFF,
         onCheckedChange = {
             SettingPrefUtil.setValue(context,

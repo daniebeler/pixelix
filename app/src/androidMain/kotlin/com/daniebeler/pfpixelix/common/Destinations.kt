@@ -1,48 +1,58 @@
 package com.daniebeler.pfpixelix.common
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import com.daniebeler.pfpixelix.R
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_circle
+import pixelix.app.generated.resources.add_circle_outline
+import pixelix.app.generated.resources.alerts
+import pixelix.app.generated.resources.bookmark_outline
+import pixelix.app.generated.resources.home
+import pixelix.app.generated.resources.house
+import pixelix.app.generated.resources.house_fill
+import pixelix.app.generated.resources.notifications
+import pixelix.app.generated.resources.notifications_outline
+import pixelix.app.generated.resources.profile
+import pixelix.app.generated.resources.search
+import pixelix.app.generated.resources.search_outline
 
 sealed class Destinations(
     val route: String,
-    @DrawableRes
-    val icon: Int = R.drawable.bookmark_outline,
-    @DrawableRes
-    val activeIcon: Int = R.drawable.bookmark_outline,
-    @StringRes val label: Int = R.string.home
+    val icon: DrawableResource = Res.drawable.bookmark_outline,
+    val activeIcon: DrawableResource = Res.drawable.bookmark_outline,
+    val label: StringResource = Res.string.home
 ) {
     data object HomeScreen : Destinations(
         route = "home_screen",
-        icon = R.drawable.house,
-        activeIcon = R.drawable.house_fill,
-        label = R.string.home
+        icon = Res.drawable.house,
+        activeIcon = Res.drawable.house_fill,
+        label = Res.string.home
     )
 
     data object NotificationsScreen : Destinations(
         route = "notifications_screen",
-        icon = R.drawable.notifications_outline,
-        activeIcon = R.drawable.notifications,
-        label = R.string.alerts
+        icon = Res.drawable.notifications_outline,
+        activeIcon = Res.drawable.notifications,
+        label = Res.string.alerts
     )
 
     data object OwnProfile : Destinations(
         route = "own_profile_screen",
-        icon = R.drawable.bookmark_outline,
-        activeIcon = R.drawable.bookmark_outline,
-        label = R.string.profile
+        icon = Res.drawable.bookmark_outline,
+        activeIcon = Res.drawable.bookmark_outline,
+        label = Res.string.profile
     )
 
     data object NewPost : Destinations(
-        route = "new_post_screen", icon = R.drawable.add_circle_outline,
-        activeIcon = R.drawable.add_circle
+        route = "new_post_screen", icon = Res.drawable.add_circle_outline,
+        activeIcon = Res.drawable.add_circle
     )
 
     data object Search : Destinations(
         route = "search_screen",
-        icon = R.drawable.search_outline,
-        activeIcon = R.drawable.search,
-        label = R.string.search
+        icon = Res.drawable.search_outline,
+        activeIcon = Res.drawable.search,
+        label = Res.string.search
     )
 
     data object Profile : Destinations(

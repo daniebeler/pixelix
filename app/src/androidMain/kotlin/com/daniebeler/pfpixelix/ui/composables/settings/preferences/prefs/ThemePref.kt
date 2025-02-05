@@ -9,9 +9,10 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ExpandOptionsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.OptionShapes
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
@@ -44,16 +45,16 @@ fun ThemePref() {
     }
 
     ExpandOptionsPref(
-        leadingIcon = R.drawable.color_palette_outline,
-        title = stringResource(R.string.app_theme),
+        leadingIcon = Res.drawable.color_palette_outline,
+        title = stringResource(Res.string.app_theme),
     ) {
         ValueOption(
             shape = OptionShapes.indexOfShape(0, 3),
             leadingIcon = imageVectorIconBlock(
                 imageVector = Icons.Rounded.BrightnessAuto,
-                contentDescription = stringResource(R.string.theme_system)
+                contentDescription = stringResource(Res.string.theme_system)
             ),
-            title = stringResource(R.string.theme_system),
+            title = stringResource(Res.string.theme_system),
             trailingContent = radioButtonBlock(themeModeValue == FOLLOW_SYSTEM),
             value = FOLLOW_SYSTEM,
             onOptionClick = onOptionClick,
@@ -62,9 +63,9 @@ fun ThemePref() {
             shape = OptionShapes.indexOfShape(1, 3),
             leadingIcon = imageVectorIconBlock(
                 imageVector = Icons.Rounded.LightMode,
-                contentDescription = stringResource(R.string.theme_light)
+                contentDescription = stringResource(Res.string.theme_light)
             ),
-            title = stringResource(R.string.theme_light),
+            title = stringResource(Res.string.theme_light),
             trailingContent = radioButtonBlock(themeModeValue == LIGHT),
             value = LIGHT,
             onOptionClick = onOptionClick,
@@ -73,9 +74,9 @@ fun ThemePref() {
             shape = OptionShapes.indexOfShape(2, 3),
             leadingIcon = imageVectorIconBlock(
                 imageVector = Icons.Rounded.DarkMode,
-                contentDescription = stringResource(R.string.theme_dark)
+                contentDescription = stringResource(Res.string.theme_dark)
             ),
-            title = stringResource(R.string.theme_dark),
+            title = stringResource(Res.string.theme_dark),
             trailingContent = radioButtonBlock(themeModeValue == DARK),
             value = DARK,
             onOptionClick = onOptionClick,
@@ -84,9 +85,9 @@ fun ThemePref() {
             shape = OptionShapes.indexOfShape(2, 3),
             leadingIcon = imageVectorIconBlock(
                 imageVector = Icons.Rounded.Contrast,
-                contentDescription = stringResource(R.string.amoled)
+                contentDescription = stringResource(Res.string.amoled)
             ),
-            title = stringResource(R.string.amoled),
+            title = stringResource(Res.string.amoled),
             trailingContent = radioButtonBlock(themeModeValue == AMOLED),
             value = AMOLED,
             onOptionClick = onOptionClick,

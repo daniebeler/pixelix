@@ -77,8 +77,8 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -101,7 +101,8 @@ import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
@@ -114,6 +115,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.snapBackZoomable
+import org.jetbrains.compose.resources.vectorResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -218,7 +220,7 @@ fun PostComposable(
                     Icon(Icons.Outlined.Cached, contentDescription = "reblogged by")
                     Text(
                         stringResource(
-                            R.string.reblogged_by,
+                            Res.string.reblogged_by,
                             reblogAccount.displayname ?: reblogAccount.username
                         ), fontSize = 12.sp
                     )
@@ -237,7 +239,7 @@ fun PostComposable(
             ) {
                 AsyncImage(
                     model = viewModel.post!!.account.avatar,
-                    error = painterResource(id = R.drawable.default_avatar),
+                    error = painterResource(Res.drawable.default_avatar),
                     contentDescription = "",
                     modifier = Modifier
                         .height(36.dp)
@@ -282,7 +284,7 @@ fun PostComposable(
                     showBottomSheet = 2
                 }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ellipsis_vertical),
+                        imageVector = vectorResource(Res.drawable.ellipsis_vertical),
                         contentDescription = ""
                     )
                 }
@@ -435,7 +437,7 @@ fun PostComposable(
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             if (viewModel.post!!.favourited) {
-                                Icon(imageVector = ImageVector.vectorResource(R.drawable.heart),
+                                Icon(imageVector = vectorResource(Res.drawable.heart),
                                     modifier = Modifier
                                         .size(24.dp)
                                         .clickable {
@@ -446,7 +448,7 @@ fun PostComposable(
                                     tint = Color(0xFFDD2E44))
                             } else {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.heart_outline),
+                                    imageVector = vectorResource(Res.drawable.heart_outline),
                                     modifier = Modifier
                                         .size(24.dp)
                                         .clickable {
@@ -469,7 +471,7 @@ fun PostComposable(
                             Spacer(Modifier.width(32.dp))
 
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.chatbubble_outline),
+                                imageVector = vectorResource(Res.drawable.chatbubble_outline),
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
@@ -499,7 +501,7 @@ fun PostComposable(
                                     viewModel.unreblogPost(postId)
                                 }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
+                                        imageVector = vectorResource(Res.drawable.sync_outline),
                                         contentDescription = "undo reblog post",
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.rotate(boostRotation)
@@ -511,7 +513,7 @@ fun PostComposable(
                                     viewModel.reblogPost(postId)
                                 }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.sync_outline),
+                                        imageVector = vectorResource(Res.drawable.sync_outline),
                                         contentDescription = "reblog post",
                                     )
                                 }
@@ -524,7 +526,7 @@ fun PostComposable(
                                     viewModel.unBookmarkPost(postId)
                                 }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.bookmark),
+                                        imageVector = vectorResource(Res.drawable.bookmark),
                                         contentDescription = "unbookmark post"
                                     )
                                 }
@@ -533,7 +535,7 @@ fun PostComposable(
                                     viewModel.bookmarkPost(postId)
                                 }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.bookmark_outline),
+                                        imageVector = vectorResource(Res.drawable.bookmark_outline),
                                         contentDescription = "bookmark post"
                                     )
                                 }
@@ -544,7 +546,7 @@ fun PostComposable(
                     Row {
                         if (viewModel.post!!.likedBy?.username?.isNotBlank() == true) {
                             Text(
-                                text = stringResource(id = R.string.liked_by) + " ",
+                                text = stringResource(Res.string.liked_by) + " ",
                                 fontSize = 14.sp
                             )
                             Text(text = viewModel.post!!.likedBy!!.username!!,
@@ -558,11 +560,11 @@ fun PostComposable(
                                 })
                             if (post.favouritesCount > 1) {
                                 Text(
-                                    text = " " + stringResource(id = R.string.and) + " ",
+                                    text = " " + stringResource(Res.string.and) + " ",
                                     fontSize = 14.sp
                                 )
                                 Text(text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
-                                    id = R.string.others
+                                    Res.string.others
                                 ),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
@@ -573,7 +575,7 @@ fun PostComposable(
                             }
                         } else {
                             Text(
-                                text = stringResource(id = R.string.no_likes_yet), fontSize = 14.sp
+                                text = stringResource(Res.string.no_likes_yet), fontSize = 14.sp
                             )
                         }
                     }
@@ -596,7 +598,7 @@ fun PostComposable(
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(text = stringResource(
-                            R.string.view_comments, viewModel.post!!.replyCount
+                            Res.string.view_comments, viewModel.post!!.replyCount
                         ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.clickable {
@@ -659,22 +661,22 @@ fun PostComposable(
         AlertDialog(icon = {
             Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
         }, title = {
-            Text(text = stringResource(R.string.delete_post))
+            Text(text = stringResource(Res.string.delete_post))
         }, text = {
-            Text(text = stringResource(R.string.this_action_cannot_be_undone))
+            Text(text = stringResource(Res.string.this_action_cannot_be_undone))
         }, onDismissRequest = {
             viewModel.deleteDialog = null
         }, confirmButton = {
             TextButton(onClick = {
                 viewModel.deletePost(viewModel.deleteDialog!!)
             }) {
-                Text(stringResource(R.string.delete))
+                Text(stringResource(Res.string.delete))
             }
         }, dismissButton = {
             TextButton(onClick = {
                 viewModel.deleteDialog = null
             }) {
-                Text(stringResource(id = R.string.cancel))
+                Text(stringResource(Res.string.cancel))
             }
         })
 
@@ -799,7 +801,7 @@ fun PostImage(
 
         if (altText.isNotBlank()) {
             AlertDialog(title = {
-                Text(text = stringResource(R.string.media_description))
+                Text(text = stringResource(Res.string.media_description))
             }, text = {
                 Text(text = altText)
             }, onDismissRequest = {
@@ -808,7 +810,7 @@ fun PostImage(
                 TextButton(onClick = {
                     altText = ""
                 }) {
-                    Text(stringResource(id = android.R.string.ok))
+                    Text(stringResource(Res.string.ok))
                 }
             })
         }

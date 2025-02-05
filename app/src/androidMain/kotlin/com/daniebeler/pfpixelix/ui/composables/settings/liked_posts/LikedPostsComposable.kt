@@ -19,14 +19,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,13 +39,13 @@ fun LikedPostsComposable(
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(stringResource(id = R.string.liked_posts), fontWeight = FontWeight.Bold)
+            Text(stringResource(Res.string.liked_posts), fontWeight = FontWeight.Bold)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })
@@ -61,7 +63,7 @@ fun LikedPostsComposable(
                 error = viewModel.likedPostsState.error,
                 emptyMessage = EmptyState(
                     icon = Icons.Outlined.FavoriteBorder,
-                    heading = stringResource(R.string.no_liked_posts)
+                    heading = stringResource(Res.string.no_liked_posts)
                 ),
                 navController = navController,
                 getItemsPaginated = {
