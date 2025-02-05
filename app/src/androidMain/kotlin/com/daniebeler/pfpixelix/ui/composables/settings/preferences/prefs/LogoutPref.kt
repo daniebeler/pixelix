@@ -10,10 +10,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.LoginActivity
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,8 +27,8 @@ fun LogoutPref(logout: () -> Unit) {
     LogoutAlert(showAlert, logout)
 
     SettingPref(
-        leadingIcon = R.drawable.log_out_outline,
-        title = stringResource(id = R.string.logout),
+        leadingIcon = Res.drawable.log_out_outline,
+        title = stringResource(Res.string.logout),
         trailingContent = null,
         onClick = { showAlert.value = true },
         textColor = MaterialTheme.colorScheme.error
@@ -45,9 +46,9 @@ fun LogoutAlert(show: MutableState<Boolean>, logout: () -> Unit) {
     val context = LocalContext.current
     if (show.value) {
         AlertDialog(title = {
-            Text(text = stringResource(R.string.logout_questionmark))
+            Text(text = stringResource(Res.string.logout_questionmark))
         }, text = {
-            Text(text = stringResource(R.string.are_you_sure_you_want_to_log_out))
+            Text(text = stringResource(Res.string.are_you_sure_you_want_to_log_out))
         }, onDismissRequest = {
             show.value = false
         }, confirmButton = {
@@ -59,13 +60,13 @@ fun LogoutAlert(show: MutableState<Boolean>, logout: () -> Unit) {
                     context.startActivity(intent)
                 }
             }) {
-                Text(stringResource(R.string.logout))
+                Text(stringResource(Res.string.logout))
             }
         }, dismissButton = {
             TextButton(onClick = {
                 show.value = false
             }) {
-                Text(stringResource(id = R.string.cancel))
+                Text(stringResource(Res.string.cancel))
             }
         })
     }

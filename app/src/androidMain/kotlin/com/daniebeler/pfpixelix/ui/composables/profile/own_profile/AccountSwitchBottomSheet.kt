@@ -26,12 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.loginDataToAccount
 import com.daniebeler.pfpixelix.gotoLoginActivity
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
@@ -51,7 +52,7 @@ fun AccountSwitchBottomSheet(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (viewModel.currentlyLoggedIn.currentAccount != null) {
             Text(
-                text = stringResource(R.string.current_account),
+                text = stringResource(Res.string.current_account),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
@@ -60,7 +61,7 @@ fun AccountSwitchBottomSheet(
         }
         if (viewModel.otherAccounts.otherAccounts.isNotEmpty()) {
             Text(
-                text = stringResource(R.string.other_accounts),
+                text = stringResource(Res.string.other_accounts),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
@@ -106,7 +107,7 @@ fun AccountSwitchBottomSheet(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = stringResource(R.string.add_pixelfed_account),
+                text = stringResource(Res.string.add_pixelfed_account),
                 lineHeight = 8.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -115,9 +116,9 @@ fun AccountSwitchBottomSheet(
 
     if (showRemoveLoginDataAlert.value.isNotBlank()) {
         AlertDialog(title = {
-            Text(text = stringResource(R.string.remove_account))
+            Text(text = stringResource(Res.string.remove_account))
         }, text = {
-            Text(text = stringResource(R.string.are_you_sure_you_want_to_remove_this_account))
+            Text(text = stringResource(Res.string.are_you_sure_you_want_to_remove_this_account))
         }, onDismissRequest = {
             showRemoveLoginDataAlert.value = ""
         }, confirmButton = {
@@ -127,13 +128,13 @@ fun AccountSwitchBottomSheet(
                     showRemoveLoginDataAlert.value = ""
                 }
             }) {
-                Text(stringResource(R.string.remove))
+                Text(stringResource(Res.string.remove))
             }
         }, dismissButton = {
             TextButton(onClick = {
                 showRemoveLoginDataAlert.value = ""
             }) {
-                Text(stringResource(id = R.string.cancel))
+                Text(stringResource(Res.string.cancel))
             }
         })
     }

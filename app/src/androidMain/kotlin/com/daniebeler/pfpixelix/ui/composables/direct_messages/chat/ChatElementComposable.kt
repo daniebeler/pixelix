@@ -24,11 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Message
 
 @Composable
@@ -105,20 +106,20 @@ fun ConversationElementComposable(
         }, title = {
             Text(text = "Delete message")
         }, text = {
-            Text(text = stringResource(R.string.this_action_cannot_be_undone))
+            Text(text = stringResource(Res.string.this_action_cannot_be_undone))
         }, onDismissRequest = {
             showDeleteReplyDialog.value = false
         }, confirmButton = {
             TextButton(onClick = {
                 deleteMessage()
             }) {
-                Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                Text(stringResource(Res.string.delete), color = MaterialTheme.colorScheme.error)
             }
         }, dismissButton = {
             TextButton(onClick = {
                 showDeleteReplyDialog.value = false
             }) {
-                Text(stringResource(id = R.string.cancel))
+                Text(stringResource(Res.string.cancel))
             }
         })
     }

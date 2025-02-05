@@ -42,13 +42,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +78,7 @@ fun IconSelectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })
@@ -100,7 +102,7 @@ fun IconSelectionComposable(
                 item (span = { GridItemSpan(3) }) {
                     Column {
                         Row {
-                            Text(text = stringResource(R.string.two_icons_info))
+                            Text(text = stringResource(Res.string.two_icons_info))
                         }
 
                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
@@ -151,9 +153,9 @@ fun IconSelectionComposable(
 
         if (newIconName.value.isNotBlank()) {
             AlertDialog(title = {
-                Text(text = stringResource(R.string.change_app_icon))
+                Text(text = stringResource(Res.string.change_app_icon))
             }, text = {
-                Text(text = stringResource(R.string.change_app_icon_dialog_content))
+                Text(text = stringResource(Res.string.change_app_icon_dialog_content))
             }, onDismissRequest = {
                 newIconName.value = ""
             }, confirmButton = {
@@ -161,13 +163,13 @@ fun IconSelectionComposable(
                     viewModel.changeIcon(context = context, newIconName.value)
                     newIconName.value = ""
                 }) {
-                    Text(stringResource(R.string.change))
+                    Text(stringResource(Res.string.change))
                 }
             }, dismissButton = {
                 TextButton(onClick = {
                     newIconName.value = ""
                 }) {
-                    Text(stringResource(id = R.string.cancel))
+                    Text(stringResource(Res.string.cancel))
                 }
             })
         }

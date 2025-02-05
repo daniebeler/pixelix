@@ -30,18 +30,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Place
+import org.jetbrains.compose.resources.StringResource
 
 @Composable
 fun TextFieldLocationsComposable(
     submit: (id: String) -> Unit,
     submitPlace: (place: Place?) -> Unit,
     initialValue: Place?,
-    labelStringId: Int,
+    labelStringId: StringResource,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,
     imeAction: ImeAction,

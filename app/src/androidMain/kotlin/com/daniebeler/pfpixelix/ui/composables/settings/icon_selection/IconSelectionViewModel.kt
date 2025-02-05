@@ -10,6 +10,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.common.IconsHolder
 import com.daniebeler.pfpixelix.domain.usecase.DisableAllCustomAppIconsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.EnableCustomAppIconUseCase

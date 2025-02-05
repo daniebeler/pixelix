@@ -50,8 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -107,6 +106,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.default_avatar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -569,7 +572,7 @@ fun BottomBar(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
                             model = avatar,
-                            error = painterResource(id = R.drawable.default_avatar),
+                            error = painterResource(Res.drawable.default_avatar),
                             contentDescription = "",
                             modifier = Modifier
                                 .height(30.dp)
@@ -583,13 +586,13 @@ fun BottomBar(
                     }
                 } else if (currentRoute?.startsWith(screen.route) == true) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(screen.activeIcon),
+                        imageVector = vectorResource(screen.activeIcon),
                         modifier = Modifier.size(30.dp),
                         contentDescription = stringResource(screen.label)
                     )
                 } else {
                     Icon(
-                        imageVector = ImageVector.vectorResource(screen.icon),
+                        imageVector = vectorResource(screen.icon),
                         modifier = Modifier.size(30.dp),
                         contentDescription = stringResource(screen.label)
                     )

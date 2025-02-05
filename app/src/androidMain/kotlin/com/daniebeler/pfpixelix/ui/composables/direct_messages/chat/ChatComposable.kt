@@ -46,8 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -56,12 +56,14 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -87,7 +89,7 @@ fun ChatComposable(
                 ) {
                     AsyncImage(
                         model = viewModel.chatState.chat!!.avatar,
-                        error = painterResource(id = R.drawable.default_avatar),
+                        error = painterResource(Res.drawable.default_avatar),
                         contentDescription = "",
                         modifier = Modifier
                             .height(46.dp)
@@ -115,7 +117,7 @@ fun ChatComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         })
@@ -178,7 +180,7 @@ fun ChatComposable(
                                         .padding(8.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.beginning_of_chat_note),
+                                        text = stringResource(Res.string.beginning_of_chat_note),
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )

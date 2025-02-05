@@ -22,6 +22,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
+            implementation(compose.components.resources)
             implementation(libs.compose.ui.graphics)
 
             //logger

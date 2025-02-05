@@ -6,9 +6,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -24,8 +25,8 @@ fun ClearCachePref() {
     }
 
     SettingPref(
-        leadingIcon = R.drawable.save_outline,
-        title = stringResource(id = R.string.clear_cache),
+        leadingIcon = Res.drawable.save_outline,
+        title = stringResource(Res.string.clear_cache),
         desc = cacheSize.value,
         trailingContent = null,
         onClick = {cacheSize.value = deleteCache(context)}

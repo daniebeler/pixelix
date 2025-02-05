@@ -23,16 +23,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun ButtonRowElement(
-    @DrawableRes
-    icon: Int,
+    icon: DrawableResource,
     text: String,
     smallText: String = "",
     onClick: () -> Unit,
@@ -45,7 +46,7 @@ fun ButtonRowElement(
                 onClick()
             }) {
         Icon(
-            imageVector = ImageVector.vectorResource(icon),
+            imageVector = vectorResource(icon),
             contentDescription = "",
             Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
             tint = color
@@ -64,7 +65,7 @@ fun ButtonRowElement(
 
 @Composable
 fun ButtonRowElementWithRoundedImage(
-    @DrawableRes icon: Int,
+    icon: DrawableResource,
     text: String,
     smallText: String = "",
     onClick: () -> Unit,
@@ -77,7 +78,7 @@ fun ButtonRowElementWithRoundedImage(
                 onClick()
             }) {
         Image(
-            painter = painterResource(id = icon),
+            painter = painterResource(icon),
             contentDescription = "",
             Modifier
                 .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
@@ -137,7 +138,7 @@ fun ButtonRowElement(
 }
 @Composable
 fun SwitchRowItem(
-    @DrawableRes icon: Int,
+    icon: DrawableResource,
     text: String,
     smallText: String = "",
     isChecked: Boolean,
@@ -154,7 +155,7 @@ fun SwitchRowItem(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = ImageVector.vectorResource(icon), contentDescription = null)
+            Icon(imageVector = vectorResource(icon), contentDescription = null)
             Spacer(modifier = Modifier.width(12.dp))
             Column(
                 modifier = Modifier.weight(1f),

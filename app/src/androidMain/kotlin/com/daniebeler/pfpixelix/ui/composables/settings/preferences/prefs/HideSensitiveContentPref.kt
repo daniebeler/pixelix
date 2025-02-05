@@ -2,9 +2,10 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPrefUtil
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchIntPref
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -26,8 +27,8 @@ fun HideSensitiveContentPref() {
 
     SwitchIntPref(
         key = HideSensitiveContentPrefUtil.KEY_HIDE_SESITIVE_CONTENT,
-        leadingIcon = R.drawable.eye_off_outline,
-        title = stringResource(R.string.hide_sensitive_content),
+        leadingIcon = Res.drawable.eye_off_outline,
+        title = stringResource(Res.string.hide_sensitive_content),
         default = SettingPrefUtil.ON,
         onCheckedChange = {
             SettingPrefUtil.setValue(context,

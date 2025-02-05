@@ -13,11 +13,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -62,9 +63,9 @@ fun FollowingComposable(
     if (!viewModel.followingState.isLoading && viewModel.followingState.error.isEmpty() && viewModel.followingState.following.isEmpty()) {
         FullscreenEmptyStateComposable(
             emptyState = EmptyState(icon = Icons.Outlined.Groups,
-                heading = stringResource(id = R.string.empty),
-                message = stringResource(R.string.the_profiles_you_follow_will_appear_here),
-                buttonText = stringResource(R.string.explore_trending_profiles),
+                heading = stringResource(Res.string.empty),
+                message = stringResource(Res.string.the_profiles_you_follow_will_appear_here),
+                buttonText = stringResource(Res.string.explore_trending_profiles),
                 onClick = {
                     Navigate.navigate("trending_screen/accounts", navController)
                 })

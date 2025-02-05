@@ -17,9 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 
 @Composable
 fun FollowButton(
@@ -159,13 +160,13 @@ private fun TextFollowButton(
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     ) {
-                        Text(text = stringResource(R.string.unfollow))
+                        Text(text = stringResource(Res.string.unfollow))
                     }
                 } else {
                     Button(onClick = {
                         onFollowClick()
                     }, modifier = Modifier.width(120.dp)) {
-                        Text(text = stringResource(R.string.follow))
+                        Text(text = stringResource(Res.string.follow))
                     }
                 }
             }

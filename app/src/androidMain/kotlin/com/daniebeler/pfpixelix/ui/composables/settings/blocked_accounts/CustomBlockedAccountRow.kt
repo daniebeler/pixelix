@@ -14,13 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnBlockAccountAlert
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -41,7 +42,7 @@ fun CustomBlockedAccountRow(
         }) {
             AsyncImage(
                 model = account.avatar,
-                error = painterResource(id = R.drawable.default_avatar),
+                error = painterResource(Res.drawable.default_avatar),
                 contentDescription = "",
                 modifier = Modifier
                     .height(32.dp)
@@ -57,7 +58,7 @@ fun CustomBlockedAccountRow(
             Button(onClick = {
                 viewModel.unblockAccountAlert = account.id
             }) {
-                Text(text = stringResource(R.string.unblock))
+                Text(text = stringResource(Res.string.unblock))
             }
         }
     }

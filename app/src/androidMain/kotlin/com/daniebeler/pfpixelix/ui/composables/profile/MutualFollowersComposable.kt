@@ -27,7 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +36,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowerElementComposable
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -59,7 +60,7 @@ fun MutualFollowersComposable(
 
         val annotatedString = buildAnnotatedString {
             withStyle(style = normalStyle) {
-                append(stringResource(R.string.followed_by) + " ")
+                append(stringResource(Res.string.followed_by) + " ")
                 withStyle(style = boldStyle) {
                     pushStringAnnotation(
                         tag = "account",
@@ -70,7 +71,7 @@ fun MutualFollowersComposable(
                 }
 
                 if (listSize == 2) {
-                    append(" " + stringResource(R.string.and) + " ")
+                    append(" " + stringResource(Res.string.and) + " ")
                 }
                 if (listSize > 2) {
                     append(", ")
@@ -85,7 +86,7 @@ fun MutualFollowersComposable(
                 }
 
                 if (listSize == 3) {
-                    append(" " + stringResource(R.string.and) + " ")
+                    append(" " + stringResource(Res.string.and) + " ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
@@ -105,15 +106,15 @@ fun MutualFollowersComposable(
                         append(mutualFollowersState.mutualFollowers[2].username)
                         pop()
                     }
-                    append(" " + stringResource(id = R.string.and) + " ")
+                    append(" " + stringResource(Res.string.and) + " ")
 
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         pushStringAnnotation(tag = "others", annotation = "others")
                         append((listSize - 3).toString())
                         if (listSize == 4) {
-                            append(" " + stringResource(R.string.other))
+                            append(" " + stringResource(Res.string.other))
                         } else {
-                            append(" " + stringResource(R.string.others))
+                            append(" " + stringResource(Res.string.others))
                         }
 
                         pop()
@@ -208,7 +209,7 @@ fun MutualFollowersComposable(
 
                     item {
                         Text(
-                            text = stringResource(R.string.mutual_followers),
+                            text = stringResource(Res.string.mutual_followers),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )

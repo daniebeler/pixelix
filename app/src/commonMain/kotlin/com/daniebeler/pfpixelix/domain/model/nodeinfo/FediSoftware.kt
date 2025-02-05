@@ -1,5 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model.nodeinfo
 
+import org.jetbrains.compose.resources.DrawableResource
+
 data class FediSoftware(
     val description: String,
     val id: Int,
@@ -10,6 +12,6 @@ data class FediSoftware(
     val statusCount: Int,
     val userCount: Int,
     val activeUserCount: Int,
-    var icon: Int?, //todo KMP
+    var icon: DrawableResource?,
     val website: String
 )

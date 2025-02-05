@@ -44,10 +44,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.utils.bottom
 import com.daniebeler.pfpixelix.utils.top
+import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
 fun ExpandOptionsPref(
-    @DrawableRes leadingIcon: Int,
+    leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
     initializeExpanded: Boolean = false,

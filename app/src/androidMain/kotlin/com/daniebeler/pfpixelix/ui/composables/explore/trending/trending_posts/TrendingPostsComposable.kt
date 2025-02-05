@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
@@ -30,7 +31,7 @@ fun TrendingPostsComposable(
             isRefreshing = viewModel.trendingState.isRefreshing,
             endReached = true,
             error = viewModel.trendingState.error,
-            emptyMessage = EmptyState(heading = stringResource(R.string.no_trending_posts)),
+            emptyMessage = EmptyState(heading = stringResource(Res.string.no_trending_posts)),
             navController = navController,
             onRefresh = {
                 viewModel.getTrendingPosts(range, true)

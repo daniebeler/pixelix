@@ -44,6 +44,8 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.widget.WidgetColors
 import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
@@ -196,7 +198,11 @@ class NotificationsWidget : GlanceAppWidget() {
                 Spacer(GlanceModifier.height(12.dp))
                 Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
                     Image(
-                        provider = GetImageProvider()(notification.accountAvatarUri, context, 1000f),
+                        provider = GetImageProvider()(
+                            notification.accountAvatarUri,
+                            context,
+                            1000f
+                        ),
                         contentDescription = "",
                         modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
                     )
@@ -214,9 +220,7 @@ class NotificationsWidget : GlanceAppWidget() {
                             }
                             Text(
                                 text = LocalContext.current.getString(
-                                    getNotificationText(
-                                        notification.type
-                                    )
+                                    getNotificationText(notification.type)
                                 ), style = TextStyle(
                                     color = GlanceTheme.colors.onBackground,
                                     fontSize = if (size.width >= BIG_SQUARE.width) {
@@ -244,10 +248,7 @@ class NotificationsWidget : GlanceAppWidget() {
             "follow" -> R.string.followed_you
             "direct" -> R.string.sent_a_dm
             "reblog" -> R.string.reblogged_your_post
-
-            else -> {
-                R.string.notifications
-            }
+            else -> R.string.notifications
         }
     }
 }

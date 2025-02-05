@@ -27,10 +27,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import com.daniebeler.pfpixelix.utils.Navigate
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun CustomPost(
@@ -125,7 +127,7 @@ fun CustomPost(
                             .align(Alignment.TopEnd)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.stack),
+                            imageVector = vectorResource(Res.drawable.stack),
                             tint = Color.White,
                             contentDescription = null,
                         )

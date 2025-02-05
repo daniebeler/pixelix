@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.CustomizeAppIconPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePref
@@ -44,6 +46,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.MoreSe
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.RepostSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ThemePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInAppBrowserPref
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,13 +67,13 @@ fun PreferencesComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(scrollBehavior = scrollBehavior, title = {
-                Text(text = stringResource(R.string.settings), fontWeight = FontWeight.Bold)
+                Text(text = stringResource(Res.string.settings), fontWeight = FontWeight.Bold)
             }, navigationIcon = {
                 IconButton(onClick = {
                     closePreferencesDrawer()
                 }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.close_outline),
+                        imageVector = vectorResource(Res.drawable.close_outline),
                         contentDescription = ""
                     )
                 }
@@ -101,7 +104,7 @@ fun PreferencesComposable(
             ThemePref()
 
             if (viewModel.appIcon == null) {
-                CustomizeAppIconPref(navController, closePreferencesDrawer, R.drawable.pixelix_logo)
+                CustomizeAppIconPref(navController, closePreferencesDrawer, Res.drawable.pixelix_logo)
             } else {
                 CustomizeAppIconPref(navController, closePreferencesDrawer, viewModel.appIcon!!)
             }

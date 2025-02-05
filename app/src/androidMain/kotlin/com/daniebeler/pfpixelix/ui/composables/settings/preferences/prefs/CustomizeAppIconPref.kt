@@ -3,20 +3,22 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
 import com.daniebeler.pfpixelix.utils.Navigate
+import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
-fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, @DrawableRes logo: Int) {
+fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, logo: DrawableResource) {
     SettingPref(leadingIcon = painterResource(logo),
-        title = stringResource(id = R.string.customize_app_icon),
-        trailingContent = R.drawable.chevron_forward_outline,
+        title = stringResource(Res.string.customize_app_icon),
+        trailingContent = Res.drawable.chevron_forward_outline,
         onClick = {
             closePreferenceDrawer()
             Navigate.navigate("icon_selection_screen", navController)
@@ -26,8 +28,8 @@ fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: ()
 @Composable
 fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, logo: ImageBitmap) {
     SettingPref(leadingIcon = logo,
-        title = stringResource(id = R.string.customize_app_icon),
-        trailingContent = R.drawable.chevron_forward_outline,
+        title = stringResource(Res.string.customize_app_icon),
+        trailingContent = Res.drawable.chevron_forward_outline,
         onClick = {
             closePreferenceDrawer()
             Navigate.navigate("icon_selection_screen", navController)
@@ -37,5 +39,5 @@ fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: ()
 @Preview
 @Composable
 private fun CustomizeAppIconPrefPreview() {
-    CustomizeAppIconPref(rememberNavController(), {}, R.drawable.pixelix_logo)
+    CustomizeAppIconPref(rememberNavController(), {}, Res.drawable.pixelix_logo)
 }

@@ -15,12 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.utils.Navigate
 
@@ -39,7 +40,7 @@ fun FollowerElementComposable(
     ) {
         AsyncImage(
             model = account.avatar,
-            error = painterResource(id = R.drawable.default_avatar),
+            error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier
                 .height(46.dp)

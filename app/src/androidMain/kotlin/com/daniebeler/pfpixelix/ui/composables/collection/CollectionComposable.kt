@@ -42,18 +42,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Share
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +100,7 @@ fun CollectionComposable(
                         )
                         Text(
                             stringResource(
-                                R.string.by, viewModel.collectionState.collection!!.username
+                                Res.string.by, viewModel.collectionState.collection!!.username
                             ), fontSize = 12.sp, lineHeight = 6.sp
                         )
                     }
@@ -109,7 +111,7 @@ fun CollectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
                 )
             }
         }, actions = {
@@ -117,12 +119,12 @@ fun CollectionComposable(
                 TextButton(onClick = {
                     viewModel.toggleEditMode()
                 }) {
-                    Text(stringResource(id = R.string.cancel))
+                    Text(stringResource(Res.string.cancel))
                 }
                 TextButton(onClick = {
                     viewModel.confirmEdit()
                 }) {
-                    Text(stringResource(id = R.string.confirm))
+                    Text(stringResource(Res.string.confirm))
                 }
             } else {
 
@@ -199,8 +201,8 @@ fun CollectionComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    ButtonRowElement(icon = R.drawable.open_outline, text = stringResource(
-                        R.string.open_in_browser
+                    ButtonRowElement(icon = Res.drawable.open_outline, text = stringResource(
+                        Res.string.open_in_browser
                     ), onClick = {
                         if (viewModel.collectionState.collection != null) {
                             viewModel.openUrl(
@@ -209,8 +211,8 @@ fun CollectionComposable(
                         }
                     })
 
-                    ButtonRowElement(icon = R.drawable.share_social_outline,
-                        text = stringResource(R.string.share_this_collection),
+                    ButtonRowElement(icon = Res.drawable.share_social_outline,
+                        text = stringResource(Res.string.share_this_collection),
                         onClick = {
                             if (viewModel.collectionState.collection != null) {
                                 Share.shareText(context, viewModel.collectionState.collection!!.url)

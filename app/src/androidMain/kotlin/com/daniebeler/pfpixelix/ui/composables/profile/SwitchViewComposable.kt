@@ -19,12 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.R
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 
 @Composable
 fun SwitchViewComposable(
@@ -45,7 +47,7 @@ fun SwitchViewComposable(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = " " + stringResource(id = R.string.posts), fontSize = 12.sp)
+                Text(text = " " + stringResource(Res.string.posts), fontSize = 12.sp)
             }
 
             Row {
@@ -61,9 +63,9 @@ fun SwitchViewComposable(
                     )) {
                     Icon(
                         imageVector = if(viewType == ViewEnum.Grid) {
-                            ImageVector.vectorResource(R.drawable.grid)
+                            vectorResource(Res.drawable.grid)
                         } else {
-                            ImageVector.vectorResource(R.drawable.grid_outline)
+                            vectorResource(Res.drawable.grid_outline)
                         },
                         modifier = Modifier.size(24.dp),
                         contentDescription = "grid view"
@@ -81,9 +83,9 @@ fun SwitchViewComposable(
                     )) {
                     Icon(
                         imageVector = if(viewType == ViewEnum.Grid) {
-                            ImageVector.vectorResource(R.drawable.reorder_four_outline)
+                            vectorResource(Res.drawable.reorder_four_outline)
                         } else {
-                            ImageVector.vectorResource(R.drawable.reorder_four)
+                            vectorResource(Res.drawable.reorder_four)
                         },
                         contentDescription = "timeline view"
                     )

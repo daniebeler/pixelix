@@ -55,7 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -64,7 +64,8 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.video.VideoFrameDecoder
-import com.daniebeler.pfpixelix.R
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
@@ -76,6 +77,7 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class
 )
@@ -111,13 +113,13 @@ fun NewPostComposable(
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
-            Text(text = stringResource(R.string.new_post), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
             Button(
                 onClick = { showReleaseAlert = true },
                 enabled = (viewModel.images.isNotEmpty() && !viewModel.mediaUploadState.isLoading)
             ) {
-                Text(text = stringResource(R.string.release))
+                Text(text = stringResource(Res.string.release))
             }
         })
     }) { paddingValues ->
@@ -175,7 +177,7 @@ fun NewPostComposable(
                                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
-                            label = { Text(stringResource(R.string.alt_text)) },
+                            label = { Text(stringResource(Res.string.alt_text)) },
                         )
 
                         if (viewModel.images.size > 1) {
@@ -198,7 +200,7 @@ fun NewPostComposable(
                             viewModel.deleteMedia(image.id, image.imageUri)
                         }) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.trash_outline),
+                                imageVector = vectorResource(Res.drawable.trash_outline),
                                 contentDescription = "delete Image",
                                 tint = MaterialTheme.colorScheme.error
                             )
@@ -215,7 +217,7 @@ fun NewPostComposable(
                             }
                             .height(50.dp)
                             .width(50.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.add_outline),
+                        imageVector = vectorResource(Res.drawable.add_outline),
                         contentDescription = null,
                     )
                 }
@@ -224,7 +226,7 @@ fun NewPostComposable(
                     submit = {},
                     text = viewModel.caption,
                     changeText = { text -> viewModel.caption = text },
-                    labelStringId = R.string.caption,
+                    labelStringId = Res.string.caption,
                     modifier = Modifier.fillMaxWidth(),
                     imeAction = ImeAction.Default,
                     suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -235,7 +237,7 @@ fun NewPostComposable(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = stringResource(R.string.sensitive_nsfw_media))
+                    Text(text = stringResource(Res.string.sensitive_nsfw_media))
                     Switch(checked = viewModel.sensitive,
                         onCheckedChange = { viewModel.sensitive = it })
                 }
@@ -244,7 +246,7 @@ fun NewPostComposable(
                         value = viewModel.sensitiveText,
                         onValueChange = { viewModel.sensitiveText = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text(stringResource(R.string.content_warning_or_spoiler_text)) },
+                        label = { Text(stringResource(Res.string.content_warning_or_spoiler_text)) },
                         shape = RoundedCornerShape(16.dp),
                         colors = TextFieldDefaults.colors(
                             unfocusedIndicatorColor = Color.Transparent,
@@ -259,20 +261,20 @@ fun NewPostComposable(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = stringResource(R.string.audience))
+                    Text(text = stringResource(Res.string.audience))
                     Box {
                         OutlinedButton(onClick = { expanded = !expanded }) {
                             val buttonText: String = when (viewModel.audience) {
                                 AUDIENCE_PUBLIC -> {
-                                    stringResource(id = R.string.audience_public)
+                                    stringResource(Res.string.audience_public)
                                 }
 
                                 AUDIENCE_UNLISTED -> {
-                                    stringResource(id = R.string.unlisted)
+                                    stringResource(Res.string.unlisted)
                                 }
 
                                 AUDIENCE_FOLLOWERS_ONLY -> {
-                                    stringResource(id = R.string.followers_only)
+                                    stringResource(Res.string.followers_only)
                                 }
 
                                 else -> {
@@ -282,7 +284,7 @@ fun NewPostComposable(
                             Text(text = buttonText)
                         }
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            DropdownMenuItem(text = { Text(stringResource(R.string.audience_public)) },
+                            DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
                                 onClick = { viewModel.audience = AUDIENCE_PUBLIC },
                                 trailingIcon = {
                                     if (viewModel.audience == AUDIENCE_PUBLIC) {
@@ -293,7 +295,7 @@ fun NewPostComposable(
                                         )
                                     }
                                 })
-                            DropdownMenuItem(text = { Text(stringResource(R.string.unlisted)) },
+                            DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
                                 onClick = { viewModel.audience = AUDIENCE_UNLISTED },
                                 trailingIcon = {
                                     if (viewModel.audience == AUDIENCE_UNLISTED) {
@@ -304,7 +306,7 @@ fun NewPostComposable(
                                         )
                                     }
                                 })
-                            DropdownMenuItem(text = { Text(stringResource(R.string.followers_only)) },
+                            DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
                                 onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
                                 trailingIcon = {
                                     if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
@@ -325,7 +327,7 @@ fun NewPostComposable(
                     submit = {viewModel.setLocation(it)},
                     submitPlace = {},
                     initialValue = null,
-                    labelStringId = R.string.location,
+                    labelStringId = Res.string.location,
                     modifier = Modifier.fillMaxWidth(),
                     imeAction = ImeAction.Default,
                     suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -358,14 +360,14 @@ fun NewPostComposable(
                     TextButton(onClick = {
                         showReleaseAlert = false
                     }) {
-                        Text(stringResource(id = R.string.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 }, confirmButton = {
                     TextButton(onClick = {
                         showReleaseAlert = false
                         viewModel.post(navController)
                     }) {
-                        Text(stringResource(id = R.string.release))
+                        Text(stringResource(Res.string.release))
                     }
                 })
             }
