@@ -38,6 +38,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.StringFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
@@ -69,7 +70,7 @@ fun ProfileTopSection(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = String.format(Locale.GERMANY, "%,d", account.postsCount),
+                            text = StringFormat.groupDigits(account.postsCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -83,7 +84,7 @@ fun ProfileTopSection(
                             )
                         }) {
                         Text(
-                            text = String.format(Locale.GERMANY, "%,d", account.followersCount),
+                            text = StringFormat.groupDigits(account.followersCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -97,7 +98,7 @@ fun ProfileTopSection(
                             )
                         }) {
                         Text(
-                            text = String.format(Locale.GERMANY, "%,d", account.followingCount),
+                            text = StringFormat.groupDigits(account.followingCount),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )

@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.utils.StringFormat
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.*
 import java.util.Locale
@@ -115,9 +116,7 @@ fun DomainSoftwareComposable(
                             Text(stringResource(Res.string.instances))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.statsState.fediSoftware!!.instanceCount
                                 ), fontWeight = FontWeight.Bold
                             )
@@ -131,9 +130,7 @@ fun DomainSoftwareComposable(
                             Text(stringResource(Res.string.total_posts))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.statsState.fediSoftware!!.statusCount
                                 ), fontWeight = FontWeight.Bold
                             )
@@ -147,9 +144,7 @@ fun DomainSoftwareComposable(
                             Text(stringResource(Res.string.total_users))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.statsState.fediSoftware!!.userCount
                                 ), fontWeight = FontWeight.Bold
                             )
@@ -163,9 +158,7 @@ fun DomainSoftwareComposable(
                             Text(stringResource(Res.string.active_users))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.statsState.fediSoftware!!.activeUserCount
                                 ), fontWeight = FontWeight.Bold
                             )
@@ -286,9 +279,7 @@ fun DomainSoftwareComposable(
                         Text(stringResource(Res.string.total_posts))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = String.format(
-                                Locale.GERMANY,
-                                "%,d",
+                            text = StringFormat.groupDigits(
                                 viewModel.statsState.fediServer!!.stats.statusCount
                             ), fontWeight = FontWeight.Bold
                         )
@@ -300,9 +291,7 @@ fun DomainSoftwareComposable(
                         Text(stringResource(Res.string.total_users))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = String.format(
-                                Locale.GERMANY,
-                                "%,d",
+                            text = StringFormat.groupDigits(
                                 viewModel.statsState.fediServer!!.stats.userCount
                             ), fontWeight = FontWeight.Bold
                         )
@@ -314,9 +303,7 @@ fun DomainSoftwareComposable(
                         Text(stringResource(Res.string.active_users))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = String.format(
-                                Locale.GERMANY,
-                                "%,d",
+                            text = StringFormat.groupDigits(
                                 viewModel.statsState.fediServer!!.stats.monthlyActiveUsers
                             ), fontWeight = FontWeight.Bold
                         )
