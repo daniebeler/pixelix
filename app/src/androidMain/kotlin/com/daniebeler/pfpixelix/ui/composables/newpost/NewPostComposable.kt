@@ -53,10 +53,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -127,7 +125,7 @@ fun NewPostComposable(
             Column(
                 Modifier
                     .padding(paddingValues)
-                    .imeAwareInsets(context, 90.dp)
+                    .imeAwareInsets(90.dp)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -137,7 +135,7 @@ fun NewPostComposable(
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
 
-                            val type = MimeType.getMimeType(image.imageUri, context.contentResolver)
+                            val type = MimeType.getMimeType(image.imageUri, context)
                             if (type != null && type.take(5) == "video") {
                                 val model = ImageRequest.Builder(context).data(image.imageUri)
                                     .decoderFactory { result, options, _ ->

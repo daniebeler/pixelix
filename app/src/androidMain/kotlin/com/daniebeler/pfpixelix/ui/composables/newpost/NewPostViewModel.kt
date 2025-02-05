@@ -103,7 +103,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun addImage(uri: Uri, context: Context) {
-        val fileType = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
+        val fileType = MimeType.getMimeType(uri, context) ?: "image/*"
         if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(
                 fileType
             )
@@ -114,9 +114,8 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        val file = GetFile.getFile(uri, context) ?: return
+        val size = GetFile.getFileSize(uri, context) ?: return
 
-        val size = file.length()
         if (fileType.take(5) == "image") {
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
                 addImageError = Pair(

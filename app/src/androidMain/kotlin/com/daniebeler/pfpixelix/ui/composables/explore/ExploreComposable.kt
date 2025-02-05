@@ -29,7 +29,6 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Close
@@ -54,11 +53,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -147,7 +144,7 @@ fun ExploreComposable(
             }
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
-                LazyColumn(modifier = Modifier.imeAwareInsets(context, 90.dp)) {
+                LazyColumn(modifier = Modifier.imeAwareInsets(90.dp)) {
                     items(viewModel.savedSearches.pastSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
@@ -167,7 +164,7 @@ fun ExploreComposable(
                 }
             }
             viewModel.searchState.searchResult?.let { searchResult ->
-                LazyColumn(modifier = Modifier.imeAwareInsets(context, 90.dp), content = {
+                LazyColumn(modifier = Modifier.imeAwareInsets(90.dp), content = {
                     items(searchResult.accounts) {
                         CustomAccount(
                             account = it,

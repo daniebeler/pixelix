@@ -1,26 +1,15 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.withSign
 
 object BlurHashDecoder {
-    fun blurHashBitmap(resources: Resources, blurHash: String?): BitmapDrawable {
-        return BitmapDrawable(
-            resources,
-            decode(
-                blurHash,
-                30, 60
-            )
-        )
-    }
-
-    private fun decode(blurHash: String?, width: Int? = 30, height: Int? = 60, punch: Float = 1f): Bitmap? {
+    fun decode(blurHash: String?, width: Int? = 30, height: Int? = 60, punch: Float = 1f): ImageBitmap? {
         if (blurHash == null || width == null || height == null || blurHash.length < 6) {
             return null
         }
@@ -92,7 +81,7 @@ object BlurHashDecoder {
         width: Int, height: Int,
         numCompX: Int, numCompY: Int,
         colors: Array<FloatArray>
-    ): Bitmap {
+    ): ImageBitmap {
         val imageArray = IntArray(height * width)
         for (y in 0 until height) {
             for (x in 0 until width) {
@@ -108,20 +97,11 @@ object BlurHashDecoder {
                         b += color[2] * basis
                     }
                 }
-                imageArray[x + width * y] =
-                    Color.rgb(linearToSrgb(r), linearToSrgb(g), linearToSrgb(b))
+                imageArray[x + width * y] = Color(r,g,b).toArgb()
             }
         }
-        return Bitmap.createBitmap(imageArray, width, height, Bitmap.Config.ARGB_8888)
-    }
 
-    private fun linearToSrgb(value: Float): Int {
-        val v = value.coerceIn(0f, 1f)
-        return if (v <= 0.0031308f) {
-            (v * 12.92f * 255f + 0.5f).toInt()
-        } else {
-            ((1.055f * v.pow(1 / 2.4f) - 0.055f) * 255 + 0.5f).toInt()
-        }
+        return createBitmap(imageArray, width, height)
     }
 
     private val charMap = listOf(
@@ -134,3 +114,5 @@ object BlurHashDecoder {
         .mapIndexed { i, c -> c to i }
         .toMap()
 }
+
+expect fun createBitmap(pixels: IntArray, width: Int, height: Int): ImageBitmap

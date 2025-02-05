@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import com.daniebeler.pfpixelix.utils.GlobalContext.globalContext
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -129,7 +128,7 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-var themeMode by mutableIntStateOf(ThemePrefUtil.getThemeModeValue(globalContext))
+var themeMode by mutableIntStateOf(ThemePrefUtil.getThemeModeValue())
 var currentColorScheme: ColorScheme = lightScheme
     private set
 

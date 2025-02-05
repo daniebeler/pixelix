@@ -29,7 +29,7 @@ actual class UpdateAccountUseCase actual constructor(
         val data = MultiPartFormDataContent(formData {
             if (avatarUri != null) {
                 try {
-                    val fileType = MimeType.getMimeType(avatarUri, context.contentResolver) ?: "image/*"
+                    val fileType = MimeType.getMimeType(avatarUri, context) ?: "image/*"
                     val fileName = "filename=avatar"
                     val bytes = context.contentResolver.openInputStream(avatarUri)?.readBytes()
                     append("avatar", bytes!!, Headers.build {

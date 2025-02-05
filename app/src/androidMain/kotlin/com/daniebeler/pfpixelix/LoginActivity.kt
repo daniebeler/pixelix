@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +29,7 @@ import com.daniebeler.pfpixelix.domain.usecase.UpdateLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.VerifyTokenUseCase
 import com.daniebeler.pfpixelix.ui.composables.LoginComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
+import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,12 +64,16 @@ class LoginActivity : ComponentActivity() {
 
 
         setContent {
-            PixelixTheme {
-                Scaffold { paddingValues ->
-                    Column(Modifier.padding(paddingValues)) {
+            CompositionLocalProvider(
+                LocalKmpContext provides this
+            ) {
+                PixelixTheme {
+                    Scaffold { paddingValues ->
+                        Column(Modifier.padding(paddingValues)) {
 
+                        }
+                        LoginComposable(isLoadingAfterRedirect, error)
                     }
-                    LoginComposable(isLoadingAfterRedirect, error)
                 }
             }
         }

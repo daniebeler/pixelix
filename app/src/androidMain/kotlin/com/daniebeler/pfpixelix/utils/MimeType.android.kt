@@ -4,10 +4,10 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.webkit.MimeTypeMap
 
-object MimeType {
-    fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
+actual object MimeType {
+    actual fun getMimeType(uri: KmpUri, context: KmpContext): String? {
         return if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
-            contentResolver.getType(uri)
+            context.contentResolver.getType(uri)
         } else {
             val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.lowercase())
