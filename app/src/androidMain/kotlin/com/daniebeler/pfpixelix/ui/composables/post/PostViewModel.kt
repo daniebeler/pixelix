@@ -13,9 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import coil3.ImageLoader
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
+import coil3.toBitmap
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -449,7 +451,7 @@ class PostViewModel @Inject constructor(
         val request = ImageRequest.Builder(context).data(imageURL).allowHardware(false).build()
         val result = loader.execute(request)
         if (result is SuccessResult) {
-            return (result.drawable as BitmapDrawable).bitmap
+            return result.image.toBitmap()
         }
         return null
     }

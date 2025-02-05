@@ -1,8 +1,10 @@
 package com.daniebeler.pfpixelix.utils
 
 import android.graphics.Bitmap
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import coil3.SingletonImageLoader
+import coil3.request.ImageRequest
+import coil3.toBitmap
+import coil3.video.videoFrameMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -23,14 +25,13 @@ actual class KmpMediaFile actual constructor(
 
     actual suspend fun getThumbnail(): ByteArray? = withContext(Dispatchers.IO) {
         val bm = try {
-            Glide.with(context).asBitmap()
-                .load(uri)
-                .apply(RequestOptions().frame(0)).submit()
-                .get()
+            val req = ImageRequest.Builder(context).data(uri).videoFrameMillis(0).build()
+            val img = SingletonImageLoader.get(context).execute(req)
+            img.image?.toBitmap()
         } catch (e: Exception) {
             e.printStackTrace()
-            return@withContext null
-        }
+            null
+        } ?: return@withContext null
 
         val stream = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.PNG, 100, stream)

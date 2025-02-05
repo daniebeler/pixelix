@@ -7,6 +7,10 @@ import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import co.touchlab.kermit.Logger
+import coil3.ImageLoader
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
+import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
 import com.daniebeler.pfpixelix.data.repository.AccountRepositoryImpl
@@ -38,7 +42,9 @@ import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.utils.AuthDataSerializer
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
+import com.daniebeler.pfpixelix.utils.coilContext
 import com.daniebeler.pfpixelix.utils.dataStoreDir
+import com.daniebeler.pfpixelix.utils.imageCacheDir
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.ktor.client.HttpClient
@@ -149,6 +155,25 @@ abstract class AppComponent(
                 serializer = AuthDataSerializer,
             )
         )
+
+    @Provides
+    @AppSingleton
+    fun provideImageLoader(): ImageLoader =
+        ImageLoader.Builder(context.coilContext)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCache(
+                MemoryCache.Builder()
+                    .maxSizePercent(context.coilContext, 0.2)
+                    .build()
+            )
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCache(
+                DiskCache.Builder()
+                    .maxSizeBytes(50L * 1024L * 1024L)
+                    .directory(context.imageCacheDir)
+                    .build()
+            )
+            .build()
     
     @Provides
     fun provideAccountRepository(impl: AccountRepositoryImpl): AccountRepository = impl

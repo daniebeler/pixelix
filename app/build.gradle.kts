@@ -67,6 +67,12 @@ kotlin {
 
             //disk io
             implementation(libs.okio)
+
+            //image loader
+            implementation(libs.coil.compose)
+            implementation(libs.coil.video)
+            implementation(libs.coil.gif)
+            implementation(libs.coil.network)
         }
 
         androidMain.dependencies {
@@ -86,9 +92,6 @@ kotlin {
             implementation(libs.material)
 
             //media
-            implementation(libs.coil.compose)
-            implementation(libs.coil.video)
-            implementation(libs.glideCompose)
             implementation(libs.androidx.media3.exoplayer)
             implementation(libs.androidx.media3.exoplayer.dash)
             implementation(libs.androidx.media3.ui)
@@ -144,6 +147,5 @@ dependencies {
         "kspAndroid"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
-        add(it, libs.glideCompiler)
     }
 }

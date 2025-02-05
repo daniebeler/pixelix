@@ -9,9 +9,9 @@ import androidx.core.content.FileProvider.getUriForFile
 import androidx.datastore.core.DataStore
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import coil.imageLoader
-import coil.request.ErrorResult
-import coil.request.ImageRequest
+import coil3.imageLoader
+import coil3.request.ErrorResult
+import coil3.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
@@ -64,7 +64,7 @@ class LatestImageTask @Inject constructor(
         }
 
         // Get the path of the loaded image from DiskCache.
-        val path = context.imageLoader.diskCache?.get(url)?.use { snapshot ->
+        val path = context.imageLoader.diskCache?.openSnapshot(url)?.use { snapshot ->
             val imageFile = snapshot.data.toFile()
 
             // Use the FileProvider to create a content URI

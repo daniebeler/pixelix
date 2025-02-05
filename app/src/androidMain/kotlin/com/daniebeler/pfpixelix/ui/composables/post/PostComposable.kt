@@ -99,10 +99,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -756,15 +754,10 @@ fun PostImage(
                     }
                 })
             }) {
-            if (mediaAttachment.type == "image" && mediaAttachment.url?.takeLast(4) != ".gif" && mediaAttachment.url?.takeLast(
-                    5
-                ) != ".webp"
-            ) {
+            if (mediaAttachment.type == "image") {
                 ImageWrapper(mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
-            } else if (mediaAttachment.url?.takeLast(4) == ".gif" || mediaAttachment.url?.takeLast(5) == ".webp") {
-                GifPlayer(mediaAttachment) { imageLoaded = true }
             } else {
                 VideoPlayer(uri = Uri.parse(mediaAttachment.url), viewModel, { imageLoaded = true })
             }
@@ -837,20 +830,6 @@ private fun ImageWrapper(
             setContentSize(state)
             onSuccess()
         })
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-private fun GifPlayer(mediaAttachment: MediaAttachment, onSuccess: () -> Unit) {
-    LaunchedEffect(Unit) {
-        onSuccess()
-    }
-    GlideImage(
-        model = mediaAttachment.url,
-        contentDescription = null,
-        contentScale = ContentScale.FillWidth,
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 @Composable
