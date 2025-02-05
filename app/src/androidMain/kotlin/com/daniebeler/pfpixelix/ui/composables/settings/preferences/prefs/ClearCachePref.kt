@@ -50,7 +50,9 @@ private fun humanReadableByteCountSI(bytes: Long): String {
         bytes /= 1000
         ci.next()
     }
-    return String.format("%.1f %cB", bytes / 1000.0, ci.current())
+
+    val valueRounded = (bytes / 100.0).toInt() / 10.0 // Round down to one decimal place
+    return "$valueRounded ${ci.current()}B"
 }
 
 private fun deleteCache(context: Context): String {

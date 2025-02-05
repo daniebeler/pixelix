@@ -400,11 +400,11 @@ class PostViewModel @Inject constructor(
         val sdf = SimpleDateFormat("yyyyMMddsshhmmss", Locale.getDefault())
         val date: String = sdf.format(Date())
 
-        val filename = String.format("%s_%s", imageName, date)
+        val filename = "${imageName}_${date}"
 
         if (returnFullPath) {
             val directory: File = context.getDir("zest", Context.MODE_PRIVATE)
-            return String.format("%s/%s", directory, filename)
+            return "$directory/$filename"
         } else {
             return filename
         }

@@ -34,6 +34,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.StringFormat
 import java.util.Locale
 
 @Composable
@@ -141,8 +142,8 @@ private fun CustomAccountPrivate(
                         )
 
                         Text(
-                            text = " • " + String.format(
-                                Locale.GERMANY, "%,d", account.followersCount
+                            text = " • " + StringFormat.groupDigits(
+                                account.followersCount
                             ) + " " + stringResource(Res.string.followers),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -224,8 +225,8 @@ private fun CustomAccountPrivateNotClickable(
                         )
 
                         Text(
-                            text = " • " + String.format(
-                                Locale.GERMANY, "%,d", account.followersCount
+                            text = " • " + StringFormat.groupDigits(
+                                account.followersCount
                             ) + " " + stringResource(Res.string.followers),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.primary,

@@ -44,6 +44,7 @@ import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.vectorResource
 import java.util.Locale
 
@@ -101,9 +102,7 @@ fun AboutInstanceComposable(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.instanceState.instance?.stats?.userCount
                                 ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                             )
@@ -112,9 +111,7 @@ fun AboutInstanceComposable(
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = String.format(
-                                    Locale.GERMANY,
-                                    "%,d",
+                                text = StringFormat.groupDigits(
                                     viewModel.instanceState.instance?.stats?.statusCount
                                 ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                             )

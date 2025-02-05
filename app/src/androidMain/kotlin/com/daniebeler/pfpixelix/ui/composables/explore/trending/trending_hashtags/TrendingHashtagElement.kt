@@ -33,6 +33,7 @@ import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.StringFormat
 import java.util.Locale
 
 @Composable
@@ -64,8 +65,8 @@ fun TrendingHashtagElement(
             Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             if (viewModel.hashtagState.hashtag != null) {
                 Text(
-                    text = "  • " + String.format(
-                        Locale.GERMANY, "%,d", viewModel.hashtagState.hashtag!!.count!!
+                    text = "  • " + StringFormat.groupDigits(
+                        viewModel.hashtagState.hashtag!!.count!!
                     ) + " " + stringResource(
                         Res.string.posts
                     ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
