@@ -13,15 +13,15 @@ actual class KmpMediaFile actual constructor(
     actual val uri: KmpUri,
     actual val context: KmpContext
 ) {
-    private val file = GetFile.getFile(uri, context) ?: error("file '$uri' not found")
+    private val fileName = GetFile.getFileName(uri, context) ?: error("file '$uri' not found")
 
-    actual fun getMimeType(): String = MimeType.getMimeType(uri, context.contentResolver) ?: "image/*"
+    actual fun getMimeType(): String = MimeType.getMimeType(uri, context) ?: "image/*"
 
     actual suspend fun getBytes(): ByteArray = withContext(Dispatchers.IO) {
         context.contentResolver.openInputStream(uri)!!.readBytes()
     }
 
-    actual fun getName(): String = file.name
+    actual fun getName(): String = fileName
 
     actual suspend fun getThumbnail(): ByteArray? = withContext(Dispatchers.IO) {
         val bm = try {

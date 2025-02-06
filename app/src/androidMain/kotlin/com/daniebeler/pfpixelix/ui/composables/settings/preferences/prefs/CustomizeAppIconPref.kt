@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import org.jetbrains.compose.resources.painterResource

@@ -35,7 +35,6 @@ import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.StringFormat
-import java.util.Locale
 
 @Composable
 fun CustomAccount(

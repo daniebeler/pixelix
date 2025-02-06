@@ -39,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,9 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -98,6 +97,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesC
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
+import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.end
 import kotlinx.coroutines.cancelChildren
@@ -174,110 +174,121 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            val scope = rememberCoroutineScope()
-            val drawerState = rememberDrawerState(DrawerValue.Closed)
+            CompositionLocalProvider(
+                LocalKmpContext provides this
+            ) {
+                val scope = rememberCoroutineScope()
+                val drawerState = rememberDrawerState(DrawerValue.Closed)
 
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
+                val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+                var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
 
-            PixelixTheme {
-                val navController: NavHostController = rememberNavController()
-                ReverseModalNavigationDrawer(gesturesEnabled = drawerState.isOpen, drawerState = drawerState, drawerContent = {
-                    ModalDrawerSheet(
+                PixelixTheme {
+                    val navController: NavHostController = rememberNavController()
+                    ReverseModalNavigationDrawer(
+                        gesturesEnabled = drawerState.isOpen,
                         drawerState = drawerState,
-                        drawerShape = shapes.extraLarge.end(0.dp),
-                        windowInsets = WindowInsets(0, 0, 0, 0)
-                    ) {
-                        PreferencesComposable(navController, {scope.launch {
-                            drawerState.close()
-                        }})
-                    }
-                }) {
+                        drawerContent = {
+                            ModalDrawerSheet(
+                                drawerState = drawerState,
+                                drawerShape = shapes.extraLarge.end(0.dp),
+                                windowInsets = WindowInsets(0, 0, 0, 0)
+                            ) {
+                                PreferencesComposable(navController, {
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                })
+                            }
+                        }) {
 
-                    Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
-                        BottomBar(
-                            navController = navController,
-                            avatar = avatar,
-                            openAccountSwitchBottomSheet = { showAccountSwitchBottomSheet = true },
-                            context = this
-                        )
-                    }) { paddingValues ->
-                        Box(
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            NavigationGraph(navController = navController, {
-                                scope.launch {
-                                    drawerState.open()
-                                }
-                            } )
+                        Scaffold(contentWindowInsets = WindowInsets(0.dp), bottomBar = {
+                            BottomBar(
+                                navController = navController,
+                                avatar = avatar,
+                                openAccountSwitchBottomSheet = {
+                                    showAccountSwitchBottomSheet = true
+                                },
+                                context = this
+                            )
+                        }) { paddingValues ->
+                            Box(
+                                modifier = Modifier.padding(paddingValues)
+                            ) {
+                                NavigationGraph(navController = navController, {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
+                                })
 
-                            LaunchedEffect(imageUris) {
-                                imageUris.forEach { uri ->
-                                    try {
-                                        contentResolver.takePersistableUriPermission(
-                                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                LaunchedEffect(imageUris) {
+                                    imageUris.forEach { uri ->
+                                        try {
+                                            contentResolver.takePersistableUriPermission(
+                                                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                            )
+                                        } catch (e: SecurityException) {
+                                            e.printStackTrace() // Handle permission denial gracefully
+                                        }
+                                    }
+                                    if (imageUris.isNotEmpty()) {
+                                        val urisJson =
+                                            Json.encodeToString(imageUris.map { uri -> uri.toString() })
+                                        Navigate.navigate(
+                                            "new_post_screen?uris=$urisJson", navController
                                         )
-                                    } catch (e: SecurityException) {
-                                        e.printStackTrace() // Handle permission denial gracefully
                                     }
                                 }
-                                if (imageUris.isNotEmpty()) {
-                                    val urisJson =
-                                        Json.encodeToString(imageUris.map { uri -> uri.toString() })
-                                    Navigate.navigate(
-                                        "new_post_screen?uris=$urisJson", navController
-                                    )
+
+                                val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
+                                if (destination.isNotBlank()) {
+                                    // Delay the navigation action to ensure the graph is set
+                                    LaunchedEffect(Unit) {
+                                        when (destination) {
+                                            StartNavigation.Notifications.toString() -> Navigate.navigate(
+                                                "notifications_screen", navController
+                                            )
+
+                                            StartNavigation.Profile.toString() -> {
+                                                val accountId: String = intent.extras?.getString(
+                                                    KEY_DESTINATION_PARAM
+                                                ) ?: ""
+                                                if (accountId.isNotBlank()) {
+                                                    Navigate.navigate(
+                                                        "profile_screen/$accountId", navController
+                                                    )
+                                                }
+                                            }
+
+                                            StartNavigation.Post.toString() -> {
+                                                val postId: String = intent.extras?.getString(
+                                                    KEY_DESTINATION_PARAM
+                                                ) ?: ""
+                                                if (postId.isNotBlank()) {
+                                                    Navigate.navigate(
+                                                        "single_post_screen/$postId", navController
+                                                    )
+
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
-                            val destination = intent.extras?.getString(KEY_DESTINATION) ?: ""
-                            if (destination.isNotBlank()) {
-                                // Delay the navigation action to ensure the graph is set
-                                LaunchedEffect(Unit) {
-                                    when (destination) {
-                                        StartNavigation.Notifications.toString() -> Navigate.navigate(
-                                            "notifications_screen", navController
-                                        )
 
-                                        StartNavigation.Profile.toString() -> {
-                                            val accountId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (accountId.isNotBlank()) {
-                                                Navigate.navigate(
-                                                    "profile_screen/$accountId", navController
-                                                )
-                                            }
-                                        }
-
-                                        StartNavigation.Post.toString() -> {
-                                            val postId: String = intent.extras?.getString(
-                                                KEY_DESTINATION_PARAM
-                                            ) ?: ""
-                                            if (postId.isNotBlank()) {
-                                                Navigate.navigate(
-                                                    "single_post_screen/$postId", navController
-                                                )
-
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
-
-
                     }
-                }
-                if (showAccountSwitchBottomSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            showAccountSwitchBottomSheet = false
-                        }, sheetState = sheetState
-                    ) {
-                        AccountSwitchBottomSheet(closeBottomSheet = {
-                            showAccountSwitchBottomSheet = false
-                        }, null)
+                    if (showAccountSwitchBottomSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = {
+                                showAccountSwitchBottomSheet = false
+                            }, sheetState = sheetState
+                        ) {
+                            AccountSwitchBottomSheet(closeBottomSheet = {
+                                showAccountSwitchBottomSheet = false
+                            }, null)
+                        }
                     }
                 }
             }

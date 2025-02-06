@@ -1,28 +1,26 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun rememberPrefIntState(key: String, default: Int): MutableIntState {
-    val context = LocalContext.current
+    val context = LocalKmpContext.current
     return remember { PrefMutableIntState(context, key, default) }
 }
 
 @Composable
 fun rememberPrefBoolState(key: String, default: Boolean): MutableState<Boolean> {
-    val context = LocalContext.current
+    val context = LocalKmpContext.current
     return remember { PrefMutableBooleanState(context, key, default) }
 }
 
 private class PrefMutableBooleanState(
-    val context: Context,
+    val context: KmpContext,
     val key: String,
     default: Boolean,
 ) : MutableState<Boolean> {
@@ -33,7 +31,7 @@ private class PrefMutableBooleanState(
         get() = delegate.value
         set(value) {
             delegate.value = value
-            context.pref.edit().putBoolean(key, value).apply()
+            context.pref.putBoolean(key, value)
         }
 
     override fun component1(): Boolean {
@@ -47,7 +45,7 @@ private class PrefMutableBooleanState(
 }
 
 private class PrefMutableIntState(
-    val context: Context,
+    val context: KmpContext,
     val key: String,
     default: Int,
 ) : MutableIntState {
@@ -60,7 +58,7 @@ private class PrefMutableIntState(
         }
         set(value) {
             delegate.intValue = value
-            context.pref.edit().putInt(key, value).apply()
+            context.pref.putInt(key, value)
         }
 
     override fun component1(): Int {

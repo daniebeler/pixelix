@@ -42,7 +42,6 @@ import com.daniebeler.pfpixelix.utils.StringFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
-import java.util.Locale
 
 @Composable
 fun ProfileTopSection(

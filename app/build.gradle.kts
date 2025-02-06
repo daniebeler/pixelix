@@ -55,6 +55,9 @@ kotlin {
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
 
+            //shared preferences
+            implementation(libs.multiplatform.settings)
+
             //lifecycle
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel)

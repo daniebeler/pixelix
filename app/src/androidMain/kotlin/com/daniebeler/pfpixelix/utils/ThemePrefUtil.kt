@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.daniebeler.pfpixelix.MyApplication
 
 object ThemePrefUtil {
 
@@ -14,12 +14,13 @@ object ThemePrefUtil {
 
     const val ACTION_NIGHT_MODE_CHANGED = "action_night_mode_changed"
 
-    fun getThemeModeValue(context: Context): Int {
+    fun getThemeModeValue(): Int {
+        val context = MyApplication.appComponent.context
         return context.pref.getInt(KEY_NIGHT_MODE, FOLLOW_SYSTEM)
     }
 
-    fun apply(context: Context) {
-        var mode = getThemeModeValue(context)
+    fun apply() {
+        var mode = getThemeModeValue()
         if (mode == AMOLED) {
             mode = DARK
         }

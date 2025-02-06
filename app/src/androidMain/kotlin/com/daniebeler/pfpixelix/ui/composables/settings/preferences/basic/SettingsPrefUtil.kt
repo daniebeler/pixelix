@@ -16,6 +16,6 @@ object SettingPrefUtil {
     }
 
     fun setValue(context: Context, key: String, value: Int) {
-        context.pref.edit().putInt(key, value).apply()
+        context.pref.putInt(key, value)
     }
 }

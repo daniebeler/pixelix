@@ -1,9 +1,5 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 
@@ -64,13 +60,11 @@ object Navigate {
         }
     }
 
-    fun openUrlInApp(context: Context, url: String) {
-        val intent = CustomTabsIntent.Builder().build()
-        intent.launchUrl(context, Uri.parse(url))
+    fun openUrlInApp(context: KmpContext, url: String) {
+        context.openUrlInApp(url)
     }
 
-    fun openUrlInBrowser(context: Context, url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(intent)
+    fun openUrlInBrowser(context: KmpContext, url: String) {
+        context.openUrlInBrowser(url)
     }
 }

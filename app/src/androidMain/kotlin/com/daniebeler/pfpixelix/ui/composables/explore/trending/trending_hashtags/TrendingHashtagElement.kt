@@ -34,7 +34,6 @@ import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.composables.CustomPost
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.StringFormat
-import java.util.Locale
 
 @Composable
 fun TrendingHashtagElement(

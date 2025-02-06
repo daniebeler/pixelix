@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.utils.zoomable
 
 import androidx.annotation.FloatRange
-import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.DecayAnimationSpec
@@ -15,7 +14,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.media3.common.util.UnstableApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -131,7 +129,6 @@ class ZoomState(
         velocityTracker.resetTracking()
     }
 
-    @OptIn(UnstableApi::class)
     internal fun willChangeOffset(pan: Offset): Boolean {
 
         var willChange = true
@@ -158,7 +155,6 @@ class ZoomState(
         return willChange
     }
 
-    @OptIn(UnstableApi::class)
     internal suspend fun applyGesture(
         pan: Offset,
         zoom: Float,
@@ -200,7 +196,6 @@ class ZoomState(
      * @param position Zoom around this point.
      * @param animationSpec The animation configuration.
      */
-    @OptIn(UnstableApi::class)
     suspend fun changeScale(
         targetScale: Float,
         position: Offset,
@@ -229,7 +224,6 @@ class ZoomState(
         }
     }
 
-    @OptIn(UnstableApi::class)
     private fun calculateNewOffset(
         newScale: Float,
         position: Offset,

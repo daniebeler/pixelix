@@ -68,8 +68,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -79,7 +77,6 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -296,14 +293,13 @@ fun PostComposable(
                 if (viewModel.post!!.sensitive && !viewModel.showPost) {
 
                     Box {
-                        val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
-                            LocalContext.current.resources,
+                        val blurHashBitmap = BlurHashDecoder.decode(
                             viewModel.post!!.mediaAttachments[0].blurHash
                         )
 
-                        if (blurHashAsDrawable.bitmap != null) {
+                        if (blurHashBitmap != null) {
                             Image(
-                                blurHashAsDrawable.bitmap.asImageBitmap(),
+                                blurHashBitmap,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.aspectRatio(
@@ -712,15 +708,14 @@ fun PostImage(
             .clip(RoundedCornerShape(16.dp))
     ) {
 
-        val blurHashAsDrawable = BlurHashDecoder.blurHashBitmap(
-            LocalContext.current.resources,
+        val blurHashBitmap = BlurHashDecoder.decode(
             mediaAttachment.blurHash,
         )
 
         if (!imageLoaded) {
-            if (blurHashAsDrawable.bitmap != null) {
+            if (blurHashBitmap != null) {
                 Image(
-                    blurHashAsDrawable.bitmap.asImageBitmap(),
+                    blurHashBitmap,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(
