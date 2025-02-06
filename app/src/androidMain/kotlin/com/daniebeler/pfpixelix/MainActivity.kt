@@ -65,6 +65,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.EntryPointComponent
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
@@ -100,6 +101,7 @@ import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.end
+import com.daniebeler.pfpixelix.utils.openLoginScreen
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -153,7 +155,7 @@ class MainActivity : ComponentActivity() {
                     repository.deleteAuthV1Data()
                     updateAuthToV2(this@MainActivity, oldBaseurl, oldAccessToken)
                 } else {
-                    gotoLoginActivity(this@MainActivity, false)
+                    openLoginScreen()
                 }
             } else {
                 if (loginData.accessToken.isNotEmpty()) {
@@ -175,7 +177,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(
-                LocalKmpContext provides this
+                LocalAppComponent provides MyApplication.appComponent,
+                LocalKmpContext provides this,
             ) {
                 val scope = rememberCoroutineScope()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -366,17 +369,6 @@ fun updateAuthToV2(context: Context, baseUrl: String, accessToken: String) {
     val intent = Intent(context, LoginActivity::class.java)
     intent.putExtra("base_url", baseUrl)
     intent.putExtra("access_token", accessToken)
-    context.startActivity(intent)
-}
-
-fun gotoLoginActivity(context: Context, isAbleToGotBack: Boolean) {
-    val intent = if (isAbleToGotBack) {
-        Intent(context, LoginActivity::class.java)
-    } else {
-        Intent(context, LoginActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-    }
     context.startActivity(intent)
 }
 

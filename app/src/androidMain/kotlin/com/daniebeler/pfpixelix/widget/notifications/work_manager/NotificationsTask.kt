@@ -18,6 +18,7 @@ import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
+import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsTask @Inject constructor(
@@ -67,12 +68,10 @@ class NotificationsTask @Inject constructor(
         val request = ImageRequest.Builder(context).data(url).build()
 
         // Request the image to be loaded and throw error if it failed
-        with(context.imageLoader) {
-            val result = execute(request)
+            val result = context.imageLoader.execute(request)
             if (result is ErrorResult) {
                 throw result.throwable
             }
-        }
 
         // Get the path of the loaded image from DiskCache.
         val path = context.imageLoader.diskCache?.openSnapshot(url)?.use { snapshot ->

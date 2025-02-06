@@ -54,7 +54,7 @@
     <string name="yearly">rocznie</string>
     <string name="monthly">miesięcznie</string>
     <string name="daily">codziennie</string>
-    <string name="i_don_t_have_an_account">I don\'t have a profile</string>
+    <string name="i_don_t_have_an_account">I don't have a profile</string>
     <string name="server_url">Adres URL serwera</string>
     <string name="are_you_sure_you_want_to_log_out">Czy na pewno chcesz się wylogować?</string>
     <string name="logout_questionmark">Wylogować się?</string>
