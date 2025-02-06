@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -67,7 +69,9 @@ class LoginActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalKmpContext provides this
             ) {
-                PixelixTheme {
+                PixelixTheme(
+                    dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                ) {
                     Scaffold { paddingValues ->
                         Column(Modifier.padding(paddingValues)) {
 
@@ -81,7 +85,6 @@ class LoginActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-
         val extras = intent.extras
         if (extras != null) {
             val baseUrl = extras.getString("base_url")

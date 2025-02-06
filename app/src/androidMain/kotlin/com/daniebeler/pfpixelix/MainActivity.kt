@@ -183,7 +183,9 @@ class MainActivity : ComponentActivity() {
                 val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
 
-                PixelixTheme {
+                PixelixTheme(
+                    dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                ) {
                     val navController: NavHostController = rememberNavController()
                     ReverseModalNavigationDrawer(
                         gesturesEnabled = drawerState.isOpen,
