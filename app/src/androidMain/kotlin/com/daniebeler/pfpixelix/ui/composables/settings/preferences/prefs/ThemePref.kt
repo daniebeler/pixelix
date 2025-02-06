@@ -18,7 +18,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.Option
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
-import com.daniebeler.pfpixelix.ui.theme.themeMode
+import com.daniebeler.pfpixelix.ui.theme.LocalTheme
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.FOLLOW_SYSTEM
@@ -29,19 +29,28 @@ import com.daniebeler.pfpixelix.utils.rememberPrefIntState
 @Preview
 @Composable
 fun ThemePref() {
+    AppCompatDelegate.MODE_NIGHT_NO
     var themeModeValue by rememberPrefIntState(KEY_NIGHT_MODE, FOLLOW_SYSTEM)
+    var appTheme by LocalTheme.current
 
     val onOptionClick = click@{ mode: Int ->
         if (themeModeValue == mode) {
             return@click
         }
         themeModeValue = mode
-        themeMode = themeModeValue
+        appTheme = themeModeValue
         var appCompatMode = mode
         if (appCompatMode == AMOLED) {
             appCompatMode = DARK
         }
-        AppCompatDelegate.setDefaultNightMode(appCompatMode)
+
+        AppCompatDelegate.setDefaultNightMode(
+            when (appCompatMode) {
+                LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+        )
     }
 
     ExpandOptionsPref(

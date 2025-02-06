@@ -1,28 +1,28 @@
 package com.daniebeler.pfpixelix.ui.theme
 
-import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.LocalKmpContext
+import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK
+import com.daniebeler.pfpixelix.utils.ThemePrefUtil.FOLLOW_SYSTEM
+import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
+import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
+import com.daniebeler.pfpixelix.utils.pref
 
 
 fun ColorScheme.toAmoled(): ColorScheme {
-    fun Color.darken(fraction: Float = 0.5f): Color =
-        Color(toArgb().blend(Color.Black.toArgb(), fraction))
+    fun Color.darken(fraction: Float = 0.5f): Color = blend(Color.Black, fraction)
     return copy(
         primary = primary.darken(0.3f),
         onPrimary = onPrimary.darken(0.3f),
@@ -128,50 +128,37 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-var themeMode by mutableIntStateOf(ThemePrefUtil.getThemeModeValue())
-var currentColorScheme: ColorScheme = lightScheme
-    private set
+val LocalTheme = compositionLocalOf<MutableIntState> { error("no LocalTheme") }
 
 @Composable
 fun PixelixTheme(
-    theme: Int = themeMode,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    var nightModeValue = theme
-    if (nightModeValue == ThemePrefUtil.FOLLOW_SYSTEM) {
-        nightModeValue = if (isSystemInDarkTheme()) ThemePrefUtil.DARK else ThemePrefUtil.LIGHT
-    }
+    val context = LocalKmpContext.current
+    val theme = mutableIntStateOf(context.pref.getInt(KEY_NIGHT_MODE, FOLLOW_SYSTEM))
 
-    val colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && dynamicColor) {
-        val context: Context = LocalContext.current
-        when (nightModeValue) {
-            ThemePrefUtil.AMOLED -> dynamicDarkColorScheme(context).toAmoled()
-            ThemePrefUtil.DARK -> dynamicDarkColorScheme(context)
-            else -> dynamicLightColorScheme(context)
+    CompositionLocalProvider(
+        LocalTheme provides theme
+    ) {
+        var nightModeValue = theme.value
+        if (nightModeValue == FOLLOW_SYSTEM) {
+            nightModeValue = if (isSystemInDarkTheme()) DARK else LIGHT
         }
-    } else {
-        when (nightModeValue) {
-            ThemePrefUtil.AMOLED -> darkScheme.toAmoled()
-            ThemePrefUtil.DARK -> darkScheme
-            else -> lightScheme
+        val colorScheme = remember(nightModeValue, dynamicColor, lightScheme, darkScheme) {
+            context.generateColorScheme(nightModeValue, dynamicColor, lightScheme, darkScheme)
         }
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
     }
-
-    currentColorScheme = colors
-    MaterialTheme(
-        colorScheme = colors, typography = Typography, content = content
-    )
-
-
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setSystemBarsColor(
-        color = Color.Transparent, darkIcons = nightModeValue == ThemePrefUtil.LIGHT
-    )
-
-    systemUiController.setNavigationBarColor(
-        color = Color.Transparent, darkIcons = nightModeValue == ThemePrefUtil.LIGHT
-    )
-
-
 }
+
+expect fun KmpContext.generateColorScheme(
+    nightModeValue: Int,
+    dynamicColor: Boolean,
+    lightScheme: ColorScheme,
+    darkScheme: ColorScheme
+): ColorScheme

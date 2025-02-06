@@ -1,8 +1,6 @@
 package com.daniebeler.pfpixelix.ui.theme
 
-import androidx.annotation.FloatRange
 import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.ColorUtils
 
 val primaryLight = Color(0xFF2D6A44)
 val onPrimaryLight = Color(0xFFFFFFFF)
@@ -76,7 +74,11 @@ val surfaceContainerDark = Color(0xFF1C211C)
 val surfaceContainerHighDark = Color(0xFF262B27)
 val surfaceContainerHighestDark = Color(0xFF313631)
 
-fun Int.blend(
-    color: Int,
-    @FloatRange(from = 0.0, to = 1.0) fraction: Float = 0.5f,
-): Int = ColorUtils.blendARGB(this, color, fraction)
+fun Color.blend(color: Color, fraction: Float = 0.5f): Color {
+    val inverseFraction: Float = 1 - fraction
+    val a = alpha * inverseFraction + color.alpha * fraction
+    val r = red * inverseFraction + color.red * fraction
+    val g = green * inverseFraction + color.green * fraction
+    val b = blue * inverseFraction + color.blue * fraction
+    return Color(r, g, b, a)
+}
