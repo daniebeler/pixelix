@@ -42,6 +42,7 @@ class WidgetRepositoryProvider(private val dataStore: DataStore<AuthData>) {
         val json = Json {
             ignoreUnknownKeys = true
             isLenient = true
+            explicitNulls = false
         }
 
         val client = HttpClient {

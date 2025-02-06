@@ -21,6 +21,7 @@ import androidx.core.view.WindowCompat
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.di.EntryPointComponent
 import com.daniebeler.pfpixelix.di.HostSelectionInterceptorInterface
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.model.LoginData
 import com.daniebeler.pfpixelix.domain.usecase.AddNewLoginUseCase
@@ -67,7 +68,8 @@ class LoginActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(
-                LocalKmpContext provides this
+                LocalAppComponent provides MyApplication.appComponent,
+                LocalKmpContext provides this,
             ) {
                 PixelixTheme(
                     dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

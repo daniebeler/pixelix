@@ -52,7 +52,7 @@ interface PixelfedApi {
     @GET("api/v1.1/discover/posts/hashtags?_pe=1")
     fun getTrendingHashtags(): Call<List<TagDto>>
 
-    @GET("/api/v1.1/discover/accounts/popular")
+    @GET("api/v1.1/discover/accounts/popular")
     fun getTrendingAccounts(): Call<List<AccountDto>>
 
 
@@ -80,7 +80,7 @@ interface PixelfedApi {
     @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(): Call<List<PostDto>>
 
-    @GET("/api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
     fun getGlobalTimeline(
         @Query("max_id") maxPostId: String
     ): Call<List<PostDto>>
@@ -135,7 +135,7 @@ interface PixelfedApi {
         @Path("accountid") accountId: String
     ): Call<AccountDto>
 
-    @GET("/api/v1.1/accounts/username/{username}?_pe=1")
+    @GET("api/v1.1/accounts/username/{username}?_pe=1")
     fun getAccountByUsername(
         @Path("username") username: String
     ): Call<AccountDto>
@@ -284,7 +284,7 @@ interface PixelfedApi {
     ): Call<String>
 
     @FormUrlEncoded
-    @POST("/api/v1.1/collections/update/{collectionId}")
+    @POST("api/v1.1/collections/update/{collectionId}")
     fun updateCollection(
         @Path("collectionId") collectionId: String,
         @Field("title") title: String,
@@ -350,49 +350,49 @@ interface PixelfedApi {
     @GET("api/v1/blocks")
     fun getBlockedAccounts(): Call<List<AccountDto>>
 
-    @GET("/api/v2/search?_pe=1&resolve")
+    @GET("api/v2/search?_pe=1&resolve")
     fun getSearch(
         @Query("q") searchText: String, @Query("type") type: String?, @Query("limit") limit: Int
     ): Call<SearchDto>
 
-    @GET("/api/v1.1/compose/search/location?limit=5")
+    @GET("api/v1.1/compose/search/location?limit=5")
     fun searchLocations(
         @Query("q") searchText: String
     ): Call<List<PlaceDto>>
 
-    @POST("/api/v2/media")
+    @POST("api/v2/media")
     fun uploadMedia(
         @Body body: MultiPartFormDataContent
     ): Call<MediaAttachmentDto>
 
     @FormUrlEncoded
-    @PUT("/api/v1/media/{id}")
+    @PUT("api/v1/media/{id}")
     fun updateMedia(
         @Path("id") mediaAttachmentid: String,
         @Field("description") description: String,
     ): Call<MediaAttachmentDto>
 
-    @POST("/api/v1/statuses")
+    @POST("api/v1/statuses")
     suspend fun createPost(
         @Body createPostDto: CreatePostDto
     ): Call<PostDto>
 
-    @POST("/api/v1/statuses")
+    @POST("api/v1/statuses")
     fun createReply(
         @Body createReplyDto: CreateReplyDto
     ): Call<PostDto>
 
-    @PUT("/api/v1/statuses/{id}")
+    @PUT("api/v1/statuses/{id}")
     suspend fun updatePost(
         @Path("id") postId: String, @Body updatePostDto: UpdatePostDto
     ): Call<Unit>
 
-    @DELETE("/api/v1/statuses/{id}")
+    @DELETE("api/v1/statuses/{id}")
     fun deletePost(
         @Path("id") postid: String
     ): Call<PostDto>
 
-    @GET("/api/pixelfed/v1/web/settings")
+    @GET("api/pixelfed/v1/web/settings")
     fun getSettings(): Call<SettingsDto>
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")

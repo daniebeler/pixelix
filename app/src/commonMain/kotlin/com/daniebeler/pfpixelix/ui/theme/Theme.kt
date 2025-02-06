@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -19,6 +20,7 @@ import com.daniebeler.pfpixelix.utils.ThemePrefUtil.FOLLOW_SYSTEM
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
 import com.daniebeler.pfpixelix.utils.pref
+import com.daniebeler.pfpixelix.utils.setDefaultNightMode
 
 
 fun ColorScheme.toAmoled(): ColorScheme {
@@ -137,6 +139,10 @@ fun PixelixTheme(
 ) {
     val context = LocalKmpContext.current
     val theme = mutableIntStateOf(context.pref.getInt(KEY_NIGHT_MODE, FOLLOW_SYSTEM))
+
+    LaunchedEffect(theme.value) {
+        context.setDefaultNightMode(theme.value)
+    }
 
     CompositionLocalProvider(
         LocalTheme provides theme

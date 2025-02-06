@@ -148,7 +148,10 @@ android {
 
 dependencies {
     listOf(
-        "kspAndroid"
+        "kspAndroid",
+        "kspIosX64",
+        "kspIosArm64",
+        "kspIosSimulatorArm64"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }
