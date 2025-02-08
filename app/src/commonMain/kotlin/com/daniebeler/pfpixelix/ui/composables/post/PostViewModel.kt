@@ -215,7 +215,7 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun likePost(postId: String) {
+    fun likePost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.favourited == false) {
             post = post?.copy(
                 favourited = true,
@@ -228,6 +228,7 @@ class PostViewModel @Inject constructor(
                     totalCount = 1, others = true, username = myUsername, id = myAccountId
                 )
             )
+            post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 likePostUseCase(postId).onEach { result ->
                     when (result) {
@@ -236,6 +237,7 @@ class PostViewModel @Inject constructor(
                                 favourited = result.data?.favourited ?: true,
                                 favouritesCount = result.data?.favouritesCount ?: 0,
                             )
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
@@ -243,6 +245,7 @@ class PostViewModel @Inject constructor(
                                 favourited = false,
                                 favouritesCount = result.data?.favouritesCount?.minus(1) ?: 0
                             )
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Loading -> {
@@ -253,7 +256,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun unlikePost(postId: String) {
+    fun unlikePost(postId: String, updatePost: (Post) -> Unit) {
         if (!post!!.favourited) {
             return
         }
@@ -262,12 +265,14 @@ class PostViewModel @Inject constructor(
                 1
             ) ?: 0
         )
+        post?.let { updatePost(it) }
 
         CoroutineScope(Dispatchers.Default).launch {
             unlikePostUseCase(postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         post = post?.copy(favourited = result.data?.favourited ?: false)
+                        result.data?.let { updatePost(result.data) }
                     }
 
                     is Resource.Error -> {
@@ -275,6 +280,7 @@ class PostViewModel @Inject constructor(
                             favourited = true,
                             favouritesCount = result.data?.favouritesCount?.plus(1) ?: 0
                         )
+                        post?.let { updatePost(it) }
                     }
 
                     is Resource.Loading -> {
@@ -284,18 +290,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun reblogPost(postId: String) {
+    fun reblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == false) {
             post = post?.copy(reblogged = true)
+            post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 reblogPostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                            result.data?.let { updatePost(result.data) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(reblogged = false)
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Loading -> {
@@ -306,17 +315,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun unreblogPost(postId: String) {
+    fun unreblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == true) {
+            post = post?.copy(reblogged = false)
+            post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 unreblogPostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                            result.data?.let { updatePost(result.data) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(reblogged = true)
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Loading -> {
@@ -327,18 +340,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun bookmarkPost(postId: String) {
+    fun bookmarkPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.bookmarked == false) {
             post = post?.copy(bookmarked = true)
+            post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 bookmarkPostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
+                            result.data?.let { updatePost(result.data) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(bookmarked = false)
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Loading -> {
@@ -349,18 +365,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun unBookmarkPost(postId: String) {
+    fun unBookmarkPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.bookmarked == true) {
             post = post?.copy(bookmarked = false)
+            post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 unbookmarkPostUseCase(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
+                            result.data?.let { updatePost(result.data) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(bookmarked = true)
+                            post?.let { updatePost(it) }
                         }
 
                         is Resource.Loading -> {

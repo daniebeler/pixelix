@@ -10,8 +10,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -40,11 +44,25 @@ fun InfinitePostsList(
     itemGetsDeleted: (postId: String) -> Unit,
     before: @Composable (() -> Unit)? = null,
 ) {
-
+    var posts by remember { mutableStateOf(listOf<Post>()) } // Your list of posts
     val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(items) {
+        posts = items
+    }
 
     fun delete(postId: String) {
         itemGetsDeleted(postId)
+    }
+
+    fun updatePost(post: Post) {
+        posts = posts.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        }
     }
 
     PullToRefreshBox(
@@ -63,9 +81,9 @@ fun InfinitePostsList(
                 }
             }
 
-            if (items.isNotEmpty()) {
+            if (posts.isNotEmpty()) {
 
-                items(items, key = {
+                items(posts, key = {
                     it.id
                 }) { item ->
                     val zIndex = remember {
@@ -75,6 +93,7 @@ fun InfinitePostsList(
                         PostComposable(post = item,
                             postGetsDeleted = ::delete,
                             navController = navController,
+                            updatePost = ::updatePost,
                             setZindex = {
                                 zIndex.floatValue = it
                             })

@@ -125,6 +125,7 @@ fun PostComposable(
     openReplies: Boolean = false,
     showReplies: Boolean = true,
     modifier: Modifier = Modifier,
+    updatePost: (post: Post) -> Unit = {},
     viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
 
@@ -351,7 +352,9 @@ fun PostComposable(
                                         postId,
                                         setZindex = { setZindex(it) },
                                         viewModel,
-                                        like = { animateHeart = true })
+                                        like = { animateHeart = true },
+                                        updatePost
+                                    )
                                 }
                             }
 
@@ -402,7 +405,9 @@ fun PostComposable(
                                 postId,
                                 setZindex = { setZindex(it) },
                                 viewModel,
-                                like = { animateHeart = true })
+                                like = { animateHeart = true },
+                                updatePost
+                            )
                         }
                     }
                 }
@@ -437,7 +442,7 @@ fun PostComposable(
                                     modifier = Modifier
                                         .size(24.dp)
                                         .clickable {
-                                            viewModel.unlikePost(postId)
+                                            viewModel.unlikePost(postId, updatePost)
                                         }
                                         .scale(heartScale),
                                     contentDescription = "unlike post",
@@ -449,7 +454,7 @@ fun PostComposable(
                                         .size(24.dp)
                                         .clickable {
                                             animateHeart = true
-                                            viewModel.likePost(postId)
+                                            viewModel.likePost(postId, updatePost)
                                         },
                                     contentDescription = "like post"
                                 )
@@ -494,7 +499,7 @@ fun PostComposable(
 
                             if (viewModel.post!!.reblogged) {
                                 IconButton(onClick = {
-                                    viewModel.unreblogPost(postId)
+                                    viewModel.unreblogPost(postId, updatePost)
                                 }) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.sync_outline),
@@ -506,7 +511,7 @@ fun PostComposable(
                             } else {
                                 IconButton(onClick = {
                                     animateBoost = true
-                                    viewModel.reblogPost(postId)
+                                    viewModel.reblogPost(postId, updatePost)
                                 }) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.sync_outline),
@@ -519,7 +524,7 @@ fun PostComposable(
 
                             if (viewModel.post!!.bookmarked) {
                                 IconButton(onClick = {
-                                    viewModel.unBookmarkPost(postId)
+                                    viewModel.unBookmarkPost(postId, updatePost)
                                 }) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.bookmark),
@@ -528,7 +533,7 @@ fun PostComposable(
                                 }
                             } else {
                                 IconButton(onClick = {
-                                    viewModel.bookmarkPost(postId)
+                                    viewModel.bookmarkPost(postId, updatePost)
                                 }) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.bookmark_outline),
@@ -686,7 +691,8 @@ fun PostImage(
     postId: String,
     setZindex: (zIndex: Float) -> Unit,
     viewModel: PostViewModel,
-    like: () -> Unit
+    like: () -> Unit,
+    updatePost: (post: Post) -> Unit
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
@@ -744,7 +750,7 @@ fun PostImage(
             .pointerInput(Unit) {
                 detectTapGestures(onDoubleTap = {
                     CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.likePost(postId)
+                        viewModel.likePost(postId, updatePost)
                         like()
                         showHeart = true
                     }
