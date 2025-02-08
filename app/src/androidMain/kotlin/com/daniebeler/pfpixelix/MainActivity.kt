@@ -199,7 +199,7 @@ class MainActivity : ComponentActivity() {
                                 drawerShape = shapes.extraLarge.end(0.dp),
                                 windowInsets = WindowInsets(0, 0, 0, 0)
                             ) {
-                                PreferencesComposable(navController, {
+                                PreferencesComposable(navController, drawerState, {
                                     scope.launch {
                                         drawerState.close()
                                     }

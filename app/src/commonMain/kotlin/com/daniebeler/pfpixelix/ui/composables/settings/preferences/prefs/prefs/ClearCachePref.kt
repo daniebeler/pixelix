@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
+import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -14,11 +15,11 @@ import pixelix.app.generated.resources.clear_cache
 import pixelix.app.generated.resources.save_outline
 
 @Composable
-fun ClearCachePref() {
+fun ClearCachePref(drawerState: DrawerState) {
     val context = LocalKmpContext.current
     val cacheSize = remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(drawerState.isOpen) {
         cacheSize.value = humanReadableByteCountSI(context.getCacheSizeInBytes())
     }
 

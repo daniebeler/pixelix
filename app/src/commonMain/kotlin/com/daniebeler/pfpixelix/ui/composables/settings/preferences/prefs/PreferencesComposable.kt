@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -51,6 +52,7 @@ import pixelix.app.generated.resources.settings
 @Composable
 fun PreferencesComposable(
     navController: NavController,
+    drawerState: DrawerState,
     closePreferencesDrawer: () -> Unit,
     viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }
 ) {
@@ -110,7 +112,7 @@ fun PreferencesComposable(
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
-            ClearCachePref()
+            ClearCachePref(drawerState)
 
             MoreSettingsPref { viewModel.openMoreSettingsPage(context) }
 
