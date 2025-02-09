@@ -15,7 +15,8 @@ object HtmlToText {
         val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
 
         Logger.d("htmlToText") { cleanedText }
-        return cleanedText.trim()
+        val finsihedText = cleanedText.trim()
+        return finsihedText
     }
 
 }

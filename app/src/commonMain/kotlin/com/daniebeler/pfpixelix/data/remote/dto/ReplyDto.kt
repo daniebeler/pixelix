@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.data.remote.dto
 
 
 import com.daniebeler.pfpixelix.domain.model.Reply
+import com.daniebeler.pfpixelix.utils.HtmlToText.htmlToText
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -51,7 +52,7 @@ data class ReplyDto(
     override fun toModel(): Reply {
         return Reply(
             id = id,
-            content = contentText,
+            content = content?.let { htmlToText(it) } ?: contentText,
             mentions = mentions.map { accountDto -> accountDto.toModel() },
             account = account.toModel(),
             createdAt = createdAt,

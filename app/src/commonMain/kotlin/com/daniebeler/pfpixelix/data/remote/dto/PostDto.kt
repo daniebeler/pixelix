@@ -60,8 +60,7 @@ data class PostDto(
                 account = reblog.account.toModel(),
                 tags = reblog.tags?.map { it.toModel() }.orEmpty(),
                 favouritesCount = reblog.favouritesCount ?: 0,
-                content = reblog.contentText?.let { it.takeIf { it.isNotEmpty() } }
-                    ?: reblog.content?.let { htmlToText(it) } ?: "",
+                content = reblog.content?.let { htmlToText(it) } ?: reblog.contentText?.let { it.takeIf { it.isNotEmpty() } } ?: "",
                 replyCount = reblog.replyCount ?: 0,
                 createdAt = reblog.createdAt ?: "",
                 url = reblog.url ?: "",
@@ -83,8 +82,7 @@ data class PostDto(
                 account = account.toModel(),
                 tags = tags?.map { it.toModel() }.orEmpty(),
                 favouritesCount = favouritesCount ?: 0,
-                content = contentText?.let { it.takeIf { it.isNotEmpty() } }
-                    ?: content?.let { htmlToText(it) } ?: "",
+                content = content?.let { htmlToText(it) } ?: contentText?.let { it.takeIf { it.isNotEmpty() } } ?: "",
                 replyCount = replyCount ?: 0,
                 createdAt = createdAt ?: "",
                 url = url ?: "",

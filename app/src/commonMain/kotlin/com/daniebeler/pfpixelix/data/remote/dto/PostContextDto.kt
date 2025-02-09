@@ -10,7 +10,8 @@ data class PostContextDto(
     @SerialName("descendants") val descendants: List<PostDto>,
 ) : DtoInterface<PostContext> {
     override fun toModel(): PostContext {
+        val descendants = descendants.map { post -> post.toModel() }
         return PostContext(ancestors = ancestors.map { post -> post.toModel() },
-            descendants = descendants.map { post -> post.toModel() })
+            descendants = descendants)
     }
 }
