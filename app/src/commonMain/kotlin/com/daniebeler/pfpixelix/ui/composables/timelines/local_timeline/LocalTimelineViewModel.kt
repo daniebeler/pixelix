@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.GetLocalTimelineUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -95,5 +96,15 @@ class LocalTimelineViewModel @Inject constructor(
     fun postGetsDeleted(postId: String) {
         localTimelineState =
             localTimelineState.copy(localTimeline = localTimelineState.localTimeline.filter { post -> post.id != postId })
+    }
+
+    fun postGetsUpdated(post: Post) {
+        localTimelineState = localTimelineState.copy(localTimeline = localTimelineState.localTimeline.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        })
     }
 }

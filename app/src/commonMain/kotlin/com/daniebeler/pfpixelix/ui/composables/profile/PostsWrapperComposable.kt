@@ -303,8 +303,6 @@ private fun LazyListScope.PostsListInScope(
         }
     }
 
-
-
     if (posts.isEmpty() && !isLoading && error.isEmpty()) {
         item {
             FullscreenEmptyStateComposable(emptyMessage)

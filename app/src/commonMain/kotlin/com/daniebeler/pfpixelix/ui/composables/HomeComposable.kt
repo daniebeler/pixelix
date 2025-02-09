@@ -143,6 +143,7 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
             }
             HorizontalPager(
                 state = pagerState,
+                beyondViewportPageCount = 3,
                 modifier = Modifier
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)

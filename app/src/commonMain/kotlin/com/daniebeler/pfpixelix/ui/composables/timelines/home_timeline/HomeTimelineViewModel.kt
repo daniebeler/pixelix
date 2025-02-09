@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Settings
 import com.daniebeler.pfpixelix.domain.usecase.GetHomeTimelineUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetSettingsUseCase
@@ -125,5 +126,15 @@ class HomeTimelineViewModel @Inject constructor(
     fun postGetsDeleted(postId: String) {
         homeTimelineState =
             homeTimelineState.copy(homeTimeline = homeTimelineState.homeTimeline.filter { post -> post.id != postId })
+    }
+
+    fun postGetsUpdated(post: Post) {
+        homeTimelineState = homeTimelineState.copy(homeTimeline = homeTimelineState.homeTimeline.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        })
     }
 }

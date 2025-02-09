@@ -268,9 +268,11 @@ fun OtherProfileComposable(
 
                             Button(
                                 onClick = {
-                                    Navigate.navigate(
-                                        "chat/" + viewModel.accountState.account!!.id, navController
-                                    )
+                                    viewModel.accountState.account?.let { account ->
+                                        Navigate.navigate(
+                                            "chat/" + account.id, navController
+                                        )
+                                    }
                                 },
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(12.dp),
@@ -284,11 +286,13 @@ fun OtherProfileComposable(
                             }
                         }
 
-                        CollectionsComposable(collectionsState = viewModel.collectionsState,
-                            getMoreCollections = {viewModel.getCollections(viewModel.accountState.account!!.id, true)},
-                            navController = navController,
-                            instanceDomain = viewModel.domain,
-                            openUrl = { url -> viewModel.openUrl(url, context) })
+                        viewModel.accountState.account?.let { account ->
+                            CollectionsComposable(collectionsState = viewModel.collectionsState,
+                                getMoreCollections = {viewModel.getCollections(account.id, true)},
+                                navController = navController,
+                                instanceDomain = viewModel.domain,
+                                openUrl = { url -> viewModel.openUrl(url, context) })
+                        }
 
                         HorizontalDivider(Modifier.padding(bottom = 12.dp))
 

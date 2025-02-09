@@ -117,10 +117,11 @@ fun HashtagTimelineComposable(
                 changeView = { viewModel.changeView(it) },
                 isFirstItemLarge = true,
                 itemGetsDeleted = { viewModel.postGetsDeleted(it) },
-                getItemsPaginated = {viewModel.getItemsPaginated(hashtag)},
+                getItemsPaginated = { viewModel.getItemsPaginated(hashtag) },
                 onRefresh = { viewModel.refresh() },
                 postsCount = viewModel.hashtagState.hashtag?.count ?: 0,
-                navController = navController
+                navController = navController,
+                postGetsUpdated = { viewModel.postGetsUpdated(it) }
             )
         }
     }

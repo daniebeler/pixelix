@@ -22,6 +22,7 @@ fun GlobalTimelineComposable(
         onRefresh = {
             viewModel.refresh()
         },
-        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
+        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
+        postGetsUpdated = { post -> viewModel.postGetsUpdated(post) }
     )
 }

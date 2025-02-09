@@ -244,6 +244,7 @@ private fun SearchResultComposable(searchState: SearchState, saveAccount: (Strin
         }
         HorizontalPager(
             state = pagerState,
+            beyondViewportPageCount = 2,
             modifier = Modifier
                 .weight(1f)
                 .background(MaterialTheme.colorScheme.background)

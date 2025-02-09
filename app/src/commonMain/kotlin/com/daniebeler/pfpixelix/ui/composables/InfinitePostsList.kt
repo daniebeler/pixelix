@@ -10,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,30 +38,20 @@ fun InfinitePostsList(
     ),
     onRefresh: () -> Unit,
     itemGetsDeleted: (postId: String) -> Unit,
+    postGetsUpdated: (post: Post) -> Unit,
     view: ViewEnum = ViewEnum.Timeline,
     changeView: (view: ViewEnum) -> Unit = {},
     isFirstItemLarge: Boolean = false,
     postsCount: Int? = null,
 ) {
-    var posts by remember { mutableStateOf(listOf<Post>()) } // Your list of posts
     val lazyListState = rememberLazyListState()
-
-    LaunchedEffect(items) {
-        posts = items
-    }
 
     fun delete(postId: String) {
         itemGetsDeleted(postId)
     }
 
     fun updatePost(post: Post) {
-        posts = posts.map {
-            if (it.id == post.id) {
-                post
-            } else {
-                it
-            }
-        }
+        postGetsUpdated(post)
     }
 
     PullToRefreshBox(
@@ -78,7 +69,7 @@ fun InfinitePostsList(
                 }
             }
             PostsWrapperComposable(
-                posts = posts,
+                posts = items,
                 isLoading = isLoading,
                 isRefreshing = isRefreshing,
                 error = error,

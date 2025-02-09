@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
@@ -218,5 +219,15 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun postGetsUpdated(post: Post) {
+        postsState = postsState.copy(hashtagTimeline = postsState.hashtagTimeline.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        })
     }
 }
