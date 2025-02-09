@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.Navigate
 import org.jetbrains.compose.resources.stringResource
@@ -42,6 +43,7 @@ fun HomeTimelineComposable(
             onRefresh = {
                 viewModel.refresh()
             },
-            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
+            itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
+        )
     }
 }

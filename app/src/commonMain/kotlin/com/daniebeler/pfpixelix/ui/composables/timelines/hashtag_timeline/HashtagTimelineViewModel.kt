@@ -12,9 +12,13 @@ import com.daniebeler.pfpixelix.domain.usecase.FollowHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelatedHashtagsUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
+import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UnfollowHashtagUseCase
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineViewModel @Inject constructor(
@@ -22,13 +26,40 @@ class HashtagTimelineViewModel @Inject constructor(
     private val followHashtagUseCase: FollowHashtagUseCase,
     private val unfollowHashtagUseCase: UnfollowHashtagUseCase,
     private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
-    private val getRelatedHashtagsUseCase: GetRelatedHashtagsUseCase
+    private val getRelatedHashtagsUseCase: GetRelatedHashtagsUseCase,
+    private val getViewUseCase: GetViewUseCase,
+    private val setViewUseCase: SetViewUseCase
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
+    var view by mutableStateOf(ViewEnum.Loading)
 
     var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
+
+
+
+    init {
+        viewModelScope.launch {
+            getViewUseCase().collect { res ->
+                view = res
+            }
+        }
+    }
+
+    fun refresh() {
+        postsState = postsState.copy(isRefreshing = true)
+        if (hashtagState.hashtag != null) {
+            getItemsFirstLoad(hashtagState.hashtag!!.name, true)
+        }
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        viewModelScope.launch {
+            setViewUseCase(newView)
+        }
+    }
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
         getHashtagTimelineUseCase(hashtag).onEach { result ->
@@ -116,13 +147,6 @@ class HashtagTimelineViewModel @Inject constructor(
                 println("fief" + result.message)
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun refresh() {
-        if (hashtagState.hashtag != null) {
-            postsState = HashtagTimelineState()
-            getItemsFirstLoad(hashtagState.hashtag!!.name, true)
-        }
     }
 
     fun postGetsDeleted(postId: String) {

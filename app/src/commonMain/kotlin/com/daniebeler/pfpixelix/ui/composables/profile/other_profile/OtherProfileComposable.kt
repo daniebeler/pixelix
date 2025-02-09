@@ -290,6 +290,8 @@ fun OtherProfileComposable(
                             instanceDomain = viewModel.domain,
                             openUrl = { url -> viewModel.openUrl(url, context) })
 
+                        HorizontalDivider(Modifier.padding(bottom = 12.dp))
+
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
                             viewType = viewModel.view,
@@ -300,6 +302,22 @@ fun OtherProfileComposable(
                 }
 
                 PostsWrapperComposable(
+                    posts = viewModel.postsState.posts,
+                    isLoading = viewModel.postsState.isLoading,
+                    isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+                    error = viewModel.postsState.error,
+                    endReached = viewModel.postsState.endReached,
+                    emptyMessage = EmptyState(
+                        icon = Icons.Outlined.Photo, heading = "No Posts"
+                    ),
+                    view = viewModel.view,
+                    isFirstImageLarge = true,
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                    updatePost = { viewModel.updatePost(it) },
+                    navController = navController
+                )
+
+                /*PostsWrapperComposable(
                     accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
@@ -309,7 +327,7 @@ fun OtherProfileComposable(
                     view = viewModel.view,
                     postGetsDeleted = { viewModel.postGetsDeleted(it) },
                     isFirstImageLarge = true
-                )
+                )*/
             }
         }
     }

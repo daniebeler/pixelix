@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
@@ -71,7 +72,7 @@ class OwnProfileViewModel @Inject constructor(
         ownDomain = getOwnInstanceDomainUseCase()
     }
 
-    fun getAppIcon(context: KmpContext){
+    fun getAppIcon(context: KmpContext) {
         appIcon = getActiveAppIconUseCase(context)
     }
 
@@ -114,7 +115,9 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(isLoading = true, account = accountState.account, refreshing = refreshing)
+                    AccountState(
+                        isLoading = true, account = accountState.account, refreshing = refreshing
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -179,11 +182,16 @@ class OwnProfileViewModel @Inject constructor(
                         CollectionsState(collections = result.data ?: emptyList())
                     } else {
                         val endReached = result.data!!.isEmpty()
-                        CollectionsState(collections = collectionsState.collections + result.data, endReached = endReached)
-                    }                }
+                        CollectionsState(
+                            collections = collectionsState.collections + result.data,
+                            endReached = endReached
+                        )
+                    }
+                }
 
                 is Resource.Error -> {
-                    collectionsState = CollectionsState(error = result.message ?: "An unexpected error occurred")
+                    collectionsState =
+                        CollectionsState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
@@ -208,5 +216,15 @@ class OwnProfileViewModel @Inject constructor(
 
     fun postGetsDeleted(postId: String) {
         postsState = postsState.copy(posts = postsState.posts.filter { post -> post.id != postId })
+    }
+
+    fun updatePost(post: Post) {
+        postsState = postsState.copy(posts = postsState.posts.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        })
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -168,6 +169,8 @@ fun OwnProfileComposable(
                             instanceDomain = viewModel.ownDomain,
                         ) { url -> viewModel.openUrl(url, context) }
 
+                        HorizontalDivider(Modifier.padding(bottom = 12.dp))
+
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
                             viewType = viewModel.view,
@@ -176,6 +179,21 @@ fun OwnProfileComposable(
                 }
 
                 PostsWrapperComposable(
+                    posts = viewModel.postsState.posts,
+                    isLoading = viewModel.postsState.isLoading,
+                    isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+                    error = viewModel.postsState.error,
+                    endReached = viewModel.postsState.endReached,
+                    emptyMessage = EmptyState(
+                        icon = Icons.Outlined.Photo, heading = "No Posts"
+                    ),
+                    view = viewModel.view,
+                    isFirstImageLarge = true,
+                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                    updatePost = { viewModel.updatePost(it) },
+                    navController = navController
+                )
+                /*PostsWrapperComposable(
                     accountState = viewModel.accountState,
                     postsState = viewModel.postsState,
                     navController = navController,
@@ -185,7 +203,7 @@ fun OwnProfileComposable(
                     view = viewModel.view,
                     postGetsDeleted = { viewModel.postGetsDeleted(it) },
                     isFirstImageLarge = true
-                )
+                )*/
 
             }
 

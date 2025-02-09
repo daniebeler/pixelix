@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountByUsernameUseCase
@@ -388,5 +389,15 @@ class OtherProfileViewModel @Inject constructor(
 
     fun postGetsDeleted(postId: String) {
         postsState = postsState.copy(posts = postsState.posts.filter { post -> post.id != postId })
+    }
+
+    fun updatePost(post: Post) {
+        postsState = postsState.copy(posts = postsState.posts.map {
+            if (it.id == post.id) {
+                post
+            } else {
+                it
+            }
+        })
     }
 }

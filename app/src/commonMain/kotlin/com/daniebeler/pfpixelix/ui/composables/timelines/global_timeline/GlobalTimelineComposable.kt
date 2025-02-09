@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @Composable
@@ -18,9 +19,9 @@ fun GlobalTimelineComposable(
         endReached = false,
         navController = navController,
         getItemsPaginated = { viewModel.getItemsPaginated() },
-        emptyMessage = EmptyState(heading = "No posts"),
         onRefresh = {
             viewModel.refresh()
         },
-        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) })
+        itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) }
+    )
 }

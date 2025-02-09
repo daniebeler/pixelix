@@ -29,7 +29,7 @@ import pixelix.app.generated.resources.reorder_four_outline
 
 @Composable
 fun SwitchViewComposable(
-    postsCount: Int, viewType: ViewEnum, onViewChange: (type: ViewEnum) -> Unit
+    postsCount: Int?, viewType: ViewEnum, onViewChange: (type: ViewEnum) -> Unit
 ) {
 
     Column(
@@ -37,17 +37,23 @@ fun SwitchViewComposable(
             .fillMaxWidth()
             .padding(12.dp)
     ) {
-        HorizontalDivider(Modifier.padding(bottom = 12.dp))
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = " " + stringResource(Res.string.posts), fontSize = 12.sp)
-            }
+            postsCount?.let {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = postsCount.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Text(text = " " + stringResource(Res.string.posts), fontSize = 12.sp)
+                }
+            } ?: Box {}
+
 
             Row {
                 Box(modifier = Modifier
@@ -61,7 +67,7 @@ fun SwitchViewComposable(
                         }
                     )) {
                     Icon(
-                        imageVector = if(viewType == ViewEnum.Grid) {
+                        imageVector = if (viewType == ViewEnum.Grid) {
                             vectorResource(Res.drawable.grid)
                         } else {
                             vectorResource(Res.drawable.grid_outline)
@@ -81,7 +87,7 @@ fun SwitchViewComposable(
                         }
                     )) {
                     Icon(
-                        imageVector = if(viewType == ViewEnum.Grid) {
+                        imageVector = if (viewType == ViewEnum.Grid) {
                             vectorResource(Res.drawable.reorder_four_outline)
                         } else {
                             vectorResource(Res.drawable.reorder_four)

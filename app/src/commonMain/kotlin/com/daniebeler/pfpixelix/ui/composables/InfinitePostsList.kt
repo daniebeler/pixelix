@@ -1,33 +1,26 @@
 package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,12 +30,17 @@ fun InfinitePostsList(
     isRefreshing: Boolean,
     error: String,
     endReached: Boolean,
-    emptyMessage: EmptyState,
     navController: NavController,
     getItemsPaginated: () -> Unit,
+    emptyMessage: EmptyState = EmptyState(
+        icon = Icons.Outlined.Photo, heading = "No Posts"
+    ),
     onRefresh: () -> Unit,
     itemGetsDeleted: (postId: String) -> Unit,
-    before: @Composable (() -> Unit)? = null,
+    view: ViewEnum = ViewEnum.Timeline,
+    changeView: (view: ViewEnum) -> Unit = {},
+    isFirstItemLarge: Boolean = false,
+    postsCount: Int? = null,
 ) {
     var posts by remember { mutableStateOf(listOf<Post>()) } // Your list of posts
     val lazyListState = rememberLazyListState()
@@ -70,65 +68,30 @@ fun InfinitePostsList(
         onRefresh = onRefresh,
     ) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-            contentPadding = PaddingValues(top = 12.dp),
-            modifier = with(Modifier) { fillMaxSize() },
-            state = lazyListState
+            verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyListState, contentPadding = PaddingValues(top = if (postsCount != null) {0.dp} else {12.dp} )
         ) {
-            if (before != null) {
+            postsCount?.let {
                 item {
-                    before()
+                    SwitchViewComposable(postsCount = postsCount,
+                        viewType = view,
+                        onViewChange = { changeView(it) })
                 }
             }
-
-            if (posts.isNotEmpty()) {
-
-                items(posts, key = {
-                    it.id
-                }) { item ->
-                    val zIndex = remember {
-                        mutableFloatStateOf(1f)
-                    }
-                    Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
-                        PostComposable(post = item,
-                            postGetsDeleted = ::delete,
-                            navController = navController,
-                            updatePost = ::updatePost,
-                            setZindex = {
-                                zIndex.floatValue = it
-                            })
-                    }
-
-                }
-
-                if (isLoading && !isRefreshing) {
-                    item {
-                        FixedHeightLoadingComposable()
-                    }
-                }
-
-                if (endReached && items.size > 3) {
-                    item {
-                        EndOfListComposable()
-                    }
-                }
-            }
+            PostsWrapperComposable(
+                posts = posts,
+                isLoading = isLoading,
+                isRefreshing = isRefreshing,
+                error = error,
+                endReached = endReached,
+                emptyMessage = emptyMessage,
+                view = view,
+                isFirstImageLarge = isFirstItemLarge,
+                postGetsDeleted = ::delete,
+                updatePost = ::updatePost,
+                navController = navController
+            )
         }
-
-
-        if (items.isEmpty() && !isLoading && error.isEmpty()) {
-            FullscreenEmptyStateComposable(emptyMessage)
-        }
-
-        if (!isRefreshing && items.isEmpty() && isLoading) {
-            FullscreenLoadingComposable()
-        }
-
-        if (error.isNotEmpty() && items.isEmpty()) {
-            FullscreenErrorComposable(message = error)
-        }
-
-        ToTopButton(lazyListState, {onRefresh()})
+        ToTopButton(lazyListState) { onRefresh() }
     }
 
     InfiniteListHandler(lazyListState = lazyListState) {
