@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model
 
 import com.daniebeler.pfpixelix.common.Constants
+import com.daniebeler.pfpixelix.domain.service.session.Credentials
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,14 +24,14 @@ data class LoginData(
     val loginOngoing: Boolean = false,
 )
 
-fun loginDataToAccount(loginData: LoginData): Account {
+fun credentialsToAccount(credentials: Credentials): Account {
     return Account(
-        username = loginData.username,
-        avatar = loginData.avatar,
-        url = loginData.baseUrl,
-        id = loginData.accountId,
-        displayname = loginData.displayName,
-        followersCount = loginData.followers,
+        username = credentials.username,
+        avatar = credentials.avatar,
+        url = credentials.serverUrl,
+        id = credentials.accountId,
+        displayname = credentials.displayName,
+        followersCount = 0,
         acct = "",
         note = "",
         locked = false,

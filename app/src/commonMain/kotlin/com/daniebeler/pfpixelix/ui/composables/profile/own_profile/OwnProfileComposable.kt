@@ -214,9 +214,11 @@ fun OwnProfileComposable(
                         showBottomSheet = 0
                     }, openPreferencesDrawer)
             } else if (showBottomSheet == 2) {
-                AccountSwitchBottomSheet(closeBottomSheet = {
-                    showBottomSheet = 0
-                }, viewModel)
+                AccountSwitchBottomSheet(
+                    navController = navController,
+                    closeBottomSheet = { showBottomSheet = 0 },
+                    viewModel
+                )
             }
         }
     }

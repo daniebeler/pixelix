@@ -24,7 +24,6 @@ expect val KmpContext.appVersionName: String
 expect fun KmpContext.openUrlInApp(url: String)
 expect fun KmpContext.openUrlInBrowser(url: String)
 expect fun KmpContext.setDefaultNightMode(mode: Int)
-expect fun KmpContext.openLoginScreen(isAbleToGotBack: Boolean = false)
 expect fun KmpContext.getCacheSizeInBytes(): Long
 expect fun KmpContext.cleanCache()
 expect fun KmpContext.getAppIcons(): List<IconWithName>

@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.openLoginScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,11 +37,6 @@ fun LogoutPref(logout: () -> Unit) {
 }
 
 @Composable
-fun LogoutPrefPreview() {
-    LogoutPref { }
-}
-
-@Composable
 fun LogoutAlert(show: MutableState<Boolean>, logout: () -> Unit) {
     val context = LocalKmpContext.current
     if (show.value) {
@@ -56,7 +50,6 @@ fun LogoutAlert(show: MutableState<Boolean>, logout: () -> Unit) {
             TextButton(onClick = {
                 CoroutineScope(Dispatchers.Default).launch {
                     logout()
-                    context.openLoginScreen()
                 }
             }) {
                 Text(stringResource(Res.string.logout))

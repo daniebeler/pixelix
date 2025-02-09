@@ -1,17 +1,14 @@
 package com.daniebeler.pfpixelix.domain.usecase
 
-import com.daniebeler.pfpixelix.domain.repository.AuthRepository
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class GetOwnInstanceDomainUseCase(
-    private val repository: AuthRepository
+    private val authService: AuthService
 ) {
     suspend operator fun invoke(): String {
-        val currentLoginData = repository.getCurrentLoginData()
-        currentLoginData?.let {
-            return repository.getCurrentLoginData()!!.baseUrl.substringAfter("https://")
-        }
-        return ("https://err.or")
+        val currentLoginData = authService.getCurrentSession()!!
+        return currentLoginData.serverUrl
     }
 }
