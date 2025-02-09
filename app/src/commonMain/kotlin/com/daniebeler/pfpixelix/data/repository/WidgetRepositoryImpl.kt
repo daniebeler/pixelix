@@ -5,8 +5,12 @@ import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.utils.execute
+import me.tatarka.inject.annotations.Inject
 
-class WidgetRepositoryImpl constructor(private val pixelfedApi: PixelfedApi): WidgetRepository{
+@Inject
+class WidgetRepositoryImpl(
+    private val pixelfedApi: PixelfedApi
+): WidgetRepository {
     override suspend fun getNotifications(): Resource<List<com.daniebeler.pfpixelix.domain.model.Notification>> {
         try {
             val response = pixelfedApi.getNotifications().execute()

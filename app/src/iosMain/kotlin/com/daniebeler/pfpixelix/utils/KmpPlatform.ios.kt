@@ -32,9 +32,6 @@ actual val KmpContext.appVersionName: String
 actual fun KmpContext.setDefaultNightMode(mode: Int) {
 }
 
-actual fun KmpContext.openLoginScreen(isAbleToGotBack: Boolean) {
-}
-
 actual fun KmpContext.getCacheSizeInBytes(): Long {
     TODO("Not yet implemented")
 }

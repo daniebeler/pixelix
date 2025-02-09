@@ -1,36 +1,36 @@
 package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
 import androidx.core.content.FileProvider.getUriForFile
-import androidx.datastore.core.DataStore
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import coil3.imageLoader
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.model.AuthData
-import com.daniebeler.pfpixelix.widget.WidgetRepositoryProvider
+import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsTask @Inject constructor(
-    private val context: Context,
+    private val context: KmpContext,
     workerParams: WorkerParameters,
-    private val dataStore: DataStore<AuthData>
+    private val authService: AuthService,
+    private val repository: WidgetRepository,
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
             updateNotificationsWidgetRefreshing(context)
-            val repository = WidgetRepositoryProvider(dataStore).invoke()
-            if (repository == null) {
+            authService.openSessionIfExist()
+            if (authService.activeUser.firstOrNull() == null) {
                 updateNotificationsWidget(emptyList(), context, "you have to be logged in to an account")
                 return Result.failure()
             }

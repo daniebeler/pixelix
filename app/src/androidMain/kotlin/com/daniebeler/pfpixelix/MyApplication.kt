@@ -21,7 +21,7 @@ class MyApplication : Application(), Configuration.Provider {
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
     override fun onCreate() {
-        appComponent = AppComponent::class.create(this)
+        appComponent = AppComponent.create(this)
         SingletonImageLoader.setSafe {
             appComponent.provideImageLoader()
         }
@@ -44,7 +44,6 @@ private class MyWorkerFactory(
     ): ListenableWorker? {
         val workerComponent = WorkerComponent::class.create(
             appComponent,
-            appContext,
             workerParameters
         )
         return when(workerClassName) {

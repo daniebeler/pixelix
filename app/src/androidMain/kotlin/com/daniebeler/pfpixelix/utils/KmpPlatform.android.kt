@@ -16,7 +16,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import coil3.PlatformContext
-import com.daniebeler.pfpixelix.LoginActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
@@ -75,14 +74,6 @@ actual fun KmpContext.setDefaultNightMode(mode: Int) {
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
     )
-}
-
-actual fun KmpContext.openLoginScreen(isAbleToGotBack: Boolean) {
-    val intent = Intent(this, LoginActivity::class.java)
-    if (!isAbleToGotBack) {
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-    }
-    startActivity(intent)
 }
 
 actual fun KmpContext.getCacheSizeInBytes(): Long {

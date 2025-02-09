@@ -5,21 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.model.LoginData
-import com.daniebeler.pfpixelix.domain.usecase.GetAuthDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.RemoveLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdateCurrentUserUseCase
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.session.Credentials
+import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class AccountSwitchViewModel @Inject constructor(
-    private val getAuthDataUseCase: GetAuthDataUseCase,
-    private val updateCurrentUserUseCase: UpdateCurrentUserUseCase,
-    private val removeLoginDataUseCase: RemoveLoginDataUseCase
+    private val authService: AuthService
 ) : ViewModel() {
-    var currentlyLoggedIn: CurrentAccountState by mutableStateOf(CurrentAccountState())
-    var otherAccounts: OtherAccountsState by mutableStateOf(OtherAccountsState())
+    var sessionStorage by mutableStateOf<SessionStorage?>(null)
 
     init {
         loadAccounts()
@@ -27,18 +23,13 @@ class AccountSwitchViewModel @Inject constructor(
 
     private fun loadAccounts() {
         viewModelScope.launch {
-            val authData = getAuthDataUseCase()
-            currentlyLoggedIn =
-                CurrentAccountState(currentAccount = authData.loginDataList.find { it.accountId == authData.currentlyLoggedIn }
-                    ?: LoginData())
-            otherAccounts =
-                OtherAccountsState(otherAccounts = authData.loginDataList.filter { it.accountId != authData.currentlyLoggedIn && !it.loginOngoing })
+            sessionStorage = authService.getAvailableSessions()
         }
     }
 
-    fun switchAccount(newAccount: LoginData, changedAccount: () -> Unit) {
+    fun switchAccount(newAccount: Credentials, changedAccount: () -> Unit) {
         val coroutine = viewModelScope.launch {
-            updateCurrentUserUseCase(newAccount)
+            authService.openSessionIfExist(userId = newAccount.accountId)
         }
 
         coroutine.invokeOnCompletion {
@@ -50,7 +41,7 @@ class AccountSwitchViewModel @Inject constructor(
 
     fun removeAccount(accountId: String) {
         val coroutine = viewModelScope.launch {
-            removeLoginDataUseCase(accountId)
+            authService.deleteSession(accountId)
         }
         coroutine.invokeOnCompletion {
             loadAccounts()

@@ -22,6 +22,14 @@ sealed class Destinations(
     val activeIcon: DrawableResource = Res.drawable.bookmark_outline,
     val label: StringResource = Res.string.home
 ) {
+    data object FirstLogin : Destinations(
+        route = "first_login_screen"
+    )
+
+    data object NewLogin : Destinations(
+        route = "new_login_screen"
+    )
+
     data object HomeScreen : Destinations(
         route = "home_screen",
         icon = Res.drawable.house,
