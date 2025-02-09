@@ -39,12 +39,14 @@ import com.daniebeler.pfpixelix.utils.execute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 
 class CountryRepositoryImpl @Inject constructor(
     private val userDataStorePreferences: DataStore<Preferences>,
-    private val pixelfedApi: PixelfedApi
+    private val pixelfedApi: PixelfedApi,
+    private val json: Json
 ) : CountryRepository {
     override fun getAuthV1Token(): Flow<String> = userDataStorePreferences.data.map { preferences ->
         preferences[stringPreferencesKey(Constants.ACCESS_TOKEN_DATASTORE_KEY)] ?: ""
@@ -128,7 +130,9 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun createReply(postId: String, content: String): Flow<Resource<Post>> {
         val dto = CreateReplyDto(status = content, in_reply_to_id = postId)
-        return NetworkCall<Post, PostDto>().makeCall(pixelfedApi.createReply(dto))
+        return NetworkCall<Post, PostDto>().makeCall(
+            pixelfedApi.createReply(json.encodeToString(dto))
+        )
     }
 
 // Auth

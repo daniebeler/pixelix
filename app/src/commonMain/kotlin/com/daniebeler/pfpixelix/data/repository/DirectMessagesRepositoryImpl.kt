@@ -14,10 +14,12 @@ import com.daniebeler.pfpixelix.utils.NetworkCall
 import com.daniebeler.pfpixelix.utils.execute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 class DirectMessagesRepositoryImpl @Inject constructor(
-    private val pixelfedApi: PixelfedApi
+    private val pixelfedApi: PixelfedApi,
+    private val json: Json
 ) : DirectMessagesRepository {
 
     override fun getConversations(): Flow<Resource<List<Conversation>>> {
@@ -33,7 +35,9 @@ class DirectMessagesRepositoryImpl @Inject constructor(
     }
 
     override fun sendMessage(createMessageDto: CreateMessageDto): Flow<Resource<Message>> {
-        return NetworkCall<Message, MessageDto>().makeCall(pixelfedApi.sendMessage(createMessageDto))
+        return NetworkCall<Message, MessageDto>().makeCall(
+            pixelfedApi.sendMessage(json.encodeToString(createMessageDto))
+        )
     }
 
     override fun deleteMessage(id: String): Flow<Resource<List<Int>>> = flow {

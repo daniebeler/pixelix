@@ -64,7 +64,7 @@ class PostEditorRepositoryImpl @Inject constructor(
             )
 
             try {
-                val res = pixelfedApi.uploadMedia(data).execute().toModel()
+                val res = pixelfedApi.uploadMedia(json.encodeToString(data)).execute().toModel()
                 emit(Resource.Success(res))
             } catch (e: Exception) {
                 emit(Resource.Error("Unknown Error"))
@@ -100,7 +100,7 @@ class PostEditorRepositoryImpl @Inject constructor(
         flow {
             try {
                 emit(Resource.Loading())
-                pixelfedApi.updatePost(postId, updatePostDto).execute()
+                pixelfedApi.updatePost(postId, json.encodeToString(updatePostDto)).execute()
                 emit(Resource.Success(null))
             } catch (exception: Exception) {
                 if (exception.message != null) {
