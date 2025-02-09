@@ -187,6 +187,17 @@ fun App(
                                     popUpTo(root) { inclusive = true }
                                 }
                             }
+
+                            if (activeUser != null) {
+                                appComponent.systemFileShare.shareFilesRequests.collect { uris ->
+                                    val urisJson = Json.encodeToString(
+                                        uris.map { uri -> uri.toString() }
+                                    )
+                                    Navigate.navigate(
+                                        "new_post_screen?uris=$urisJson", navController
+                                    )
+                                }
+                            }
                         }
                     }
                 )

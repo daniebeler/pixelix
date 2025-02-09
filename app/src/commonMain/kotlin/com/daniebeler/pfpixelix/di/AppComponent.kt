@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
+import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -49,6 +50,7 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
@@ -72,6 +74,7 @@ abstract class AppComponent(
     @get:Provides val context: KmpContext
 ) {
     abstract val systemUrlHandler: SystemUrlHandler
+    abstract val systemFileShare: SystemFileShare
     abstract val authService: AuthService
 
     @get:Provides
@@ -98,6 +101,11 @@ abstract class AppComponent(
                 }
             }
             level = LogLevel.BODY
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 60000
+            socketTimeoutMillis = 60000
+            connectTimeoutMillis = 60000
         }
     }.apply {
         plugin(HttpSend).intercept { request ->

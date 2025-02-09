@@ -33,6 +33,7 @@ import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
@@ -372,9 +373,10 @@ interface PixelfedApi {
         @Field("description") description: String,
     ): Call<MediaAttachmentDto>
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createPost(
-        @Body createPostDto: CreatePostDto
+        @Body createPostDto: String
     ): Call<PostDto>
 
     @POST("api/v1/statuses")
