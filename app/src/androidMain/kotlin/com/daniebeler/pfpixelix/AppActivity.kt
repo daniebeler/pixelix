@@ -14,6 +14,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
@@ -79,7 +81,28 @@ class AppActivity : ComponentActivity() {
 }
 
 @Composable
-actual fun SetUpEdgeToEdgeDialog() {
+actual fun EdgeToEdgeDialog(
+    onDismissRequest: () -> Unit,
+    properties: DialogProperties,
+    content: @Composable () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnBackPress = properties.dismissOnBackPress,
+            dismissOnClickOutside = properties.dismissOnClickOutside,
+            usePlatformDefaultWidth = true,
+            decorFitsSystemWindows = false
+        ),
+        content = {
+            SetUpEdgeToEdgeDialog()
+            content()
+        }
+    )
+}
+
+@Composable
+private fun SetUpEdgeToEdgeDialog() {
     val parentView = LocalView.current.parent as View
     val window = (parentView as DialogWindowProvider).window
 
