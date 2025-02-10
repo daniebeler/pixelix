@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
-import com.daniebeler.pfpixelix.ui.composables.post.MentionSuggestionsState
+import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
@@ -20,11 +20,11 @@ class TextFieldMentionsViewModel @Inject constructor(
 ) : ViewModel() {
     var text by mutableStateOf(TextFieldValue(""))
     var mentionsDropdownOpen by mutableStateOf(false)
-    var mentionSuggestions by mutableStateOf(MentionSuggestionsState())
+    var mentionSuggestions by mutableStateOf(SuggestionsState())
 
     fun changeText(newText: TextFieldValue) {
         text = newText
-        val regex = Regex("\\B@\\w+\$")
+        val regex = Regex("\\B([@#])\\w*$")
 
         val textBeforeSelection = newText.getTextBeforeSelection(9999).toString()
         val result = regex.find(textBeforeSelection)
@@ -34,35 +34,35 @@ class TextFieldMentionsViewModel @Inject constructor(
             return
         }
         mentionsDropdownOpen = result.range.first != result.range.last
-        searchMentions(result.value)
+        search(result.value)
     }
 
-    private fun searchMentions(mention: String?) {
-        if (mention == null) {
+    private fun search(searchString: String?) {
+        if (searchString == null) {
             return
         }
-        val searchUsername = mention.substring(1)
-        searchUseCase(searchUsername, "accounts").onEach { result ->
+        val type = if (searchString.toCharArray().first() == '@') {"accounts"} else {"tags"}
+        val searchShortened = searchString.substring(1)
+        searchUseCase(searchShortened).onEach { result ->
             mentionSuggestions = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
-                        MentionSuggestionsState(mentions = result.data.accounts)
-
+                        SuggestionsState(suggestions = if (type == "accounts") {result.data.accounts.map { "@" + it.acct }} else {result.data.tags.map { "#" + it.name }})
                     } else {
-                        MentionSuggestionsState(
+                        SuggestionsState(
                             error = result.message ?: "An unexpected error occurred"
                         )
                     }
                 }
 
                 is Resource.Error -> {
-                    MentionSuggestionsState(
+                    SuggestionsState(
                         error = result.message ?: "An unexpected error occurred"
                     )
                 }
 
                 is Resource.Loading -> {
-                    MentionSuggestionsState(isLoading = true)
+                    SuggestionsState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

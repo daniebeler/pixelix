@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.data.repository
 
 import androidx.compose.foundation.content.MediaType
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
@@ -67,6 +68,7 @@ class PostEditorRepositoryImpl @Inject constructor(
                 val res = pixelfedApi.uploadMedia(json.encodeToString(data)).execute().toModel()
                 emit(Resource.Success(res))
             } catch (e: Exception) {
+                Logger.d(e.message.toString())
                 emit(Resource.Error("Unknown Error"))
             }
         } catch (exception: Exception) {

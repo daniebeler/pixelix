@@ -89,16 +89,16 @@ fun TextFieldMentionsComposable(
                     .clip(shape = RoundedCornerShape(12.dp))
                     .background(suggestionsBoxColor)
             ) {
-                if (viewModel.mentionSuggestions.mentions.isNotEmpty()) {
+                if (viewModel.mentionSuggestions.suggestions.isNotEmpty()) {
                     Column(
                         modifier = Modifier.padding(12.dp)
                     ) {
-                        viewModel.mentionSuggestions.mentions.map {
+                        viewModel.mentionSuggestions.suggestions.map {
                             TextButton(onClick = {
                                 viewModel.mentionsDropdownOpen = false
                                 val textBeforeSelection = text.getTextBeforeSelection(9999).toString()
-                                val index = textBeforeSelection.lastIndexOf("@") + 1
-                                val newText = textBeforeSelection.substring(0, index) + it.acct
+                                val index = textBeforeSelection.lastIndexOf(it.toCharArray().first())
+                                val newText = textBeforeSelection.substring(0, index) + it
                                 changeText(
                                     text.copy(
                                         text = newText + text.getTextAfterSelection(9999).toString(), selection = TextRange(newText.length)
@@ -106,7 +106,7 @@ fun TextFieldMentionsComposable(
                                 )
                             }) {
                                 Text(
-                                    text = "@${it.acct}",
+                                    text = it,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             }
