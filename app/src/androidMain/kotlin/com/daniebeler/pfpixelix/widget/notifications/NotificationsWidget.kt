@@ -14,8 +14,6 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.actionParametersOf
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
@@ -42,23 +40,20 @@ import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.daniebeler.pfpixelix.MainActivity
 import com.daniebeler.pfpixelix.R
-import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.*
 import com.daniebeler.pfpixelix.widget.WidgetColors
 import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
 import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsWorkManager
 
-private val destinationKey = ActionParameters.Key<String>(
-    MainActivity.KEY_DESTINATION
-)
-
-private val destinationKeyParam = ActionParameters.Key<String>(
-    MainActivity.KEY_DESTINATION_PARAM
-)
+//private val destinationKey = ActionParameters.Key<String>(
+//    MainActivity.KEY_DESTINATION
+//)
+//
+//private val destinationKeyParam = ActionParameters.Key<String>(
+//    MainActivity.KEY_DESTINATION_PARAM
+//)
 
 class NotificationsWidget : GlanceAppWidget() {
 
@@ -106,13 +101,15 @@ class NotificationsWidget : GlanceAppWidget() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(
-                                modifier = GlanceModifier.clickable(
-                                    actionStartActivity<MainActivity>(
-                                        actionParametersOf(
-                                            destinationKey to MainActivity.Companion.StartNavigation.Notifications.toString(),
-                                        )
-                                    )
-                                ), verticalAlignment = Alignment.CenterVertically
+                                modifier = GlanceModifier
+//                                    .clickable(
+//                                    actionStartActivity<MainActivity>(
+//                                        actionParametersOf(
+//                                            destinationKey to MainActivity.Companion.StartNavigation.Notifications.toString(),
+//                                        )
+//                                    )
+//                                )
+                                , verticalAlignment = Alignment.CenterVertically
                             ) {
                                 if (size.height >= BIG_SQUARE.height && size.width >= BIG_SQUARE.width) {
                                     Image(
@@ -185,14 +182,14 @@ class NotificationsWidget : GlanceAppWidget() {
     private fun NotificationItem(notification: NotificationStoreItem, context: Context) {
         val size = LocalSize.current
         Box(
-            modifier = GlanceModifier.clickable(
-                actionStartActivity<MainActivity>(
-                    actionParametersOf(
-                        destinationKey to MainActivity.Companion.StartNavigation.Profile.toString(),
-                        destinationKeyParam to notification.accountId
-                    )
-                )
-            )
+//            modifier = GlanceModifier.clickable(
+//                actionStartActivity<MainActivity>(
+//                    actionParametersOf(
+//                        destinationKey to MainActivity.Companion.StartNavigation.Profile.toString(),
+//                        destinationKeyParam to notification.accountId
+//                    )
+//                )
+//            )
         ) {
             Column {
                 Spacer(GlanceModifier.height(12.dp))

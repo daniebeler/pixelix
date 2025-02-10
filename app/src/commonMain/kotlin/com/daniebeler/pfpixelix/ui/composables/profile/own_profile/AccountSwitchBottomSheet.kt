@@ -28,11 +28,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.model.loginDataToAccount
+import com.daniebeler.pfpixelix.domain.model.credentialsToAccount
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
-import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.openLoginScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,31 +48,38 @@ import pixelix.app.generated.resources.remove_account
 
 @Composable
 fun AccountSwitchBottomSheet(
+    navController: NavController,
     closeBottomSheet: () -> Unit,
     ownProfileViewModel: OwnProfileViewModel?,
     viewModel: AccountSwitchViewModel = injectViewModel(key = "account_switcher_viewmodel") { accountSwitchViewModel }
 ) {
-    val context = LocalKmpContext.current
     val showRemoveLoginDataAlert = remember { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (viewModel.currentlyLoggedIn.currentAccount != null) {
+        val sessionStorage = viewModel.sessionStorage
+        val currentlyLoggedIn = remember(sessionStorage) {
+            viewModel.sessionStorage?.getActiveSession()
+        }
+        if (currentlyLoggedIn != null) {
             Text(
                 text = stringResource(Res.string.current_account),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            CustomAccount(account = loginDataToAccount(viewModel.currentlyLoggedIn.currentAccount!!))
+            CustomAccount(account = credentialsToAccount(currentlyLoggedIn))
         }
-        if (viewModel.otherAccounts.otherAccounts.isNotEmpty()) {
+        val otherAccounts = remember(sessionStorage) {
+            viewModel.sessionStorage?.sessions?.filter { it != currentlyLoggedIn }.orEmpty()
+        }
+        if (otherAccounts.isNotEmpty()) {
             Text(
                 text = stringResource(Res.string.other_accounts),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            viewModel.otherAccounts.otherAccounts.map { otherAccount ->
+            otherAccounts.map { otherAccount ->
                 Box(Modifier.clickable {
                     viewModel.switchAccount(otherAccount) {
                         ownProfileViewModel?.let {
@@ -82,9 +89,9 @@ fun AccountSwitchBottomSheet(
                     }
                 }) {
                     CustomAccount(
-                        account = loginDataToAccount(otherAccount),
+                        account = credentialsToAccount(otherAccount),
                         logoutButton = true,
-                        logout = {showRemoveLoginDataAlert.value = otherAccount.accountId})
+                        logout = { showRemoveLoginDataAlert.value = otherAccount.accountId })
                 }
             }
         }
@@ -92,7 +99,10 @@ fun AccountSwitchBottomSheet(
             modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth()
-                .clickable { context.openLoginScreen(true) },
+                .clickable {
+                    navController.navigate(Destinations.NewLogin.route)
+                    closeBottomSheet()
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(

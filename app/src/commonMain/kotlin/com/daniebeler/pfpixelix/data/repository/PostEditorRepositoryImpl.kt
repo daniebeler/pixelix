@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.data.repository
 
+import androidx.compose.foundation.content.MediaType
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
@@ -15,15 +16,20 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.NetworkCall
 import com.daniebeler.pfpixelix.utils.execute
 import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.append
 import io.ktor.client.request.forms.formData
+import io.ktor.http.BadContentTypeFormatException
+import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 class PostEditorRepositoryImpl @Inject constructor(
-    private val pixelfedApi: PixelfedApi
+    private val pixelfedApi: PixelfedApi,
+    private val json: Json
 ) : PostEditorRepository {
 
     override fun uploadMedia(
@@ -42,20 +48,23 @@ class PostEditorRepositoryImpl @Inject constructor(
             val bytes = file.getBytes()
             val thumbnail = file.getThumbnail()
 
-            val data = MultiPartFormDataContent(formData {
-                append("file", bytes, Headers.build {
-                    append(HttpHeaders.ContentType, file.getMimeType())
-                    append(HttpHeaders.ContentDisposition, file.getName())
-                })
-                if (thumbnail != null) {
-                    append("thumbnail", thumbnail, Headers.build {
-                        append(HttpHeaders.ContentDisposition, "thumbnail")
+            val data = MultiPartFormDataContent(
+                parts = formData {
+                    append("description", description)
+                    append("file", bytes, Headers.build {
+                        append(HttpHeaders.ContentType, file.getMimeType())
+                        append(HttpHeaders.ContentDisposition, "filename=${file.getName()}")
                     })
+                    if (thumbnail != null) {
+                        append("thumbnail", thumbnail, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "filename=thumbnail")
+                        })
+                    }
                 }
-            })
+            )
 
             try {
-                val res = pixelfedApi.uploadMedia(data).execute().toModel()
+                val res = pixelfedApi.uploadMedia(json.encodeToString(data)).execute().toModel()
                 emit(Resource.Success(res))
             } catch (e: Exception) {
                 emit(Resource.Error("Unknown Error"))
@@ -76,7 +85,7 @@ class PostEditorRepositoryImpl @Inject constructor(
     override fun createPost(createPostDto: CreatePostDto): Flow<Resource<Post>> = flow {
         try {
             emit(Resource.Loading())
-            val res = pixelfedApi.createPost(createPostDto).execute().toModel()
+            val res = pixelfedApi.createPost(json.encodeToString(createPostDto)).execute().toModel()
             emit(Resource.Success(res))
         } catch (exception: Exception) {
             if (exception.message != null) {
@@ -91,7 +100,7 @@ class PostEditorRepositoryImpl @Inject constructor(
         flow {
             try {
                 emit(Resource.Loading())
-                pixelfedApi.updatePost(postId, updatePostDto).execute()
+                pixelfedApi.updatePost(postId, json.encodeToString(updatePostDto)).execute()
                 emit(Resource.Success(null))
             } catch (exception: Exception) {
                 if (exception.message != null) {

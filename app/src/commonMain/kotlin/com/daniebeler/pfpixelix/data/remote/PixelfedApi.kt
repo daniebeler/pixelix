@@ -33,6 +33,7 @@ import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
@@ -326,8 +327,9 @@ interface PixelfedApi {
     @GET("api/v1.1/direct/thread")
     fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1.1/direct/thread/send")
-    fun sendMessage(@Body createMessageDto: CreateMessageDto): Call<MessageDto>
+    fun sendMessage(@Body createMessageDto: String): Call<MessageDto>
 
     @DELETE("api/v1.1/direct/thread/message")
     fun deleteMessage(@Query("id") id: String): Call<List<Int>>
@@ -360,9 +362,10 @@ interface PixelfedApi {
         @Query("q") searchText: String
     ): Call<List<PlaceDto>>
 
+    @Headers("Content-Type: application/json")
     @POST("api/v2/media")
     fun uploadMedia(
-        @Body body: MultiPartFormDataContent
+        @Body body: String
     ): Call<MediaAttachmentDto>
 
     @FormUrlEncoded
@@ -372,19 +375,22 @@ interface PixelfedApi {
         @Field("description") description: String,
     ): Call<MediaAttachmentDto>
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createPost(
-        @Body createPostDto: CreatePostDto
+        @Body createPostDto: String
     ): Call<PostDto>
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     fun createReply(
-        @Body createReplyDto: CreateReplyDto
+        @Body createReplyDto: String
     ): Call<PostDto>
 
+    @Headers("Content-Type: application/json")
     @PUT("api/v1/statuses/{id}")
     suspend fun updatePost(
-        @Path("id") postId: String, @Body updatePostDto: UpdatePostDto
+        @Path("id") postId: String, @Body updatePostDto: String
     ): Call<Unit>
 
     @DELETE("api/v1/statuses/{id}")

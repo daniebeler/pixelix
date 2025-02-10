@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,12 +64,10 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.MimeType
-import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.audience
 import pixelix.app.generated.resources.audience_public
@@ -199,7 +196,6 @@ fun NewPostComposable(
                 }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     SinglePhotoPickerButton { result ->
-                        Navigate.navigate("new_post_screen", navController)
                         result.forEach {
                             viewModel.addImage(it, context)
                         }

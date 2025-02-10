@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.di
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.daniebeler.pfpixelix.ui.composables.LoginViewModel
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccountViewModel
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewModel
@@ -28,6 +27,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfil
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.ServerStatsViewModel
+import com.daniebeler.pfpixelix.ui.composables.session.LoginViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsViewModel
