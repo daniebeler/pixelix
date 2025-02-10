@@ -227,24 +227,26 @@ private fun NavGraphBuilder.navigationGraph(
     dialog(
         route = Destinations.FirstLogin.route,
     ) {
-        Dialog(
+        EdgeToEdgeDialog(
             onDismissRequest = exitApp,
             properties = DialogProperties(
-                dismissOnClickOutside = false
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
             )
         ) {
-            SetUpEdgeToEdgeDialog()
             LoginComposable()
         }
     }
-    dialog(
-        route = Destinations.NewLogin.route,
-        dialogProperties = DialogProperties(
-            dismissOnClickOutside = false
-        )
-    ) {
-        SetUpEdgeToEdgeDialog()
-        LoginComposable()
+    dialog(route = Destinations.NewLogin.route) {
+        EdgeToEdgeDialog(
+            onDismissRequest = { navController.popBackStack() },
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+            )
+        ) {
+            LoginComposable()
+        }
     }
 
     composable(Destinations.HomeScreen.route) {
@@ -493,4 +495,8 @@ private fun BottomBar(
 
 //https://partnerissuetracker.corp.google.com/issues/246909281
 @Composable
-expect fun SetUpEdgeToEdgeDialog()
+expect fun EdgeToEdgeDialog(
+    onDismissRequest: () -> Unit,
+    properties: DialogProperties,
+    content: @Composable () -> Unit
+)
