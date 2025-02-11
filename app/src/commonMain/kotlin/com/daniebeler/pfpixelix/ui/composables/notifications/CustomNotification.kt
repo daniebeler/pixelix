@@ -98,7 +98,7 @@ fun CustomNotification(
                     Navigate.navigate("profile_screen/" + notification.account.id, navController)
                 })
         Spacer(modifier = Modifier.width(10.dp))
-        Column {
+        Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = notification.account.username, fontWeight = FontWeight.Bold, modifier = Modifier.clickable {
                     Navigate.navigate("profile_screen/" + notification.account.id, navController)
@@ -123,7 +123,7 @@ fun CustomNotification(
             } else {
                 viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl
             }
-            Spacer(modifier = Modifier.weight(1f))
+            //Spacer(modifier = Modifier.weight(1f))
             AsyncImage(model = previewUrl,
                 contentDescription = "",
                 contentScale = ContentScale.Crop,

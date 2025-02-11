@@ -350,8 +350,7 @@ private fun PastSearchItem(
                 item.value
             }
         }
-        Text(text = text)
-        Spacer(modifier = Modifier.weight(1f))
+        Text(text = text, modifier = Modifier.weight(1f), softWrap = true)
         Box(
             modifier = Modifier
                 .height(22.dp)
