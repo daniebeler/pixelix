@@ -247,7 +247,7 @@ private fun NavGraphBuilder.navigationGraph(
                 usePlatformDefaultWidth = false,
             )
         ) {
-            LoginComposable()
+            LoginComposable(navController = navController)
         }
     }
     dialog(route = Destinations.NewLogin.route) {
@@ -258,7 +258,7 @@ private fun NavGraphBuilder.navigationGraph(
                 usePlatformDefaultWidth = false,
             )
         ) {
-            LoginComposable()
+            LoginComposable(true, navController)
         }
     }
 

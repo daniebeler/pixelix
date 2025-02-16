@@ -11,25 +11,32 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,7 +67,9 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.close_outline
 import pixelix.app.generated.resources.i_don_t_have_an_account
 import pixelix.app.generated.resources.login_wave_dark
 import pixelix.app.generated.resources.login_wave_light
@@ -70,11 +79,15 @@ import pixelix.app.generated.resources.server_url
 
 @Composable
 fun LoginComposable(
+    isCloseable: Boolean = false,
+    navController: NavController,
     viewModel: LoginViewModel = injectViewModel("LoginViewModel") { loginViewModel }
 ) {
     Scaffold(Modifier.fillMaxSize()) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.ime)
+                .verticalScroll(rememberScrollState())
         ) {
             Column(
                 modifier = Modifier
@@ -89,7 +102,23 @@ fun LoginComposable(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(50.dp))
+                Box(
+                    modifier = Modifier.padding(8.dp)
+                        .heightIn(min = 50.dp)
+                        .fillMaxWidth()
+                ) {
+                    if (isCloseable) {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.close_outline),
+                                tint = if (isSystemInDarkTheme()) Color.Black else Color.White,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
                 Image(
                     modifier = Modifier
                         .size(150.dp)
@@ -236,8 +265,7 @@ fun LoginComposable(
 
             }
 
-            Spacer(modifier = Modifier.height(200.dp))
-            Spacer(modifier = Modifier.imeAwareInsets(200.dp))
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
