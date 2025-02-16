@@ -9,12 +9,16 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-expect class UploadMediaUseCase(
-    postEditorRepository: PostEditorRepository
+class UploadMediaUseCase(
+    private val postEditorRepository: PostEditorRepository
 ) {
     operator fun invoke(
         url: KmpUri,
         description: String,
-        context: KmpContext,
-    ): Flow<Resource<MediaAttachment>>
+        context: KmpContext
+    ): Flow<Resource<MediaAttachment>> {
+        return postEditorRepository.uploadMedia(
+            url, description, context
+        )
+    }
 }

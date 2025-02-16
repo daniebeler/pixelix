@@ -66,6 +66,9 @@ kotlin {
             //shared preferences
             implementation(libs.multiplatform.settings)
 
+            //file picker
+            implementation(libs.filekit.compose)
+
             //lifecycle
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel)

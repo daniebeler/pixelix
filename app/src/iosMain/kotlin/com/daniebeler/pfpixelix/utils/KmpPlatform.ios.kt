@@ -4,6 +4,7 @@ import coil3.PlatformContext
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.Settings
+import io.github.vinceglb.filekit.core.PlatformFile
 import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path
 import okio.Path.Companion.toPath
@@ -18,11 +19,12 @@ import platform.Foundation.fileSize
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
-private data class IosUri(val uri: String) : KmpUri() {
-    override fun toString(): String = uri
+private data class IosUri(override val url: NSURL) : KmpUri() {
+    override fun toString(): String = url.toString()
 }
 
 actual abstract class KmpUri {
+    abstract val url: NSURL
     actual abstract override fun toString(): String
 }
 
@@ -91,12 +93,14 @@ actual fun KmpContext.enableCustomIcon(iconWithName: IconWithName) {
 actual fun KmpContext.disableCustomIcon() {
 }
 
-actual fun String.toKmpUri(): KmpUri = IosUri(this)
-
-actual val EmptyKmpUri: KmpUri = IosUri("")
+actual fun String.toKmpUri(): KmpUri = IosUri(NSURL(string = this))
+actual fun PlatformFile.toKmpUri(): KmpUri = IosUri(nsUrl)
+actual val EmptyKmpUri: KmpUri = IosUri(NSURL(string = ""))
 actual fun KmpContext.pinWidget() {
 }
 
 actual fun isAbleToDownloadImage(): Boolean {
     return false //TODO("Not yet implemented")
 }
+
+actual fun KmpUri.getPlatformUriObject(): Any = url

@@ -24,6 +24,7 @@ import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
+import io.github.vinceglb.filekit.core.PlatformFile
 import okio.Path
 import okio.Path.Companion.toPath
 import java.io.File
@@ -31,6 +32,7 @@ import java.io.File
 actual typealias KmpUri = Uri
 actual fun String.toKmpUri(): KmpUri = this.toUri()
 actual val EmptyKmpUri = Uri.EMPTY
+actual fun PlatformFile.toKmpUri(): KmpUri = this.uri
 
 actual typealias KmpContext = Context
 
@@ -145,3 +147,5 @@ actual fun KmpContext.pinWidget() {
 
 actual fun isAbleToDownloadImage(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+actual fun KmpUri.getPlatformUriObject(): Any = this
