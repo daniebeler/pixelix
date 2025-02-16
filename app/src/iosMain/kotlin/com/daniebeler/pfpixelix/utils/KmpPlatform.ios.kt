@@ -8,10 +8,12 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path
 import okio.Path.Companion.toPath
 import platform.Foundation.NSBundle
+import platform.Foundation.NSDictionary
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
+import platform.Foundation.fileSize
 
 private data class IosUri(val uri: String) : KmpUri() {
     override fun toString(): String = uri
@@ -50,11 +52,26 @@ actual val KmpContext.appVersionName: String
 actual fun KmpContext.setDefaultNightMode(mode: Int) {
 }
 
+@OptIn(ExperimentalForeignApi::class)
 actual fun KmpContext.getCacheSizeInBytes(): Long {
-    return 0L //TODO("Not yet implemented")
+    val fm = NSFileManager.defaultManager()
+    val cacheDir = imageCacheDir
+    val files = fm.subpathsOfDirectoryAtPath(cacheDir.toString(), null).orEmpty()
+    var result = 0uL
+    files.map { file ->
+        val dict = fm.fileAttributesAtPath(
+            cacheDir.resolve(file.toString()).toString(),
+            true
+        ) as NSDictionary
+        result += dict.fileSize()
+    }
+    return result.toLong()
 }
 
+@OptIn(ExperimentalForeignApi::class)
 actual fun KmpContext.cleanCache() {
+    val fm = NSFileManager.defaultManager()
+    fm.removeItemAtPath(imageCacheDir.toString(), null)
 }
 
 actual fun KmpContext.getAppIcons(): List<IconWithName> {
