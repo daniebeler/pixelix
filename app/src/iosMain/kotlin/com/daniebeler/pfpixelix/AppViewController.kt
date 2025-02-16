@@ -9,14 +9,17 @@ import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import platform.UIKit.UIViewController
 
-private object IosContext : KmpContext()
-
 class IosUrlCallback {
     var onRedirect: (String) -> Unit = {}
 }
 
 fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
-    val appComponent = AppComponent.Companion.create(IosContext)
+    var viewController: UIViewController? = null
+    val context = object : KmpContext() {
+        override val viewController: UIViewController
+            get() = viewController!!
+    }
+    val appComponent = AppComponent.Companion.create(context)
 
     SingletonImageLoader.setSafe {
         appComponent.provideImageLoader()
@@ -27,11 +30,13 @@ fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
     }
 
     val finishApp = {}
-    return ComposeUIViewController {
+    viewController = ComposeUIViewController {
         CompositionLocalProvider(
-            LocalKmpContext provides IosContext
+            LocalKmpContext provides context
         ) {
             App(appComponent, finishApp)
         }
     }
+
+    return viewController
 }

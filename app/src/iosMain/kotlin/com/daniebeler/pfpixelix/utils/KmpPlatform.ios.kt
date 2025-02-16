@@ -11,9 +11,12 @@ import platform.Foundation.NSBundle
 import platform.Foundation.NSDictionary
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSURL
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.fileSize
+import platform.UIKit.UIApplication
+import platform.UIKit.UIViewController
 
 private data class IosUri(val uri: String) : KmpUri() {
     override fun toString(): String = uri
@@ -23,7 +26,9 @@ actual abstract class KmpUri {
     actual abstract override fun toString(): String
 }
 
-actual abstract class KmpContext
+actual abstract class KmpContext {
+    abstract val viewController: UIViewController
+}
 
 actual val KmpContext.dataStoreDir get() = appDocDir().resolve("dataStore")
 actual val KmpContext.imageCacheDir get() = appDocDir().resolve("imageCache")
@@ -39,9 +44,11 @@ private fun appDocDir() = NSFileManager.defaultManager.URLForDirectory(
 )!!.path!!.toPath()
 
 actual fun KmpContext.openUrlInApp(url: String) {
+    openUrlInBrowser(url)
 }
 
 actual fun KmpContext.openUrlInBrowser(url: String) {
+    UIApplication.sharedApplication.openURL(NSURL(string = url))
 }
 
 actual val KmpContext.pref: Settings
