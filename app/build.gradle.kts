@@ -142,6 +142,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -150,6 +154,14 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
+        }
+
+        create("demo") {
+            initWith(getByName("debug"))
+            isMinifyEnabled = true
+            isDebuggable = false
+            isProfileable = false
+            isShrinkResources = true
         }
     }
     packaging.resources {

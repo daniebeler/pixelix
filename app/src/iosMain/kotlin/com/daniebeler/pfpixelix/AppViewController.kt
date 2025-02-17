@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
+import com.daniebeler.pfpixelix.utils.configureLogger
 import platform.UIKit.UIViewController
 
 class IosUrlCallback {
@@ -20,6 +21,8 @@ fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
             get() = viewController!!
     }
     val appComponent = AppComponent.Companion.create(context)
+
+    configureLogger()
 
     SingletonImageLoader.setSafe {
         appComponent.provideImageLoader()

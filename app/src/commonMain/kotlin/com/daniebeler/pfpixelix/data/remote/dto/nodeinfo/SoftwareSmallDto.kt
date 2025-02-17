@@ -15,7 +15,7 @@ data class SoftwareSmallDto(
     @SerialName("version") val version: String
 ): DtoInterface<SoftwareSmall> {
     override fun toModel(): SoftwareSmall {
-        Logger.d("SoftwareSmallDto") { "Converting SoftwareSmallDto to SoftwareSmall: $this" }
+        Logger.d { "SoftwareSmallDto: Converting SoftwareSmallDto to SoftwareSmall: $this" }
         return SoftwareSmall(
             id = id,
             name = name,

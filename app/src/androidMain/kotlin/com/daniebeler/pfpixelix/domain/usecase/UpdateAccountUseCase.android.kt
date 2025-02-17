@@ -37,7 +37,7 @@ actual class UpdateAccountUseCase actual constructor(
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
                 } catch (e: Exception) {
-                    Logger.e("UpdateAccountUseCase") { e.message!! }
+                    Logger.e("UpdateAccountUseCase", e)
                 }
             }
 

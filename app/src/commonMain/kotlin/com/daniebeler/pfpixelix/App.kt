@@ -375,8 +375,8 @@ private fun NavGraphBuilder.navigationGraph(
         val uId = navBackStackEntry.arguments?.getString("postid")
         val refresh = navBackStackEntry.arguments?.getBoolean("refresh")!!
         val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")!!
-        Logger.d("refresh") { refresh.toString() }
-        Logger.d("openReplies") { openReplies.toString() }
+        Logger.d { "refresh $refresh" }
+        Logger.d { "openReplies $openReplies" }
         uId?.let { id ->
             SinglePostComposable(navController, postId = id, refresh, openReplies)
         }
