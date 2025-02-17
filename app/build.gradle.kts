@@ -66,6 +66,9 @@ kotlin {
             //shared preferences
             implementation(libs.multiplatform.settings)
 
+            //file picker
+            implementation(libs.filekit.compose)
+
             //lifecycle
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -139,6 +142,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -147,6 +154,14 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
+        }
+
+        create("demo") {
+            initWith(getByName("debug"))
+            isMinifyEnabled = true
+            isDebuggable = false
+            isProfileable = false
+            isShrinkResources = true
         }
     }
     packaging.resources {

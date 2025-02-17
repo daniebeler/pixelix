@@ -87,7 +87,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun loadDataByUsername(username: String, refreshing: Boolean) {
-        Logger.d("byUsername") { "load data by username" }
+        Logger.d { "byUsername: load data by username" }
         getAccountByUsername(username, refreshing)
     }
 

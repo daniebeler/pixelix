@@ -134,7 +134,7 @@ class AuthService(
             install(Logging) {
                 logger = object : io.ktor.client.plugins.logging.Logger {
                     override fun log(message: String) {
-                        Logger.v("HttpAuth") {
+                        Logger.v("Pixelix HttpAuth") {
                             message.lines().joinToString { "\n\t\t$it" }
                         }
                     }

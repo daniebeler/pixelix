@@ -10,6 +10,7 @@ import coil3.SingletonImageLoader
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.WorkerComponent
 import com.daniebeler.pfpixelix.di.create
+import com.daniebeler.pfpixelix.utils.configureLogger
 import com.daniebeler.pfpixelix.widget.notifications.work_manager.LatestImageTask
 import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsTask
 
@@ -25,6 +26,7 @@ class MyApplication : Application(), Configuration.Provider {
         SingletonImageLoader.setSafe {
             appComponent.provideImageLoader()
         }
+        configureLogger(BuildConfig.DEBUG)
         super.onCreate()
     }
 

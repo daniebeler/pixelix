@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -76,10 +77,15 @@ fun NotificationsComposable(
         CenterAlignedTopAppBar(title = {
             Text(stringResource(Res.string.notifications), fontWeight = FontWeight.Bold)
         }, actions = {
-            IconButton(onClick = {
-                context.pinWidget()
-            }) {
-                Icon(imageVector = vectorResource(Res.drawable.extension_puzzle_outline), contentDescription = "add widget")
+            if (PlatformFeatures.notificationWidgets) {
+                IconButton(onClick = {
+                    context.pinWidget()
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
+                        contentDescription = "add widget"
+                    )
+                }
             }
         })
     }) { paddingValues ->

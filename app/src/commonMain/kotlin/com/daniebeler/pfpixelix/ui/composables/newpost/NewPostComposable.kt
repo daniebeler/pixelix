@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,10 +65,16 @@ import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMenti
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.MimeType
+import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import com.daniebeler.pfpixelix.utils.toKmpUri
+import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.core.PickerMode
+import io.github.vinceglb.filekit.core.PickerType
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.audience
 import pixelix.app.generated.resources.audience_public
@@ -134,13 +141,13 @@ fun NewPostComposable(
                             if (type != null && type.take(5) == "video") {
                                 //todo KMP video
                                 AsyncImage(
-                                    model = image.imageUri,
+                                    model = image.imageUri.getPlatformUriObject(),
                                     contentDescription = "video thumbnail",
                                     modifier = Modifier.width(100.dp)
                                 )
                             } else {
                                 AsyncImage(
-                                    model = image.imageUri,
+                                    model = image.imageUri.getPlatformUriObject(),
                                     contentDescription = null,
                                     modifier = Modifier.width(100.dp)
                                 )
@@ -195,11 +202,22 @@ fun NewPostComposable(
                     }
                 }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    SinglePhotoPickerButton { result ->
-                        result.forEach {
-                            viewModel.addImage(it, context)
+                    val launcher = rememberFilePickerLauncher(
+                        type = PickerType.ImageAndVideo,
+                        mode = PickerMode.Multiple()
+                    ) { files ->
+                        files?.forEach { file ->
+                            viewModel.addImage(file.toKmpUri(), context)
                         }
                     }
+                    Icon(
+                        modifier = Modifier
+                            .clickable { launcher.launch() }
+                            .height(50.dp)
+                            .width(50.dp),
+                        imageVector = vectorResource(Res.drawable.add_outline),
+                        contentDescription = null,
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 TextFieldMentionsComposable(
@@ -300,11 +318,10 @@ fun NewPostComposable(
                         }
 
 
-
                     }
                 }
                 TextFieldLocationsComposable(
-                    submit = {viewModel.setLocation(it)},
+                    submit = { viewModel.setLocation(it) },
                     submitPlace = {},
                     initialValue = null,
                     labelStringId = Res.string.location,
@@ -359,6 +376,3 @@ fun NewPostComposable(
         }
     }
 }
-
-@Composable
-expect fun SinglePhotoPickerButton(selected: (result: List<KmpUri>) -> Unit)

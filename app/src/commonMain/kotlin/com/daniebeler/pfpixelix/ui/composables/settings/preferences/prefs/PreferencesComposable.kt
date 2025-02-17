@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.CustomizeAppIconPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePref
@@ -104,10 +105,16 @@ fun PreferencesComposable(
 
             ThemePref()
 
-            if (viewModel.appIcon == null) {
-                CustomizeAppIconPref(navController, closePreferencesDrawer, Res.drawable.pixelix_logo)
-            } else {
-                CustomizeAppIconPref(navController, closePreferencesDrawer, viewModel.appIcon!!)
+            if (PlatformFeatures.customAppIcon) {
+                if (viewModel.appIcon == null) {
+                    CustomizeAppIconPref(
+                        navController,
+                        closePreferencesDrawer,
+                        Res.drawable.pixelix_logo
+                    )
+                } else {
+                    CustomizeAppIconPref(navController, closePreferencesDrawer, viewModel.appIcon!!)
+                }
             }
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
