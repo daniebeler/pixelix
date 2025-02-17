@@ -65,7 +65,7 @@ class PostEditorRepositoryImpl @Inject constructor(
             )
 
             try {
-                val res = pixelfedApi.uploadMedia(json.encodeToString(data)).execute().toModel()
+                val res = pixelfedApi.uploadMedia(data).execute().toModel()
                 emit(Resource.Success(res))
             } catch (e: Exception) {
                 Logger.d(e.message.toString())

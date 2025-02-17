@@ -362,10 +362,9 @@ interface PixelfedApi {
         @Query("q") searchText: String
     ): Call<List<PlaceDto>>
 
-    @Headers("Content-Type: application/json")
     @POST("api/v2/media")
     fun uploadMedia(
-        @Body body: String
+        @Body body: MultiPartFormDataContent
     ): Call<MediaAttachmentDto>
 
     @FormUrlEncoded
