@@ -183,8 +183,20 @@ fun App(
                             startDestination = Destinations.FirstLogin.route,
                             enterTransition = { fadeIn() },
                             exitTransition = { ExitTransition.None },
-                            popEnterTransition = { EnterTransition.None },
-                            popExitTransition = { scaleOut(targetScale = 0.9f) },
+                            popExitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                    animationSpec = tween(durationMillis = 500),
+                                    targetOffset = { fullOffset -> (fullOffset * 0.25f).toInt() }
+                                )
+                            },
+                            popEnterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                                    animationSpec = tween(durationMillis = 500),
+                                    initialOffset = { fullOffset -> (fullOffset * 0.25f).toInt() }
+                                )
+                            },
                             builder = {
                                 navigationGraph(
                                     navController,
