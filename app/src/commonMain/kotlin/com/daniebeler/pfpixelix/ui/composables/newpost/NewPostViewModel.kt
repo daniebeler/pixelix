@@ -144,10 +144,8 @@ class NewPostViewModel @Inject constructor(
         uploadImage(context, uri, "")
     }
 
-    fun deleteMedia(mediaId: String?) {
-        images.remove(images.find { it.id == mediaId })
-        mediaUploadState =
-            mediaUploadState.copy(mediaAttachments = mediaUploadState.mediaAttachments.filter { it.id != mediaId })
+    fun deleteMedia(index: Int) {
+        images.removeAt(index)
     }
 
     fun moveMediaAttachmentUp(index: Int) {
@@ -175,15 +173,11 @@ class NewPostViewModel @Inject constructor(
                     if (result.data?.type?.take(5) == "video") {
                         //Thread.sleep(1500) todo KMP
                     }
-                    images = images.map { image ->
-                        if (image.imageUri == uri) {
-                            image.copy(
-                                isLoading = false, id = result.data?.id
-                            ) // Replace the object
-                        } else {
-                            image // Keep the original object
-                        }
-                    }.toMutableStateList()
+                    val index = images.indexOfFirst { it.imageUri == uri }
+                    if (index != -1) {
+                        images[index] = images[index].copy(isLoading = false, id = result.data?.id) // Replacing the object forces recomposition
+                    }
+
                     mediaUploadState.copy(
                         mediaAttachments = mediaUploadState.mediaAttachments + result.data!!,
                         isLoading = false

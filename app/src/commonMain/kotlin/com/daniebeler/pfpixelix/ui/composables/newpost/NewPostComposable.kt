@@ -127,13 +127,17 @@ fun NewPostComposable(
         }
     }
 
+    LaunchedEffect(viewModel.images) {
+        Logger.d("images") {viewModel.images.none { it.isLoading }.toString()}
+    }
+
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
             Button(
                 onClick = { showReleaseAlert = true },
-                enabled = (viewModel.images.isNotEmpty() && !viewModel.mediaUploadState.isLoading)
+                enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
             ) {
                 Text(text = stringResource(Res.string.release))
             }
@@ -153,7 +157,7 @@ fun NewPostComposable(
                     },
                     { index -> viewModel.moveMediaAttachmentUp(index) },
                     { index -> viewModel.moveMediaAttachmentDown(index) },
-                    { id -> viewModel.deleteMedia(id) })/*viewModel.images.forEachIndexed { index, image ->
+                    { index -> viewModel.deleteMedia(index) })/*viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
 
@@ -401,7 +405,7 @@ fun ImagesPager(
     updateAltText: (index: Int, altText: String) -> Unit,
     moveImageUp: (index: Int) -> Unit,
     moveImageDown: (index: Int) -> Unit,
-    deleteMedia: (id: String) -> Unit
+    deleteMedia: (index: Int) -> Unit
 ) {
     val pagerState = rememberPagerState { images.size }
     val context = LocalKmpContext.current
@@ -432,10 +436,8 @@ fun ImagesPager(
                         )
                     }
                 }
-                image.id?.let {
                     IconButton(onClick = {
-                        Logger.d("deleteImage") { image.id.toString() }
-                        deleteMedia(it)
+                        deleteMedia(page)
                     }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.trash_outline),
@@ -443,7 +445,7 @@ fun ImagesPager(
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
-                }
+
 
                 if (page == images.size - 1) {
                     Box(Modifier.width(48.dp)) {}
