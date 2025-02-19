@@ -35,7 +35,7 @@ fun HomeTimelineComposable(
                 message = stringResource(Res.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
                 buttonText = stringResource(Res.string.explore_trending_profiles),
                 onClick = {
-                    Navigate.navigate("trending_screen/accounts", navController)
+                    Navigate.navigate("search_screen/1", navController)
                 }),
             getItemsPaginated = {
                 viewModel.getItemsPaginated()

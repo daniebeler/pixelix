@@ -85,6 +85,7 @@ import pixelix.app.generated.resources.search_outline
 @Composable
 fun ExploreComposable(
     navController: NavController,
+    initialPage: Int = 0,
     viewModel: ExploreViewModel = injectViewModel(key = "search-viewmodel-key") { exploreViewModel }
 ) {
     val context: KmpContext = LocalKmpContext.current
@@ -206,10 +207,9 @@ fun ExploreComposable(
                     navController = navController
                 )
             } else {
-                TrendingComposable(navController)
+                TrendingComposable(navController, initialPage = initialPage)
             }
         }
-
     }
 }
 
