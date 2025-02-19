@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -25,13 +26,13 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.empty
+import pixelix.app.generated.resources.no_followers_yet
 import pixelix.app.generated.resources.nobody_follows_you_yet
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FollowersComposable(
     navController: NavController,
-    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
+    viewModel: FollowersViewModel
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -61,11 +62,16 @@ fun FollowersComposable(
     })
 
     if (!viewModel.followersState.isLoading && viewModel.followersState.error.isEmpty() && viewModel.followersState.followers.isEmpty()) {
+        val message = if (viewModel.loggedInAccountId == viewModel.accountId)
+            stringResource(Res.string.nobody_follows_you_yet)
+        else
+            stringResource(Res.string.no_followers_yet)
+
         FullscreenEmptyStateComposable(
             emptyState = EmptyState(
                 icon = Icons.Outlined.Groups,
                 heading = stringResource(Res.string.empty),
-                message = stringResource(Res.string.nobody_follows_you_yet)
+                message = message
             )
         )
     }

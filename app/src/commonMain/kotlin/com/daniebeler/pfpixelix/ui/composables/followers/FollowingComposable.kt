@@ -10,11 +10,15 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -27,13 +31,14 @@ import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.empty
 import pixelix.app.generated.resources.explore_trending_profiles
+import pixelix.app.generated.resources.not_following_anyone
 import pixelix.app.generated.resources.the_profiles_you_follow_will_appear_here
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FollowingComposable(
     navController: NavController,
-    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
+    viewModel: FollowersViewModel
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -63,10 +68,16 @@ fun FollowingComposable(
     })
 
     if (!viewModel.followingState.isLoading && viewModel.followingState.error.isEmpty() && viewModel.followingState.following.isEmpty()) {
+
+        val message = if (viewModel.loggedInAccountId == viewModel.accountId)
+            stringResource(Res.string.the_profiles_you_follow_will_appear_here)
+        else
+            stringResource(Res.string.not_following_anyone)
+
         FullscreenEmptyStateComposable(
             emptyState = EmptyState(icon = Icons.Outlined.Groups,
                 heading = stringResource(Res.string.empty),
-                message = stringResource(Res.string.the_profiles_you_follow_will_appear_here),
+                message = message,
                 buttonText = stringResource(Res.string.explore_trending_profiles),
                 onClick = {
                     Navigate.navigate("trending_screen/accounts", navController)

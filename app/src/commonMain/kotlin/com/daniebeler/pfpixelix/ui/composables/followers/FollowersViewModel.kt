@@ -9,6 +9,7 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowingUseCase
+import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,7 +18,8 @@ import me.tatarka.inject.annotations.Inject
 class FollowersViewModel @Inject constructor(
     private val getAccountsFollowingUseCase: GetAccountsFollowingUseCase,
     private val getAccountsFollowersUseCase: GetAccountsFollowersUseCase,
-    private val getAccountUseCase: GetAccountUseCase
+    private val getAccountUseCase: GetAccountUseCase,
+    private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -25,6 +27,7 @@ class FollowersViewModel @Inject constructor(
     var followingState by mutableStateOf(FollowingState())
 
     var accountId: String = ""
+    var loggedInAccountId: String = ""
 
     fun getAccount(userId: String) {
         getAccountUseCase(userId).onEach { result ->
@@ -46,6 +49,10 @@ class FollowersViewModel @Inject constructor(
 
     fun setAccountIdValue(id: String) {
         accountId = id
+    }
+
+    suspend fun setLoggedInAccountIdValue() {
+        loggedInAccountId = getCurrentLoginDataUseCase()?.accountId ?: ""
     }
 
     fun getFollowersFirstLoad(refreshing: Boolean = false) {

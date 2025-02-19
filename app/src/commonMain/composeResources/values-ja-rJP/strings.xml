@@ -56,7 +56,7 @@
     <string name="daily">daily</string>
     <string name="i_don_t_have_an_account">I don't have a profile</string>
     <string name="server_url">Server URL</string>
-    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
+    <string name="are_you_mipmap-mdpisure_you_want_to_log_out">Are you sure you want to log out?</string>
     <string name="logout_questionmark">Logout?</string>
     <string name="view_comments">View %1$s comments</string>
     <string name="comment">Leave a comment</string>
@@ -215,4 +215,6 @@
     <string name="focus_mode">Focus Mode</string>
     <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
     <string name="repost_settings">Repost settings</string>
+    <string name="no_followers_yet">No followers yet</string>
+    <string name="not_following_anyone">Not following anyone</string>
 </resources>
