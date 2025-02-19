@@ -23,3 +23,4 @@ It's designed to provide a seamless and high-performance user experience. With P
 ## Contribution
 For translations use the [Crowdin](https://crowdin.com/project/pixelix).
 
+If you are opening pull requests please use the dev branch as base.
