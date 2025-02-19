@@ -144,7 +144,7 @@ class NewPostViewModel @Inject constructor(
         uploadImage(context, uri, "")
     }
 
-    fun deleteMedia(mediaId: String?, imageUri: KmpUri) {
+    fun deleteMedia(mediaId: String?) {
         images.remove(images.find { it.id == mediaId })
         mediaUploadState =
             mediaUploadState.copy(mediaAttachments = mediaUploadState.mediaAttachments.filter { it.id != mediaId })

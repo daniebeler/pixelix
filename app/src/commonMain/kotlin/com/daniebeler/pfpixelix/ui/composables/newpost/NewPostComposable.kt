@@ -4,27 +4,37 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.ArrowRight
 import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowRight
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -45,14 +55,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
@@ -71,6 +85,8 @@ import com.daniebeler.pfpixelix.utils.toKmpUri
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -106,7 +122,7 @@ fun NewPostComposable(
     LaunchedEffect(uris) {
         uris?.let {
             uris.forEach {
-                viewModel.addImage(it, context)
+                viewModel.addImage(uri = it, context = context)
             }
         }
     }
@@ -125,15 +141,19 @@ fun NewPostComposable(
     }) { paddingValues ->
         Box {
             Column(
-                Modifier
-                    .padding(paddingValues)
-                    .imeAwareInsets(90.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+                Modifier.padding(paddingValues).imeAwareInsets(90.dp).fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
-                viewModel.images.forEachIndexed { index, image ->
+                ImagesPager(viewModel.images,
+                    { index, altText ->
+                        viewModel.updateAltTextVariable(
+                            index, altText
+                        )
+                    },
+                    { index -> viewModel.moveMediaAttachmentUp(index) },
+                    { index -> viewModel.moveMediaAttachmentDown(index) },
+                    { id -> viewModel.deleteMedia(id) })/*viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
 
@@ -200,136 +220,134 @@ fun NewPostComposable(
                             )
                         }
                     }
-                }
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    val launcher = rememberFilePickerLauncher(
-                        type = PickerType.ImageAndVideo,
-                        mode = PickerMode.Multiple()
-                    ) { files ->
-                        files?.forEach { file ->
-                            viewModel.addImage(file.toKmpUri(), context)
-                        }
-                    }
-                    Icon(
-                        modifier = Modifier
-                            .clickable { launcher.launch() }
-                            .height(50.dp)
-                            .width(50.dp),
-                        imageVector = vectorResource(Res.drawable.add_outline),
-                        contentDescription = null,
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                TextFieldMentionsComposable(
-                    submit = {},
-                    text = viewModel.caption,
-                    changeText = { text -> viewModel.caption = text },
-                    labelStringId = Res.string.caption,
-                    modifier = Modifier.fillMaxWidth(),
-                    imeAction = ImeAction.Default,
-                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                    submitButton = null
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = stringResource(Res.string.sensitive_nsfw_media))
-                    Switch(checked = viewModel.sensitive,
-                        onCheckedChange = { viewModel.sensitive = it })
-                }
-                if (viewModel.sensitive) {
-                    TextField(
-                        value = viewModel.sensitiveText,
-                        onValueChange = { viewModel.sensitiveText = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(stringResource(Res.string.content_warning_or_spoiler_text)) },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = stringResource(Res.string.audience))
-                    Box {
-                        OutlinedButton(onClick = { expanded = !expanded }) {
-                            val buttonText: String = when (viewModel.audience) {
-                                AUDIENCE_PUBLIC -> {
-                                    stringResource(Res.string.audience_public)
-                                }
+                }*/
+                Column(Modifier.padding(12.dp)) {
 
-                                AUDIENCE_UNLISTED -> {
-                                    stringResource(Res.string.unlisted)
-                                }
-
-                                AUDIENCE_FOLLOWERS_ONLY -> {
-                                    stringResource(Res.string.followers_only)
-                                }
-
-                                else -> {
-                                    ""
-                                }
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        val launcher = rememberFilePickerLauncher(
+                            type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
+                        ) { files ->
+                            files?.forEach { file ->
+                                viewModel.addImage(file.toKmpUri(), context)
                             }
-                            Text(text = buttonText)
                         }
-                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
-                                onClick = { viewModel.audience = AUDIENCE_PUBLIC },
-                                trailingIcon = {
-                                    if (viewModel.audience == AUDIENCE_PUBLIC) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                })
-                            DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
-                                onClick = { viewModel.audience = AUDIENCE_UNLISTED },
-                                trailingIcon = {
-                                    if (viewModel.audience == AUDIENCE_UNLISTED) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                })
-                            DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
-                                onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
-                                trailingIcon = {
-                                    if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Check,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                })
-                        }
-
-
+                        Icon(
+                            modifier = Modifier.clickable { launcher.launch() }.height(50.dp)
+                                .width(50.dp),
+                            imageVector = vectorResource(Res.drawable.add_outline),
+                            contentDescription = null,
+                        )
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    TextFieldMentionsComposable(submit = {},
+                        text = viewModel.caption,
+                        changeText = { text -> viewModel.caption = text },
+                        labelStringId = Res.string.caption,
+                        modifier = Modifier.fillMaxWidth(),
+                        imeAction = ImeAction.Default,
+                        suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                        submitButton = null
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(Res.string.sensitive_nsfw_media))
+                        Switch(checked = viewModel.sensitive,
+                            onCheckedChange = { viewModel.sensitive = it })
+                    }
+                    if (viewModel.sensitive) {
+                        TextField(
+                            value = viewModel.sensitiveText,
+                            onValueChange = { viewModel.sensitiveText = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text(stringResource(Res.string.content_warning_or_spoiler_text)) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(Res.string.audience))
+                        Box {
+                            OutlinedButton(onClick = { expanded = !expanded }) {
+                                val buttonText: String = when (viewModel.audience) {
+                                    AUDIENCE_PUBLIC -> {
+                                        stringResource(Res.string.audience_public)
+                                    }
+
+                                    AUDIENCE_UNLISTED -> {
+                                        stringResource(Res.string.unlisted)
+                                    }
+
+                                    AUDIENCE_FOLLOWERS_ONLY -> {
+                                        stringResource(Res.string.followers_only)
+                                    }
+
+                                    else -> {
+                                        ""
+                                    }
+                                }
+                                Text(text = buttonText)
+                            }
+                            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
+                                    onClick = { viewModel.audience = AUDIENCE_PUBLIC },
+                                    trailingIcon = {
+                                        if (viewModel.audience == AUDIENCE_PUBLIC) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
+                                    onClick = { viewModel.audience = AUDIENCE_UNLISTED },
+                                    trailingIcon = {
+                                        if (viewModel.audience == AUDIENCE_UNLISTED) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
+                                    onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
+                                    trailingIcon = {
+                                        if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                            }
+
+
+                        }
+                    }
+                    TextFieldLocationsComposable(submit = { viewModel.setLocation(it) },
+                        submitPlace = {},
+                        initialValue = null,
+                        labelStringId = Res.string.location,
+                        modifier = Modifier.fillMaxWidth(),
+                        imeAction = ImeAction.Default,
+                        suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                        submitButton = null
+                    )
                 }
-                TextFieldLocationsComposable(
-                    submit = { viewModel.setLocation(it) },
-                    submitPlace = {},
-                    initialValue = null,
-                    labelStringId = Res.string.location,
-                    modifier = Modifier.fillMaxWidth(),
-                    imeAction = ImeAction.Default,
-                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                    submitButton = null
-                )
             }
 
             if (viewModel.addImageError.first.isNotBlank()) {
@@ -373,6 +391,116 @@ fun NewPostComposable(
             //LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)
             ErrorComposable(message = viewModel.mediaUploadState.error)
             ErrorComposable(message = viewModel.createPostState.error)
+        }
+    }
+}
+
+@Composable
+fun ImagesPager(
+    images: List<NewPostViewModel.ImageItem>,
+    updateAltText: (index: Int, altText: String) -> Unit,
+    moveImageUp: (index: Int) -> Unit,
+    moveImageDown: (index: Int) -> Unit,
+    deleteMedia: (id: String) -> Unit
+) {
+    val pagerState = rememberPagerState { images.size }
+    val context = LocalKmpContext.current
+    val scope = rememberCoroutineScope()
+
+    HorizontalPager(
+        state = pagerState, contentPadding = PaddingValues(horizontal = 32.dp), pageSpacing = 10.dp
+    ) { page ->
+        val image = images[page]
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+            ) {
+                if (page == 0) {
+                    Box(Modifier.width(48.dp)) {}
+                } else {
+                    IconButton(onClick = {
+                        moveImageUp(page)
+                        scope.launch {
+                            pagerState.animateScrollToPage(page = page - 1)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                            contentDescription = "move Image upwards"
+                        )
+                    }
+                }
+                image.id?.let {
+                    IconButton(onClick = {
+                        Logger.d("deleteImage") { image.id.toString() }
+                        deleteMedia(it)
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.trash_outline),
+                            contentDescription = "delete Image",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+
+                if (page == images.size - 1) {
+                    Box(Modifier.width(48.dp)) {}
+                } else {
+                    IconButton(onClick = {
+                        moveImageDown(page)
+                        scope.launch {
+                            pagerState.animateScrollToPage(page = page + 1)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                            contentDescription = "move Image downwards"
+                        )
+                    }
+                }
+            }
+            Card(Modifier.fillMaxWidth().aspectRatio(1f)) {
+
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+
+                    val type = MimeType.getMimeType(image.imageUri, context)
+                    if (type != null && type.take(5) == "video") {
+                        //todo KMP video
+                        AsyncImage(
+                            model = image.imageUri.getPlatformUriObject(),
+                            contentDescription = "video thumbnail",
+                            modifier = Modifier.width(100.dp)
+                        )
+                    } else {
+                        AsyncImage(
+                            model = image.imageUri.getPlatformUriObject(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Inside
+                        )
+                    }
+                    if (image.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.wrapContentSize(Alignment.Center)
+                        )
+                    }
+                }
+            }
+            TextField(
+                value = image.text,
+                onValueChange = { updateAltText(page, it) },
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                label = { Text(stringResource(Res.string.alt_text)) },
+            )
         }
     }
 }
