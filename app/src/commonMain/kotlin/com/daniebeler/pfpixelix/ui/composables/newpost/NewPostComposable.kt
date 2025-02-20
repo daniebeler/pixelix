@@ -128,15 +128,14 @@ fun NewPostComposable(
     }
 
     LaunchedEffect(viewModel.images) {
-        Logger.d("images") {viewModel.images.none { it.isLoading }.toString()}
+        Logger.d("images") { viewModel.images.none { it.isLoading }.toString() }
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
-            Button(
-                onClick = { showReleaseAlert = true },
+            Button(onClick = { showReleaseAlert = true },
                 enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
             ) {
                 Text(text = stringResource(Res.string.release))
@@ -157,7 +156,8 @@ fun NewPostComposable(
                     },
                     { index -> viewModel.moveMediaAttachmentUp(index) },
                     { index -> viewModel.moveMediaAttachmentDown(index) },
-                    { index -> viewModel.deleteMedia(index) })/*viewModel.images.forEachIndexed { index, image ->
+                    { index -> viewModel.deleteMedia(index) },
+                    { kmpUri: KmpUri -> viewModel.addImage(kmpUri, context) })/*viewModel.images.forEachIndexed { index, image ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(contentAlignment = Alignment.Center) {
 
@@ -225,23 +225,7 @@ fun NewPostComposable(
                         }
                     }
                 }*/
-                Column(Modifier.padding(12.dp)) {
-
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        val launcher = rememberFilePickerLauncher(
-                            type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
-                        ) { files ->
-                            files?.forEach { file ->
-                                viewModel.addImage(file.toKmpUri(), context)
-                            }
-                        }
-                        Icon(
-                            modifier = Modifier.clickable { launcher.launch() }.height(50.dp)
-                                .width(50.dp),
-                            imageVector = vectorResource(Res.drawable.add_outline),
-                            contentDescription = null,
-                        )
-                    }
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Spacer(modifier = Modifier.height(20.dp))
                     TextFieldMentionsComposable(submit = {},
                         text = viewModel.caption,
@@ -303,7 +287,8 @@ fun NewPostComposable(
                                 }
                                 Text(text = buttonText)
                             }
-                            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            DropdownMenu(expanded = expanded,
+                                onDismissRequest = { expanded = false }) {
                                 DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
                                     onClick = { viewModel.audience = AUDIENCE_PUBLIC },
                                     trailingIcon = {
@@ -405,37 +390,65 @@ fun ImagesPager(
     updateAltText: (index: Int, altText: String) -> Unit,
     moveImageUp: (index: Int) -> Unit,
     moveImageDown: (index: Int) -> Unit,
-    deleteMedia: (index: Int) -> Unit
+    deleteMedia: (index: Int) -> Unit,
+    addImage: (kmpUri: KmpUri) -> Unit
 ) {
-    val pagerState = rememberPagerState { images.size }
+    val pagerState = rememberPagerState { images.size + 1 }
     val context = LocalKmpContext.current
     val scope = rememberCoroutineScope()
 
     HorizontalPager(
-        state = pagerState, contentPadding = PaddingValues(horizontal = 32.dp), pageSpacing = 10.dp
+        state = pagerState,
+        contentPadding = PaddingValues(horizontal = 32.dp),
+        pageSpacing = 10.dp,
+        verticalAlignment = Alignment.Top
     ) { page ->
-        val image = images[page]
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
-            ) {
-                if (page == 0) {
-                    Box(Modifier.width(48.dp)) {}
-                } else {
-                    IconButton(onClick = {
-                        moveImageUp(page)
-                        scope.launch {
-                            pagerState.animateScrollToPage(page = page - 1)
+        if (page == images.size) {
+            Column {
+                Spacer(Modifier.height(48.dp))
+                Card(Modifier.fillMaxWidth().aspectRatio(1f)) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        val launcher = rememberFilePickerLauncher(
+                            type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
+                        ) { files ->
+                            files?.forEach { file ->
+                                addImage(file.toKmpUri())
+                            }
                         }
-                    }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
-                            contentDescription = "move Image upwards"
+                            modifier = Modifier.clickable { launcher.launch() }.height(50.dp)
+                                .width(50.dp),
+                            imageVector = vectorResource(Res.drawable.add_outline),
+                            contentDescription = null,
                         )
                     }
                 }
+            }
+        } else {
+            val image = images[page]
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (page == 0) {
+                        Box(Modifier.width(48.dp)) {}
+                    } else {
+                        IconButton(onClick = {
+                            moveImageUp(page)
+                            scope.launch {
+                                pagerState.animateScrollToPage(page = page - 1)
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                                contentDescription = "move Image upwards"
+                            )
+                        }
+                    }
                     IconButton(onClick = {
                         deleteMedia(page)
                     }) {
@@ -447,62 +460,63 @@ fun ImagesPager(
                     }
 
 
-                if (page == images.size - 1) {
-                    Box(Modifier.width(48.dp)) {}
-                } else {
-                    IconButton(onClick = {
-                        moveImageDown(page)
-                        scope.launch {
-                            pagerState.animateScrollToPage(page = page + 1)
-                        }
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
-                            contentDescription = "move Image downwards"
-                        )
-                    }
-                }
-            }
-            Card(Modifier.fillMaxWidth().aspectRatio(1f)) {
-
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-
-                    val type = MimeType.getMimeType(image.imageUri, context)
-                    if (type != null && type.take(5) == "video") {
-                        //todo KMP video
-                        AsyncImage(
-                            model = image.imageUri.getPlatformUriObject(),
-                            contentDescription = "video thumbnail",
-                            modifier = Modifier.width(100.dp)
-                        )
+                    if (page == images.size - 1) {
+                        Box(Modifier.width(48.dp)) {}
                     } else {
-                        AsyncImage(
-                            model = image.imageUri.getPlatformUriObject(),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Inside
-                        )
-                    }
-                    if (image.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.wrapContentSize(Alignment.Center)
-                        )
+                        IconButton(onClick = {
+                            moveImageDown(page)
+                            scope.launch {
+                                pagerState.animateScrollToPage(page = page + 1)
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                                contentDescription = "move Image downwards"
+                            )
+                        }
                     }
                 }
+                Card(Modifier.fillMaxWidth().aspectRatio(1f)) {
+
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+
+                        val type = MimeType.getMimeType(image.imageUri, context)
+                        if (type != null && type.take(5) == "video") {
+                            //todo KMP video
+                            AsyncImage(
+                                model = image.imageUri.getPlatformUriObject(),
+                                contentDescription = "video thumbnail",
+                                modifier = Modifier.width(100.dp)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = image.imageUri.getPlatformUriObject(),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxWidth(),
+                                contentScale = ContentScale.Inside
+                            )
+                        }
+                        if (image.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.wrapContentSize(Alignment.Center)
+                            )
+                        }
+                    }
+                }
+                TextField(
+                    value = image.text,
+                    onValueChange = { updateAltText(page, it) },
+                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
+                    label = { Text(stringResource(Res.string.alt_text)) },
+                )
             }
-            TextField(
-                value = image.text,
-                onValueChange = { updateAltText(page, it) },
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                label = { Text(stringResource(Res.string.alt_text)) },
-            )
         }
     }
 }

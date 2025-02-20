@@ -169,7 +169,7 @@ fun OwnProfileComposable(
                             instanceDomain = viewModel.ownDomain,
                         ) { url -> viewModel.openUrl(url, context) }
 
-                        HorizontalDivider(Modifier.padding(bottom = 12.dp))
+                        HorizontalDivider(Modifier.padding(bottom = 12.dp, top = 12.dp))
 
                         SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
                             ?: 0,
