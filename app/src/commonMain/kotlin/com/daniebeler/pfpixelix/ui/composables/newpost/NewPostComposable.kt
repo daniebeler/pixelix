@@ -135,7 +135,8 @@ fun NewPostComposable(
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
-            Button(onClick = { showReleaseAlert = true },
+            Button(
+                onClick = { showReleaseAlert = true },
                 enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
             ) {
                 Text(text = stringResource(Res.string.release))
@@ -157,77 +158,11 @@ fun NewPostComposable(
                     { index -> viewModel.moveMediaAttachmentUp(index) },
                     { index -> viewModel.moveMediaAttachmentDown(index) },
                     { index -> viewModel.deleteMedia(index) },
-                    { kmpUri: KmpUri -> viewModel.addImage(kmpUri, context) })/*viewModel.images.forEachIndexed { index, image ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Box(contentAlignment = Alignment.Center) {
-
-                            val type = MimeType.getMimeType(image.imageUri, context)
-                            if (type != null && type.take(5) == "video") {
-                                //todo KMP video
-                                AsyncImage(
-                                    model = image.imageUri.getPlatformUriObject(),
-                                    contentDescription = "video thumbnail",
-                                    modifier = Modifier.width(100.dp)
-                                )
-                            } else {
-                                AsyncImage(
-                                    model = image.imageUri.getPlatformUriObject(),
-                                    contentDescription = null,
-                                    modifier = Modifier.width(100.dp)
-                                )
-                            }
-                            if (image.isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.wrapContentSize(Alignment.Center)
-                                )
-                            }
-                        }
-                        Spacer(Modifier.width(10.dp))
-
-                        TextField(
-                            value = image.text,
-                            onValueChange = { viewModel.updateAltTextVariable(index, it) },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            label = { Text(stringResource(Res.string.alt_text)) },
-                        )
-
-                        if (viewModel.images.size > 1) {
-                            Column {
-                                IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.ArrowUpward,
-                                        contentDescription = "move Imageupwards"
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.ArrowDownward,
-                                        contentDescription = "move Imageupwards"
-                                    )
-                                }
-                            }
-                        }
-                        IconButton(onClick = {
-                            viewModel.deleteMedia(image.id, image.imageUri)
-                        }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.trash_outline),
-                                contentDescription = "delete Image",
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }*/
+                    { kmpUri: KmpUri -> viewModel.addImage(kmpUri, context) })
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Spacer(modifier = Modifier.height(20.dp))
-                    TextFieldMentionsComposable(submit = {},
+                    TextFieldMentionsComposable(
+                        submit = {},
                         text = viewModel.caption,
                         changeText = { text -> viewModel.caption = text },
                         labelStringId = Res.string.caption,
@@ -327,7 +262,8 @@ fun NewPostComposable(
 
                         }
                     }
-                    TextFieldLocationsComposable(submit = { viewModel.setLocation(it) },
+                    TextFieldLocationsComposable(
+                        submit = { viewModel.setLocation(it) },
                         submitPlace = {},
                         initialValue = null,
                         labelStringId = Res.string.location,

@@ -140,6 +140,11 @@ class NewPostViewModel @Inject constructor(
                 return
             }
         }
+        val imagesNumber = images.size + 1
+        if (instance != null && imagesNumber > instance!!.configuration.statusConfig.maxMediaAttachments) {
+            addImageError = Pair("To many images", "You have added to many images, your Server does only allow ${instance!!.configuration.statusConfig.maxMediaAttachments} images per post")
+            return
+        }
         images += ImageItem(uri, null, "", true)
         uploadImage(context, uri, "")
     }
