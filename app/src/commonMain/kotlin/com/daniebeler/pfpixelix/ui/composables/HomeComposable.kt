@@ -67,7 +67,6 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
     var showBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         topBar = {
             CenterAlignedTopAppBar(title = {
                 Text(stringResource(Res.string.app_name), fontWeight = FontWeight.Bold)
