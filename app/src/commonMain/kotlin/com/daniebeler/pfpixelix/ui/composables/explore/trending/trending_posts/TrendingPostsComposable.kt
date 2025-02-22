@@ -51,7 +51,7 @@ fun TrendingPostsComposable(
             onRefresh = { viewModel.getTrendingPosts(range, true) },
             navController = navController,
             postGetsUpdated = {  },
-            contentPaddingBottom = 90.dp
+            contentPaddingBottom = 10.dp
         )
     }
 }

@@ -55,7 +55,15 @@ fun InfinitePostsList(
         onRefresh = onRefresh,
     ) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyListState, contentPadding = PaddingValues(top = if (postsCount != null) {0.dp} else {12.dp}, bottom = contentPaddingBottom )
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                top = if (postsCount != null) {
+                    0.dp
+                } else {
+                    12.dp
+                }, bottom = contentPaddingBottom
+            )
         ) {
             postsCount?.let {
                 item {

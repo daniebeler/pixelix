@@ -47,7 +47,7 @@ fun ColorScheme.toAmoled(): ColorScheme {
         onSurfaceVariant = onSurfaceVariant,
         surfaceTint = surfaceTint,
         surfaceContainer = surfaceContainer.darken(0.4f),
-        inverseSurface = inverseSurface.darken(),
+        inverseSurface = inverseSurface.darken(0.2f),
         inverseOnSurface = inverseOnSurface.darken(0.2f),
         outline = outline.darken(0.2f),
         outlineVariant = outlineVariant.darken(0.2f)
