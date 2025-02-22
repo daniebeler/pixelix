@@ -1,8 +1,9 @@
 package com.daniebeler.pfpixelix.di
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccountViewModel
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewModel
@@ -102,7 +103,7 @@ expect fun ViewModelComponent.Companion.create(app: AppComponent): ViewModelComp
 val LocalAppComponent = staticCompositionLocalOf<AppComponent> { error("no AppComponent") }
 
 @Composable
-internal fun <T> injectViewModel(key: String, block: ViewModelComponent.() -> T): T {
+inline fun <reified VM: ViewModel> injectViewModel(key: String, crossinline factory: ViewModelComponent.() -> VM): VM {
     val app = LocalAppComponent.current
-    return remember(key) { ViewModelComponent.create(app).block() }
+    return viewModel(key = key) { ViewModelComponent.create(app).factory() }
 }

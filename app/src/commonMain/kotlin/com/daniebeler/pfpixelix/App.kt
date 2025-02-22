@@ -1,13 +1,5 @@
 package com.daniebeler.pfpixelix
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -19,11 +11,11 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.UnfoldMore
@@ -54,9 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -66,6 +56,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.common.Destinations
@@ -166,6 +157,7 @@ fun App(
             ) {
 
                 Scaffold(
+                    contentWindowInsets = WindowInsets(0),
                     bottomBar = {
                         BottomBar(
                             navController = navController,
@@ -176,27 +168,10 @@ fun App(
                     },
                     content = { paddingValues ->
                         NavHost(
-                            modifier = Modifier.fillMaxSize()
-                                .padding(paddingValues)
-                                .consumeWindowInsets(WindowInsets.systemBars),
+                            modifier = Modifier.fillMaxSize().padding(paddingValues)
+                                .consumeWindowInsets(WindowInsets.navigationBars),
                             navController = navController,
                             startDestination = Destinations.FirstLogin.route,
-                            enterTransition = { fadeIn() },
-                            exitTransition = { ExitTransition.None },
-                            popExitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                    animationSpec = tween(durationMillis = 500),
-                                    targetOffset = { fullOffset -> (fullOffset * 0.25f).toInt() }
-                                )
-                            },
-                            popEnterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                    animationSpec = tween(durationMillis = 500),
-                                    initialOffset = { fullOffset -> (fullOffset * 0.25f).toInt() }
-                                )
-                            },
                             builder = {
                                 navigationGraph(
                                     navController,
@@ -290,7 +265,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Profile.route) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("userid")
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("userid")) getString("userid") else null
+        }
 
         uId?.let { id ->
             OtherProfileComposable(navController, userId = id, byUsername = null)
@@ -299,7 +276,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.ProfileByUsername.route) { navBackStackEntry ->
-        val username = navBackStackEntry.arguments?.getString("username")
+        val username = navBackStackEntry.arguments?.read {
+            if (contains("username")) getString("username") else null
+        }
 
         username?.let {
             OtherProfileComposable(navController, userId = "", byUsername = it)
@@ -307,7 +286,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Hashtag.route) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("hashtag")
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("hashtag")) getString("hashtag") else null
+        }
         uId?.let { id ->
             HashtagTimelineComposable(navController, id)
         }
@@ -322,7 +303,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable("${Destinations.NewPost.route}?uris={uris}") { navBackStackEntry ->
-        val urisJson = navBackStackEntry.arguments?.getString("uris")
+        val urisJson = navBackStackEntry.arguments?.read {
+            if (contains("uris")) getString("uris") else null
+        }
         val imageUris: List<KmpUri>? = urisJson?.let { json ->
             Json.decodeFromString<List<String>>(json).map { it.toKmpUri() }
         }
@@ -330,7 +313,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.EditPost.route) { navBackStackEntry ->
-        val postId = navBackStackEntry.arguments?.getString("postId")
+        val postId = navBackStackEntry.arguments?.read {
+            if (contains("postId")) getString("postId") else null
+        }
         postId?.let { id ->
             EditPostComposable(postId, navController)
         }
@@ -369,8 +354,12 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Followers.route) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("userid")
-        val page = navBackStackEntry.arguments?.getString("page")
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("userid")) getString("userid") else null
+        }
+        val page = navBackStackEntry.arguments?.read {
+            if (contains("page")) getString("page") else null
+        }
         if (uId != null && page != null) {
             FollowersMainComposable(navController, accountId = uId, page = page)
         }
@@ -384,9 +373,11 @@ private fun NavGraphBuilder.navigationGraph(
             defaultValue = false
         })
     ) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("postid")
-        val refresh = navBackStackEntry.arguments?.getBoolean("refresh")!!
-        val openReplies = navBackStackEntry.arguments?.getBoolean("openReplies")!!
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("postid")) getString("postid") else null
+        }
+        val refresh = navBackStackEntry.arguments?.read { getBoolean("refresh") }!!
+        val openReplies = navBackStackEntry.arguments?.read { getBoolean("openReplies") }!!
         Logger.d { "refresh $refresh" }
         Logger.d { "openReplies $openReplies" }
         uId?.let { id ->
@@ -395,7 +386,9 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Collection.route) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("collectionid")
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("collectionid")) getString("collectionid") else null
+        }
         uId?.let { id ->
             CollectionComposable(navController, collectionId = id)
         }
@@ -413,14 +406,18 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Chat.route) { navBackStackEntry ->
-        val uId = navBackStackEntry.arguments?.getString("userid")
+        val uId = navBackStackEntry.arguments?.read {
+            if (contains("userid")) getString("userid") else null
+        }
         uId?.let { id ->
             ChatComposable(navController = navController, accountId = id)
         }
     }
 
     composable(Destinations.Mention.route) { navBackStackEntry ->
-        val mentionId = navBackStackEntry.arguments?.getString("mentionid")
+        val mentionId = navBackStackEntry.arguments?.read {
+            if (contains("mentionid")) getString("mentionid") else null
+        }
         mentionId?.let { id ->
             MentionComposable(navController = navController, mentionId = id)
         }

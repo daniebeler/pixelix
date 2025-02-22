@@ -40,7 +40,7 @@ object Navigate {
             }
         } else {
             navController.navigate(newRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
+                popUpTo(0) {
                     saveState = true
                 }
                 launchSingleTop = true
