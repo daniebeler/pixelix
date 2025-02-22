@@ -91,7 +91,7 @@ actual fun VideoPlayer(
     val audioAttributes =
         AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
             .build()
-    exoPlayer.setAudioAttributes(audioAttributes, true)
+    exoPlayer.setAudioAttributes(audioAttributes, false)
 
     val contentLength = remember {
         mutableLongStateOf(1.toLong())
@@ -151,12 +151,15 @@ actual fun VideoPlayer(
     }
 
     // Manage lifecycle events
+
     DisposableEffect(Unit) {
-        exoPlayer.volume = if (viewModel.volume) {
-            1f
-        } else {
-            0f
-        }
+       if (viewModel.volume) {
+           exoPlayer.volume = 1f
+           exoPlayer.setAudioAttributes(audioAttributes, true)
+       } else {
+           exoPlayer.volume = 0f
+           exoPlayer.setAudioAttributes(audioAttributes, false)
+       }
         onDispose {
             exoPlayer.release()
         }
@@ -194,10 +197,12 @@ actual fun VideoPlayer(
                         .align(Alignment.BottomEnd)
                         .padding(8.dp), onClick = {
                         viewModel.toggleVolume(!viewModel.volume)
-                        exoPlayer.volume = if (viewModel.volume) {
-                            1f
+                        if (viewModel.volume) {
+                            exoPlayer.volume = 1f
+                            exoPlayer.setAudioAttributes(audioAttributes, true)
                         } else {
-                            0f
+                            exoPlayer.volume = 0f
+                            exoPlayer.setAudioAttributes(audioAttributes, false)
                         }
                     }, colors = IconButtonDefaults.filledTonalIconButtonColors()
                 ) {
