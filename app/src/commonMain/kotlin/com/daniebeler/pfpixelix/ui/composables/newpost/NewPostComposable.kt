@@ -1,5 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -142,7 +149,8 @@ fun NewPostComposable(
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
-            Button(onClick = { showReleaseAlert = true },
+            Button(
+                onClick = { showReleaseAlert = true },
                 enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
             ) {
                 Text(text = stringResource(Res.string.release))
@@ -178,7 +186,11 @@ fun NewPostComposable(
                             Switch(checked = viewModel.sensitive,
                                 onCheckedChange = { viewModel.sensitive = it })
                         })
-                    if (viewModel.sensitive) {
+                    AnimatedVisibility(
+                        visible = viewModel.sensitive,
+                        enter = slideInVertically() + fadeIn(),
+                        exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+                    ) {
                         NewPostTextField(
                             value = viewModel.sensitiveText,
                             onChange = { viewModel.sensitiveText = it },
@@ -250,7 +262,8 @@ fun NewPostComposable(
 
                             }
                         })
-                    TextFieldLocationsComposable(submit = { viewModel.setLocation(it) },
+                    TextFieldLocationsComposable(
+                        submit = { viewModel.setLocation(it) },
                         submitPlace = {},
                         initialValue = null,
                         labelStringId = Res.string.location,
