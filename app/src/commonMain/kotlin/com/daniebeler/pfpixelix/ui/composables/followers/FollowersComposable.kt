@@ -32,7 +32,7 @@ import pixelix.app.generated.resources.nobody_follows_you_yet
 @Composable
 fun FollowersComposable(
     navController: NavController,
-    viewModel: FollowersViewModel
+    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
     val lazyListState = rememberLazyListState()
 

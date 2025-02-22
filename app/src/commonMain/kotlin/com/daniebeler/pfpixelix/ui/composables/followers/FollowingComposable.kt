@@ -38,7 +38,7 @@ import pixelix.app.generated.resources.the_profiles_you_follow_will_appear_here
 @Composable
 fun FollowingComposable(
     navController: NavController,
-    viewModel: FollowersViewModel
+    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
     val lazyListState = rememberLazyListState()
 

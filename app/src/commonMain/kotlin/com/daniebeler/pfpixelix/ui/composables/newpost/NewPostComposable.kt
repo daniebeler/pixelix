@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowRight
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -72,6 +73,9 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPrefUtil
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchIntPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePrefUtil
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -94,14 +98,17 @@ import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.audience
 import pixelix.app.generated.resources.audience_public
+import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
+import pixelix.app.generated.resources.focus_mode
 import pixelix.app.generated.resources.followers_only
 import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_nsfw_media
+import pixelix.app.generated.resources.square_outline
 import pixelix.app.generated.resources.trash_outline
 import pixelix.app.generated.resources.unlisted
 
@@ -135,8 +142,7 @@ fun NewPostComposable(
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
         }, actions = {
-            Button(
-                onClick = { showReleaseAlert = true },
+            Button(onClick = { showReleaseAlert = true },
                 enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
             ) {
                 Text(text = stringResource(Res.string.release))
@@ -159,111 +165,92 @@ fun NewPostComposable(
                     { index -> viewModel.moveMediaAttachmentDown(index) },
                     { index -> viewModel.deleteMedia(index) },
                     { kmpUri: KmpUri -> viewModel.addImage(kmpUri, context) })
+
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    TextFieldMentionsComposable(
-                        submit = {},
-                        text = viewModel.caption,
-                        changeText = { text -> viewModel.caption = text },
-                        labelStringId = Res.string.caption,
-                        modifier = Modifier.fillMaxWidth(),
-                        imeAction = ImeAction.Default,
-                        suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                        submitButton = null
+                    NewPostTextField(
+                        value = viewModel.caption,
+                        onChange = { viewModel.caption = it },
+                        label = stringResource(Res.string.caption)
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = stringResource(Res.string.sensitive_nsfw_media))
-                        Switch(checked = viewModel.sensitive,
-                            onCheckedChange = { viewModel.sensitive = it })
-                    }
+                    NewPostPref(leadingIcon = Res.drawable.browsers_outline,
+                        title = stringResource(Res.string.sensitive_nsfw_media),
+                        trailingContent = {
+                            Switch(checked = viewModel.sensitive,
+                                onCheckedChange = { viewModel.sensitive = it })
+                        })
                     if (viewModel.sensitive) {
-                        TextField(
+                        NewPostTextField(
                             value = viewModel.sensitiveText,
-                            onValueChange = { viewModel.sensitiveText = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text(stringResource(Res.string.content_warning_or_spoiler_text)) },
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                            )
+                            onChange = { viewModel.sensitiveText = it },
+                            label = stringResource(Res.string.content_warning_or_spoiler_text)
                         )
                     }
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = stringResource(Res.string.audience))
-                        Box {
-                            OutlinedButton(onClick = { expanded = !expanded }) {
-                                val buttonText: String = when (viewModel.audience) {
-                                    AUDIENCE_PUBLIC -> {
-                                        stringResource(Res.string.audience_public)
-                                    }
+                    NewPostPref(leadingIcon = Res.drawable.browsers_outline,
+                        title = stringResource(Res.string.audience),
+                        trailingContent = {
+                            Box {
+                                OutlinedButton(onClick = { expanded = !expanded }) {
+                                    val buttonText: String = when (viewModel.audience) {
+                                        AUDIENCE_PUBLIC -> {
+                                            stringResource(Res.string.audience_public)
+                                        }
 
-                                    AUDIENCE_UNLISTED -> {
-                                        stringResource(Res.string.unlisted)
-                                    }
+                                        AUDIENCE_UNLISTED -> {
+                                            stringResource(Res.string.unlisted)
+                                        }
 
-                                    AUDIENCE_FOLLOWERS_ONLY -> {
-                                        stringResource(Res.string.followers_only)
-                                    }
+                                        AUDIENCE_FOLLOWERS_ONLY -> {
+                                            stringResource(Res.string.followers_only)
+                                        }
 
-                                    else -> {
-                                        ""
+                                        else -> {
+                                            ""
+                                        }
                                     }
+                                    Text(text = buttonText)
                                 }
-                                Text(text = buttonText)
-                            }
-                            DropdownMenu(expanded = expanded,
-                                onDismissRequest = { expanded = false }) {
-                                DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
-                                    onClick = { viewModel.audience = AUDIENCE_PUBLIC },
-                                    trailingIcon = {
-                                        if (viewModel.audience == AUDIENCE_PUBLIC) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    })
-                                DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
-                                    onClick = { viewModel.audience = AUDIENCE_UNLISTED },
-                                    trailingIcon = {
-                                        if (viewModel.audience == AUDIENCE_UNLISTED) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    })
-                                DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
-                                    onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
-                                    trailingIcon = {
-                                        if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    })
-                            }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }) {
+                                    DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
+                                        onClick = { viewModel.audience = AUDIENCE_PUBLIC },
+                                        trailingIcon = {
+                                            if (viewModel.audience == AUDIENCE_PUBLIC) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Check,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        })
+                                    DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
+                                        onClick = { viewModel.audience = AUDIENCE_UNLISTED },
+                                        trailingIcon = {
+                                            if (viewModel.audience == AUDIENCE_UNLISTED) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Check,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        })
+                                    DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
+                                        onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
+                                        trailingIcon = {
+                                            if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Check,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        })
+                                }
 
 
-                        }
-                    }
-                    TextFieldLocationsComposable(
-                        submit = { viewModel.setLocation(it) },
+                            }
+                        })
+                    TextFieldLocationsComposable(submit = { viewModel.setLocation(it) },
                         submitPlace = {},
                         initialValue = null,
                         labelStringId = Res.string.location,

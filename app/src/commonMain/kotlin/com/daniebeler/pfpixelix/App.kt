@@ -395,9 +395,11 @@ private fun NavGraphBuilder.navigationGraph(
     }
 
     composable(Destinations.Search.route) { navBackStackEntry ->
-        val initialPage = navBackStackEntry.arguments?.getString("initialPage")
+        val initialPage = navBackStackEntry.arguments?.read {
+            if (contains("initialPage")) getInt("initialPage") else 0
+        }
         initialPage?.let {
-            ExploreComposable(navController, it.toIntOrNull() ?: 0)
+            ExploreComposable(navController, initialPage)
         }
     }
 

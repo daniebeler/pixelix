@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -34,8 +35,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostPref
+import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostTextField
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.browsers_outline
 
 @Composable
 fun TextFieldLocationsComposable(
@@ -61,35 +66,30 @@ fun TextFieldLocationsComposable(
     Column {
 
         if (viewModel.locationsSuggestions.location != null) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.surfaceContainer,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .height(56.dp).padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("${viewModel.locationsSuggestions.location!!.name!!}, ${viewModel.locationsSuggestions.location!!.country}")
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
-                    viewModel.edit()
-                    submit("")
-                    submitPlace(null)
-                }) {
-                    Icon(imageVector = Icons.Outlined.Edit, contentDescription = "edit")
+            NewPostPref(
+                leadingIcon = Res.drawable.browsers_outline,
+                title = viewModel.locationsSuggestions.location!!.name!!,
+                trailingContent = {
+                    Row {
+                        IconButton(onClick = {
+                            viewModel.edit()
+                            submit("")
+                            submitPlace(null)
+                        }) {
+                            Icon(imageVector = Icons.Outlined.Edit, contentDescription = "edit")
+                        }
+                        IconButton(onClick = {
+                            viewModel.removeLocation()
+                            submit("")
+                            submitPlace(null)
+                        }) {
+                            Icon(imageVector = Icons.Outlined.Delete, contentDescription = "remove")
+                        }
+                    }
                 }
-                IconButton(onClick = {
-                    viewModel.removeLocation()
-                    submit("")
-                    submitPlace(null)
-                }) {
-                    Icon(imageVector = Icons.Outlined.Delete, contentDescription = "remove")
-                }
-            }
+            )
         } else {
             Row(verticalAlignment = Alignment.CenterVertically) {
-
                 TextField(
                     value = viewModel.text,
                     singleLine = false,
@@ -98,12 +98,12 @@ fun TextFieldLocationsComposable(
                     },
                     placeholder = { Text(stringResource(labelStringId)) },
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = imeAction),
                     keyboardActions = KeyboardActions(onDone = {

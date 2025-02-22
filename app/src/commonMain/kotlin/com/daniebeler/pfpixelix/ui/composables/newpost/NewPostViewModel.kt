@@ -41,7 +41,7 @@ class NewPostViewModel @Inject constructor(
     )
 
     var images = mutableStateListOf<ImageItem>()
-    var caption: TextFieldValue by mutableStateOf(TextFieldValue())
+    var caption: String by mutableStateOf("")
     private var locationId: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
@@ -285,7 +285,7 @@ class NewPostViewModel @Inject constructor(
             locationId
         }
         val createPostDto =
-            CreatePostDto(caption.text, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
+            CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
         createPostUseCase(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
