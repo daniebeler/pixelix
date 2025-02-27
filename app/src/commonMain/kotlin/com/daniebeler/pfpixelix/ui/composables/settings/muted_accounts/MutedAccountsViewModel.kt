@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.usecase.GetMutedAccountsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class MutedAccountsViewModel @Inject constructor(
-    private val getMutedAccountsUseCase: GetMutedAccountsUseCase,
-    private val unmuteAccountUseCase: UnmuteAccountUseCase
+    private val accountService: AccountService
 ) : ViewModel() {
 
 
@@ -28,7 +26,7 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun getMutedAccounts(refreshing: Boolean = false) {
-        getMutedAccountsUseCase().onEach { result ->
+        accountService.getMutedAccounts().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
                     MutedAccountsState(mutedAccounts = result.data ?: emptyList())
@@ -50,7 +48,7 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun unmuteAccount(accountId: String) {
-        unmuteAccountUseCase(accountId).onEach { result ->
+        accountService.unMuteAccount(accountId).onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
                     val newMutedAccounts =

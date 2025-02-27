@@ -6,8 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdateAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -17,8 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class EditProfileViewModel @Inject constructor(
-    private val getOwnAccountUseCase: GetOwnAccountUseCase,
-    private val updateAccountUseCase: UpdateAccountUseCase
+    private val accountService: AccountService
 ) : ViewModel() {
 
     var accountState by mutableStateOf(EditProfileState())
@@ -35,7 +33,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun getAccount() {
-        getOwnAccountUseCase().onEach { result ->
+        accountService.getOwnAccount().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
@@ -66,8 +64,8 @@ class EditProfileViewModel @Inject constructor(
         } else {
             avatarUri
         }
-        updateAccountUseCase(
-            displayname, note, "https://$website", privateProfile, newAvatarUri, context
+        accountService.updateAccount(
+            displayname, note, "https://$website", privateProfile, newAvatarUri
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {

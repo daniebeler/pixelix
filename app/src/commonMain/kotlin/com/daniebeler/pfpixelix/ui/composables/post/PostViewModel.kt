@@ -8,11 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DownloadImageUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountsWhoLikedPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
@@ -49,7 +49,7 @@ class PostViewModel @Inject constructor(
     private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
     private val deletePostUseCase: DeletePostUseCase,
     private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
-    private val getAccountsWhoLikedPostUseCase: GetAccountsWhoLikedPostUseCase,
+    private val accountService: AccountService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val setVolumeUseCase: SetVolumeUseCase,
@@ -198,7 +198,7 @@ class PostViewModel @Inject constructor(
 
 
     fun loadLikedBy(postId: String) {
-        getAccountsWhoLikedPostUseCase(postId).onEach { result ->
+        accountService.getLikedBy(postId).onEach { result ->
             likedByState = when (result) {
                 is Resource.Success -> {
                     LikedByState(likedBy = result.data ?: emptyList())

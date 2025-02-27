@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.usecase.GetBlockedAccountsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class BlockedAccountsViewModel @Inject constructor(
-    private val getBlockedAccountsUseCase: GetBlockedAccountsUseCase,
-    private val unblockAccountUseCase: UnblockAccountUseCase
+    private val accountService: AccountService
 ) : ViewModel() {
 
     var blockedAccountsState by mutableStateOf(BlockedAccountsState())
@@ -27,7 +25,7 @@ class BlockedAccountsViewModel @Inject constructor(
     }
 
     fun getBlockedAccounts(refreshing: Boolean = false) {
-        getBlockedAccountsUseCase().onEach { result ->
+        accountService.getBlockedAccounts().onEach { result ->
             blockedAccountsState = when (result) {
                 is Resource.Success -> {
                     BlockedAccountsState(blockedAccounts = result.data ?: emptyList())
@@ -49,7 +47,7 @@ class BlockedAccountsViewModel @Inject constructor(
     }
 
     fun unblockAccount(accountId: String) {
-        unblockAccountUseCase(accountId).onEach { result ->
+        accountService.unblockAccount(accountId).onEach { result ->
             blockedAccountsState = when (result) {
                 is Resource.Success -> {
                     val newBlockedAccounts =

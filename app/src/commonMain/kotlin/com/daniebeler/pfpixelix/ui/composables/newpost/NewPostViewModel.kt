@@ -4,8 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -13,14 +11,13 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.usecase.CreatePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
 import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
-import com.daniebeler.pfpixelix.utils.GetFile
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
-import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.Navigate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -34,10 +31,15 @@ class NewPostViewModel @Inject constructor(
     private val uploadMediaUseCase: UploadMediaUseCase,
     private val updateMediaUseCase: UpdateMediaUseCase,
     private val createPostUseCase: CreatePostUseCase,
-    private val getInstanceUseCase: GetInstanceUseCase
+    private val getInstanceUseCase: GetInstanceUseCase,
+    private val platform: Platform
 ) : ViewModel() {
     data class ImageItem(
-        val imageUri: KmpUri, var id: String?, var text: String = "", var isLoading: Boolean
+        val imageUri: KmpUri,
+        val mimeType: String,
+        var id: String?,
+        var text: String = "",
+        var isLoading: Boolean
     )
 
     var images = mutableStateListOf<ImageItem>()
@@ -104,7 +106,8 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun addImage(uri: KmpUri, context: KmpContext) {
-        val fileType = MimeType.getMimeType(uri, context) ?: "image/*"
+        val file = platform.getPlatformFile(uri) ?: return
+        val fileType = file.getMimeType()
         if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(
                 fileType
             )
@@ -115,7 +118,7 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        val size = GetFile.getFileSize(uri, context) ?: return
+        val size = file.getSize()
 
         if (fileType.take(5) == "image") {
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
@@ -145,7 +148,7 @@ class NewPostViewModel @Inject constructor(
             addImageError = Pair("To many images", "You have added to many images, your Server does only allow ${instance!!.configuration.statusConfig.maxMediaAttachments} images per post")
             return
         }
-        images += ImageItem(uri, null, "", true)
+        images += ImageItem(uri, fileType, null, "", true)
         uploadImage(context, uri, "")
     }
 

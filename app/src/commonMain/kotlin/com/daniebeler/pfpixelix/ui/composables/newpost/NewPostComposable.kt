@@ -20,14 +20,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,11 +33,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.ArrowDownward
-import androidx.compose.material.icons.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -72,7 +66,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
@@ -80,23 +73,17 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPrefUtil
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchIntPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePrefUtil
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
-import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.MimeType
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -109,13 +96,11 @@ import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
-import pixelix.app.generated.resources.focus_mode
 import pixelix.app.generated.resources.followers_only
 import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_nsfw_media
-import pixelix.app.generated.resources.square_outline
 import pixelix.app.generated.resources.trash_outline
 import pixelix.app.generated.resources.unlisted
 
@@ -416,8 +401,9 @@ fun ImagesPager(
 
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-                        val type = MimeType.getMimeType(image.imageUri, context)
-                        if (type != null && type.take(5) == "video") {
+                        val type = image.mimeType
+
+                        if (type.take(5) == "video") {
                             //todo KMP video
                             AsyncImage(
                                 model = image.imageUri.getPlatformUriObject(),

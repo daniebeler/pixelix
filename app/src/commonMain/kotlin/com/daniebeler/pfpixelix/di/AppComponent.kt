@@ -12,7 +12,6 @@ import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
-import com.daniebeler.pfpixelix.data.repository.AccountRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CollectionRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.DirectMessagesRepositoryImpl
@@ -24,7 +23,6 @@ import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.WidgetRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.repository.AccountRepository
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
@@ -173,8 +171,6 @@ abstract class AppComponent(
             )
             .build()
 
-    @Provides
-    fun provideAccountRepository(impl: AccountRepositoryImpl): AccountRepository = impl
     @Provides
     fun provideCollectionRepository(impl: CollectionRepositoryImpl): CollectionRepository = impl
     @Provides

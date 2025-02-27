@@ -8,15 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Settings
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.usecase.GetHomeTimelineUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class HomeTimelineViewModel @Inject constructor(
     private val getHomeTimelineUseCase: GetHomeTimelineUseCase,
-    private val getSettingsUseCase: GetSettingsUseCase
+    private val accountService: AccountService
 ) : ViewModel() {
 
     var homeTimelineState by mutableStateOf(HomeTimelineState(isLoading = true))
@@ -27,7 +27,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     private fun getSettings() {
-        getSettingsUseCase().onEach { result ->
+        accountService.getAccountSettings().onEach { result ->
             accountSettings = when (result) {
                 is Resource.Success -> {
                     accountSettings = result.data

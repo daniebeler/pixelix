@@ -10,21 +10,13 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.usecase.BlockAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountByUsernameUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetMutualFollowersUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.MuteAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnblockAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnmuteAccountUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
@@ -37,17 +29,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-class OtherProfileViewModel @Inject constructor(
-    private val getAccountUseCase: GetAccountUseCase,
-    private val getAccountByUsernameUseCase: GetAccountByUsernameUseCase,
+@Inject
+class OtherProfileViewModel(
+    private val accountService: AccountService,
     private val getPostsOfAccountUseCase: GetPostsOfAccountUseCase,
-    private val followAccountUseCase: FollowAccountUseCase,
-    private val unfollowAccountUseCase: UnfollowAccountUseCase,
-    private val muteAccountUseCase: MuteAccountUseCase,
-    private val unmuteAccountUseCase: UnmuteAccountUseCase,
-    private val blockAccountUseCase: BlockAccountUseCase,
-    private val unblockAccountUseCase: UnblockAccountUseCase,
-    private val getMutualFollowersUseCase: GetMutualFollowersUseCase,
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val setViewUseCase: SetViewUseCase,
@@ -119,7 +104,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getMutualFollowers(userId: String) {
-        getMutualFollowersUseCase(userId).onEach { result ->
+        accountService.getMutualFollowers(userId).onEach { result ->
             mutualFollowersState = when (result) {
                 is Resource.Success -> {
                     MutualFollowersState(mutualFollowers = result.data ?: emptyList())
@@ -139,7 +124,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getAccount(userId: String, refreshing: Boolean) {
-        getAccountUseCase(userId).onEach { result ->
+        accountService.getAccount(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)
@@ -162,7 +147,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     private fun getAccountByUsername(username: String, refreshing: Boolean) {
-        getAccountByUsernameUseCase(username).onEach { result ->
+        accountService.getAccountByUsername(username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     userId = result.data!!.id
@@ -263,7 +248,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun followAccount(userId: String) {
-        followAccountUseCase(userId).onEach { result ->
+        accountService.followAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -284,7 +269,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unfollowAccount(userId: String) {
-        unfollowAccountUseCase(userId).onEach { result ->
+        accountService.unfollowAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -305,7 +290,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun muteAccount(userId: String) {
-        muteAccountUseCase(userId).onEach { result ->
+        accountService.muteAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -323,7 +308,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unMuteAccount(userId: String) {
-        unmuteAccountUseCase(userId).onEach { result ->
+        accountService.unMuteAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -341,7 +326,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun blockAccount(userId: String) {
-        blockAccountUseCase(userId).onEach { result ->
+        accountService.blockAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -359,7 +344,7 @@ class OtherProfileViewModel @Inject constructor(
     }
 
     fun unblockAccount(userId: String) {
-        unblockAccountUseCase(userId).onEach { result ->
+        accountService.unblockAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
