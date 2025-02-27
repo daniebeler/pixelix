@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 
 class FollowersViewModel @Inject constructor(
     private val accountService: AccountService,
-    private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase
+    private val authService: AuthService
 ) : ViewModel() {
 
     var accountState by mutableStateOf(AccountState())
@@ -48,7 +48,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     suspend fun setLoggedInAccountIdValue() {
-        loggedInAccountId = getCurrentLoginDataUseCase()?.accountId ?: ""
+        loggedInAccountId = authService.getCurrentSession()?.accountId ?: ""
     }
 
     fun getFollowersFirstLoad(refreshing: Boolean = false) {

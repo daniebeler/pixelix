@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -129,8 +131,6 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-val LocalTheme = compositionLocalOf<MutableIntState> { error("no LocalTheme") }
-
 @Composable
 fun PixelixTheme(
     dynamicColor: Boolean = true,
@@ -138,29 +138,24 @@ fun PixelixTheme(
 ) {
     val context = LocalKmpContext.current
     val prefs = LocalAppComponent.current.preferences
-    val theme = remember { mutableIntStateOf(prefs.appThemeMode) }
+    val theme by prefs.appThemeModeFlow.collectAsState(prefs.appThemeMode)
 
-    LaunchedEffect(theme.value) {
-        context.setDefaultNightMode(theme.value)
-        prefs.appThemeMode = theme.value
+    LaunchedEffect(theme) {
+        context.setDefaultNightMode(theme)
     }
 
-    CompositionLocalProvider(
-        LocalTheme provides theme
-    ) {
-        var nightModeValue = theme.value
-        if (nightModeValue == FOLLOW_SYSTEM) {
-            nightModeValue = if (isSystemInDarkTheme()) DARK else LIGHT
-        }
-        val colorScheme = remember(nightModeValue, dynamicColor, lightScheme, darkScheme) {
-            context.generateColorScheme(nightModeValue, dynamicColor, lightScheme, darkScheme)
-        }
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = Typography,
-            content = content
-        )
+    var nightModeValue = theme
+    if (nightModeValue == FOLLOW_SYSTEM) {
+        nightModeValue = if (isSystemInDarkTheme()) DARK else LIGHT
     }
+    val colorScheme = remember(nightModeValue, dynamicColor, lightScheme, darkScheme) {
+        context.generateColorScheme(nightModeValue, dynamicColor, lightScheme, darkScheme)
+    }
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
 }
 
 expect fun KmpContext.generateColorScheme(

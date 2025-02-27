@@ -8,22 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
 import com.daniebeler.pfpixelix.domain.model.Message
-import com.daniebeler.pfpixelix.domain.usecase.DeleteMessageUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetChatUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SendMessageUseCase
+import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class ChatViewModel @Inject constructor(
-    private val getChatUseCase: GetChatUseCase, private val sendMessageUseCase: SendMessageUseCase, private val deleteMessageUseCase: DeleteMessageUseCase
+    private val directMessagesService: DirectMessagesService
 ) : ViewModel() {
 
     var chatState by mutableStateOf(ChatState())
     var newMessage by mutableStateOf("")
     var newMessageState by mutableStateOf(NewMessageState())
     fun getChat(accountId: String, refreshing: Boolean = false) {
-        getChatUseCase(accountId).onEach { result ->
+        directMessagesService.getChat(accountId).onEach { result ->
             chatState = when (result) {
                 is Resource.Success -> {
                     ChatState(
@@ -47,7 +45,7 @@ class ChatViewModel @Inject constructor(
     fun getChatPaginated(accountId: String) {
         if (chatState.chat != null && !chatState.isLoading && !chatState.endReached) {
             if (chatState.chat!!.messages.isNotEmpty()) {
-                getChatUseCase(accountId, chatState.chat!!.messages.last().id).onEach { result ->
+                directMessagesService.getChat(accountId, chatState.chat!!.messages.last().id).onEach { result ->
                     chatState = when (result) {
                         is Resource.Success -> {
                             val endReached = result.data?.messages!!.isEmpty()
@@ -90,7 +88,7 @@ class ChatViewModel @Inject constructor(
             to_id = accountId, message = newMessage, type = "text"
         )
         newMessage = ""
-        sendMessageUseCase(createMessageDto).onEach { result ->
+        directMessagesService.sendMessage(createMessageDto).onEach { result ->
             newMessageState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
@@ -119,7 +117,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun deleteMessage(id: String) {
-        deleteMessageUseCase(id).onEach { result ->
+        directMessagesService.deleteMessage(id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

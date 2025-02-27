@@ -50,51 +50,51 @@ interface PixelfedApi {
     suspend fun getTrendingHashtags(): List<TagDto>
 
     @GET("api/v1.1/discover/accounts/popular")
-    fun getTrendingAccounts(): Call<List<AccountDto>>
+    suspend fun getTrendingAccounts(): List<AccountDto>
 
 
     // Timelines
 
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
-    fun getHashtagTimeline(
+    suspend fun getHashtagTimeline(
         @Path("tag") tag: String, @Query("limit") limit: Int
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
-    fun getHashtagTimeline(
+    suspend fun getHashtagTimeline(
         @Path("tag") tag: String, @Query("max_id") maxPostId: String, @Query("limit") limit: Int
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
-    fun getLocalTimeline(): Call<List<PostDto>>
+    suspend fun getLocalTimeline(): List<PostDto>
 
     @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
-    fun getLocalTimeline(
+    suspend fun getLocalTimeline(
         @Query("max_id") maxPostId: String
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
-    fun getGlobalTimeline(): Call<List<PostDto>>
+    suspend fun getGlobalTimeline(): List<PostDto>
 
     @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
-    fun getGlobalTimeline(
+    suspend fun getGlobalTimeline(
         @Query("max_id") maxPostId: String
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    fun getHomeTimeline(@Query("include_reblogs") includeReblogs: Boolean): Call<List<PostDto>>
+    suspend fun getHomeTimeline(@Query("include_reblogs") includeReblogs: Boolean): List<PostDto>
 
     @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    fun getHomeTimeline(
+    suspend fun getHomeTimeline(
         @Query("max_id") maxPostId: String,
         @Query("include_reblogs") includeReblogs: Boolean
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/timelines/home?_pe=1")
-    fun getHomeTimelineWithLimit(
+    suspend fun getHomeTimelineWithLimit(
         @Query("limit") limit: Int
-    ): Call<List<PostDto>>
+    ): List<PostDto>
     // Favourites
 
 
@@ -116,12 +116,12 @@ interface PixelfedApi {
 
 
     @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
-    fun getNotifications(): Call<List<NotificationDto>>
+    suspend fun getNotifications(): List<NotificationDto>
 
     @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
-    fun getNotifications(
+    suspend fun getNotifications(
         @Query("max_id") maxNotificationId: String
-    ): Call<List<NotificationDto>>
+    ): List<NotificationDto>
 
 
     // Accounts
@@ -155,9 +155,9 @@ interface PixelfedApi {
     ): List<PostDto>
 
     @GET("api/v1/accounts/relationships")
-    fun getRelationships(
+    suspend fun getRelationships(
         @Query("id[]") userId: List<String>
-    ): Call<List<RelationshipDto>>
+    ): List<RelationshipDto>
 
     @GET("api/v1.1/accounts/mutuals/{id}")
     suspend fun getMutalFollowers(
@@ -256,38 +256,38 @@ interface PixelfedApi {
     // Collections
 
     @GET("api/v1.1/collections/accounts/{userId}")
-    fun getCollectionsByUserId(
+    suspend fun getCollectionsByUserId(
         @Path("userId") userId: String, @Query("page") page: Int
-    ): Call<List<CollectionDto>>
+    ): List<CollectionDto>
 
     @GET("api/v1.1/collections/view/{collectionid}")
-    fun getCollection(
+    suspend fun getCollection(
         @Path("collectionid") collectionId: String
-    ): Call<CollectionDto>
+    ): CollectionDto
 
     @GET("api/v1.1/collections/items/{collectionid}")
-    fun getPostsOfCollection(
+    suspend fun getPostsOfCollection(
         @Path("collectionid") collectionId: String
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @POST("api/v1.1/collections/remove")
-    fun removePostOfCollection(
+    suspend fun removePostOfCollection(
         @Query("collection_id") collectionId: String, @Query("post_id") postId: String
-    ): Call<String>
+    ): String
 
     @POST("api/v1.1/collections/add")
-    fun addPostOfCollection(
+    suspend fun addPostOfCollection(
         @Query("collection_id") collectionId: String, @Query("post_id") postId: String
-    ): Call<String>
+    ): String
 
     @FormUrlEncoded
     @POST("api/v1.1/collections/update/{collectionId}")
-    fun updateCollection(
+    suspend fun updateCollection(
         @Path("collectionId") collectionId: String,
         @Field("title") title: String,
         @Field("description") description: String,
         @Field("visibility") visibility: String
-    ): Call<CollectionDto>
+    ): CollectionDto
 
     // Tags
 
@@ -315,32 +315,32 @@ interface PixelfedApi {
     // Direct Messages
 
     @GET("api/v1/conversations")
-    fun getConversations(): Call<List<ConversationDto>>
+    suspend fun getConversations(): List<ConversationDto>
 
     @GET("api/v1.1/direct/thread")
-    fun getChat(@Query("pid") accountId: String): Call<ChatDto>
+    suspend fun getChat(@Query("pid") accountId: String): ChatDto
 
     @GET("api/v1.1/direct/thread")
-    fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): Call<ChatDto>
+    suspend fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): ChatDto
 
     @Headers("Content-Type: application/json")
     @POST("api/v1.1/direct/thread/send")
-    fun sendMessage(@Body createMessageDto: String): Call<MessageDto>
+    suspend fun sendMessage(@Body createMessageDto: String): MessageDto
 
     @DELETE("api/v1.1/direct/thread/message")
-    fun deleteMessage(@Query("id") id: String): Call<List<Int>>
+    suspend fun deleteMessage(@Query("id") id: String): List<Int>
     // Other
 
     @GET("api/v1/bookmarks?limit=12")
     suspend fun getBookmarkedPosts(): List<PostDto>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")
-    fun getReplies(
+    suspend fun getReplies(
         @Path("postid") postid: String
-    ): Call<PostContextDto>
+    ): PostContextDto
 
     @GET("api/v1/instance")
-    fun getInstance(): Call<InstanceDto>
+    suspend fun getInstance(): InstanceDto
 
     @GET("api/v1/mutes")
     suspend fun getMutedAccounts(): List<AccountDto>
@@ -349,14 +349,14 @@ interface PixelfedApi {
     suspend fun getBlockedAccounts(): List<AccountDto>
 
     @GET("api/v2/search?_pe=1&resolve")
-    fun getSearch(
+    suspend fun getSearch(
         @Query("q") searchText: String, @Query("type") type: String?, @Query("limit") limit: Int
-    ): Call<SearchDto>
+    ): SearchDto
 
     @GET("api/v1.1/compose/search/location?limit=5")
-    fun searchLocations(
+    suspend fun searchLocations(
         @Query("q") searchText: String
-    ): Call<List<PlaceDto>>
+    ): List<PlaceDto>
 
     @POST("api/v2/media")
     suspend fun uploadMedia(
@@ -378,9 +378,9 @@ interface PixelfedApi {
 
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
-    fun createReply(
+    suspend fun createReply(
         @Body createReplyDto: String
-    ): Call<PostDto>
+    ): PostDto
 
     @Headers("Content-Type: application/json")
     @PUT("api/v1/statuses/{id}")
@@ -413,15 +413,15 @@ interface PixelfedApi {
     fun getWellKnownDomains(@Url domain: String): Call<WellKnownDomainsDto>
 
     @GET
-    fun getNodeInfo(@Url domain: String): Call<NodeInfoDto>
+    suspend fun getNodeInfo(@Url domain: String): NodeInfoDto
 
     @GET("https://api.fedidb.org/v1/software/{slug}")
-    fun getSoftwareFromFediDB(
+    suspend fun getSoftwareFromFediDB(
         @Path("slug") slug: String
-    ): Call<FediSoftwareDto>
+    ): FediSoftwareDto
 
     @GET("https://api.fedidb.org/v1/server/domain/{slug}")
-    fun getServerFromFediDB(
+    suspend fun getServerFromFediDB(
         @Path("slug") domain: String
-    ): Call<WrapperDto>
+    ): WrapperDto
 }

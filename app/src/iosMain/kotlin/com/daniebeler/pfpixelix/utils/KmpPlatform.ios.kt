@@ -53,8 +53,6 @@ actual fun KmpContext.openUrlInBrowser(url: String) {
     UIApplication.sharedApplication.openURL(NSURL(string = url))
 }
 
-actual val KmpContext.pref: Settings
-    get() = NSUserDefaultsSettings(NSUserDefaults())
 actual val KmpContext.appVersionName: String
     get() = NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString").toString()
 
@@ -81,16 +79,6 @@ actual fun KmpContext.getCacheSizeInBytes(): Long {
 actual fun KmpContext.cleanCache() {
     val fm = NSFileManager.defaultManager()
     fm.removeItemAtPath(imageCacheDir.toString(), null)
-}
-
-actual fun KmpContext.getAppIcons(): List<IconWithName> {
-    return emptyList() // TODO("Not yet implemented")
-}
-
-actual fun KmpContext.enableCustomIcon(iconWithName: IconWithName) {
-}
-
-actual fun KmpContext.disableCustomIcon() {
 }
 
 actual fun String.toKmpUri(): KmpUri = IosUri(NSURL(string = this))

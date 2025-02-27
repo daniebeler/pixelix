@@ -6,25 +6,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.AddPostOfCollectionUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdateCollectionUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class CollectionViewModel @Inject constructor(
-    private val getCollectionUseCase: GetCollectionUseCase,
-    private val getPostsOfCollectionUseCase: GetPostsOfCollectionUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val removePostOfCollectionUseCase: RemovePostOfCollectionUseCase,
-    private val addPostOfCollectionUseCase: AddPostOfCollectionUseCase,
-    private val updateCollectionUseCase: UpdateCollectionUseCase,
+    private val collectionService: CollectionService,
     private val postService: PostService
 ) : ViewModel() {
 
@@ -42,7 +34,7 @@ class CollectionViewModel @Inject constructor(
 
     private fun getCollection() {
         if (collectionState.id != null) {
-            getCollectionUseCase(collectionState.id!!).onEach { result ->
+            collectionService.getCollection(collectionState.id!!).onEach { result ->
                 collectionState = when (result) {
                     is Resource.Success -> {
                         CollectionState(
@@ -72,7 +64,7 @@ class CollectionViewModel @Inject constructor(
 
     private fun getPostsFirstLoad(refreshing: Boolean) {
         if (collectionState.id != null) {
-            getPostsOfCollectionUseCase(collectionState.id!!).onEach { result ->
+            collectionService.getPostsOfCollection(collectionState.id!!).onEach { result ->
                 collectionPostsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) == 0
@@ -146,7 +138,7 @@ class CollectionViewModel @Inject constructor(
 
     private fun updateCollection(newName: String) {
         if (collectionState.id != null && collectionState.collection != null) {
-            updateCollectionUseCase(collectionState.id!!, newName, collectionState.collection!!.description, collectionState.collection!!.visibility).onEach { result ->
+            collectionService.updateCollection(collectionState.id!!, newName, collectionState.collection!!.description, collectionState.collection!!.visibility).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         getCollection()
@@ -166,7 +158,7 @@ class CollectionViewModel @Inject constructor(
 
     private fun addPostsOfCollection(postId: String) {
         if (collectionState.id != null) {
-            addPostOfCollectionUseCase(collectionState.id!!, postId).onEach { result ->
+            collectionService.addPostOfCollection(collectionState.id!!, postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         getPostsFirstLoad(false)
@@ -186,7 +178,7 @@ class CollectionViewModel @Inject constructor(
 
     private fun removePostOfCollection(postId: String) {
         if (collectionState.id != null) {
-            removePostOfCollectionUseCase(collectionState.id!!, postId).onEach { result ->
+            collectionService.removePostOfCollection(collectionState.id!!, postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         getPostsFirstLoad(false)

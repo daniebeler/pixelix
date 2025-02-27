@@ -68,7 +68,7 @@ fun IconSelectionComposable(
     val lazyGridState = rememberLazyGridState()
 
     LaunchedEffect(Unit) {
-        viewModel.updateList(context)
+        viewModel.updateList()
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
@@ -161,7 +161,7 @@ fun IconSelectionComposable(
                 newIconName.value = ""
             }, confirmButton = {
                 TextButton(onClick = {
-                    viewModel.changeIcon(context = context, newIconName.value)
+                    viewModel.changeIcon(newIconName.value)
                     newIconName.value = ""
                 }) {
                     Text(stringResource(Res.string.change))

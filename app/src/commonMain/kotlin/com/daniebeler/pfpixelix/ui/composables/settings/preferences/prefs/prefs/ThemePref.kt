@@ -6,8 +6,9 @@ import androidx.compose.material.icons.rounded.Contrast
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.AMOLED
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.DARK
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
@@ -17,7 +18,6 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.Option
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
-import com.daniebeler.pfpixelix.ui.theme.LocalTheme
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.amoled
@@ -29,10 +29,11 @@ import pixelix.app.generated.resources.theme_system
 
 @Composable
 fun ThemePref() {
-    var appTheme by LocalTheme.current
+    val pref = LocalAppComponent.current.preferences
+    val appTheme by pref.appThemeModeFlow.collectAsState(pref.appThemeMode)
 
     val onOptionClick = { mode: Int ->
-        appTheme = mode
+        pref.appThemeMode = mode
     }
 
     ExpandOptionsPref(

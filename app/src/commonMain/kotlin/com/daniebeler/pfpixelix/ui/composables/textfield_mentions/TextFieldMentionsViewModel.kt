@@ -9,14 +9,14 @@ import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TextFieldMentionsViewModel @Inject constructor(
-    private val searchUseCase: SearchUseCase
+    private val searchService: SearchService
 ) : ViewModel() {
     var text by mutableStateOf(TextFieldValue(""))
     var mentionsDropdownOpen by mutableStateOf(false)
@@ -43,7 +43,7 @@ class TextFieldMentionsViewModel @Inject constructor(
         }
         val type = if (searchString.toCharArray().first() == '@') {"accounts"} else {"tags"}
         val searchShortened = searchString.substring(1)
-        searchUseCase(searchShortened).onEach { result ->
+        searchService.search(searchShortened).onEach { result ->
             mentionSuggestions = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

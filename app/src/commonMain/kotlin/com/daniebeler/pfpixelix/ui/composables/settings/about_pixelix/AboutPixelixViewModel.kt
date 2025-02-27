@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.appVersionName
@@ -13,8 +13,9 @@ import me.tatarka.inject.annotations.Inject
 
 class AboutPixelixViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
+    private val platform: Platform
 ) : ViewModel() {
+    private val iconManager = platform.getAppIconManager()
 
     var versionName by mutableStateOf("")
 
@@ -24,8 +25,8 @@ class AboutPixelixViewModel @Inject constructor(
         versionName = context.appVersionName
     }
 
-    fun getAppIcon(context: KmpContext){
-        appIcon = getActiveAppIconUseCase(context)
+    fun getAppIcon(context: KmpContext) {
+        appIcon = iconManager.getCurrentIcon()
     }
 
     fun rateApp(context: KmpContext) {

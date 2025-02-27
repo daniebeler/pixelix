@@ -9,15 +9,11 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class ReplyElementViewModel @Inject constructor(
-    private val getRepliesUseCase: GetRepliesUseCase,
-    private val createReplyUseCase: CreateReplyUseCase,
     private val postEditorService: PostEditorService,
     private val postService: PostService
     ): ViewModel()
@@ -31,7 +27,7 @@ class ReplyElementViewModel @Inject constructor(
     }
 
     fun loadReplies(replyId: String) {
-        getRepliesUseCase(replyId).onEach { result ->
+        postService.getReplies(replyId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
                     RepliesState(replies = result.data?.descendants ?: emptyList())
@@ -50,7 +46,7 @@ class ReplyElementViewModel @Inject constructor(
 
     fun createReply(replyId: String, replyText: String, myAccountId: String) {
         if (replyText.isNotBlank()) {
-            createReplyUseCase(replyId, replyText).onEach { result ->
+            postService.createReply(replyId, replyText).onEach { result ->
                 newReplyState = when (result) {
                     is Resource.Success -> {
                         loadReplies(replyId)

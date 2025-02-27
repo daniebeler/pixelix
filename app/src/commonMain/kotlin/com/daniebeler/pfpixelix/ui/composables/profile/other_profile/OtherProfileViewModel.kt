@@ -11,12 +11,11 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
@@ -33,11 +32,10 @@ import me.tatarka.inject.annotations.Inject
 class OtherProfileViewModel(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val getRelationshipsUseCase: GetRelationshipsUseCase,
+    private val searchService: SearchService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val setViewUseCase: SetViewUseCase,
-    private val getCollectionsUseCase: GetCollectionsUseCase,
-    private val getViewUseCase: GetViewUseCase
+    private val prefs: UserPreferences,
+    private val collectionService: CollectionService,
 ) : ViewModel() {
     var userId: String = ""
     var accountState by mutableStateOf(AccountState())
@@ -48,7 +46,7 @@ class OtherProfileViewModel(
     var collectionsState by mutableStateOf(CollectionsState())
 
     var domain by mutableStateOf("")
-    var view by mutableStateOf(ViewEnum.Timeline)
+    var view by mutableStateOf(ViewEnum.Grid)
 
     fun loadData(_userId: String, refreshing: Boolean) {
         userId = _userId
@@ -65,8 +63,8 @@ class OtherProfileViewModel(
         getCollections(userId, false)
 
         viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
             }
         }
     }
@@ -77,7 +75,7 @@ class OtherProfileViewModel(
     }
 
     private fun getRelationship(userId: String) {
-        getRelationshipsUseCase(List(1) { userId }).onEach { result ->
+        searchService.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(
@@ -180,7 +178,7 @@ class OtherProfileViewModel(
         } else {
             collectionPage++
         }
-        getCollectionsUseCase(userId, collectionPage).onEach { result ->
+        collectionService.getCollections(userId, collectionPage).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {
@@ -367,9 +365,7 @@ class OtherProfileViewModel(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        viewModelScope.launch {
-            setViewUseCase(newView)
-        }
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun postGetsDeleted(postId: String) {

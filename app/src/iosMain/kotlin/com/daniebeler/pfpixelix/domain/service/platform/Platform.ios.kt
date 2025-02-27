@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.platform
 
+import androidx.compose.ui.graphics.ImageBitmap
+import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
+import com.daniebeler.pfpixelix.utils.getAppIcons
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.get
 import kotlinx.cinterop.refTo
@@ -45,6 +48,10 @@ actual class Platform actual constructor(
     actual fun getPlatformFile(uri: KmpUri): PlatformFile? {
         val f = IosFile(uri)
         return if (f.getName() != "IosFile:unknown") f else null
+    }
+
+    actual fun getAppIconManager(): AppIconManager {
+        return IosAppIconManager()
     }
 }
 
@@ -127,6 +134,22 @@ private class IosFile(
         CFRelease(thumbnailSource)
 
         byteArray
+    }
+}
+
+private class IosAppIconManager : AppIconManager {
+    override fun getIcons(): List<IconWithName> {
+        return emptyList()
+    }
+
+    override fun getCurrentIcon(): ImageBitmap? {
+        return null
+    }
+
+    override fun enableCustomIcon(iconWithName: IconWithName) {
+    }
+
+    override fun disableCustomIcon() {
     }
 
 }

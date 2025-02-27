@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetNotificationsUseCase
+import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsViewModel @Inject constructor(
-    private val getNotificationsUseCase: GetNotificationsUseCase
+    private val widgetService: WidgetService
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
@@ -23,7 +23,7 @@ class NotificationsViewModel @Inject constructor(
     }
 
     private fun getNotificationsFirstLoad(refreshing: Boolean) {
-        getNotificationsUseCase().onEach { result ->
+        widgetService.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) == 0
@@ -47,7 +47,7 @@ class NotificationsViewModel @Inject constructor(
 
     fun getNotificationsPaginated() {
         if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading && !notificationsState.endReached) {
-            getNotificationsUseCase(notificationsState.notifications.last().id).onEach { result ->
+            widgetService.getNotifications(notificationsState.notifications.last().id).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
                         val endReached = result.data?.size == 0

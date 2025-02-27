@@ -11,7 +11,7 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
-import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class ExploreViewModel @Inject constructor(
-    private val searchUseCase: SearchUseCase,
+    private val searchService: SearchService,
     private val savedSearchesRepository: SavedSearchesRepository
 ) : ViewModel() {
     var searchState by mutableStateOf(SearchState())
@@ -91,7 +91,7 @@ class ExploreViewModel @Inject constructor(
     }
 
     private fun getSearchResults(text: String, limit: Int) {
-        searchUseCase(text, limit = limit).onEach { result ->
+        searchService.search(text, limit = limit).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)

@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.usecase.GetConversationsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SearchUseCase
+import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class ConversationsViewModel @Inject constructor(
-    private val getConversationsUseCase: GetConversationsUseCase,
-    private val searchUseCase: SearchUseCase
+    private val dmService: DirectMessagesService,
+    private val searchService: SearchService
 ) : ViewModel() {
 
     var conversationsState by mutableStateOf(ConversationsState())
@@ -28,7 +28,7 @@ class ConversationsViewModel @Inject constructor(
     }
 
     private fun getConversationsFirstLoad(refreshing: Boolean) {
-        getConversationsUseCase().onEach { result ->
+        dmService.getConversations().onEach { result ->
             conversationsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) == 0
@@ -55,7 +55,7 @@ class ConversationsViewModel @Inject constructor(
     fun changeNewConversationUsername(newUsername: TextFieldValue) {
         newConversationSelectedAccount = null
         newConversationUsername = newUsername
-        searchUseCase(newUsername.text, "accounts").onEach { result ->
+        searchService.search(newUsername.text, "accounts").onEach { result ->
             newConversationState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

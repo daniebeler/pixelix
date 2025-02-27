@@ -9,10 +9,9 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
-import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
-import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,15 +19,14 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineViewModel @Inject constructor(
-    private val hashtagService: HashtagService,
-    private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
-    private val getViewUseCase: GetViewUseCase,
-    private val setViewUseCase: SetViewUseCase
+    private val searchService: SearchService,
+    private val timelineService: TimelineService,
+    private val prefs: UserPreferences
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
-    var view by mutableStateOf(ViewEnum.Loading)
+    var view by mutableStateOf(ViewEnum.Grid)
 
     var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
 
@@ -36,8 +34,8 @@ class HashtagTimelineViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
             }
         }
     }
@@ -51,13 +49,11 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        viewModelScope.launch {
-            setViewUseCase(newView)
-        }
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
-        getHashtagTimelineUseCase(hashtag).onEach { result ->
+        timelineService.getHashtagTimeline(hashtag).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached =
@@ -95,7 +91,7 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated(hashtag: String) {
         if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getHashtagTimelineUseCase(
+            timelineService.getHashtagTimeline(
                 hashtag, postsState.hashtagTimeline.last().id
             ).onEach { result ->
                 postsState = when (result) {
@@ -134,7 +130,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getRelatedHashtags(hashtag: String) {
-        hashtagService.getRelatedHashtags(hashtag).onEach { result ->
+        searchService.getRelatedHashtags(hashtag).onEach { result ->
             if (result is Resource.Success) {
                 relatedHashtags = result.data ?: emptyList()
                 println("juhuu" + result.data)
@@ -150,7 +146,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getHashtagInfo(hashtag: String) {
-        hashtagService.getHashtag(hashtag).onEach { result ->
+        searchService.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -168,7 +164,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun followHashtag(hashtag: String) {
-        hashtagService.followHashtag(hashtag).onEach { result ->
+        searchService.followHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
@@ -192,7 +188,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun unfollowHashtag(hashtag: String) {
-        hashtagService.unfollowHashtag(hashtag).onEach { result ->
+        searchService.unfollowHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag

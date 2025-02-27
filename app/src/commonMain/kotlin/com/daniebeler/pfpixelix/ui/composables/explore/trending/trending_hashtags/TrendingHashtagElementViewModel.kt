@@ -6,16 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
-import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagElementViewModel @Inject constructor(
-    private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
-    private val hashtagService: HashtagService
+    private val timelineService: TimelineService,
+    private val searchService: SearchService
 ) : ViewModel() {
 
     var postsState by mutableStateOf(TrendingHashtagPostsState())
@@ -23,7 +23,7 @@ class TrendingHashtagElementViewModel @Inject constructor(
 
     fun loadItems(hashtag: String) {
         if (postsState.posts.isEmpty()) {
-            getHashtagTimelineUseCase(hashtag, limit = 39).onEach { result ->
+            timelineService.getHashtagTimeline(hashtag, limit = 39).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingHashtagPostsState(
@@ -51,7 +51,7 @@ class TrendingHashtagElementViewModel @Inject constructor(
 
     fun getHashtagInfo(hashtag: String) {
         if (hashtagState.hashtag == null) {
-            hashtagService.getHashtag(hashtag).onEach { result ->
+            searchService.getHashtag(hashtag).onEach { result ->
                 hashtagState = when (result) {
                     is Resource.Success -> {
                         HashtagState(hashtag = result.data)
