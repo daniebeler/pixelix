@@ -10,13 +10,18 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import com.daniebeler.pfpixelix.utils.executeWithResponse
+import de.jensklingenberg.ktorfit.Call
+import de.jensklingenberg.ktorfit.Callback
+import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 @Inject
 class PostService(
@@ -127,5 +132,17 @@ class PostService(
         } else {
             event
         }
+    }
+
+    private suspend fun <T> Call<T>.executeWithResponse() = suspendCoroutine { cont ->
+        onExecute(object : Callback<T> {
+            override fun onResponse(call: T, response: HttpResponse) {
+                cont.resume(response to call)
+            }
+
+            override fun onError(exception: Throwable) {
+                cont.resumeWithException(exception)
+            }
+        })
     }
 }

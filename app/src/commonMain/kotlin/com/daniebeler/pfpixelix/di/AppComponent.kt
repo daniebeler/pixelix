@@ -13,10 +13,8 @@ import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
 import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
-import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
@@ -29,8 +27,9 @@ import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
 import com.daniebeler.pfpixelix.utils.dataStoreDir
 import com.daniebeler.pfpixelix.utils.imageCacheDir
-import com.daniebeler.pfpixelix.utils.pref
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.datastore.DataStoreSettings
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.ktor.client.HttpClient
@@ -62,10 +61,6 @@ abstract class AppComponent(
     abstract val systemFileShare: SystemFileShare
     abstract val authService: AuthService
     abstract val preferences: UserPreferences
-
-    @Provides
-    @AppSingleton
-    fun provideSettings(): Settings = context.pref
 
     @get:Provides
     @get:AppSingleton
@@ -144,6 +139,11 @@ abstract class AppComponent(
             )
         )
 
+    @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
+    @Provides
+    @AppSingleton
+    fun provideSettings(ds: DataStore<Preferences>) = DataStoreSettings(ds)
+
     @Provides
     @AppSingleton
     fun provideImageLoader(): ImageLoader =
@@ -165,8 +165,6 @@ abstract class AppComponent(
 
     @Provides
     fun provideSavedSearchesRepository(impl: SavedSearchesRepositoryImpl): SavedSearchesRepository = impl
-    @Provides
-    fun provideStorageRepository(impl: StorageRepositoryImpl): StorageRepository = impl
 
     companion object
 }

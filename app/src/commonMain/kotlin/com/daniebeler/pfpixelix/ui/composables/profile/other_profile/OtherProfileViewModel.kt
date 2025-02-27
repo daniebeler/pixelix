@@ -14,9 +14,8 @@ import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
@@ -35,9 +34,8 @@ class OtherProfileViewModel(
     private val postService: PostService,
     private val searchService: SearchService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val setViewUseCase: SetViewUseCase,
+    private val prefs: UserPreferences,
     private val collectionService: CollectionService,
-    private val getViewUseCase: GetViewUseCase
 ) : ViewModel() {
     var userId: String = ""
     var accountState by mutableStateOf(AccountState())
@@ -48,7 +46,7 @@ class OtherProfileViewModel(
     var collectionsState by mutableStateOf(CollectionsState())
 
     var domain by mutableStateOf("")
-    var view by mutableStateOf(ViewEnum.Timeline)
+    var view by mutableStateOf(ViewEnum.Grid)
 
     fun loadData(_userId: String, refreshing: Boolean) {
         userId = _userId
@@ -65,8 +63,8 @@ class OtherProfileViewModel(
         getCollections(userId, false)
 
         viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
             }
         }
     }
@@ -367,9 +365,7 @@ class OtherProfileViewModel(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        viewModelScope.launch {
-            setViewUseCase(newView)
-        }
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun postGetsDeleted(postId: String) {

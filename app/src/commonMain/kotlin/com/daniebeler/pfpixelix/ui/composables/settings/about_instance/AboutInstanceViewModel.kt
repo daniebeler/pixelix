@@ -7,17 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class AboutInstanceViewModel @Inject constructor(
     private val instanceService: InstanceService,
-    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
+    private val authService: AuthService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
 
@@ -27,13 +26,7 @@ class AboutInstanceViewModel @Inject constructor(
 
     init {
         getInstance()
-        viewModelScope.launch {
-            getInstanceDomain()
-        }
-    }
-
-    private suspend fun getInstanceDomain() {
-        ownInstanceDomain = getOwnInstanceDomainUseCase()
+        ownInstanceDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
     }
 
     private fun getInstance() {

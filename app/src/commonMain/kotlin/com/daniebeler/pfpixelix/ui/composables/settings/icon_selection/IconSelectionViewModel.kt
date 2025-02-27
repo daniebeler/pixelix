@@ -3,26 +3,26 @@ package com.daniebeler.pfpixelix.ui.composables.settings.icon_selection
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.utils.KmpContext
-import com.daniebeler.pfpixelix.utils.disableCustomIcon
-import com.daniebeler.pfpixelix.utils.enableCustomIcon
-import com.daniebeler.pfpixelix.utils.getAppIcons
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class IconSelectionViewModel : ViewModel() {
+class IconSelectionViewModel(
+    val platform: Platform
+) : ViewModel() {
+    private val iconManager = platform.getAppIconManager()
 
     val icons = mutableStateListOf<IconWithName>()
 
-    fun updateList(context: KmpContext) {
+    fun updateList() {
         icons.clear()
-        icons.addAll(context.getAppIcons())
+        icons.addAll(iconManager.getIcons())
     }
 
-    fun changeIcon(context: KmpContext, name: String) {
-        context.disableCustomIcon()
-        context.enableCustomIcon(icons.first { it.name == name })
-        updateList(context)
+    fun changeIcon(name: String) {
+        iconManager.disableCustomIcon()
+        iconManager.enableCustomIcon(icons.first { it.name == name })
+        updateList()
     }
 }
 

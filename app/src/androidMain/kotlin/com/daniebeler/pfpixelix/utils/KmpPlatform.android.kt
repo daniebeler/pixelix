@@ -4,23 +4,16 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import coil3.PlatformContext
-import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.AMOLED
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.DARK
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
-import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
@@ -39,14 +32,6 @@ actual typealias KmpContext = Context
 actual val KmpContext.dataStoreDir: Path
     get() = File(applicationContext.filesDir, "datastore").path.toPath()
 actual val KmpContext.imageCacheDir: Path get() = cacheDir.path.toPath().resolve("image_cache")
-
-actual val KmpContext.pref: Settings
-    get() = SharedPreferencesSettings(
-        applicationContext.getSharedPreferences(
-            applicationContext.packageName + "_preferences",
-            Context.MODE_PRIVATE
-        )
-    )
 
 actual val KmpContext.coilContext: PlatformContext get() = this
 
@@ -84,56 +69,6 @@ actual fun KmpContext.getCacheSizeInBytes(): Long {
 
 actual fun KmpContext.cleanCache() {
     cacheDir.deleteRecursively()
-}
-
-private val appIcons = listOf(
-    "com.daniebeler.pfpixelix.MainActivity" to R.mipmap.ic_launcher_02,
-    "com.daniebeler.pfpixelix.Icon03" to R.mipmap.ic_launcher_03,
-    "com.daniebeler.pfpixelix.Icon01" to R.mipmap.ic_launcher_01,
-    "com.daniebeler.pfpixelix.Icon05" to R.mipmap.ic_launcher_05,
-    "com.daniebeler.pfpixelix.Icon06" to R.mipmap.ic_launcher_06,
-    "com.daniebeler.pfpixelix.Icon07" to R.mipmap.ic_launcher_07,
-    "com.daniebeler.pfpixelix.Icon08" to R.mipmap.ic_launcher_08,
-    "com.daniebeler.pfpixelix.Icon09" to R.mipmap.ic_launcher_09,
-    "com.daniebeler.pfpixelix.Icon04" to R.mipmap.ic_launcher,
-)
-
-actual fun KmpContext.getAppIcons(): List<IconWithName> {
-    fun icon(name: String, id: Int): IconWithName {
-        val bm = ResourcesCompat.getDrawableForDensity(
-            resources, id, DisplayMetrics.DENSITY_XXXHIGH, theme
-        )!!.let { drawable ->
-            drawable.toBitmap(drawable.minimumWidth, drawable.minimumHeight).asImageBitmap()
-        }
-        val isEnabled = packageManager.getComponentEnabledSetting(
-            ComponentName(this, name)
-        ) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        return IconWithName(name, bm, isEnabled)
-    }
-
-    return appIcons.map { (name, id) -> icon(name, id) }
-}
-
-actual fun KmpContext.enableCustomIcon(iconWithName: IconWithName) {
-    try {
-        packageManager.setComponentEnabledSetting(
-            ComponentName(this, iconWithName.name),
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-    } catch (e: Error) {
-        Logger.e("enableCustomIcon", e)
-    }
-}
-
-actual fun KmpContext.disableCustomIcon() {
-    appIcons.forEach { (name, id) ->
-        packageManager.setComponentEnabledSetting(
-            ComponentName(this, name),
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-    }
 }
 
 actual fun KmpContext.pinWidget() {

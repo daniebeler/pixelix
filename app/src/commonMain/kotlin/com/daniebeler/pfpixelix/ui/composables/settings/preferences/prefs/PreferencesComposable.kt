@@ -101,7 +101,9 @@ fun PreferencesComposable(
 
             FocusModePref()
 
-            UseInAppBrowserPref()
+            if (PlatformFeatures.inAppBrowser) {
+                UseInAppBrowserPref()
+            }
 
             RepostSettingsPref { viewModel.openRepostSettings(context) }
 

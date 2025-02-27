@@ -10,9 +10,8 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
-import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,13 +21,12 @@ import me.tatarka.inject.annotations.Inject
 class HashtagTimelineViewModel @Inject constructor(
     private val searchService: SearchService,
     private val timelineService: TimelineService,
-    private val getViewUseCase: GetViewUseCase,
-    private val setViewUseCase: SetViewUseCase
+    private val prefs: UserPreferences
 ) : ViewModel() {
 
     var postsState by mutableStateOf(HashtagTimelineState())
     var hashtagState by mutableStateOf(HashtagState())
-    var view by mutableStateOf(ViewEnum.Loading)
+    var view by mutableStateOf(ViewEnum.Grid)
 
     var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
 
@@ -36,8 +34,8 @@ class HashtagTimelineViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
             }
         }
     }
@@ -51,9 +49,7 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        viewModelScope.launch {
-            setViewUseCase(newView)
-        }
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {

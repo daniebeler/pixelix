@@ -12,17 +12,13 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
-import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
-import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -34,21 +30,17 @@ import me.tatarka.inject.annotations.Inject
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val instanceService: InstanceService,
-    private val getViewUseCase: GetViewUseCase,
-    private val setViewUseCase: SetViewUseCase,
+    private val prefs: UserPreferences,
     private val collectionService: CollectionService,
     private val authService: AuthService,
-    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
+    private val platform: Platform
 ) : ViewModel() {
-
+    private val iconManager = platform.getAppIconManager()
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
-    var domainSoftwareState by mutableStateOf(DomainSoftwareState())
-    var view by mutableStateOf(ViewEnum.Loading)
+    var view by mutableStateOf(ViewEnum.Grid)
     private var collectionPage by mutableIntStateOf(1)
     var appIcon by mutableStateOf<ImageBitmap?>(null)
 
@@ -58,36 +50,20 @@ class OwnProfileViewModel @Inject constructor(
         loadData(false)
 
         viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
             }
         }
-
-        viewModelScope.launch {
-            getInstanceDomain()
-        }
-    }
-
-    private suspend fun getInstanceDomain() {
-        ownDomain = getOwnInstanceDomainUseCase()
+        ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
     }
 
     fun getAppIcon(context: KmpContext) {
-        appIcon = getActiveAppIconUseCase(context)
+        appIcon = iconManager.getCurrentIcon()
     }
 
     fun updateAccountSwitch() {
         loadData(false)
-
-        viewModelScope.launch {
-            getViewUseCase().collect { res ->
-                view = res
-            }
-        }
-
-        viewModelScope.launch {
-            getInstanceDomain()
-        }
+        ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
     }
 
     fun loadData(refreshing: Boolean) {
@@ -209,9 +185,7 @@ class OwnProfileViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        viewModelScope.launch {
-            setViewUseCase(newView)
-        }
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun postGetsDeleted(postId: String) {

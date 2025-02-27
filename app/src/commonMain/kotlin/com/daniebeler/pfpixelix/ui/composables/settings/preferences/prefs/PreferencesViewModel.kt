@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -17,16 +17,17 @@ import me.tatarka.inject.annotations.Inject
 
 class PreferencesViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
-    private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
+    private val authService: AuthService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getActiveAppIconUseCase: GetActiveAppIconUseCase
+    private val platform: Platform
 ) : ViewModel() {
+    private val iconManager = platform.getAppIconManager()
 
     var appIcon by mutableStateOf<ImageBitmap?>(null)
     var versionName by mutableStateOf("")
 
     fun getAppIcon(context: KmpContext) {
-        appIcon = getActiveAppIconUseCase(context)
+        appIcon = iconManager.getCurrentIcon()
     }
 
     fun getVersionName(context: KmpContext) {
@@ -40,17 +41,15 @@ class PreferencesViewModel @Inject constructor(
     }
 
     fun openMoreSettingsPage(context: KmpContext) {
-        viewModelScope.launch {
-            val domain = getOwnInstanceDomainUseCase()
-            val moreSettingUrl = "https://$domain/settings/home"
+        authService.getCurrentSession()?.let {
+            val moreSettingUrl = "https://${it.serverUrl}/settings/home"
             openExternalUrlUseCase(moreSettingUrl, context)
         }
     }
 
     fun openRepostSettings(context: KmpContext) {
-        viewModelScope.launch {
-            val domain = getOwnInstanceDomainUseCase()
-            val moreSettingUrl = "https://$domain/settings/timeline"
+        authService.getCurrentSession()?.let {
+            val moreSettingUrl = "https://${it.serverUrl}/settings/timeline"
             openExternalUrlUseCase(moreSettingUrl, context)
         }
     }

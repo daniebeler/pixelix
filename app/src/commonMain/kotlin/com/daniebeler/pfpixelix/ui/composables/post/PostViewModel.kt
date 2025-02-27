@@ -14,9 +14,7 @@ import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.usecase.DownloadImageUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.SetVolumeUseCase
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -36,8 +34,6 @@ class PostViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountService: AccountService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getVolumeUseCase: GetVolumeUseCase,
-    private val setVolumeUseCase: SetVolumeUseCase,
     private val downloadImageUseCase: DownloadImageUseCase
 ) : ViewModel() {
 
@@ -62,7 +58,7 @@ class PostViewModel @Inject constructor(
     var isAltTextButtonHidden by mutableStateOf(false)
     var isInFocusMode by mutableStateOf(false)
 
-    var volume by mutableStateOf(false)
+    var volume by mutableStateOf(prefs.enableVolume)
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
@@ -76,9 +72,7 @@ class PostViewModel @Inject constructor(
 
     fun toggleVolume(newVolume: Boolean) {
         volume = newVolume
-        viewModelScope.launch {
-            setVolumeUseCase(newVolume)
-        }
+        prefs.enableVolume = newVolume
     }
 
     fun updatePost(post: Post) {
@@ -88,7 +82,7 @@ class PostViewModel @Inject constructor(
 
     private fun getVolume() {
         viewModelScope.launch {
-            getVolumeUseCase().collect { res ->
+            prefs.enableVolumeFlow.collect { res ->
                 volume = res
             }
         }
@@ -145,7 +139,8 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        repliesState = repliesState.copy(replies = repliesState.replies + result.data!!)
+                        repliesState =
+                            repliesState.copy(replies = repliesState.replies + result.data!!)
                     }
 
                     is Resource.Error -> {

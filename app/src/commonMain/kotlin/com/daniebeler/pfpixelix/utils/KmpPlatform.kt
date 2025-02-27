@@ -20,7 +20,6 @@ val LocalKmpContext = staticCompositionLocalOf<KmpContext> { error("no KmpContex
 
 expect val KmpContext.dataStoreDir: Path
 expect val KmpContext.imageCacheDir: Path
-expect val KmpContext.pref: Settings
 expect val KmpContext.coilContext: PlatformContext
 expect val KmpContext.appVersionName: String
 
@@ -29,9 +28,6 @@ expect fun KmpContext.openUrlInBrowser(url: String)
 expect fun KmpContext.setDefaultNightMode(mode: Int)
 expect fun KmpContext.getCacheSizeInBytes(): Long
 expect fun KmpContext.cleanCache()
-expect fun KmpContext.getAppIcons(): List<IconWithName>
-expect fun KmpContext.enableCustomIcon(iconWithName: IconWithName)
-expect fun KmpContext.disableCustomIcon()
 expect fun KmpContext.pinWidget()
 
 expect fun isAbleToDownloadImage(): Boolean

@@ -65,6 +65,8 @@ kotlin {
 
             //shared preferences
             implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
+            implementation(libs.multiplatform.settings.datastore)
 
             //file picker
             implementation(libs.filekit.compose)
