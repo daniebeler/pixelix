@@ -8,18 +8,16 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.AMOLED
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.DARK
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ExpandOptionsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.OptionShapes
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
 import com.daniebeler.pfpixelix.ui.theme.LocalTheme
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.FOLLOW_SYSTEM
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
-import com.daniebeler.pfpixelix.utils.rememberPrefIntState
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.amoled
@@ -31,14 +29,10 @@ import pixelix.app.generated.resources.theme_system
 
 @Composable
 fun ThemePref() {
-    var themeModeValue by rememberPrefIntState(KEY_NIGHT_MODE, FOLLOW_SYSTEM)
     var appTheme by LocalTheme.current
 
     val onOptionClick = { mode: Int ->
-        if (themeModeValue != mode) {
-            themeModeValue = mode
-            appTheme = themeModeValue
-        }
+        appTheme = mode
     }
 
     ExpandOptionsPref(
@@ -52,7 +46,7 @@ fun ThemePref() {
                 contentDescription = stringResource(Res.string.theme_system)
             ),
             title = stringResource(Res.string.theme_system),
-            trailingContent = radioButtonBlock(themeModeValue == FOLLOW_SYSTEM),
+            trailingContent = radioButtonBlock(appTheme == FOLLOW_SYSTEM),
             value = FOLLOW_SYSTEM,
             onOptionClick = onOptionClick,
         )
@@ -63,7 +57,7 @@ fun ThemePref() {
                 contentDescription = stringResource(Res.string.theme_light)
             ),
             title = stringResource(Res.string.theme_light),
-            trailingContent = radioButtonBlock(themeModeValue == LIGHT),
+            trailingContent = radioButtonBlock(appTheme == LIGHT),
             value = LIGHT,
             onOptionClick = onOptionClick,
         )
@@ -74,7 +68,7 @@ fun ThemePref() {
                 contentDescription = stringResource(Res.string.theme_dark)
             ),
             title = stringResource(Res.string.theme_dark),
-            trailingContent = radioButtonBlock(themeModeValue == DARK),
+            trailingContent = radioButtonBlock(appTheme == DARK),
             value = DARK,
             onOptionClick = onOptionClick,
         )
@@ -85,7 +79,7 @@ fun ThemePref() {
                 contentDescription = stringResource(Res.string.amoled)
             ),
             title = stringResource(Res.string.amoled),
-            trailingContent = radioButtonBlock(themeModeValue == AMOLED),
+            trailingContent = radioButtonBlock(appTheme == AMOLED),
             value = AMOLED,
             onOptionClick = onOptionClick,
         )

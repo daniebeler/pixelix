@@ -3,17 +3,17 @@ package com.daniebeler.pfpixelix.domain.service.account
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
-import com.daniebeler.pfpixelix.data.remote.dto.DtoInterface
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import me.tatarka.inject.annotations.Inject
 
@@ -92,29 +92,5 @@ class AccountService(
         } else {
             api.getAccountsFollowing(accountId)
         }
-    }
-}
-
-private inline fun <reified T> loadResource(
-    crossinline call: suspend () -> DtoInterface<T>
-): Flow<Resource<T>> = flow {
-    emit(Resource.Loading())
-    try {
-        val data = call().toModel()
-        emit(Resource.Success(data))
-    } catch (e: Exception) {
-        emit(Resource.Error(e.message ?: "Unknown Error"))
-    }
-}
-
-private inline fun <reified T> loadListResources(
-    crossinline call: suspend () -> List<DtoInterface<T>>
-): Flow<Resource<List<T>>> = flow {
-    emit(Resource.Loading())
-    try {
-        val data = call().map { it.toModel() }
-        emit(Resource.Success(data))
-    } catch (e: Exception) {
-        emit(Resource.Error(e.message ?: "Unknown Error"))
     }
 }

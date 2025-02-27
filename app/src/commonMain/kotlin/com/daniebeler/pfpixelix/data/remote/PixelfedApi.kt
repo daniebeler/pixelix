@@ -7,9 +7,6 @@ import com.daniebeler.pfpixelix.data.remote.dto.ApplicationDto
 import com.daniebeler.pfpixelix.data.remote.dto.ChatDto
 import com.daniebeler.pfpixelix.data.remote.dto.CollectionDto
 import com.daniebeler.pfpixelix.data.remote.dto.ConversationDto
-import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
-import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
-import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.data.remote.dto.InstanceDto
 import com.daniebeler.pfpixelix.data.remote.dto.MediaAttachmentDto
 import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
@@ -22,7 +19,6 @@ import com.daniebeler.pfpixelix.data.remote.dto.RelationshipDto
 import com.daniebeler.pfpixelix.data.remote.dto.SearchDto
 import com.daniebeler.pfpixelix.data.remote.dto.SettingsDto
 import com.daniebeler.pfpixelix.data.remote.dto.TagDto
-import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.data.remote.dto.WellKnownDomainsDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.FediSoftwareDto
 import com.daniebeler.pfpixelix.data.remote.dto.nodeinfo.NodeInfoDto
@@ -48,10 +44,10 @@ interface PixelfedApi {
 
 
     @GET("api/v1.1/discover/posts/trending")
-    fun getTrendingPosts(@Query("range") range: String): Call<List<PostDto>>
+    suspend fun getTrendingPosts(@Query("range") range: String): List<PostDto>
 
     @GET("api/v1.1/discover/posts/hashtags?_pe=1")
-    fun getTrendingHashtags(): Call<List<TagDto>>
+    suspend fun getTrendingHashtags(): List<TagDto>
 
     @GET("api/v1.1/discover/accounts/popular")
     fun getTrendingAccounts(): Call<List<AccountDto>>
@@ -111,7 +107,7 @@ interface PixelfedApi {
     ): Call<List<PostDto>>
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
-    fun getAccountsWhoLikedPost(
+    suspend fun getAccountsWhoLikedPost(
         @Path("postId") postId: String
     ): List<AccountDto>
 
@@ -132,31 +128,31 @@ interface PixelfedApi {
 
 
     @GET("api/pixelfed/v1/accounts/{accountid}")
-    fun getAccount(
+    suspend fun getAccount(
         @Path("accountid") accountId: String
     ): AccountDto
 
     @GET("api/v1.1/accounts/username/{username}?_pe=1")
-    fun getAccountByUsername(
+    suspend fun getAccountByUsername(
         @Path("username") username: String
     ): AccountDto
 
     @POST("api/v1/accounts/update_credentials?_pe=1")
-    fun updateAccount(
+    suspend fun updateAccount(
         @Body body: MultiPartFormDataContent
     ): AccountDto
 
     @GET("api/v1/accounts/{accountid}/statuses?pe=1")
-    fun getPostsByAccountId(
+    suspend fun getPostsByAccountId(
         @Path("accountid") accountId: String, @Query("limit") limit: Int
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/accounts/{accountid}/statuses?pe=1")
-    fun getPostsByAccountId(
+    suspend fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Query("max_id") maxId: String,
         @Query("limit") limit: Int
-    ): Call<List<PostDto>>
+    ): List<PostDto>
 
     @GET("api/v1/accounts/relationships")
     fun getRelationships(
@@ -164,57 +160,57 @@ interface PixelfedApi {
     ): Call<List<RelationshipDto>>
 
     @GET("api/v1.1/accounts/mutuals/{id}")
-    fun getMutalFollowers(
+    suspend fun getMutalFollowers(
         @Path("id") userId: String
     ): List<AccountDto>
 
     @POST("api/v1/accounts/{id}/follow")
-    fun followAccount(
+    suspend fun followAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unfollow")
-    fun unfollowAccount(
+    suspend fun unfollowAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/mute")
-    fun muteAccount(
+    suspend fun muteAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unmute")
-    fun unmuteAccount(
+    suspend fun unmuteAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/block")
-    fun blockAccount(
+    suspend fun blockAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unblock")
-    fun unblockAccount(
+    suspend fun unblockAccount(
         @Path("id") userId: String
     ): RelationshipDto
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
+    suspend fun getAccountsFollowers(
         @Path("id") userId: String, @Query("max_id") maxId: String
     ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
+    suspend fun getAccountsFollowing(
         @Path("id") userId: String
     ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/following?limit=40")
-    fun getAccountsFollowing(
+    suspend fun getAccountsFollowing(
         @Path("id") userId: String, @Query("max_id") maxId: String
     ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
-    fun getAccountsFollowers(
+    suspend fun getAccountsFollowers(
         @Path("id") userId: String
     ): List<AccountDto>
 
@@ -226,35 +222,35 @@ interface PixelfedApi {
 
 
     @GET("api/v1/statuses/{postid}?_pe=1")
-    fun getPostById(
+    suspend fun getPostById(
         @Path("postid") postId: String
-    ): Call<PostDto>
+    ): PostDto
 
     @POST("api/v1/statuses/{id}/favourite")
-    fun likePost(@Path("id") userId: String): Call<PostDto>
+    suspend fun likePost(@Path("id") userId: String): PostDto
 
     @POST("api/v1/statuses/{id}/unfavourite")
-    fun unlikePost(
+    suspend fun unlikePost(
         @Path("id") userId: String
-    ): Call<PostDto>
+    ): PostDto
 
     @POST("api/v1/statuses/{id}/reblog")
-    fun reblogPost(@Path("id") userId: String): Call<PostDto>
+    suspend fun reblogPost(@Path("id") userId: String): PostDto
 
     @POST("api/v1/statuses/{id}/unreblog")
-    fun unreblogPost(
+    suspend fun unreblogPost(
         @Path("id") userId: String
-    ): Call<PostDto>
+    ): PostDto
 
     @POST("api/v1/statuses/{id}/bookmark")
-    fun bookmarkPost(
+    suspend fun bookmarkPost(
         @Path("id") userId: String
-    ): Call<PostDto>
+    ): PostDto
 
     @POST("api/v1/statuses/{id}/unbookmark")
-    fun unbookmarkPost(
+    suspend fun unbookmarkPost(
         @Path("id") userId: String
-    ): Call<PostDto>
+    ): PostDto
 
 
     // Collections
@@ -297,23 +293,23 @@ interface PixelfedApi {
 
 
     @POST("api/v1/tags/{id}/follow")
-    fun followHashtag(
+    suspend fun followHashtag(
         @Path("id") tagId: String
-    ): Call<TagDto>
+    ): TagDto
 
     @POST("api/v1/tags/{id}/unfollow")
-    fun unfollowHashtag(
+    suspend fun unfollowHashtag(
         @Path("id") tagId: String
-    ): Call<TagDto>
+    ): TagDto
 
     @GET("api/v1/followed_tags?_pe=1")
-    fun getFollowedHashtags(): Call<List<TagDto>>
+    suspend fun getFollowedHashtags(): List<TagDto>
 
     @GET("api/v1/tags/{tag}?_pe=1")
-    fun getHashtag(@Path("tag") tag: String): Call<TagDto>
+    suspend fun getHashtag(@Path("tag") tag: String): TagDto
 
     @GET("api/v1/tags/{tag}/related")
-    fun getRelatedHashtags(@Path("tag") tag: String): Call<List<RelatedHashtagDto>>
+    suspend fun getRelatedHashtags(@Path("tag") tag: String): List<RelatedHashtagDto>
 
 
     // Direct Messages
@@ -336,7 +332,7 @@ interface PixelfedApi {
     // Other
 
     @GET("api/v1/bookmarks?limit=12")
-    fun getBookmarkedPosts(): Call<List<PostDto>>
+    suspend fun getBookmarkedPosts(): List<PostDto>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")
     fun getReplies(
@@ -347,10 +343,10 @@ interface PixelfedApi {
     fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1/mutes")
-    fun getMutedAccounts(): List<AccountDto>
+    suspend fun getMutedAccounts(): List<AccountDto>
 
     @GET("api/v1/blocks")
-    fun getBlockedAccounts(): List<AccountDto>
+    suspend fun getBlockedAccounts(): List<AccountDto>
 
     @GET("api/v2/search?_pe=1&resolve")
     fun getSearch(
@@ -363,22 +359,22 @@ interface PixelfedApi {
     ): Call<List<PlaceDto>>
 
     @POST("api/v2/media")
-    fun uploadMedia(
+    suspend fun uploadMedia(
         @Body body: MultiPartFormDataContent
-    ): Call<MediaAttachmentDto>
+    ): MediaAttachmentDto
 
     @FormUrlEncoded
     @PUT("api/v1/media/{id}")
-    fun updateMedia(
+    suspend fun updateMedia(
         @Path("id") mediaAttachmentid: String,
         @Field("description") description: String,
-    ): Call<MediaAttachmentDto>
+    ): MediaAttachmentDto
 
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createPost(
         @Body createPostDto: String
-    ): Call<PostDto>
+    ): PostDto
 
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
@@ -390,15 +386,15 @@ interface PixelfedApi {
     @PUT("api/v1/statuses/{id}")
     suspend fun updatePost(
         @Path("id") postId: String, @Body updatePostDto: String
-    ): Call<Unit>
+    )
 
     @DELETE("api/v1/statuses/{id}")
-    fun deletePost(
+    suspend fun deletePost(
         @Path("id") postid: String
-    ): Call<PostDto>
+    ): PostDto
 
     @GET("api/pixelfed/v1/web/settings")
-    fun getSettings(): SettingsDto
+    suspend fun getSettings(): SettingsDto
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>

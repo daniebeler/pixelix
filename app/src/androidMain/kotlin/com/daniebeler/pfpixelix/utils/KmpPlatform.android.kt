@@ -17,10 +17,10 @@ import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import coil3.PlatformContext
 import com.daniebeler.pfpixelix.R
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.AMOLED
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.DARK
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.AMOLED
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings

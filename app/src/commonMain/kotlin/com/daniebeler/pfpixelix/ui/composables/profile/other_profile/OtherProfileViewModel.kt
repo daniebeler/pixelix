@@ -11,8 +11,8 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
@@ -32,7 +32,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class OtherProfileViewModel(
     private val accountService: AccountService,
-    private val getPostsOfAccountUseCase: GetPostsOfAccountUseCase,
+    private val postService: PostService,
     private val getRelationshipsUseCase: GetRelationshipsUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val setViewUseCase: SetViewUseCase,
@@ -205,7 +205,7 @@ class OtherProfileViewModel(
     }
 
     private fun getPostsFirstLoad(userId: String, refreshing: Boolean) {
-        getPostsOfAccountUseCase(userId).onEach { result ->
+        postService.getPostsOfAccount(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -225,7 +225,7 @@ class OtherProfileViewModel(
 
     fun getPostsPaginated(userId: String) {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getPostsOfAccountUseCase(userId, postsState.posts.last().id).onEach { result ->
+            postService.getPostsOfAccount(userId, postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT

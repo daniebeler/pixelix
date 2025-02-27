@@ -11,11 +11,11 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
@@ -33,7 +33,7 @@ import me.tatarka.inject.annotations.Inject
 
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
-    private val getOwnPostsUseCase: GetOwnPostsUseCase,
+    private val postService: PostService,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getDomainSoftwareUseCase: GetFediServerUseCase,
@@ -124,7 +124,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private fun getPostsFirstLoad(refreshing: Boolean) {
-        getOwnPostsUseCase().onEach { result ->
+        postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
@@ -144,7 +144,7 @@ class OwnProfileViewModel @Inject constructor(
 
     fun getPostsPaginated() {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            getOwnPostsUseCase(postsState.posts.last().id).onEach { result ->
+            postService.getOwnPosts(postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT

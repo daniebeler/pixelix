@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.AddPostOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfCollectionUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.RemovePostOfCollectionUseCase
@@ -25,7 +25,7 @@ class CollectionViewModel @Inject constructor(
     private val removePostOfCollectionUseCase: RemovePostOfCollectionUseCase,
     private val addPostOfCollectionUseCase: AddPostOfCollectionUseCase,
     private val updateCollectionUseCase: UpdateCollectionUseCase,
-    private val getOwnPostsUseCase: GetOwnPostsUseCase
+    private val postService: PostService
 ) : ViewModel() {
 
     var collectionState by mutableStateOf(CollectionState())
@@ -100,7 +100,7 @@ class CollectionViewModel @Inject constructor(
     }
 
     fun getPostsExceptCollection() {
-        getOwnPostsUseCase().onEach { result ->
+        postService.getOwnPosts().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     val posts = result.data!!.filter {!editState.editPosts.contains(it)}

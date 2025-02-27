@@ -9,13 +9,10 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
-import com.daniebeler.pfpixelix.domain.usecase.FollowHashtagUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetRelatedHashtagsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnfollowHashtagUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,11 +20,8 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineViewModel @Inject constructor(
-    private val getHashtagUseCase: GetHashtagUseCase,
-    private val followHashtagUseCase: FollowHashtagUseCase,
-    private val unfollowHashtagUseCase: UnfollowHashtagUseCase,
+    private val hashtagService: HashtagService,
     private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
-    private val getRelatedHashtagsUseCase: GetRelatedHashtagsUseCase,
     private val getViewUseCase: GetViewUseCase,
     private val setViewUseCase: SetViewUseCase
 ) : ViewModel() {
@@ -140,7 +134,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getRelatedHashtags(hashtag: String) {
-        getRelatedHashtagsUseCase(hashtag).onEach { result ->
+        hashtagService.getRelatedHashtags(hashtag).onEach { result ->
             if (result is Resource.Success) {
                 relatedHashtags = result.data ?: emptyList()
                 println("juhuu" + result.data)
@@ -156,7 +150,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getHashtagInfo(hashtag: String) {
-        getHashtagUseCase(hashtag).onEach { result ->
+        hashtagService.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -174,7 +168,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun followHashtag(hashtag: String) {
-        followHashtagUseCase(hashtag).onEach { result ->
+        hashtagService.followHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
@@ -198,7 +192,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun unfollowHashtag(hashtag: String) {
-        unfollowHashtagUseCase(hashtag).onEach { result ->
+        hashtagService.unfollowHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag

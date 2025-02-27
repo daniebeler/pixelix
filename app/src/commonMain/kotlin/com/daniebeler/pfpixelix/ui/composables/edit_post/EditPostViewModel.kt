@@ -13,9 +13,8 @@ import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
 import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Place
-import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdatePostUseCase
+import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -24,9 +23,8 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class EditPostViewModel @Inject constructor(
-    private val getPostUseCase: GetPostUseCase,
-    private val updatePostUseCase: UpdatePostUseCase,
-    private val updateMediaUseCase: UpdateMediaUseCase
+    private val postService: PostService,
+    private val postEditorService: PostEditorService
 ) : ViewModel() {
     data class MediaDescriptionItem(
         val imageId: String, var description: String, var changed: Boolean
@@ -47,7 +45,7 @@ class EditPostViewModel @Inject constructor(
     }
 
     private fun loadPost(postId: String) {
-        getPostUseCase(postId).onEach { result ->
+        postService.getPostById(postId).onEach { result ->
             editPostState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
@@ -105,7 +103,7 @@ class EditPostViewModel @Inject constructor(
                 updateMedia(mediaDescriptionItem)
             }
 
-            updatePostUseCase(
+            postEditorService.updatePost(
                 postId, updatePostDto
             ).onEach { result ->
                 editPostState = when (result) {
@@ -131,7 +129,7 @@ class EditPostViewModel @Inject constructor(
     }
 
     private fun updateMedia(mediaDescriptionItem: MediaDescriptionItem) {
-        updateMediaUseCase(
+        postEditorService.updateMedia(
             mediaDescriptionItem.imageId, mediaDescriptionItem.description
         ).onEach { result ->
             when (result) {

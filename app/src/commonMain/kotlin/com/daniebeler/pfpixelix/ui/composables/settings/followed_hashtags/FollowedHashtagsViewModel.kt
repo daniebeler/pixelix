@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Tag
-import com.daniebeler.pfpixelix.domain.usecase.GetFollowedHashtagsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class FollowedHashtagsViewModel @Inject constructor(
-    private val getFollowedHashtagsUseCase: GetFollowedHashtagsUseCase,
-    private val getHashtagUseCase: GetHashtagUseCase
+    private val hashtagService: HashtagService
 ) : ViewModel() {
 
     var followedHashtagsState by mutableStateOf(FollowedHashtagsState())
@@ -25,7 +23,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     fun getFollowedHashtags(refreshing: Boolean = false) {
-        getFollowedHashtagsUseCase().onEach { result ->
+        hashtagService.getFollowedHashtags().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data?.isNotEmpty() == false) {
@@ -55,7 +53,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     private fun getFollowedHashtagSingle(tag: Tag) {
-        getHashtagUseCase(tag.name).onEach { result ->
+        hashtagService.getHashtag(tag.name).onEach { result ->
             followedHashtagsState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {
