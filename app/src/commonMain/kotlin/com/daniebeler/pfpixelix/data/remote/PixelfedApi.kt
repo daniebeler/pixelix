@@ -113,7 +113,7 @@ interface PixelfedApi {
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
     fun getAccountsWhoLikedPost(
         @Path("postId") postId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
 
     // Notifications
@@ -134,17 +134,17 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/accounts/{accountid}")
     fun getAccount(
         @Path("accountid") accountId: String
-    ): Call<AccountDto>
+    ): AccountDto
 
     @GET("api/v1.1/accounts/username/{username}?_pe=1")
     fun getAccountByUsername(
         @Path("username") username: String
-    ): Call<AccountDto>
+    ): AccountDto
 
     @POST("api/v1/accounts/update_credentials?_pe=1")
     fun updateAccount(
         @Body body: MultiPartFormDataContent
-    ): Call<AccountDto>
+    ): AccountDto
 
     @GET("api/v1/accounts/{accountid}/statuses?pe=1")
     fun getPostsByAccountId(
@@ -166,57 +166,57 @@ interface PixelfedApi {
     @GET("api/v1.1/accounts/mutuals/{id}")
     fun getMutalFollowers(
         @Path("id") userId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
     @POST("api/v1/accounts/{id}/follow")
     fun followAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unfollow")
     fun unfollowAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/mute")
     fun muteAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unmute")
     fun unmuteAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/block")
     fun blockAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @POST("api/v1/accounts/{id}/unblock")
     fun unblockAccount(
         @Path("id") userId: String
-    ): Call<RelationshipDto>
+    ): RelationshipDto
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
     fun getAccountsFollowers(
         @Path("id") userId: String, @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
         @Path("id") userId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/following?limit=40")
     fun getAccountsFollowing(
         @Path("id") userId: String, @Query("max_id") maxId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
     @GET("api/v1/accounts/{id}/followers?limit=40")
     fun getAccountsFollowers(
         @Path("id") userId: String
-    ): Call<List<AccountDto>>
+    ): List<AccountDto>
 
     @GET("api/v1/accounts/verify_credentials")
     fun verifyToken(): Call<AccountDto>
@@ -347,10 +347,10 @@ interface PixelfedApi {
     fun getInstance(): Call<InstanceDto>
 
     @GET("api/v1/mutes")
-    fun getMutedAccounts(): Call<List<AccountDto>>
+    fun getMutedAccounts(): List<AccountDto>
 
     @GET("api/v1/blocks")
-    fun getBlockedAccounts(): Call<List<AccountDto>>
+    fun getBlockedAccounts(): List<AccountDto>
 
     @GET("api/v2/search?_pe=1&resolve")
     fun getSearch(
@@ -398,7 +398,7 @@ interface PixelfedApi {
     ): Call<PostDto>
 
     @GET("api/pixelfed/v1/web/settings")
-    fun getSettings(): Call<SettingsDto>
+    fun getSettings(): SettingsDto
 
     @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
     fun createApplication(): Call<ApplicationDto>

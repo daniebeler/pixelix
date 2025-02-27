@@ -10,10 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetOwnAccountUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnPostsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class OwnProfileViewModel @Inject constructor(
-    private val getOwnAccountUseCase: GetOwnAccountUseCase,
+    private val accountService: AccountService,
     private val getOwnPostsUseCase: GetOwnPostsUseCase,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
@@ -104,7 +104,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     private fun getAccount(refreshing: Boolean) {
-        getOwnAccountUseCase().onEach { result ->
+        accountService.getOwnAccount().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)

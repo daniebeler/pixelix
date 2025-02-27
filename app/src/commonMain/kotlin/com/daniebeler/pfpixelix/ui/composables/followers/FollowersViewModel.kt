@@ -6,9 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowersUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetAccountsFollowingUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import kotlinx.coroutines.flow.launchIn
@@ -16,9 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class FollowersViewModel @Inject constructor(
-    private val getAccountsFollowingUseCase: GetAccountsFollowingUseCase,
-    private val getAccountsFollowersUseCase: GetAccountsFollowersUseCase,
-    private val getAccountUseCase: GetAccountUseCase,
+    private val accountService: AccountService,
     private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase
 ) : ViewModel() {
 
@@ -30,7 +26,7 @@ class FollowersViewModel @Inject constructor(
     var loggedInAccountId: String = ""
 
     fun getAccount(userId: String) {
-        getAccountUseCase(userId).onEach { result ->
+        accountService.getAccount(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)
@@ -56,7 +52,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowersFirstLoad(refreshing: Boolean = false) {
-        getAccountsFollowersUseCase(accountId).onEach { result ->
+        accountService.getAccountsFollowers(accountId).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < 40
@@ -80,7 +76,7 @@ class FollowersViewModel @Inject constructor(
 
     fun getFollowersPaginated() {
         if (followersState.followers.isNotEmpty() && !followersState.isLoading && !followersState.endReached) {
-            getAccountsFollowersUseCase(
+            accountService.getAccountsFollowers(
                 accountId, followersState.followers.last().id
             ).onEach { result ->
                 followersState = when (result) {
@@ -109,7 +105,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowingFirstLoad(refreshing: Boolean = false) {
-        getAccountsFollowingUseCase(accountId).onEach { result ->
+        accountService.getAccountsFollowing(accountId).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data?.size ?: 0) < 40
@@ -133,7 +129,7 @@ class FollowersViewModel @Inject constructor(
 
     fun getFollowingPaginated() {
         if (followingState.following.isNotEmpty() && !followingState.isLoading && !followingState.endReached) {
-            getAccountsFollowingUseCase(
+            accountService.getAccountsFollowing(
                 accountId, followingState.following.last().id
             ).onEach { result ->
                 followingState = when (result) {

@@ -6,23 +6,21 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.FollowAccountUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnfollowAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class CustomAccountViewModel @Inject constructor(
-    private val followAccountUseCase: FollowAccountUseCase,
-    private val unfollowAccountUseCase: UnfollowAccountUseCase
+    private val accountService: AccountService
 ) : ViewModel() {
 
     var relationshipState by mutableStateOf(RelationshipState())
     var gotUpdatedRelationship by mutableStateOf(false)
 
     fun followAccount(userId: String) {
-        followAccountUseCase(userId).onEach { result ->
+        accountService.followAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true
@@ -45,7 +43,7 @@ class CustomAccountViewModel @Inject constructor(
     }
 
     fun unfollowAccount(userId: String) {
-        unfollowAccountUseCase(userId).onEach { result ->
+        accountService.unfollowAccount(userId).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true
