@@ -12,21 +12,11 @@ import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
-import com.daniebeler.pfpixelix.data.repository.CollectionRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.DirectMessagesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.WidgetRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
-import com.daniebeler.pfpixelix.domain.repository.CountryRepository
-import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
-import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
-import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
@@ -174,19 +164,9 @@ abstract class AppComponent(
             .build()
 
     @Provides
-    fun provideCollectionRepository(impl: CollectionRepositoryImpl): CollectionRepository = impl
-    @Provides
-    fun provideCountryRepository(impl: CountryRepositoryImpl): CountryRepository = impl
-    @Provides
-    fun provideDirectMessagesRepository(impl: DirectMessagesRepositoryImpl): DirectMessagesRepository = impl
-    @Provides
     fun provideSavedSearchesRepository(impl: SavedSearchesRepositoryImpl): SavedSearchesRepository = impl
     @Provides
     fun provideStorageRepository(impl: StorageRepositoryImpl): StorageRepository = impl
-    @Provides
-    fun provideTimelineRepository(impl: TimelineRepositoryImpl): TimelineRepository = impl
-    @Provides
-    fun provideWidgetRepository(impl: WidgetRepositoryImpl): WidgetRepository = impl
 
     companion object
 }

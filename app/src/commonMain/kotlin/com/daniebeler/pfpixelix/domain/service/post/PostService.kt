@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.service.post
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
+import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -21,6 +23,7 @@ class PostService(
     private val api: PixelfedApi,
     private val prefs: UserPreferences,
     private val authService: AuthService,
+    private val json: Json
 ) {
 
     fun getPostById(postId: String) = loadResource {
@@ -73,6 +76,15 @@ class PostService(
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
+    }
+
+    fun createReply(postId: String, content: String) = loadResource {
+        val dto = CreateReplyDto(status = content, in_reply_to_id = postId)
+        api.createReply(json.encodeToString(dto))
+    }
+
+    fun getReplies(postId: String) = loadResource {
+        api.getReplies(postId)
     }
 
     fun likePost(postId: String) = loadResource {

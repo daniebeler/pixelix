@@ -11,15 +11,15 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.usecase.GetActiveAppIconUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
-import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
@@ -36,11 +36,11 @@ class OwnProfileViewModel @Inject constructor(
     private val postService: PostService,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getDomainSoftwareUseCase: GetFediServerUseCase,
+    private val instanceService: InstanceService,
     private val getViewUseCase: GetViewUseCase,
     private val setViewUseCase: SetViewUseCase,
-    private val getCollectionsUseCase: GetCollectionsUseCase,
-    private val getCurrentLoginDataUseCase: GetCurrentLoginDataUseCase,
+    private val collectionService: CollectionService,
+    private val authService: AuthService,
     private val getActiveAppIconUseCase: GetActiveAppIconUseCase
 ) : ViewModel() {
 
@@ -95,7 +95,7 @@ class OwnProfileViewModel @Inject constructor(
         getPostsFirstLoad(refreshing)
 
         viewModelScope.launch {
-            val currentLoginData = getCurrentLoginDataUseCase()
+            val currentLoginData = authService.getCurrentSession()
             currentLoginData?.let {
                 collectionsState = collectionsState.copy(endReached = false)
                 getCollections(it.accountId, false)
@@ -175,7 +175,7 @@ class OwnProfileViewModel @Inject constructor(
         } else {
             collectionPage++
         }
-        getCollectionsUseCase(userId, collectionPage).onEach { result ->
+        collectionService.getCollections(userId, collectionPage).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {

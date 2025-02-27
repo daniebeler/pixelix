@@ -6,9 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediServerUseCase
-import com.daniebeler.pfpixelix.domain.usecase.nodeinfo.GetFediSoftwareUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.DomainSoftwareState
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
@@ -17,8 +16,7 @@ import me.tatarka.inject.annotations.Inject
 
 class ServerStatsViewModel @Inject constructor(
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val getFediServerUseCase: GetFediServerUseCase,
-    private val getFediSoftwareUseCase: GetFediSoftwareUseCase,
+    private val instanceService: InstanceService,
 ) : ViewModel() {
 
     var statsState by mutableStateOf(DomainSoftwareState())
@@ -28,7 +26,7 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediServer(domain: String) {
-        getFediServerUseCase(domain).onEach { result ->
+        instanceService.getServerFromFediDB(domain).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     statsState = DomainSoftwareState(
@@ -59,7 +57,7 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediSoftware(softwareSlug: String) {
-        getFediSoftwareUseCase(softwareSlug).onEach { result ->
+        instanceService.getSoftwareFromFediDB(softwareSlug).onEach { result ->
             statsState = when (result) {
                 is Resource.Success -> {
                     DomainSoftwareState(

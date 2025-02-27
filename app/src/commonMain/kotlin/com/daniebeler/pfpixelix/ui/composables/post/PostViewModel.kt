@@ -12,10 +12,8 @@ import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.usecase.DownloadImageUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetVolumeUseCase
@@ -32,13 +30,10 @@ import me.tatarka.inject.annotations.Inject
 
 
 class PostViewModel @Inject constructor(
-    context: KmpContext,
-    private val getRepliesUseCase: GetRepliesUseCase,
-    private val createReplyUseCase: CreateReplyUseCase,
     private val postService: PostService,
     private val prefs: UserPreferences,
     private val postEditorService: PostEditorService,
-    private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
+    private val authService: AuthService,
     private val accountService: AccountService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
@@ -71,8 +66,8 @@ class PostViewModel @Inject constructor(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            myAccountId = currentLoginDataUseCase()!!.accountId
-            myUsername = currentLoginDataUseCase()!!.username
+            myAccountId = authService.getCurrentSession()!!.accountId
+            myUsername = authService.getCurrentSession()!!.username
         }
 
         isAltTextButtonHidden = prefs.hideAltTextButton
@@ -127,7 +122,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadReplies(postId: String) {
-        getRepliesUseCase(postId).onEach { result ->
+        postService.getReplies(postId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
                     RepliesState(replies = result.data?.descendants ?: emptyList())
@@ -146,7 +141,7 @@ class PostViewModel @Inject constructor(
 
     fun createReply(postId: String, commentText: String) {
         if (commentText.isNotEmpty()) {
-            createReplyUseCase(postId, commentText).onEach { result ->
+            postService.createReply(postId, commentText).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)

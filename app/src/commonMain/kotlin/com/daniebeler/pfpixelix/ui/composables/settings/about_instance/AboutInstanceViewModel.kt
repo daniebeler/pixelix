@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.usecase.GetOwnInstanceDomainUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class AboutInstanceViewModel @Inject constructor(
-    private val getInstanceUseCase: GetInstanceUseCase,
+    private val instanceService: InstanceService,
     private val getOwnInstanceDomainUseCase: GetOwnInstanceDomainUseCase,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
@@ -37,7 +37,7 @@ class AboutInstanceViewModel @Inject constructor(
     }
 
     private fun getInstance() {
-        getInstanceUseCase().onEach { result ->
+        instanceService.getInstance().onEach { result ->
             instanceState = when (result) {
                 is Resource.Success -> {
                     InstanceState(instance = result.data)

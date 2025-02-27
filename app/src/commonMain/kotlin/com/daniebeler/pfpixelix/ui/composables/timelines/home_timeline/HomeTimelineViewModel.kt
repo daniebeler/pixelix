@@ -9,13 +9,13 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Settings
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.usecase.GetHomeTimelineUseCase
+import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class HomeTimelineViewModel @Inject constructor(
-    private val getHomeTimelineUseCase: GetHomeTimelineUseCase,
+    private val timelineService: TimelineService,
     private val accountService: AccountService
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class HomeTimelineViewModel @Inject constructor(
     }
 
     private fun getItemsFirstLoad(refreshing: Boolean, enableReblogs: Boolean) {
-        getHomeTimelineUseCase(
+        timelineService.getHomeTimeline(
             enableReblogs = enableReblogs
         ).onEach { result ->
             homeTimelineState = when (result) {
@@ -85,7 +85,7 @@ class HomeTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (homeTimelineState.homeTimeline.isNotEmpty() && !homeTimelineState.isLoading) {
-            getHomeTimelineUseCase(homeTimelineState.homeTimeline.last().id, accountSettings?.enableReblogs ?: false).onEach { result ->
+            timelineService.getHomeTimeline(homeTimelineState.homeTimeline.last().id, accountSettings?.enableReblogs ?: false).onEach { result ->
                 homeTimelineState = when (result) {
                     is Resource.Success -> {
                         HomeTimelineState(

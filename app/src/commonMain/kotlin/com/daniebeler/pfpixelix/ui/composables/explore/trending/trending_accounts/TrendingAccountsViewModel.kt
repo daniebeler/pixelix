@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetTrendingAccountsUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingAccountsViewModel @Inject constructor(
-    private val getRelationshipsUseCase: GetRelationshipsUseCase,
-    private val getTrendingAccountsUseCase: GetTrendingAccountsUseCase
+    private val searchService: SearchService
 ) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
     var accountRelationShipsState by mutableStateOf(AccountRelationshipsState())
@@ -26,7 +24,7 @@ class TrendingAccountsViewModel @Inject constructor(
 
     fun getTrendingAccountsState(refreshing: Boolean = false) {
         if (refreshing || trendingAccountsState.trendingAccounts.isEmpty()) {
-            getTrendingAccountsUseCase().onEach { result ->
+            searchService.getTrendingAccounts().onEach { result ->
                 trendingAccountsState = when (result) {
                     is Resource.Success -> {
                         result.data?.let { getRelationships(it) }
@@ -54,7 +52,7 @@ class TrendingAccountsViewModel @Inject constructor(
     private fun getRelationships(accounts: List<Account>) {
         val accountIds: List<String> = accounts.map { account: Account -> account.id }
 
-        getRelationshipsUseCase(accountIds).onEach { result ->
+        searchService.getRelationships(accountIds).onEach { result ->
             accountRelationShipsState = when (result) {
                 is Resource.Success -> {
                     AccountRelationshipsState(accountRelationships = result.data ?: emptyList())

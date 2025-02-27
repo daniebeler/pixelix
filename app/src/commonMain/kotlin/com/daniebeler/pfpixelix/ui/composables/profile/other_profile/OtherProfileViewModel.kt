@@ -11,9 +11,9 @@ import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.GetCollectionsUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetRelationshipsUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetViewUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetViewUseCase
@@ -33,10 +33,10 @@ import me.tatarka.inject.annotations.Inject
 class OtherProfileViewModel(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val getRelationshipsUseCase: GetRelationshipsUseCase,
+    private val searchService: SearchService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val setViewUseCase: SetViewUseCase,
-    private val getCollectionsUseCase: GetCollectionsUseCase,
+    private val collectionService: CollectionService,
     private val getViewUseCase: GetViewUseCase
 ) : ViewModel() {
     var userId: String = ""
@@ -77,7 +77,7 @@ class OtherProfileViewModel(
     }
 
     private fun getRelationship(userId: String) {
-        getRelationshipsUseCase(List(1) { userId }).onEach { result ->
+        searchService.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(
@@ -180,7 +180,7 @@ class OtherProfileViewModel(
         } else {
             collectionPage++
         }
-        getCollectionsUseCase(userId, collectionPage).onEach { result ->
+        collectionService.getCollections(userId, collectionPage).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {

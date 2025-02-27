@@ -12,8 +12,8 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -27,7 +27,7 @@ import me.tatarka.inject.annotations.Inject
 
 class NewPostViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
-    private val getInstanceUseCase: GetInstanceUseCase,
+    private val instanceService: InstanceService,
     private val platform: Platform
 ) : ViewModel() {
     data class ImageItem(
@@ -54,7 +54,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     private fun getInstance() {
-        getInstanceUseCase().onEach { result ->
+        instanceService.getInstance().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

@@ -6,9 +6,25 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class HashtagService(
+class SearchService(
     private val api: PixelfedApi
 ) {
+    fun getTrendingAccounts() = loadListResources {
+        api.getTrendingAccounts()
+    }
+
+    fun getRelationships(userIds: List<String>) = loadListResources {
+        api.getRelationships(userIds)
+    }
+
+    fun search(searchText: String, type: String? = null, limit: Int = 5) = loadResource {
+        api.getSearch(searchText, type, limit)
+    }
+
+    fun searchLocations(searchText: String) = loadListResources {
+        api.searchLocations(searchText)
+    }
+
     fun getTrendingHashtags() = loadListResources {
         api.getTrendingHashtags()
     }

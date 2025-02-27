@@ -11,20 +11,21 @@ import coil3.imageLoader
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.last
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsTask @Inject constructor(
     private val context: KmpContext,
     workerParams: WorkerParameters,
     private val authService: AuthService,
-    private val repository: WidgetRepository,
+    private val widgetService: WidgetService,
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
@@ -34,7 +35,7 @@ class NotificationsTask @Inject constructor(
                 updateNotificationsWidget(emptyList(), context, "you have to be logged in to an account")
                 return Result.failure()
             }
-            val res = repository.getNotifications()
+            val res = widgetService.getNotifications().last()
             if (res is Resource.Success && res.data != null) {
                 val notifications = res.data.take(10)
                 val notificationStoreItems = notifications.map { notification ->

@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.usecase.GetLocalTimelineUseCase
+import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class LocalTimelineViewModel @Inject constructor(
-    private val getLocalTimelineUseCase: GetLocalTimelineUseCase
+    private val timelineService: TimelineService
 ) : ViewModel() {
 
     var localTimelineState by mutableStateOf(LocalTimelineState())
@@ -23,7 +23,7 @@ class LocalTimelineViewModel @Inject constructor(
     }
 
     private fun getItemsFirstLoad(refreshing: Boolean) {
-        getLocalTimelineUseCase().onEach { result ->
+        timelineService.getLocalTimeline().onEach { result ->
             localTimelineState = when (result) {
                 is Resource.Success -> {
                     LocalTimelineState(
@@ -58,7 +58,7 @@ class LocalTimelineViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (localTimelineState.localTimeline.isNotEmpty() && !localTimelineState.isLoading) {
-            getLocalTimelineUseCase(localTimelineState.localTimeline.last().id).onEach { result ->
+            timelineService.getLocalTimeline(localTimelineState.localTimeline.last().id).onEach { result ->
                 localTimelineState = when (result) {
                     is Resource.Success -> {
                         LocalTimelineState(
