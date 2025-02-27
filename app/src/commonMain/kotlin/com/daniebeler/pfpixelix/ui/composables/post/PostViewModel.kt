@@ -9,24 +9,18 @@ import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.usecase.BookmarkPostUseCase
+import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
-import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.DownloadImageUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetCurrentLoginDataUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetVolumeUseCase
-import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
-import com.daniebeler.pfpixelix.domain.usecase.ReblogPostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.SetVolumeUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnbookmarkPostUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnreblogPostUseCase
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePrefUtil
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAltTextButtonPrefUtil
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import kotlinx.coroutines.CoroutineScope
@@ -41,13 +35,9 @@ class PostViewModel @Inject constructor(
     context: KmpContext,
     private val getRepliesUseCase: GetRepliesUseCase,
     private val createReplyUseCase: CreateReplyUseCase,
-    private val likePostUseCase: LikePostUseCase,
-    private val unlikePostUseCase: UnlikePostUseCase,
-    private val reblogPostUseCase: ReblogPostUseCase,
-    private val unreblogPostUseCase: UnreblogPostUseCase,
-    private val bookmarkPostUseCase: BookmarkPostUseCase,
-    private val unbookmarkPostUseCase: UnbookmarkPostUseCase,
-    private val deletePostUseCase: DeletePostUseCase,
+    private val postService: PostService,
+    private val prefs: UserPreferences,
+    private val postEditorService: PostEditorService,
     private val currentLoginDataUseCase: GetCurrentLoginDataUseCase,
     private val accountService: AccountService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
@@ -85,9 +75,8 @@ class PostViewModel @Inject constructor(
             myUsername = currentLoginDataUseCase()!!.username
         }
 
-        isAltTextButtonHidden = HideAltTextButtonPrefUtil.isEnable(context)
-
-        isInFocusMode = FocusModePrefUtil.isEnable(context)
+        isAltTextButtonHidden = prefs.hideAltTextButton
+        isInFocusMode = prefs.focusMode
     }
 
     fun toggleVolume(newVolume: Boolean) {
@@ -112,7 +101,7 @@ class PostViewModel @Inject constructor(
 
     fun deletePost(postId: String) {
         deleteDialog = null
-        deletePostUseCase(postId).onEach { result ->
+        postEditorService.deletePost(postId).onEach { result ->
             deleteState = when (result) {
                 is Resource.Success -> {
                     DeleteState(deleted = true)
@@ -178,7 +167,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun deleteReply(postId: String) {
-        deletePostUseCase(postId).onEach { result ->
+        postEditorService.deletePost(postId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     repliesState =
@@ -230,7 +219,7 @@ class PostViewModel @Inject constructor(
             )
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
-                likePostUseCase(postId).onEach { result ->
+                postService.likePost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(
@@ -268,7 +257,7 @@ class PostViewModel @Inject constructor(
         post?.let { updatePost(it) }
 
         CoroutineScope(Dispatchers.Default).launch {
-            unlikePostUseCase(postId).onEach { result ->
+            postService.unlikePost(postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         post = post?.copy(favourited = result.data?.favourited ?: false)
@@ -295,7 +284,7 @@ class PostViewModel @Inject constructor(
             post = post?.copy(reblogged = true)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
-                reblogPostUseCase(postId).onEach { result ->
+                postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(reblogged = result.data?.reblogged ?: false)
@@ -320,7 +309,7 @@ class PostViewModel @Inject constructor(
             post = post?.copy(reblogged = false)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
-                unreblogPostUseCase(postId).onEach { result ->
+                postService.unreblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(reblogged = result.data?.reblogged ?: false)
@@ -345,7 +334,7 @@ class PostViewModel @Inject constructor(
             post = post?.copy(bookmarked = true)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
-                bookmarkPostUseCase(postId).onEach { result ->
+                postService.bookmarkPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
@@ -370,7 +359,7 @@ class PostViewModel @Inject constructor(
             post = post?.copy(bookmarked = false)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
-                unbookmarkPostUseCase(postId).onEach { result ->
+                postService.unBookmarkPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(bookmarked = result.data?.bookmarked ?: false)

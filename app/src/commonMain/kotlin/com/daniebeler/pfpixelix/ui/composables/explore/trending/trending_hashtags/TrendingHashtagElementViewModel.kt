@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
 import com.daniebeler.pfpixelix.domain.usecase.GetHashtagTimelineUseCase
-import com.daniebeler.pfpixelix.domain.usecase.GetHashtagUseCase
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagElementViewModel @Inject constructor(
     private val getHashtagTimelineUseCase: GetHashtagTimelineUseCase,
-    private val getHashtagUseCase: GetHashtagUseCase
+    private val hashtagService: HashtagService
 ) : ViewModel() {
 
     var postsState by mutableStateOf(TrendingHashtagPostsState())
@@ -51,7 +51,7 @@ class TrendingHashtagElementViewModel @Inject constructor(
 
     fun getHashtagInfo(hashtag: String) {
         if (hashtagState.hashtag == null) {
-            getHashtagUseCase(hashtag).onEach { result ->
+            hashtagService.getHashtag(hashtag).onEach { result ->
                 hashtagState = when (result) {
                     is Resource.Success -> {
                         HashtagState(hashtag = result.data)

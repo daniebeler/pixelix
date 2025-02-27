@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetLikedPostsUseCase
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class LikedPostsViewModel @Inject constructor(
-    private val getLikedPostsUseCase: GetLikedPostsUseCase
+    private val postService: PostService
 ) : ViewModel() {
 
     var likedPostsState by mutableStateOf(LikedPostsState())
@@ -22,7 +22,7 @@ class LikedPostsViewModel @Inject constructor(
     }
 
     fun getItemsFirstLoad(refreshing: Boolean = false) {
-        getLikedPostsUseCase().onEach { result ->
+        postService.getLikedPosts().onEach { result ->
             likedPostsState = when (result) {
                 is Resource.Success -> {
                     LikedPostsState(
@@ -52,7 +52,7 @@ class LikedPostsViewModel @Inject constructor(
 
     fun getItemsPaginated() {
         if (likedPostsState.likedPosts.isNotEmpty() && !likedPostsState.isLoading && likedPostsState.nextMaxId.isNotEmpty()) {
-            getLikedPostsUseCase(likedPostsState.nextMaxId).onEach { result ->
+            postService.getLikedPosts(likedPostsState.nextMaxId).onEach { result ->
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(

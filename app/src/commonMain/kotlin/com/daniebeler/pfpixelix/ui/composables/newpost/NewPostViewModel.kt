@@ -11,11 +11,9 @@ import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.usecase.CreatePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetInstanceUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UpdateMediaUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UploadMediaUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.Navigate
@@ -28,9 +26,7 @@ import me.tatarka.inject.annotations.Inject
 
 
 class NewPostViewModel @Inject constructor(
-    private val uploadMediaUseCase: UploadMediaUseCase,
-    private val updateMediaUseCase: UpdateMediaUseCase,
-    private val createPostUseCase: CreatePostUseCase,
+    private val postEditorService: PostEditorService,
     private val getInstanceUseCase: GetInstanceUseCase,
     private val platform: Platform
 ) : ViewModel() {
@@ -173,9 +169,7 @@ class NewPostViewModel @Inject constructor(
     }
 
     private fun uploadImage(context: KmpContext, uri: KmpUri, text: String) {
-        uploadMediaUseCase(
-            uri, text, context
-        ).onEach { result ->
+        postEditorService.uploadMedia(uri, text).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
                     if (result.data?.type?.take(5) == "video") {
@@ -242,9 +236,7 @@ class NewPostViewModel @Inject constructor(
         if (image.id == null) {
             return
         }
-        updateMediaUseCase(
-            image.id!!, image.text
-        ).onEach { result ->
+        postEditorService.updateMedia(image.id!!, image.text).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
                     images.find { it.imageUri == image.imageUri }?.isLoading = false
@@ -289,7 +281,7 @@ class NewPostViewModel @Inject constructor(
         }
         val createPostDto =
             CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
-        createPostUseCase(createPostDto).onEach { result ->
+        postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetTrendingHashtagsUseCase
+import com.daniebeler.pfpixelix.domain.service.hashtag.HashtagService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagsViewModel @Inject constructor(
-    private val getTrendingHashtagsUseCase: GetTrendingHashtagsUseCase
+    private val hashtagService: HashtagService
 ) : ViewModel() {
 
     var trendingHashtagsState by mutableStateOf(TrendingHashtagsState())
@@ -22,7 +22,7 @@ class TrendingHashtagsViewModel @Inject constructor(
     }
 
     fun getTrendingHashtags(refreshing: Boolean = false) {
-        getTrendingHashtagsUseCase().onEach { result ->
+        hashtagService.getTrendingHashtags().onEach { result ->
             trendingHashtagsState = when (result) {
                 is Resource.Success -> {
                     TrendingHashtagsState(trendingHashtags = result.data ?: emptyList())

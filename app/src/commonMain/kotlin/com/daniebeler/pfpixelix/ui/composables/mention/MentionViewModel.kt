@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetPostUseCase
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostState
 import kotlinx.coroutines.flow.launchIn
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class MentionViewModel @Inject constructor(
-    private val getPostUseCase: GetPostUseCase,
+    private val postService: PostService,
     private val getRepliesUseCase: GetRepliesUseCase
 ) : ViewModel() {
 
@@ -27,7 +27,7 @@ class MentionViewModel @Inject constructor(
     }
 
     private fun getPost(postId: String, refreshing: Boolean) {
-        getPostUseCase(postId).onEach { result ->
+        postService.getPostById(postId).onEach { result ->
             postState = when (result) {
                 is Resource.Success -> {
                     SinglePostState(post = result.data)

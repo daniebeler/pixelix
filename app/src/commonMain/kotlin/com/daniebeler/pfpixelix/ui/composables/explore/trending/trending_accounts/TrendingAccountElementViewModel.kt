@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.usecase.GetPostsOfAccountUseCase
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
@@ -14,14 +14,14 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingAccountElementViewModel @Inject constructor(
-    private val getAccountPosts: GetPostsOfAccountUseCase,
+    private val postService: PostService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase
 ) : ViewModel() {
     var postsState by mutableStateOf(TrendingAccountPostsState())
 
     fun loadItems(accountId: String) {
         if (postsState.posts.isEmpty()) {
-            getAccountPosts(accountId, limit = 9).onEach { result ->
+            postService.getPostsOfAccount(accountId, limit = 9).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingAccountPostsState(

@@ -7,11 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.usecase.CreateReplyUseCase
-import com.daniebeler.pfpixelix.domain.usecase.DeletePostUseCase
 import com.daniebeler.pfpixelix.domain.usecase.GetRepliesUseCase
-import com.daniebeler.pfpixelix.domain.usecase.LikePostUseCase
-import com.daniebeler.pfpixelix.domain.usecase.UnlikePostUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
@@ -19,9 +18,8 @@ import me.tatarka.inject.annotations.Inject
 class ReplyElementViewModel @Inject constructor(
     private val getRepliesUseCase: GetRepliesUseCase,
     private val createReplyUseCase: CreateReplyUseCase,
-    private val deletePostUseCase: DeletePostUseCase,
-    private val likePostUseCase: LikePostUseCase,
-    private val unlikePostUseCase: UnlikePostUseCase
+    private val postEditorService: PostEditorService,
+    private val postService: PostService
     ): ViewModel()
 {
     var repliesState by mutableStateOf(RepliesState())
@@ -73,7 +71,7 @@ class ReplyElementViewModel @Inject constructor(
     }
 
     fun deleteReply(postId: String) {
-        deletePostUseCase(postId).onEach { result ->
+        postEditorService.deletePost(postId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     repliesState = repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
@@ -90,7 +88,7 @@ class ReplyElementViewModel @Inject constructor(
     }
 
     fun likeReply(postId: String) {
-        likePostUseCase(postId).onEach {result ->
+        postService.likePost(postId).onEach {result ->
             when (result) {
                 is Resource.Success -> {
                     likedReply = true
@@ -108,7 +106,7 @@ class ReplyElementViewModel @Inject constructor(
     }
 
     fun unlikeReply(postId: String) {
-        unlikePostUseCase(postId).onEach {result ->
+        postService.unlikePost(postId).onEach {result ->
             when (result) {
                 is Resource.Success -> {
                     likedReply = false

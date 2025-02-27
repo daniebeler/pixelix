@@ -15,9 +15,6 @@ import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
 import com.daniebeler.pfpixelix.data.repository.CollectionRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.CountryRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.DirectMessagesRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.HashtagRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.PostEditorRepositoryImpl
-import com.daniebeler.pfpixelix.data.repository.PostRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.StorageRepositoryImpl
 import com.daniebeler.pfpixelix.data.repository.TimelineRepositoryImpl
@@ -26,13 +23,11 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.CollectionRepository
 import com.daniebeler.pfpixelix.domain.repository.CountryRepository
 import com.daniebeler.pfpixelix.domain.repository.DirectMessagesRepository
-import com.daniebeler.pfpixelix.domain.repository.HashtagRepository
-import com.daniebeler.pfpixelix.domain.repository.PostEditorRepository
-import com.daniebeler.pfpixelix.domain.repository.PostRepository
 import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.repository.StorageRepository
 import com.daniebeler.pfpixelix.domain.repository.TimelineRepository
 import com.daniebeler.pfpixelix.domain.repository.WidgetRepository
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
@@ -44,6 +39,8 @@ import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
 import com.daniebeler.pfpixelix.utils.dataStoreDir
 import com.daniebeler.pfpixelix.utils.imageCacheDir
+import com.daniebeler.pfpixelix.utils.pref
+import com.russhwolf.settings.Settings
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.ktor.client.HttpClient
@@ -74,6 +71,11 @@ abstract class AppComponent(
     abstract val systemUrlHandler: SystemUrlHandler
     abstract val systemFileShare: SystemFileShare
     abstract val authService: AuthService
+    abstract val preferences: UserPreferences
+
+    @Provides
+    @AppSingleton
+    fun provideSettings(): Settings = context.pref
 
     @get:Provides
     @get:AppSingleton
@@ -177,12 +179,6 @@ abstract class AppComponent(
     fun provideCountryRepository(impl: CountryRepositoryImpl): CountryRepository = impl
     @Provides
     fun provideDirectMessagesRepository(impl: DirectMessagesRepositoryImpl): DirectMessagesRepository = impl
-    @Provides
-    fun provideHashtagRepository(impl: HashtagRepositoryImpl): HashtagRepository = impl
-    @Provides
-    fun providePostEditorRepository(impl: PostEditorRepositoryImpl): PostEditorRepository = impl
-    @Provides
-    fun providePostRepository(impl: PostRepositoryImpl): PostRepository = impl
     @Provides
     fun provideSavedSearchesRepository(impl: SavedSearchesRepositoryImpl): SavedSearchesRepository = impl
     @Provides

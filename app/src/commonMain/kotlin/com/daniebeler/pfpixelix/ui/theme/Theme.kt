@@ -13,13 +13,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import com.daniebeler.pfpixelix.di.LocalAppComponent
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.DARK
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.DARK
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.FOLLOW_SYSTEM
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.KEY_NIGHT_MODE
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil.LIGHT
-import com.daniebeler.pfpixelix.utils.pref
 import com.daniebeler.pfpixelix.utils.setDefaultNightMode
 
 
@@ -138,10 +137,12 @@ fun PixelixTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalKmpContext.current
-    val theme = mutableIntStateOf(context.pref.getInt(KEY_NIGHT_MODE, FOLLOW_SYSTEM))
+    val prefs = LocalAppComponent.current.preferences
+    val theme = remember { mutableIntStateOf(prefs.appThemeMode) }
 
     LaunchedEffect(theme.value) {
         context.setDefaultNightMode(theme.value)
+        prefs.appThemeMode = theme.value
     }
 
     CompositionLocalProvider(
