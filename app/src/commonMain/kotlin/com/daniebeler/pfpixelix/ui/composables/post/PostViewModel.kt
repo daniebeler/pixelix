@@ -59,13 +59,17 @@ class PostViewModel @Inject constructor(
     var volume by mutableStateOf(prefs.enableVolume)
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
-            myAccountId = authService.getCurrentSession()!!.accountId
-            myUsername = authService.getCurrentSession()!!.username
-        }
+        myAccountId = authService.getCurrentSession()!!.accountId
+        myUsername = authService.getCurrentSession()!!.username
 
-        isAltTextButtonHidden = prefs.hideAltTextButton
-        isInFocusMode = prefs.focusMode
+        viewModelScope.launch {
+            prefs.hideAltTextButtonFlow.collect {
+                isAltTextButtonHidden = it
+            }
+        }
+        viewModelScope.launch {
+            prefs.focusModeFlow.collect { isInFocusMode = it }
+        }
     }
 
     fun toggleVolume(newVolume: Boolean) {
