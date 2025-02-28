@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.session
 
-import com.daniebeler.pfpixelix.data.remote.dto.AccountDto
+import com.daniebeler.pfpixelix.domain.model.Account
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
@@ -30,7 +30,7 @@ interface AuthApi {
     @GET("api/v1/accounts/verify_credentials")
     suspend fun verify(
         @Header("Authorization") token: String
-    ): AccountDto
+    ): Account
 }
 
 @Serializable

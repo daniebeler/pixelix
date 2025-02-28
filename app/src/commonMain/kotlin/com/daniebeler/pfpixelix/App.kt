@@ -1,9 +1,7 @@
 package com.daniebeler.pfpixelix
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -11,10 +9,8 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -56,10 +52,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.SavedStateReader
 import androidx.savedstate.read
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.common.Destinations
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
@@ -90,6 +86,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesC
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
+import com.daniebeler.pfpixelix.utils.Destinations
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.Navigate
 import com.daniebeler.pfpixelix.utils.end
@@ -266,7 +263,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Profile.route) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("userid")) getString("userid") else null
+            if (hasValue("userid")) getString("userid") else null
         }
 
         uId?.let { id ->
@@ -277,7 +274,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.ProfileByUsername.route) { navBackStackEntry ->
         val username = navBackStackEntry.arguments?.read {
-            if (contains("username")) getString("username") else null
+            if (hasValue("username")) getString("username") else null
         }
 
         username?.let {
@@ -287,7 +284,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Hashtag.route) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("hashtag")) getString("hashtag") else null
+            if (hasValue("hashtag")) getString("hashtag") else null
         }
         uId?.let { id ->
             HashtagTimelineComposable(navController, id)
@@ -304,7 +301,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable("${Destinations.NewPost.route}?uris={uris}") { navBackStackEntry ->
         val urisJson = navBackStackEntry.arguments?.read {
-            if (contains("uris")) getString("uris") else null
+            if (hasValue("uris")) getString("uris") else null
         }
         val imageUris: List<KmpUri>? = urisJson?.let { json ->
             Json.decodeFromString<List<String>>(json).map { it.toKmpUri() }
@@ -314,7 +311,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.EditPost.route) { navBackStackEntry ->
         val postId = navBackStackEntry.arguments?.read {
-            if (contains("postId")) getString("postId") else null
+            if (hasValue("postId")) getString("postId") else null
         }
         postId?.let { id ->
             EditPostComposable(postId, navController)
@@ -355,10 +352,10 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Followers.route) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("userid")) getString("userid") else null
+            if (hasValue("userid")) getString("userid") else null
         }
         val page = navBackStackEntry.arguments?.read {
-            if (contains("page")) getString("page") else null
+            if (hasValue("page")) getString("page") else null
         }
         if (uId != null && page != null) {
             FollowersMainComposable(navController, accountId = uId, page = page)
@@ -374,7 +371,7 @@ private fun NavGraphBuilder.navigationGraph(
         })
     ) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("postid")) getString("postid") else null
+            if (hasValue("postid")) getString("postid") else null
         }
         val refresh = navBackStackEntry.arguments?.read { getBoolean("refresh") }!!
         val openReplies = navBackStackEntry.arguments?.read { getBoolean("openReplies") }!!
@@ -387,7 +384,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Collection.route) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("collectionid")) getString("collectionid") else null
+            if (hasValue("collectionid")) getString("collectionid") else null
         }
         uId?.let { id ->
             CollectionComposable(navController, collectionId = id)
@@ -396,7 +393,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Search.route) { navBackStackEntry ->
         val initialPage = navBackStackEntry.arguments?.read {
-            if (contains("initialPage")) getInt("initialPage") else 0
+            if (hasValue("initialPage")) getInt("initialPage") else 0
         }
         initialPage?.let {
             ExploreComposable(navController, initialPage)
@@ -409,7 +406,7 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Chat.route) { navBackStackEntry ->
         val uId = navBackStackEntry.arguments?.read {
-            if (contains("userid")) getString("userid") else null
+            if (hasValue("userid")) getString("userid") else null
         }
         uId?.let { id ->
             ChatComposable(navController = navController, accountId = id)
@@ -418,13 +415,15 @@ private fun NavGraphBuilder.navigationGraph(
 
     composable(Destinations.Mention.route) { navBackStackEntry ->
         val mentionId = navBackStackEntry.arguments?.read {
-            if (contains("mentionid")) getString("mentionid") else null
+            if (hasValue("mentionid")) getString("mentionid") else null
         }
         mentionId?.let { id ->
             MentionComposable(navController = navController, mentionId = id)
         }
     }
 }
+
+private fun SavedStateReader.hasValue(key: String) = contains(key) && !isNull(key)
 
 @Composable
 private fun BottomBar(

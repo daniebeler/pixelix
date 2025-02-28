@@ -33,7 +33,6 @@ fun TrendingHashtagsComposable(
         items(viewModel.trendingHashtagsState.trendingHashtags, key = {
             it.hashtag ?: ""
         }) {
-            it.name = it.hashtag ?: ""
             TrendingHashtagElement(hashtag = it, navController = navController)
         }
     })

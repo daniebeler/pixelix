@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.common.Destinations
+import com.daniebeler.pfpixelix.utils.Destinations
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.credentialsToAccount
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount

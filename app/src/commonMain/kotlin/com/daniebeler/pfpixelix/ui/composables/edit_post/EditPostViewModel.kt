@@ -8,11 +8,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.PlaceDto
-import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import kotlinx.coroutines.CoroutineScope
@@ -80,7 +79,7 @@ class EditPostViewModel @Inject constructor(
     fun updatePost(postId: String, navController: NavController) {
         CoroutineScope(Dispatchers.Default).launch {
             val placeDto = if (location != null) {
-                PlaceDto(
+                Place(
                     id = location!!.id,
                     name = location!!.name!!,
                     slug = location!!.slug,
@@ -91,12 +90,12 @@ class EditPostViewModel @Inject constructor(
                 null
             }
 
-            val updatePostDto = UpdatePostDto(
-                _status = caption.text,
-                _sensitive = sensitive,
-                _spoilerText = sensitiveText,
-                _media_ids = mediaAttachmentsEdit.map { it.id },
-                _location = placeDto
+            val updatePostDto = UpdatePost(
+                status = caption.text,
+                sensitive = sensitive,
+                spoilerText = sensitiveText,
+                mediaIds = mediaAttachmentsEdit.map { it.id },
+                location = placeDto
             )
 
             mediaDescriptionItems.onEach { mediaDescriptionItem ->

@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.CreateMessageDto
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Message
+import com.daniebeler.pfpixelix.domain.model.NewMessage
 import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -84,11 +84,11 @@ class ChatViewModel @Inject constructor(
     }
 
     fun sendMessage(accountId: String) {
-        val createMessageDto = CreateMessageDto(
-            to_id = accountId, message = newMessage, type = "text"
+        val newMsg = NewMessage(
+            toId = accountId, message = newMessage, type = "text"
         )
         newMessage = ""
-        directMessagesService.sendMessage(createMessageDto).onEach { result ->
+        directMessagesService.sendMessage(newMsg).onEach { result ->
             newMessageState = when (result) {
                 is Resource.Success -> {
                     if (result.data != null) {

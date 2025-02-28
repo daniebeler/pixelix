@@ -1,11 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.editor
 
-import com.daniebeler.pfpixelix.data.remote.PixelfedApi
-import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
-import com.daniebeler.pfpixelix.data.remote.dto.UpdatePostDto
+import com.daniebeler.pfpixelix.domain.model.NewPost
+import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import com.daniebeler.pfpixelix.domain.service.utils.loadUnit
 import com.daniebeler.pfpixelix.utils.KmpUri
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -48,11 +47,11 @@ class PostEditorService(
         api.updateMedia(id, description)
     }
 
-    fun createPost(createPostDto: CreatePostDto) = loadResource {
+    fun createPost(createPostDto: NewPost) = loadResource {
         api.createPost(json.encodeToString(createPostDto))
     }
 
-    fun updatePost(postId: String, updatePostDto: UpdatePostDto) = loadUnit {
+    fun updatePost(postId: String, updatePostDto: UpdatePost) = loadResource {
         api.updatePost(postId, json.encodeToString(updatePostDto))
     }
 

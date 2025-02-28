@@ -1,9 +1,8 @@
 package com.daniebeler.pfpixelix.domain.service.collection
 
-import com.daniebeler.pfpixelix.data.remote.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import com.daniebeler.pfpixelix.domain.service.utils.loadType
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -23,11 +22,11 @@ class CollectionService(
         api.getPostsOfCollection(collectionId)
     }
 
-    fun removePostOfCollection(collectionId: String, postId: String) = loadType {
+    fun removePostOfCollection(collectionId: String, postId: String) = loadResource {
         api.removePostOfCollection(collectionId, postId)
     }
 
-    fun addPostOfCollection(collectionId: String, postId: String) = loadType {
+    fun addPostOfCollection(collectionId: String, postId: String) = loadResource {
         api.addPostOfCollection(collectionId, postId)
     }
 

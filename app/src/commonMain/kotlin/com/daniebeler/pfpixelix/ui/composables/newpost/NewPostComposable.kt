@@ -69,9 +69,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_FOLLOWERS_ONLY
-import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
-import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_UNLISTED
+import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_FOLLOWERS_ONLY
+import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_PUBLIC
+import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable

@@ -1,7 +1,11 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class License(
-    val id: Int,
-    val title: String,
-    val url: String
+    @SerialName("id") val id: Int,
+    @SerialName("title") val title: String,
+    @SerialName("url") val url: String
 )

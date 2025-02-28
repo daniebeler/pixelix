@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.common.Constants
-import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.utils.Constants
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
@@ -169,8 +169,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        newHashtag.following = true
-                        HashtagState(hashtag = newHashtag)
+                        HashtagState(hashtag = newHashtag.copy(following = true))
                     } else {
                         HashtagState(hashtag = result.data)
                     }
@@ -193,8 +192,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        newHashtag.following = false
-                        HashtagState(hashtag = newHashtag)
+                        HashtagState(hashtag = newHashtag.copy(following = false))
                     } else {
                         HashtagState(hashtag = result.data)
                     }

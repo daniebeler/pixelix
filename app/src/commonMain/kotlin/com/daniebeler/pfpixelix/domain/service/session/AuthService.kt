@@ -73,8 +73,8 @@ class AuthService(
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
-            displayName = account.displayName ?: account.username,
-            avatar = account.avatar.orEmpty(),
+            displayName = account.displayname ?: account.username,
+            avatar = account.avatar,
             serverUrl = serverUrl.toString(),
             token = token.accessToken
         )

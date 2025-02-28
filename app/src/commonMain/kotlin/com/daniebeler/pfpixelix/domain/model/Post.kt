@@ -1,10 +1,10 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import androidx.compose.runtime.Immutable
+import com.daniebeler.pfpixelix.domain.repository.serializers.PostSerializer
+import kotlinx.serialization.Serializable
 
-@Immutable
-data class
-Post(
+@Serializable(with = PostSerializer::class)
+data class Post(
     val id: String,
     val mediaAttachments: List<MediaAttachment>,
     val account: Account,
