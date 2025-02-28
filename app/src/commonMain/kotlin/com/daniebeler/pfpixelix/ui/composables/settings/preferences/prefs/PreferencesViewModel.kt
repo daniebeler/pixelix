@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.usecase.LogoutUseCase
 import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.appVersionName
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class PreferencesViewModel @Inject constructor(
-    private val logoutUseCase: LogoutUseCase,
     private val authService: AuthService,
     private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val platform: Platform
@@ -36,7 +34,7 @@ class PreferencesViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            logoutUseCase()
+            authService.deleteSession()
         }
     }
 
