@@ -39,10 +39,7 @@ import io.ktor.client.request.forms.MultiPartFormDataContent
 
 interface PixelfedApi {
 
-
     // Discover
-
-
     @GET("api/v1.1/discover/posts/trending")
     suspend fun getTrendingPosts(@Query("range") range: String): List<PostDto>
 
@@ -54,79 +51,55 @@ interface PixelfedApi {
 
 
     // Timelines
-
-
     @GET("api/v1/timelines/tag/{tag}?_pe=1")
     suspend fun getHashtagTimeline(
-        @Path("tag") tag: String, @Query("limit") limit: Int
+        @Path("tag") tag: String,
+        @Query("max_id") maxPostId: String? = null,
+        @Query("limit") limit: Int
     ): List<PostDto>
 
-    @GET("api/v1/timelines/tag/{tag}?_pe=1")
-    suspend fun getHashtagTimeline(
-        @Path("tag") tag: String, @Query("max_id") maxPostId: String, @Query("limit") limit: Int
-    ): List<PostDto>
-
-    @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
-    suspend fun getLocalTimeline(): List<PostDto>
-
-    @GET("api/v1/timelines/public?local=true&_pe=1&limit=" + Constants.LOCAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?local=true&_pe=1")
     suspend fun getLocalTimeline(
-        @Query("max_id") maxPostId: String
+        @Query("max_id") maxPostId: String? = null,
+        @Query("limit") limit: Int = Constants.LOCAL_TIMELINE_POSTS_LIMIT
     ): List<PostDto>
 
-    @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
-    suspend fun getGlobalTimeline(): List<PostDto>
-
-    @GET("api/v1/timelines/public?remote=true&_pe=1&limit=" + Constants.GLOBAL_TIMELINE_POSTS_LIMIT)
+    @GET("api/v1/timelines/public?remote=true&_pe=1")
     suspend fun getGlobalTimeline(
-        @Query("max_id") maxPostId: String
-    ): List<PostDto>
-
-    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    suspend fun getHomeTimeline(@Query("include_reblogs") includeReblogs: Boolean): List<PostDto>
-
-    @GET("api/v1/timelines/home?_pe=1&limit=" + Constants.HOME_TIMELINE_POSTS_LIMIT)
-    suspend fun getHomeTimeline(
-        @Query("max_id") maxPostId: String,
-        @Query("include_reblogs") includeReblogs: Boolean
+        @Query("max_id") maxPostId: String? = null,
+        @Query("limit") limit: Int = Constants.GLOBAL_TIMELINE_POSTS_LIMIT
     ): List<PostDto>
 
     @GET("api/v1/timelines/home?_pe=1")
-    suspend fun getHomeTimelineWithLimit(
-        @Query("limit") limit: Int
+    suspend fun getHomeTimeline(
+        @Query("max_id") maxPostId: String? = null,
+        @Query("include_reblogs") includeReblogs: Boolean = false,
+        @Query("limit") limit: Int = Constants.HOME_TIMELINE_POSTS_LIMIT
     ): List<PostDto>
+
     // Favourites
-
-
-    @GET("api/v1/favourites/?limit=" + Constants.LIKED_POSTS_LIMIT)
-    fun getLikedPosts(): Call<List<PostDto>>
-
     @GET("api/v1/favourites/?limit=" + Constants.LIKED_POSTS_LIMIT)
     fun getLikedPosts(
-        @Query("max_id") maxId: String
+        @Query("max_id") maxId: String? = null,
+        @Query("limit") limit: Int = Constants.LIKED_POSTS_LIMIT
     ): Call<List<PostDto>>
 
-    @GET("api/v1/statuses/{postId}/favourited_by?_pe=1&limit=" + Constants.LIKED_BY_LIMIT)
+    @GET("api/v1/statuses/{postId}/favourited_by?_pe=1")
     suspend fun getAccountsWhoLikedPost(
-        @Path("postId") postId: String
+        @Path("postId") postId: String,
+        @Query("limit") limit: Int = Constants.LIKED_BY_LIMIT
     ): List<AccountDto>
 
 
     // Notifications
-
-
-    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
-    suspend fun getNotifications(): List<NotificationDto>
-
-    @GET("api/v1/notifications?limit=" + Constants.NOTIFICATIONS_LIMIT)
+    @GET("api/v1/notifications")
     suspend fun getNotifications(
-        @Query("max_id") maxNotificationId: String
+        @Query("max_id") maxNotificationId: String? = null,
+        @Query("limit") limit: Int = Constants.NOTIFICATIONS_LIMIT
     ): List<NotificationDto>
 
 
     // Accounts
-
-
     @GET("api/pixelfed/v1/accounts/{accountid}")
     suspend fun getAccount(
         @Path("accountid") accountId: String
@@ -144,13 +117,8 @@ interface PixelfedApi {
 
     @GET("api/v1/accounts/{accountid}/statuses?pe=1")
     suspend fun getPostsByAccountId(
-        @Path("accountid") accountId: String, @Query("limit") limit: Int
-    ): List<PostDto>
-
-    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
-    suspend fun getPostsByAccountId(
         @Path("accountid") accountId: String,
-        @Query("max_id") maxId: String,
+        @Query("max_id") maxId: String? = null,
         @Query("limit") limit: Int
     ): List<PostDto>
 
@@ -194,33 +162,21 @@ interface PixelfedApi {
         @Path("id") userId: String
     ): RelationshipDto
 
-    @GET("api/v1/accounts/{id}/followers?limit=40")
+    @GET("api/v1/accounts/{id}/followers")
     suspend fun getAccountsFollowers(
-        @Path("id") userId: String, @Query("max_id") maxId: String
+        @Path("id") userId: String,
+        @Query("max_id") maxId: String? = null,
+        @Query("limit") limit: Int = Constants.FOLLOWERS_LIMIT
     ): List<AccountDto>
 
-    @GET("api/v1/accounts/{id}/following?limit=40")
+    @GET("api/v1/accounts/{id}/following")
     suspend fun getAccountsFollowing(
-        @Path("id") userId: String
+        @Path("id") userId: String,
+        @Query("max_id") maxId: String? = null,
+        @Query("limit") limit: Int = Constants.FOLLOWERS_LIMIT
     ): List<AccountDto>
-
-    @GET("api/v1/accounts/{id}/following?limit=40")
-    suspend fun getAccountsFollowing(
-        @Path("id") userId: String, @Query("max_id") maxId: String
-    ): List<AccountDto>
-
-    @GET("api/v1/accounts/{id}/followers?limit=40")
-    suspend fun getAccountsFollowers(
-        @Path("id") userId: String
-    ): List<AccountDto>
-
-    @GET("api/v1/accounts/verify_credentials")
-    fun verifyToken(): Call<AccountDto>
-
 
     // Statuses
-
-
     @GET("api/v1/statuses/{postid}?_pe=1")
     suspend fun getPostById(
         @Path("postid") postId: String
@@ -254,7 +210,6 @@ interface PixelfedApi {
 
 
     // Collections
-
     @GET("api/v1.1/collections/accounts/{userId}")
     suspend fun getCollectionsByUserId(
         @Path("userId") userId: String, @Query("page") page: Int
@@ -290,8 +245,6 @@ interface PixelfedApi {
     ): CollectionDto
 
     // Tags
-
-
     @POST("api/v1/tags/{id}/follow")
     suspend fun followHashtag(
         @Path("id") tagId: String
@@ -313,15 +266,14 @@ interface PixelfedApi {
 
 
     // Direct Messages
-
     @GET("api/v1/conversations")
     suspend fun getConversations(): List<ConversationDto>
 
     @GET("api/v1.1/direct/thread")
-    suspend fun getChat(@Query("pid") accountId: String): ChatDto
-
-    @GET("api/v1.1/direct/thread")
-    suspend fun getChat(@Query("pid") accountId: String, @Query("max_id") maxId: String): ChatDto
+    suspend fun getChat(
+        @Query("pid") accountId: String,
+        @Query("max_id") maxId: String? = null
+    ): ChatDto
 
     @Headers("Content-Type: application/json")
     @POST("api/v1.1/direct/thread/send")
@@ -331,8 +283,10 @@ interface PixelfedApi {
     suspend fun deleteMessage(@Query("id") id: String): List<Int>
     // Other
 
-    @GET("api/v1/bookmarks?limit=12")
-    suspend fun getBookmarkedPosts(): List<PostDto>
+    @GET("api/v1/bookmarks")
+    suspend fun getBookmarkedPosts(
+        @Query("limit") limit: Int = Constants.BOOKMARKED_LIMIT
+    ): List<PostDto>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")
     suspend fun getReplies(
@@ -395,22 +349,6 @@ interface PixelfedApi {
 
     @GET("api/pixelfed/v1/web/settings")
     suspend fun getSettings(): SettingsDto
-
-    @POST("api/v1/apps?client_name=pixelix&redirect_uris=pixelix-android-auth://callback")
-    fun createApplication(): Call<ApplicationDto>
-
-    @FormUrlEncoded
-    @POST("oauth/token")
-    fun obtainToken(
-        @Field("client_id") clientId: String,
-        @Field("client_secret") clientSecret: String,
-        @Field("code") code: String,
-        @Field("redirect_uri") redirectUri: String? = "pixelix-android-auth://callback",
-        @Field("grant_type") grantType: String? = "authorization_code"
-    ): Call<AccessTokenDto>
-
-    @GET
-    fun getWellKnownDomains(@Url domain: String): Call<WellKnownDomainsDto>
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): NodeInfoDto

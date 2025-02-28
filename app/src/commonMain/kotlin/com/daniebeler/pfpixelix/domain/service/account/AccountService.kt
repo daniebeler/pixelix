@@ -78,19 +78,11 @@ class AccountService(
     fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
     fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
 
-    fun getAccountsFollowers(accountId: String, maxId: String = "") = loadListResources {
-        if (maxId.isNotEmpty()) {
-            api.getAccountsFollowers(accountId, maxId)
-        } else {
-            api.getAccountsFollowers(accountId)
-        }
+    fun getAccountsFollowers(accountId: String, maxId: String? = null) = loadListResources {
+        api.getAccountsFollowers(accountId, maxId)
     }
 
-    fun getAccountsFollowing(accountId: String, maxId: String = "") = loadListResources {
-        if (maxId.isNotEmpty()) {
-            api.getAccountsFollowing(accountId, maxId)
-        } else {
-            api.getAccountsFollowing(accountId)
-        }
+    fun getAccountsFollowing(accountId: String, maxId: String? = null) = loadListResources {
+        api.getAccountsFollowing(accountId, maxId)
     }
 }

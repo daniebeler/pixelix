@@ -17,12 +17,8 @@ class DirectMessagesService(
         api.getConversations()
     }
 
-    fun getChat(accountId: String, maxId: String = "") = loadResource {
-        if (maxId.isEmpty()) {
-            api.getChat(accountId)
-        } else {
-            api.getChat(accountId, maxId)
-        }
+    fun getChat(accountId: String, maxId: String? = null) = loadResource {
+        api.getChat(accountId, maxId)
     }
 
     fun sendMessage(createMessageDto: CreateMessageDto) = loadResource {
