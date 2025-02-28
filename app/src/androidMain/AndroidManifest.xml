@@ -39,8 +39,6 @@
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -77,6 +75,19 @@
                     android:scheme="pixelix-android-auth" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:name=".AppActivity"
+            android:exported="true"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_02"
+            android:roundIcon="@mipmap/ic_launcher_02_round"
+            android:targetActivity=".AppActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity-alias
             android:name=".Icon04"

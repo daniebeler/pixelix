@@ -285,7 +285,7 @@ private class AndroidAppIconManager(
     private val context: Context
 ) : AppIconManager {
     private val appIcons = listOf(
-        "com.daniebeler.pfpixelix.MainActivity" to R.mipmap.ic_launcher_02,
+        "com.daniebeler.pfpixelix.AppActivity" to R.mipmap.ic_launcher_02,
         "com.daniebeler.pfpixelix.Icon03" to R.mipmap.ic_launcher_03,
         "com.daniebeler.pfpixelix.Icon01" to R.mipmap.ic_launcher_01,
         "com.daniebeler.pfpixelix.Icon05" to R.mipmap.ic_launcher_05,

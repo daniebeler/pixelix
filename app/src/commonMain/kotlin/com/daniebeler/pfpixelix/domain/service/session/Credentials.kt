@@ -1,10 +1,8 @@
 package com.daniebeler.pfpixelix.domain.service.session
 
 import androidx.datastore.core.okio.OkioSerializer
-import com.daniebeler.pfpixelix.domain.model.AuthData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import okio.BufferedSink
 import okio.BufferedSource

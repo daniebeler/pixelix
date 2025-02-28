@@ -28,6 +28,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.utils.Navigate
+import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -87,7 +88,7 @@ fun CustomNotification(
         },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(model = notification.account.avatar,
+        AsyncImage(model = notification.account?.avatar,
             error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier
@@ -95,20 +96,20 @@ fun CustomNotification(
                 .width(46.dp)
                 .clip(CircleShape)
                 .clickable {
-                    Navigate.navigate("profile_screen/" + notification.account.id, navController)
+                    Navigate.navigate("profile_screen/" + notification.account?.id, navController)
                 })
         Spacer(modifier = Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = notification.account.username, fontWeight = FontWeight.Bold, modifier = Modifier.clickable {
-                    Navigate.navigate("profile_screen/" + notification.account.id, navController)
+                Text(text = notification.account?.username.orEmpty(), fontWeight = FontWeight.Bold, modifier = Modifier.clickable {
+                    Navigate.navigate("profile_screen/" + notification.account?.id, navController)
                 })
 
                 Text(text = text, overflow = TextOverflow.Ellipsis)
             }
 
             Text(
-                text = notification.timeAgo,
+                text = TimeAgo.convertTimeToText(notification.createdAt),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )

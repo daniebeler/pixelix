@@ -1,5 +1,9 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Meta(
-    val original: Original?
+    @SerialName("original") val original: Original?
 )

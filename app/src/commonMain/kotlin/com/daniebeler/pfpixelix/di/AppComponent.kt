@@ -10,9 +10,10 @@ import coil3.ImageLoader
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
-import com.daniebeler.pfpixelix.data.remote.PixelfedApi
-import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.createPixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
@@ -22,7 +23,6 @@ import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
-import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
 import com.daniebeler.pfpixelix.utils.dataStoreDir
 import com.daniebeler.pfpixelix.utils.imageCacheDir
@@ -68,6 +68,8 @@ abstract class AppComponent(
         ignoreUnknownKeys = true
         isLenient = true
         explicitNulls = false
+        encodeDefaults = true
+        coerceInputValues = true
     }
 
     @Provides

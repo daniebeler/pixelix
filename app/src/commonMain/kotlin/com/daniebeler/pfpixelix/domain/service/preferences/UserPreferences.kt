@@ -15,9 +15,14 @@ class UserPreferences(observableSettings: DataStoreSettings) {
     private val settings = observableSettings.toBlockingSettings()
 
     var hideSensitiveContent by settings.boolean("k_hide_sensitive_content", true)
-    var focusMode by settings.boolean("k_focus_mode", false)
-    var hideAltTextButton by settings.boolean("k_hide_alt_text_button", false)
     var useInAppBrowser by settings.boolean("k_use_in_app_browser", true)
+
+
+    var hideAltTextButton by settings.boolean("k_hide_alt_text_button", false)
+    val hideAltTextButtonFlow = observableSettings.getBooleanFlow("k_hide_alt_text_button", hideAltTextButton)
+
+    var focusMode by settings.boolean("k_focus_mode", false)
+    val focusModeFlow = observableSettings.getBooleanFlow("k_focus_mode", focusMode)
 
     var showUserGridTimeline by settings.boolean("k_grid_timeline", true)
     val showUserGridTimelineFlow = observableSettings.getBooleanFlow("k_grid_timeline", showUserGridTimeline)

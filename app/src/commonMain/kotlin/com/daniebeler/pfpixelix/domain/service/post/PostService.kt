@@ -1,13 +1,12 @@
 package com.daniebeler.pfpixelix.domain.service.post
 
-import com.daniebeler.pfpixelix.common.Constants
-import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.PixelfedApi
-import com.daniebeler.pfpixelix.data.remote.dto.CreateReplyDto
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
+import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import de.jensklingenberg.ktorfit.Call
@@ -36,7 +35,7 @@ class PostService(
     }
 
     fun getOwnPosts(
-        maxPostId: String? = null, limit: Int = Constants.PROFILE_POSTS_LIMIT
+        maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
     ): Flow<Resource<List<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
@@ -47,7 +46,7 @@ class PostService(
     }
 
     fun getPostsOfAccount(
-        accountId: String, maxPostId: String = "", limit: Int = Constants.PROFILE_POSTS_LIMIT
+        accountId: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
     ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
 
     private fun getPostsByAccountId(
@@ -65,7 +64,7 @@ class PostService(
             val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
             val nextMinId = onlyLink.substringAfter("min_id=", "")
 
-            val posts = data.map { it.toModel() }.filter { it.mediaAttachments.isNotEmpty() }
+            val posts = data.filter { it.mediaAttachments.isNotEmpty() }
 
             val result = LikedPostsWithNext(posts, nextMinId)
             emit(Resource.Success(result))
@@ -75,7 +74,7 @@ class PostService(
     }
 
     fun createReply(postId: String, content: String) = loadResource {
-        val dto = CreateReplyDto(status = content, in_reply_to_id = postId)
+        val dto = NewReply(status = content, toId = postId)
         api.createReply(json.encodeToString(dto))
     }
 

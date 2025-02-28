@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -74,10 +74,9 @@ fun ShareBottomSheet(
 
     LaunchedEffect(Unit) {
         humanReadableVisibility = when (post.visibility) {
-            Constants.AUDIENCE_PUBLIC -> getString(Res.string.audience_public)
-            Constants.AUDIENCE_UNLISTED -> getString(Res.string.unlisted)
-            Constants.AUDIENCE_FOLLOWERS_ONLY -> getString(Res.string.followers_only)
-            else -> post.visibility
+            Visibility.PUBLIC -> getString(Res.string.audience_public)
+            Visibility.UNLISTED -> getString(Res.string.unlisted)
+            Visibility.PRIVATE -> getString(Res.string.followers_only)
         }
     }
 

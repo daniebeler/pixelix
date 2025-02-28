@@ -59,6 +59,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -111,7 +112,7 @@ fun CommentsBottomSheet(
                         sensitive = false,
                         bookmarked = false,
                         favourited = false,
-                        visibility = "",
+                        visibility = Visibility.PUBLIC,
                         spoilerText = "",
                         place = null,
                         inReplyToId = null

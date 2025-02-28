@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
@@ -59,13 +59,17 @@ class PostViewModel @Inject constructor(
     var volume by mutableStateOf(prefs.enableVolume)
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
-            myAccountId = authService.getCurrentSession()!!.accountId
-            myUsername = authService.getCurrentSession()!!.username
-        }
+        myAccountId = authService.getCurrentSession()!!.accountId
+        myUsername = authService.getCurrentSession()!!.username
 
-        isAltTextButtonHidden = prefs.hideAltTextButton
-        isInFocusMode = prefs.focusMode
+        viewModelScope.launch {
+            prefs.hideAltTextButtonFlow.collect {
+                isAltTextButtonHidden = it
+            }
+        }
+        viewModelScope.launch {
+            prefs.focusModeFlow.collect { isInFocusMode = it }
+        }
     }
 
     fun toggleVolume(newVolume: Boolean) {
