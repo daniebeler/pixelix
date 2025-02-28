@@ -9,15 +9,11 @@ import me.tatarka.inject.annotations.Inject
 class WidgetService(
     private val api: PixelfedApi
 ) {
-    fun getNotifications(maxNotificationId: String = "") = loadListResources {
-        if (maxNotificationId.isNotEmpty()) {
-            api.getNotifications(maxNotificationId)
-        } else {
-            api.getNotifications()
-        }
+    fun getNotifications(maxNotificationId: String? = null) = loadListResources {
+        api.getNotifications(maxNotificationId)
     }
 
     fun getLatestImage() = loadResource {
-        api.getHomeTimelineWithLimit(1).first()
+        api.getHomeTimeline(limit = 1).first()
     }
 }

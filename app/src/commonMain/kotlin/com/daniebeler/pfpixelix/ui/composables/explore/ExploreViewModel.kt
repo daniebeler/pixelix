@@ -10,8 +10,8 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -21,7 +21,7 @@ import me.tatarka.inject.annotations.Inject
 
 class ExploreViewModel @Inject constructor(
     private val searchService: SearchService,
-    private val savedSearchesRepository: SavedSearchesRepository
+    private val savedSearchesService: SavedSearchesService
 ) : ViewModel() {
     var searchState by mutableStateOf(SearchState())
     var savedSearches: SavedSearches by mutableStateOf(SavedSearches())
@@ -31,20 +31,20 @@ class ExploreViewModel @Inject constructor(
     }
 
     private suspend fun getSavedSearches() {
-        savedSearchesRepository.getSavedSearches().collect {
+        savedSearchesService.getSavedSearches().collect {
             savedSearches = it
         }
     }
 
     fun saveAccount(accountUsername: String, account: Account) {
         viewModelScope.launch {
-            savedSearchesRepository.addAccount(accountUsername, account)
+            savedSearchesService.addAccount(accountUsername, account)
         }
     }
 
     fun saveHashtag(accountId: String) {
         viewModelScope.launch {
-            savedSearchesRepository.addHashtag(accountId)
+            savedSearchesService.addHashtag(accountId)
         }
     }
 
@@ -57,14 +57,14 @@ class ExploreViewModel @Inject constructor(
             }
 
             viewModelScope.launch {
-                savedSearchesRepository.addSearch(text)
+                savedSearchesService.addSearch(text)
             }
         }
     }
 
     fun deleteSavedSearch(item: SavedSearchItem) {
         viewModelScope.launch {
-            savedSearchesRepository.deleteElement(item)
+            savedSearchesService.deleteElement(item)
         }
     }
 

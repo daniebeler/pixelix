@@ -15,41 +15,25 @@ class TimelineService(
     private val api: PixelfedApi,
     private val prefs: UserPreferences
 ) {
-    fun getHomeTimeline(maxPostId: String = "", enableReblogs: Boolean = false) =
+    fun getHomeTimeline(maxPostId: String? = null, enableReblogs: Boolean = false) =
         loadListResources {
-            if (maxPostId.isNotEmpty()) {
-                api.getHomeTimeline(maxPostId, enableReblogs)
-            } else {
-                api.getHomeTimeline(enableReblogs)
-            }
+            api.getHomeTimeline(maxPostId, enableReblogs)
         }.filterSensitive()
 
-    fun getLocalTimeline(maxPostId: String = "") = loadListResources {
-        if (maxPostId.isNotEmpty()) {
-            api.getLocalTimeline(maxPostId)
-        } else {
-            api.getLocalTimeline()
-        }
+    fun getLocalTimeline(maxPostId: String? = null) = loadListResources {
+        api.getLocalTimeline(maxPostId)
     }.filterSensitive()
 
-    fun getGlobalTimeline(maxPostId: String = "") = loadListResources {
-        if (maxPostId.isNotEmpty()) {
-            api.getGlobalTimeline(maxPostId)
-        } else {
-            api.getGlobalTimeline()
-        }
+    fun getGlobalTimeline(maxPostId: String? = null) = loadListResources {
+        api.getGlobalTimeline(maxPostId)
     }.filterSensitive()
 
     fun getHashtagTimeline(
         hashtag: String,
-        maxId: String = "",
+        maxId: String? = null,
         limit: Int = Constants.HASHTAG_TIMELINE_POSTS_LIMIT
     ) = loadListResources {
-        if (maxId.isNotEmpty()) {
-            api.getHashtagTimeline(hashtag, maxId, limit)
-        } else {
-            api.getHashtagTimeline(hashtag, limit)
-        }
+        api.getHashtagTimeline(hashtag, maxId, limit)
     }.filterSensitive()
 
     private fun Flow<Resource<List<Post>>>.filterSensitive() = this.map { event ->

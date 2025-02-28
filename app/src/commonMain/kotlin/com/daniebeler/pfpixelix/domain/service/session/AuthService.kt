@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.service.session
 import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -23,6 +24,7 @@ class AuthService(
     private val urlHandler: SystemUrlHandler,
     private val session: Session,
     private val sessionStorage: DataStore<SessionStorage>,
+    private val savedSearchesService: SavedSearchesService,
     private val json: Json
 ) {
     companion object {
@@ -111,6 +113,7 @@ class AuthService(
             data.copy(sessions = newSessions, activeUserId = newId)
         }
         if (userId == null) {
+            savedSearchesService.clearSavedSearches()
             openSessionIfExist()
         }
     }

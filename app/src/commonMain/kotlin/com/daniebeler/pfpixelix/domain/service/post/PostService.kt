@@ -36,7 +36,7 @@ class PostService(
     }
 
     fun getOwnPosts(
-        maxPostId: String = "", limit: Int = Constants.PROFILE_POSTS_LIMIT
+        maxPostId: String? = null, limit: Int = Constants.PROFILE_POSTS_LIMIT
     ): Flow<Resource<List<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
@@ -51,25 +51,16 @@ class PostService(
     ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
 
     private fun getPostsByAccountId(
-        accountId: String, maxPostId: String, limit: Int
+        accountId: String, maxPostId: String?, limit: Int
     ) = loadListResources {
-        if (maxPostId.isEmpty()) {
-            api.getPostsByAccountId(accountId, limit)
-        } else {
-            api.getPostsByAccountId(accountId, maxPostId, limit)
-        }
+        api.getPostsByAccountId(accountId, maxPostId, limit)
     }
 
-    fun getLikedPosts(maxId: String = "") = flow {
+    fun getLikedPosts(maxId: String? = null) = flow {
         emit(Resource.Loading())
 
         try {
-            val (response, data) = if (maxId.isNotBlank()) {
-                api.getLikedPosts(maxId).executeWithResponse()
-            } else {
-                api.getLikedPosts().executeWithResponse()
-            }
-
+            val (response, data) = api.getLikedPosts(maxId).executeWithResponse()
             val linkHeader = response.headers["link"] ?: ""
             val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
             val nextMinId = onlyLink.substringAfter("min_id=", "")

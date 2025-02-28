@@ -1,10 +1,11 @@
 package com.daniebeler.pfpixelix.domain.service.platform
 
 import androidx.compose.ui.graphics.ImageBitmap
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
-import com.daniebeler.pfpixelix.utils.getAppIcons
+import com.daniebeler.pfpixelix.utils.imageCacheDir
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.get
 import kotlinx.cinterop.refTo
@@ -28,22 +29,29 @@ import platform.CoreServices.kUTTagClassFilenameExtension
 import platform.CoreServices.kUTTagClassMIMEType
 import platform.Foundation.CFBridgingRelease
 import platform.Foundation.CFBridgingRetain
+import platform.Foundation.NSBundle
 import platform.Foundation.NSData
+import platform.Foundation.NSDictionary
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSFileSize
 import platform.Foundation.NSNumber
 import platform.Foundation.NSString
+import platform.Foundation.NSURL
 import platform.Foundation.dataWithContentsOfURL
+import platform.Foundation.fileSize
 import platform.ImageIO.CGImageSourceCreateThumbnailAtIndex
 import platform.ImageIO.CGImageSourceCreateWithURL
 import platform.ImageIO.kCGImageSourceCreateThumbnailFromImageAlways
 import platform.ImageIO.kCGImageSourceCreateThumbnailWithTransform
 import platform.ImageIO.kCGImageSourceThumbnailMaxPixelSize
+import platform.UIKit.UIActivityViewController
+import platform.UIKit.UIApplication
 import platform.posix.memcpy
 
 @Inject
 actual class Platform actual constructor(
-    private val context: KmpContext
+    private val context: KmpContext,
+    private val prefs: UserPreferences
 ) {
     actual fun getPlatformFile(uri: KmpUri): PlatformFile? {
         val f = IosFile(uri)
@@ -52,6 +60,43 @@ actual class Platform actual constructor(
 
     actual fun getAppIconManager(): AppIconManager {
         return IosAppIconManager()
+    }
+
+    actual fun openUrl(url: String) {
+        UIApplication.sharedApplication.openURL(NSURL(string = url))
+    }
+
+    actual fun shareText(text: String) {
+        val vc = UIActivityViewController(listOf(text), null)
+        context.viewController.presentViewController(vc, true, null)
+    }
+
+    actual fun getAppVersion(): String {
+        return NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString").toString()
+    }
+    actual fun pinWidget() {}
+
+    actual fun downloadImageToGallery(name: String?, url: String) {}
+
+    @OptIn(ExperimentalForeignApi::class)
+    actual fun getCacheSizeInBytes(): Long {
+        val fm = NSFileManager.defaultManager()
+        val cacheDir = context.imageCacheDir
+        val files = fm.subpathsOfDirectoryAtPath(cacheDir.toString(), null).orEmpty()
+        var result = 0uL
+        files.map { file ->
+            val dict = fm.fileAttributesAtPath(
+                cacheDir.resolve(file.toString()).toString(),
+                true
+            ) as NSDictionary
+            result += dict.fileSize()
+        }
+        return result.toLong()
+    }
+    @OptIn(ExperimentalForeignApi::class)
+    actual fun cleanCache() {
+        val fm = NSFileManager.defaultManager()
+        fm.removeItemAtPath(context.imageCacheDir.toString(), null)
     }
 }
 

@@ -5,10 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
-import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.cleanCache
-import com.daniebeler.pfpixelix.utils.getCacheSizeInBytes
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.clear_cache
@@ -16,11 +14,11 @@ import pixelix.app.generated.resources.save_outline
 
 @Composable
 fun ClearCachePref(drawerState: DrawerState) {
-    val context = LocalKmpContext.current
+    val viewModel = injectViewModel("ClearCacheViewModel") { clearCacheViewModel }
     val cacheSize = remember { mutableStateOf("") }
 
     LaunchedEffect(drawerState.isOpen) {
-        cacheSize.value = humanReadableByteCountSI(context.getCacheSizeInBytes())
+        cacheSize.value = humanReadableByteCountSI(viewModel.getCacheSizeInBytes())
     }
 
     SettingPref(
@@ -29,8 +27,8 @@ fun ClearCachePref(drawerState: DrawerState) {
         desc = cacheSize.value,
         trailingContent = null,
         onClick = {
-            context.cleanCache()
-            cacheSize.value = humanReadableByteCountSI(context.getCacheSizeInBytes())
+            viewModel.cleanCache()
+            cacheSize.value = humanReadableByteCountSI(viewModel.getCacheSizeInBytes())
         }
     )
 }

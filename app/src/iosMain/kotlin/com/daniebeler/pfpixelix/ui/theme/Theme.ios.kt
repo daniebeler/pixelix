@@ -1,8 +1,10 @@
 package com.daniebeler.pfpixelix.ui.theme
 
 import androidx.compose.material3.ColorScheme
+import com.daniebeler.pfpixelix.domain.model.AppThemeMode
 import com.daniebeler.pfpixelix.utils.KmpContext
-import com.daniebeler.pfpixelix.utils.ThemePrefUtil
+
+actual fun applySystemNightMode(mode: Int) {}
 
 actual fun KmpContext.generateColorScheme(
     nightModeValue: Int,
@@ -12,8 +14,8 @@ actual fun KmpContext.generateColorScheme(
 ): ColorScheme {
     //TODO dynamicColor
     return when (nightModeValue) {
-        ThemePrefUtil.AMOLED -> darkScheme.toAmoled()
-        ThemePrefUtil.DARK -> darkScheme
+        AppThemeMode.AMOLED -> darkScheme.toAmoled()
+        AppThemeMode.DARK -> darkScheme
         else -> lightScheme
     }
 }

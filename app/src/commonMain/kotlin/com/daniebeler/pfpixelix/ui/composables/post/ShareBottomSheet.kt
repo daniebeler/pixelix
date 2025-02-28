@@ -23,11 +23,10 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.common.Constants
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.Navigate
-import com.daniebeler.pfpixelix.utils.Share
-import com.daniebeler.pfpixelix.utils.isAbleToDownloadImage
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -118,10 +117,10 @@ fun ShareBottomSheet(
         ButtonRowElement(icon = Res.drawable.share_social_outline,
             text = stringResource(Res.string.share_this_post),
             onClick = {
-                Share.shareText(context, url)
+                viewModel.shareText(url)
             })
 
-        if (mediaAttachment != null && isAbleToDownloadImage() && mediaAttachment.type == "image") {
+        if (mediaAttachment != null && PlatformFeatures.downloadToGallery && mediaAttachment.type == "image") {
             ButtonRowElement(icon = Res.drawable.cloud_download_outline,
                 text = stringResource(Res.string.download_image),
                 onClick = {

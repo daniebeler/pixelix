@@ -6,13 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
-import com.daniebeler.pfpixelix.utils.appVersionName
 import me.tatarka.inject.annotations.Inject
 
 class AboutPixelixViewModel @Inject constructor(
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val platform: Platform
 ) : ViewModel() {
     private val iconManager = platform.getAppIconManager()
@@ -22,7 +19,7 @@ class AboutPixelixViewModel @Inject constructor(
     var appIcon by mutableStateOf<ImageBitmap?>(null)
 
     fun getVersionName(context: KmpContext) {
-        versionName = context.appVersionName
+        versionName = platform.getAppVersion()
     }
 
     fun getAppIcon(context: KmpContext) {
@@ -30,14 +27,12 @@ class AboutPixelixViewModel @Inject constructor(
     }
 
     fun rateApp(context: KmpContext) {
-        openExternalUrlUseCase(
-             "https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix", context
+        platform.openUrl(
+             "https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"
         )
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(
-            url,context
-        )
+        platform.openUrl(url)
     }
 }

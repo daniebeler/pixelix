@@ -12,9 +12,7 @@ import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.data.remote.PixelfedApi
 import com.daniebeler.pfpixelix.data.remote.createPixelfedApi
-import com.daniebeler.pfpixelix.data.repository.SavedSearchesRepositoryImpl
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.repository.SavedSearchesRepository
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
@@ -22,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
+import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -60,6 +59,7 @@ abstract class AppComponent(
     abstract val systemUrlHandler: SystemUrlHandler
     abstract val systemFileShare: SystemFileShare
     abstract val authService: AuthService
+    abstract val widgetService: WidgetService
     abstract val preferences: UserPreferences
 
     @get:Provides
@@ -162,9 +162,6 @@ abstract class AppComponent(
                     .build()
             )
             .build()
-
-    @Provides
-    fun provideSavedSearchesRepository(impl: SavedSearchesRepositoryImpl): SavedSearchesRepository = impl
 
     companion object
 }

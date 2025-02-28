@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -11,23 +12,23 @@ import coil3.imageLoader
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
-import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.last
-import me.tatarka.inject.annotations.Inject
 
-class LatestImageTask @Inject constructor(
-    private val context: KmpContext,
+class LatestImageTask(
+    context: Context,
     workerParams: WorkerParameters,
-    private val authService: AuthService,
-    private val widgetService: WidgetService,
+    private val appComponent: AppComponent
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+        val context = appComponent.context
+        val authService = appComponent.authService
+        val widgetService = appComponent.widgetService
+
         try {
             updateLatestImageWidgetRefreshing(context)
             authService.openSessionIfExist()
@@ -38,7 +39,7 @@ class LatestImageTask @Inject constructor(
             val res = widgetService.getLatestImage().last()
             if (res is Resource.Success && res.data != null) {
 
-                val imageUri = getImageUri(res.data.mediaAttachments.first().previewUrl)
+                val imageUri = getImageUri(context, res.data.mediaAttachments.first().previewUrl)
 
                 updateLatestImageWidget(imageUri, res.data.id, context)
             } else {
@@ -55,7 +56,7 @@ class LatestImageTask @Inject constructor(
         return Result.success()
     }
 
-    private suspend fun getImageUri(url: String): String {
+    private suspend fun getImageUri(context: Context, url: String): String {
         val request = ImageRequest.Builder(context).data(url).build()
 
         // Request the image to be loaded and throw error if it failed

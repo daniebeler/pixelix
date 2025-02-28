@@ -6,13 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsViewModel @Inject constructor(
-    private val widgetService: WidgetService
+    private val widgetService: WidgetService,
+    private val platform: Platform
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
@@ -81,5 +83,9 @@ class NotificationsViewModel @Inject constructor(
 
     fun refresh() {
         getNotificationsFirstLoad(true)
+    }
+
+    fun pinWidget() {
+        platform.pinWidget()
     }
 }

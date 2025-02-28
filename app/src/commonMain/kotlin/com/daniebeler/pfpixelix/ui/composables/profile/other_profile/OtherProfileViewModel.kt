@@ -13,9 +13,9 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
@@ -33,7 +33,7 @@ class OtherProfileViewModel(
     private val accountService: AccountService,
     private val postService: PostService,
     private val searchService: SearchService,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val platform: Platform,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
 ) : ViewModel() {
@@ -360,7 +360,7 @@ class OtherProfileViewModel(
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(url, context)
+        platform.openUrl(url)
     }
 
     fun changeView(newView: ViewEnum) {
@@ -380,5 +380,9 @@ class OtherProfileViewModel(
                 it
             }
         })
+    }
+
+    fun shareAccountUrl() {
+        accountState.account?.url?.let { platform.shareText(it) }
     }
 }

@@ -7,15 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class CollectionViewModel @Inject constructor(
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
+    private val platform: Platform,
     private val collectionService: CollectionService,
     private val postService: PostService
 ) : ViewModel() {
@@ -221,6 +221,10 @@ class CollectionViewModel @Inject constructor(
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(url, context)
+        platform.openUrl(url)
+    }
+
+    fun shareCollectionUrl() {
+        collectionState.collection?.url?.let { platform.shareText(it) }
     }
 }
