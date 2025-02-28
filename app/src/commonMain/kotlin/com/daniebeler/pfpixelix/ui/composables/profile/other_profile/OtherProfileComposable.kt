@@ -69,7 +69,6 @@ import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwa
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.Navigate
-import com.daniebeler.pfpixelix.utils.Share
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -396,7 +395,7 @@ fun OtherProfileComposable(
                 ButtonRowElement(icon = Res.drawable.share_social_outline,
                     text = stringResource(Res.string.share_this_profile),
                     onClick = {
-                        Share.shareText(context, viewModel.accountState.account!!.url)
+                        viewModel.shareAccountUrl()
                     })
             }
         }

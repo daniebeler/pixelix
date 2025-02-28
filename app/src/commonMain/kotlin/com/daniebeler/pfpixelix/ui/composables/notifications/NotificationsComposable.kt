@@ -49,7 +49,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateCompos
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.pinWidget
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -79,7 +78,7 @@ fun NotificationsComposable(
         }, actions = {
             if (PlatformFeatures.notificationWidgets) {
                 IconButton(onClick = {
-                    context.pinWidget()
+                    viewModel.pinWidget()
                 }) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.extension_puzzle_outline),

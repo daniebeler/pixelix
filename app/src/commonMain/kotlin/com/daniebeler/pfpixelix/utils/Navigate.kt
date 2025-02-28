@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.utils
 
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 
 object Navigate {
     private var currentBottomBarRoute: String? = null
@@ -58,13 +57,5 @@ object Navigate {
 
             launchSingleTop = true
         }
-    }
-
-    fun openUrlInApp(context: KmpContext, url: String) {
-        context.openUrlInApp(url)
-    }
-
-    fun openUrlInBrowser(context: KmpContext, url: String) {
-        context.openUrlInBrowser(url)
     }
 }

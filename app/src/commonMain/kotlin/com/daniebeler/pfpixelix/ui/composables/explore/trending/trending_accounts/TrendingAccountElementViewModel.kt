@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 
 class TrendingAccountElementViewModel @Inject constructor(
     private val postService: PostService,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase
+    private val platform: Platform
 ) : ViewModel() {
     var postsState by mutableStateOf(TrendingAccountPostsState())
 
@@ -48,6 +48,6 @@ class TrendingAccountElementViewModel @Inject constructor(
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(url, context)
+        platform.openUrl(url)
     }
 }

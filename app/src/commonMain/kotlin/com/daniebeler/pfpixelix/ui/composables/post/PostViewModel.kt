@@ -10,11 +10,10 @@ import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.usecase.DownloadImageUseCase
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -33,8 +32,7 @@ class PostViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
     private val authService: AuthService,
     private val accountService: AccountService,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
-    private val downloadImageUseCase: DownloadImageUseCase
+    private val platform: Platform
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -371,11 +369,15 @@ class PostViewModel @Inject constructor(
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(url, context)
+        platform.openUrl(url)
     }
 
     fun saveImage(name: String?, url: String, context: KmpContext) {
-        downloadImageUseCase(name, url, context)
+        platform.downloadImageToGallery(name, url)
+    }
+
+    fun shareText(text: String) {
+        platform.shareText(text)
     }
 
 }

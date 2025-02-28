@@ -16,7 +16,6 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.usecase.OpenExternalUrlUseCase
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
@@ -30,7 +29,6 @@ import me.tatarka.inject.annotations.Inject
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val openExternalUrlUseCase: OpenExternalUrlUseCase,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
     private val authService: AuthService,
@@ -180,7 +178,7 @@ class OwnProfileViewModel @Inject constructor(
     }
 
     fun openUrl(url: String, context: KmpContext) {
-        openExternalUrlUseCase(url, context)
+        platform.openUrl(url)
     }
 
     fun changeView(newView: ViewEnum) {

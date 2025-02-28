@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
+import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -58,6 +59,7 @@ abstract class AppComponent(
     abstract val systemUrlHandler: SystemUrlHandler
     abstract val systemFileShare: SystemFileShare
     abstract val authService: AuthService
+    abstract val widgetService: WidgetService
     abstract val preferences: UserPreferences
 
     @get:Provides

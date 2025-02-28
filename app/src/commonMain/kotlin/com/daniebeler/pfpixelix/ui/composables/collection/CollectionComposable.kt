@@ -49,7 +49,6 @@ import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.Share
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -218,11 +217,8 @@ fun CollectionComposable(
 
                     ButtonRowElement(icon = Res.drawable.share_social_outline,
                         text = stringResource(Res.string.share_this_collection),
-                        onClick = {
-                            if (viewModel.collectionState.collection != null) {
-                                Share.shareText(context, viewModel.collectionState.collection!!.url)
-                            }
-                        })
+                        onClick = { viewModel.shareCollectionUrl() }
+                    )
                 }
 
             }

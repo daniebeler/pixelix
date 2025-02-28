@@ -6,13 +6,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -21,7 +17,6 @@ import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
-import com.daniebeler.pfpixelix.utils.setDefaultNightMode
 
 
 fun ColorScheme.toAmoled(): ColorScheme {
@@ -136,27 +131,29 @@ fun PixelixTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val context = LocalKmpContext.current
     val prefs = LocalAppComponent.current.preferences
     val theme by prefs.appThemeModeFlow.collectAsState(prefs.appThemeMode)
 
-    LaunchedEffect(theme) {
-        context.setDefaultNightMode(theme)
-    }
+    LaunchedEffect(theme) { applySystemNightMode(theme) }
 
     var nightModeValue = theme
     if (nightModeValue == FOLLOW_SYSTEM) {
         nightModeValue = if (isSystemInDarkTheme()) DARK else LIGHT
     }
+
+    val context = LocalKmpContext.current
     val colorScheme = remember(nightModeValue, dynamicColor, lightScheme, darkScheme) {
         context.generateColorScheme(nightModeValue, dynamicColor, lightScheme, darkScheme)
     }
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
 }
+
+expect fun applySystemNightMode(mode: Int)
 
 expect fun KmpContext.generateColorScheme(
     nightModeValue: Int,
