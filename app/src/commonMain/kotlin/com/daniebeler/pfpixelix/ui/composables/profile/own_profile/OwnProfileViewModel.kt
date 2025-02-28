@@ -25,6 +25,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.pixelix_logo
 
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
@@ -40,7 +43,7 @@ class OwnProfileViewModel @Inject constructor(
     var ownDomain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
     private var collectionPage by mutableIntStateOf(1)
-    var appIcon by mutableStateOf<ImageBitmap?>(null)
+    var appIcon by mutableStateOf<DrawableResource>(Res.drawable.pixelix_logo)
 
     var collectionsState by mutableStateOf(CollectionsState())
 

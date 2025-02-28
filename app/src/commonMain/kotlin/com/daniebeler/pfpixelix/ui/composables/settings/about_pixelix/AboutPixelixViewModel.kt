@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.utils.KmpContext
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.pixelix_logo
 
 class AboutPixelixViewModel @Inject constructor(
     private val platform: Platform
@@ -16,7 +19,7 @@ class AboutPixelixViewModel @Inject constructor(
 
     var versionName by mutableStateOf("")
 
-    var appIcon by mutableStateOf<ImageBitmap?>(null)
+    var appIcon by mutableStateOf<DrawableResource>(Res.drawable.pixelix_logo)
 
     fun getVersionName(context: KmpContext) {
         versionName = platform.getAppVersion()

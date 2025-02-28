@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.settings.icon_selection
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,15 +35,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -60,16 +67,8 @@ fun IconSelectionComposable(
     navController: NavController,
     viewModel: IconSelectionViewModel = injectViewModel(key = "iconselectionvm") { iconSelectionViewModel }
 ) {
-
-    val context = LocalKmpContext.current
-
-    val newIconName = remember { mutableStateOf("") }
-
     val lazyGridState = rememberLazyGridState()
-
-    LaunchedEffect(Unit) {
-        viewModel.updateList()
-    }
+    val (newIcon, setNewIcon) = remember { mutableStateOf<DrawableResource?>(null) }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
@@ -79,7 +78,8 @@ fun IconSelectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline),
+                    contentDescription = ""
                 )
             }
         })
@@ -100,7 +100,7 @@ fun IconSelectionComposable(
                 state = lazyGridState,
                 columns = GridCells.Fixed(3)
             ) {
-                item (span = { GridItemSpan(3) }) {
+                item(span = { GridItemSpan(3) }) {
                     Column {
                         Row {
                             Text(text = stringResource(Res.string.two_icons_info))
@@ -111,40 +111,26 @@ fun IconSelectionComposable(
 
                 }
 
-                items(viewModel.icons) {
-                    if (it.enabled) {
-                        Box(
-                            modifier = Modifier
-                                .border(
-                                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                                    shape = CircleShape
-                                )
-                                .padding(6.dp)
-                        ) {
-                            Image(
-                                it.icon,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                            )
-                        }
-                    } else {
-                        Box(
-                            modifier = Modifier.padding(6.dp)
-                        ) {
-                            Image(it.icon,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                                    .clickable {
-                                        newIconName.value = it.name
-                                    })
-                        }
-                    }
+                items(viewModel.icons) { icon ->
+                    Image(
+                        painterResource(icon),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                            .let {
+                                if (viewModel.selectedIcon.value == icon) {
+                                    it.border(
+                                        BorderStroke(4.dp, MaterialTheme.colorScheme.primary),
+                                        shape = CircleShape
+                                    )
+                                } else it
+                            }
+                            .clickable { setNewIcon(icon) }
+                    )
 
                 }
             }
@@ -152,23 +138,23 @@ fun IconSelectionComposable(
 
         }
 
-        if (newIconName.value.isNotBlank()) {
+        if (newIcon != null) {
             AlertDialog(title = {
                 Text(text = stringResource(Res.string.change_app_icon))
             }, text = {
                 Text(text = stringResource(Res.string.change_app_icon_dialog_content))
             }, onDismissRequest = {
-                newIconName.value = ""
+                setNewIcon(null)
             }, confirmButton = {
                 TextButton(onClick = {
-                    viewModel.changeIcon(newIconName.value)
-                    newIconName.value = ""
+                    viewModel.changeIcon(newIcon)
+                    setNewIcon(null)
                 }) {
                     Text(stringResource(Res.string.change))
                 }
             }, dismissButton = {
                 TextButton(onClick = {
-                    newIconName.value = ""
+                    setNewIcon(null)
                 }) {
                     Text(stringResource(Res.string.cancel))
                 }
