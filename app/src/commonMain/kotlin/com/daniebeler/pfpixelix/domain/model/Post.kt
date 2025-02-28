@@ -22,7 +22,7 @@ data class Post(
     val mentions: List<Account>,
     val place: Place?,
     val likedBy: LikedBy?,
-    val visibility: String,
+    val visibility: Visibility,
     val inReplyToId: String?,
     val rebloggedBy: Account? = null,
     val reblogId: String? = null

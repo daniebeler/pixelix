@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.repository
 
-import com.daniebeler.pfpixelix.utils.Constants
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Collection
@@ -35,6 +34,18 @@ import de.jensklingenberg.ktorfit.http.Url
 import io.ktor.client.request.forms.MultiPartFormDataContent
 
 interface PixelfedApi {
+    companion object {
+        const val HASHTAG_TIMELINE_POSTS_LIMIT = 20
+        const val HOME_TIMELINE_POSTS_LIMIT = 20
+        const val LOCAL_TIMELINE_POSTS_LIMIT = 20
+        const val GLOBAL_TIMELINE_POSTS_LIMIT = 20
+        const val NOTIFICATIONS_LIMIT = 40
+        const val LIKED_POSTS_LIMIT = 40
+        const val PROFILE_POSTS_LIMIT = 18
+        const val LIKED_BY_LIMIT = 40
+        const val FOLLOWERS_LIMIT = 40
+        const val BOOKMARKED_LIMIT = 12
+    }
 
     // Discover
     @GET("api/v1.1/discover/posts/trending")
@@ -58,33 +69,33 @@ interface PixelfedApi {
     @GET("api/v1/timelines/public?local=true&_pe=1")
     suspend fun getLocalTimeline(
         @Query("max_id") maxPostId: String? = null,
-        @Query("limit") limit: Int = Constants.LOCAL_TIMELINE_POSTS_LIMIT
+        @Query("limit") limit: Int = LOCAL_TIMELINE_POSTS_LIMIT
     ): List<Post>
 
     @GET("api/v1/timelines/public?remote=true&_pe=1")
     suspend fun getGlobalTimeline(
         @Query("max_id") maxPostId: String? = null,
-        @Query("limit") limit: Int = Constants.GLOBAL_TIMELINE_POSTS_LIMIT
+        @Query("limit") limit: Int = GLOBAL_TIMELINE_POSTS_LIMIT
     ): List<Post>
 
     @GET("api/v1/timelines/home?_pe=1")
     suspend fun getHomeTimeline(
         @Query("max_id") maxPostId: String? = null,
         @Query("include_reblogs") includeReblogs: Boolean = false,
-        @Query("limit") limit: Int = Constants.HOME_TIMELINE_POSTS_LIMIT
+        @Query("limit") limit: Int = HOME_TIMELINE_POSTS_LIMIT
     ): List<Post>
 
     // Favourites
-    @GET("api/v1/favourites/?limit=" + Constants.LIKED_POSTS_LIMIT)
+    @GET("api/v1/favourites")
     fun getLikedPosts(
         @Query("max_id") maxId: String? = null,
-        @Query("limit") limit: Int = Constants.LIKED_POSTS_LIMIT
+        @Query("limit") limit: Int = LIKED_POSTS_LIMIT
     ): Call<List<Post>>
 
     @GET("api/v1/statuses/{postId}/favourited_by?_pe=1")
     suspend fun getAccountsWhoLikedPost(
         @Path("postId") postId: String,
-        @Query("limit") limit: Int = Constants.LIKED_BY_LIMIT
+        @Query("limit") limit: Int = LIKED_BY_LIMIT
     ): List<Account>
 
 
@@ -92,7 +103,7 @@ interface PixelfedApi {
     @GET("api/v1/notifications")
     suspend fun getNotifications(
         @Query("max_id") maxNotificationId: String? = null,
-        @Query("limit") limit: Int = Constants.NOTIFICATIONS_LIMIT
+        @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
     ): List<Notification>
 
 
@@ -163,14 +174,14 @@ interface PixelfedApi {
     suspend fun getAccountsFollowers(
         @Path("id") userId: String,
         @Query("max_id") maxId: String? = null,
-        @Query("limit") limit: Int = Constants.FOLLOWERS_LIMIT
+        @Query("limit") limit: Int = FOLLOWERS_LIMIT
     ): List<Account>
 
     @GET("api/v1/accounts/{id}/following")
     suspend fun getAccountsFollowing(
         @Path("id") userId: String,
         @Query("max_id") maxId: String? = null,
-        @Query("limit") limit: Int = Constants.FOLLOWERS_LIMIT
+        @Query("limit") limit: Int = FOLLOWERS_LIMIT
     ): List<Account>
 
     // Statuses
@@ -282,7 +293,7 @@ interface PixelfedApi {
 
     @GET("api/v1/bookmarks")
     suspend fun getBookmarkedPosts(
-        @Query("limit") limit: Int = Constants.BOOKMARKED_LIMIT
+        @Query("limit") limit: Int = BOOKMARKED_LIMIT
     ): List<Post>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")

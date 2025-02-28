@@ -7,9 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.utils.Constants
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
@@ -101,7 +101,7 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
                     PostsState(posts = result.data ?: emptyList(), endReached = endReached)
                 }
 
@@ -121,7 +121,7 @@ class OwnProfileViewModel @Inject constructor(
             postService.getOwnPosts(postsState.posts.last().id).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < Constants.PROFILE_POSTS_LIMIT
+                        val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
                         PostsState(
                             posts = postsState.posts + (result.data ?: emptyList()),
                             endReached = endReached

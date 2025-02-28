@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Tag
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -101,6 +102,6 @@ private data class PostDto(
     @SerialName("spoiler_text") val spoilerText: String = "",
     @SerialName("tags") val tags: List<Tag> = emptyList(),
     @SerialName("url") val url: String = "",
-    @SerialName("visibility") val visibility: String = "",
+    @SerialName("visibility") val visibility: Visibility,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
 )

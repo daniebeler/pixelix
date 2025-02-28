@@ -69,10 +69,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_FOLLOWERS_ONLY
-import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_PUBLIC
-import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_UNLISTED
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -188,21 +186,9 @@ fun NewPostComposable(
                             Box {
                                 OutlinedButton(onClick = { expanded = !expanded }) {
                                     val buttonText: String = when (viewModel.audience) {
-                                        AUDIENCE_PUBLIC -> {
-                                            stringResource(Res.string.audience_public)
-                                        }
-
-                                        AUDIENCE_UNLISTED -> {
-                                            stringResource(Res.string.unlisted)
-                                        }
-
-                                        AUDIENCE_FOLLOWERS_ONLY -> {
-                                            stringResource(Res.string.followers_only)
-                                        }
-
-                                        else -> {
-                                            ""
-                                        }
+                                        Visibility.PUBLIC -> stringResource(Res.string.audience_public)
+                                        Visibility.UNLISTED -> stringResource(Res.string.unlisted)
+                                        Visibility.PRIVATE -> stringResource(Res.string.followers_only)
                                     }
                                     Text(text = buttonText)
                                 }
@@ -210,9 +196,9 @@ fun NewPostComposable(
                                     expanded = expanded,
                                     onDismissRequest = { expanded = false }) {
                                     DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
-                                        onClick = { viewModel.audience = AUDIENCE_PUBLIC },
+                                        onClick = { viewModel.audience = Visibility.PUBLIC },
                                         trailingIcon = {
-                                            if (viewModel.audience == AUDIENCE_PUBLIC) {
+                                            if (viewModel.audience == Visibility.PUBLIC) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Check,
                                                     contentDescription = null,
@@ -221,9 +207,9 @@ fun NewPostComposable(
                                             }
                                         })
                                     DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
-                                        onClick = { viewModel.audience = AUDIENCE_UNLISTED },
+                                        onClick = { viewModel.audience = Visibility.UNLISTED },
                                         trailingIcon = {
-                                            if (viewModel.audience == AUDIENCE_UNLISTED) {
+                                            if (viewModel.audience == Visibility.UNLISTED) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Check,
                                                     contentDescription = null,
@@ -232,9 +218,9 @@ fun NewPostComposable(
                                             }
                                         })
                                     DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
-                                        onClick = { viewModel.audience = AUDIENCE_FOLLOWERS_ONLY },
+                                        onClick = { viewModel.audience = Visibility.PRIVATE },
                                         trailingIcon = {
-                                            if (viewModel.audience == AUDIENCE_FOLLOWERS_ONLY) {
+                                            if (viewModel.audience == Visibility.PRIVATE) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Check,
                                                     contentDescription = null,

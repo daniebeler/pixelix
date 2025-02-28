@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.utils.Constants
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,7 +57,7 @@ class HashtagTimelineViewModel @Inject constructor(
             postsState = when (result) {
                 is Resource.Success -> {
                     val endReached =
-                        (result.data?.size ?: 0) < Constants.HASHTAG_TIMELINE_POSTS_LIMIT
+                        (result.data?.size ?: 0) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
                     HashtagTimelineState(
                         hashtagTimeline = result.data ?: emptyList(),
                         error = "",

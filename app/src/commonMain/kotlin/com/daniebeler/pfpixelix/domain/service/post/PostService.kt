@@ -1,13 +1,12 @@
 package com.daniebeler.pfpixelix.domain.service.post
 
-import com.daniebeler.pfpixelix.utils.Constants
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import de.jensklingenberg.ktorfit.Call
@@ -36,7 +35,7 @@ class PostService(
     }
 
     fun getOwnPosts(
-        maxPostId: String? = null, limit: Int = Constants.PROFILE_POSTS_LIMIT
+        maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
     ): Flow<Resource<List<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
@@ -47,7 +46,7 @@ class PostService(
     }
 
     fun getPostsOfAccount(
-        accountId: String, maxPostId: String? = null, limit: Int = Constants.PROFILE_POSTS_LIMIT
+        accountId: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
     ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
 
     private fun getPostsByAccountId(

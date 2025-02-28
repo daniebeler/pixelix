@@ -7,10 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_PUBLIC
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
@@ -43,7 +43,7 @@ class NewPostViewModel @Inject constructor(
     private var locationId: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
-    var audience: String by mutableStateOf(AUDIENCE_PUBLIC)
+    var audience: Visibility by mutableStateOf(Visibility.PUBLIC)
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
     var instance: Instance? = null
