@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediServer
-import com.daniebeler.pfpixelix.domain.model.nodeinfo.FediSoftware
+import com.daniebeler.pfpixelix.domain.model.FediServer
+import com.daniebeler.pfpixelix.domain.model.FediSoftware
 
 data class DomainSoftwareState(
     val isLoading: Boolean = false,

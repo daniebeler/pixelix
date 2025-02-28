@@ -7,10 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.common.Constants.AUDIENCE_PUBLIC
-import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.dto.CreatePostDto
+import com.daniebeler.pfpixelix.utils.Constants.AUDIENCE_PUBLIC
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
@@ -280,7 +280,7 @@ class NewPostViewModel @Inject constructor(
             locationId
         }
         val createPostDto =
-            CreatePostDto(caption, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
+            NewPost(caption, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
         postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

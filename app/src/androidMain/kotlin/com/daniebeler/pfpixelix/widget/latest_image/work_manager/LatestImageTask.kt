@@ -11,7 +11,7 @@ import androidx.work.WorkerParameters
 import coil3.imageLoader
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
-import com.daniebeler.pfpixelix.common.Resource
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing

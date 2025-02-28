@@ -1,7 +1,11 @@
 package com.daniebeler.pfpixelix.domain.model
 
-class MediaAttachmentConfiguration(
-    val supportedMimeTypes: List<String>,
-    val imageSizeLimit: Int,
-    val videoSizeLimit: Int
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MediaAttachmentConfiguration(
+    @SerialName("supported_mime_types") val supportedMimeTypes: List<String>,
+    @SerialName("image_size_limit") val imageSizeLimit: Int,
+    @SerialName("video_size_limit") val videoSizeLimit: Int
 )

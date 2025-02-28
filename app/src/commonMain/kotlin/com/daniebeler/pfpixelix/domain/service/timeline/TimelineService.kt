@@ -1,8 +1,8 @@
 package com.daniebeler.pfpixelix.domain.service.timeline
 
-import com.daniebeler.pfpixelix.common.Constants
-import com.daniebeler.pfpixelix.common.Resource
-import com.daniebeler.pfpixelix.data.remote.PixelfedApi
+import com.daniebeler.pfpixelix.utils.Constants
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources

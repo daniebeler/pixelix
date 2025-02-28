@@ -1,8 +1,10 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import com.daniebeler.pfpixelix.data.remote.dto.MessageDto
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class RelatedHashtag (
-    val name: String,
-    val relatedCount: Int
+@Serializable
+data class RelatedHashtag(
+    @SerialName("name") val name: String,
+    @SerialName("related_count") val relatedCount: Int
 )

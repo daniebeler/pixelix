@@ -1,6 +1,10 @@
 package com.daniebeler.pfpixelix.domain.model
 
-data class PostContext (
-    val ancestors: List<Post>,
-    val descendants: List<Post>
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PostContext(
+    @SerialName("ancestors") val ancestors: List<Post>,
+    @SerialName("descendants") val descendants: List<Post>,
 )
