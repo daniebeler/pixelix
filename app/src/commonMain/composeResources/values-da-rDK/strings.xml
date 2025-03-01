@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="notifications">Notifications</string>
-    <string name="settings">Settings</string>
-    <string name="liked_posts">Liked Posts</string>
-    <string name="bookmarked_posts">Bookmarked Posts</string>
-    <string name="followed_hashtags">Followed Hashtags</string>
-    <string name="blocked_accounts">Blocked Profiles</string>
-    <string name="muted_accounts">Muted Profiles</string>
-    <string name="logout">Logout</string>
-    <string name="open_in_browser">Open in browser</string>
-    <string name="share_this_profile">Share this profile</string>
-    <string name="block_this_profile">Block this profile</string>
-    <string name="unblock_this_profile">Unblock this profile</string>
-    <string name="mute_this_profile">Mute this profile</string>
-    <string name="unmute_this_profile">Unmute this profile</string>
-    <string name="load_more">Load More</string>
-    <string name="follow">Follow</string>
-    <string name="unfollow">Unfollow</string>
+    <string name="notifications">Meddelelse</string>
+    <string name="settings">Indstilling</string>
+    <string name="liked_posts">Synes Godt Om Indlæg</string>
+    <string name="bookmarked_posts">Bogmærkede Indlæg</string>
+    <string name="followed_hashtags">Fulgte hashtags</string>
+    <string name="blocked_accounts">Blokerede Profiler</string>
+    <string name="muted_accounts">Lydløse Profiler</string>
+    <string name="logout">Log ud</string>
+    <string name="open_in_browser">Åbn i browser</string>
+    <string name="share_this_profile">Del denne profil</string>
+    <string name="block_this_profile">Blokér denne profil</string>
+    <string name="unblock_this_profile">Fjern blokering af denne profil</string>
+    <string name="mute_this_profile">Lydløs denne profil</string>
+    <string name="unmute_this_profile">Slå denne profil fra</string>
+    <string name="load_more">Indlæs flere</string>
+    <string name="follow">Følg</string>
+    <string name="unfollow">Følg ikke</string>
     <string name="followers">Followers</string>
     <string name="following">Following</string>
     <string name="posts">Posts</string>
@@ -54,7 +54,7 @@
     <string name="yearly">yearly</string>
     <string name="monthly">monthly</string>
     <string name="daily">daily</string>
-    <string name="i_don_t_have_an_account">I don't have a profile</string>
+    <string name="i_don_t_have_an_account">I don\'t have a profile</string>
     <string name="server_url">Server URL</string>
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
     <string name="logout_questionmark">Logout?</string>
@@ -108,7 +108,7 @@
     <string name="local_timeline_explained">The Local timeline shows posts from all users in your server</string>
     <string name="global_timeline_explained">The Global timeline shows posts from all users in all servers your server federates with</string>
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
-    <string name="you_don_t_have_any_notifications">You don't have any notifications</string>
+    <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
     <string name="view_more">view more</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="save">Save</string>
@@ -159,7 +159,7 @@
     <string name="warning">Warning</string>
     <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
     <string name="confirm">Confirm</string>
-    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don't forget to be respectful.</string>
+    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don\'t forget to be respectful.</string>
     <string name="rate_us">Rate us</string>
     <string name="about_pixelix">About Pixelix</string>
     <string name="developed_by">Developed by</string>
@@ -215,6 +215,5 @@
     <string name="focus_mode">Focus Mode</string>
     <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
     <string name="repost_settings">Repost settings</string>
-    <string name="no_followers_yet">No followers yet</string>
-    <string name="not_following_anyone">Not following anyone</string>
+    <string name="amoled">AMOLED</string>
 </resources>

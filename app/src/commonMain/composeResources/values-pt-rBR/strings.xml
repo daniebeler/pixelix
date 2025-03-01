@@ -5,8 +5,8 @@
     <string name="liked_posts">Publicações curtidas</string>
     <string name="bookmarked_posts">Publicações favoritas</string>
     <string name="followed_hashtags">Hashtags seguidas</string>
-    <string name="blocked_accounts">Blocked Profiles</string>
-    <string name="muted_accounts">Muted Profiles</string>
+    <string name="blocked_accounts">Contas bloqueadas</string>
+    <string name="muted_accounts">Contas silenciadas</string>
     <string name="logout">Sair</string>
     <string name="open_in_browser">Abrir no navegador</string>
     <string name="share_this_profile">Compartilhar este perfil</string>
@@ -26,7 +26,7 @@
     <string name="followed_you">seguiu você</string>
     <string name="share_this_post">Compartilhar este post</string>
     <string name="trending">Mais populares</string>
-    <string name="accounts">Profiles</string>
+    <string name="accounts">Contas</string>
     <string name="rules">Regras</string>
     <string name="instance_version">Versão</string>
     <string name="terms_of_use">Termos de uso</string>
@@ -36,9 +36,9 @@
     <string name="stats">Estatísticas</string>
     <string name="unblock">desbloquear</string>
     <string name="unblock_caps">Desbloquear</string>
-    <string name="unblock_account">Unblock Profile?</string>
-    <string name="confirm_to_unblock_this_account">Confirm to unblock this profile</string>
-    <string name="no_blocked_accounts">no blocked profiles</string>
+    <string name="unblock_account">Desbloquear perfil?</string>
+    <string name="confirm_to_unblock_this_account">Confirme para desbloquear esta conta</string>
+    <string name="no_blocked_accounts">sem contas bloqueadas</string>
     <string name="cancel">Cancelar</string>
     <string name="post_by">Criado por</string>
     <string name="liked_by">Curtido por</string>
@@ -54,7 +54,7 @@
     <string name="yearly">anualmente</string>
     <string name="monthly">mensal</string>
     <string name="daily">diariamente</string>
-    <string name="i_don_t_have_an_account">I don't have a profile</string>
+    <string name="i_don_t_have_an_account">Não tenho uma conta</string>
     <string name="server_url">URL do servidor</string>
     <string name="are_you_sure_you_want_to_log_out">Tem certeza de que deseja sair?</string>
     <string name="logout_questionmark">Sair?</string>
@@ -86,7 +86,7 @@
     <string name="followers_only">apenas seguidores</string>
     <string name="audience_public">público</string>
     <string name="no_followed_hashtags">Sem hashtags seguidas</string>
-    <string name="no_muted_accounts">No muted profiles</string>
+    <string name="no_muted_accounts">Nenhuma conta silenciada</string>
     <string name="visibility_x">Visibilidade: %1$s</string>
     <string name="clear_cache">Limpar cache</string>
     <string name="preferences">Preferências</string>
@@ -215,6 +215,5 @@
     <string name="focus_mode">Focus Mode</string>
     <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
     <string name="repost_settings">Repost settings</string>
-    <string name="no_followers_yet">No followers yet</string>
-    <string name="not_following_anyone">Not following anyone</string>
+    <string name="amoled">AMOLED</string>
 </resources>
