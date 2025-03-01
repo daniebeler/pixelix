@@ -90,6 +90,9 @@ kotlin {
             implementation(libs.coil.video)
             implementation(libs.coil.gif)
             implementation(libs.coil.network)
+
+            //image crop
+            implementation(libs.krop)
         }
 
         androidMain.dependencies {
