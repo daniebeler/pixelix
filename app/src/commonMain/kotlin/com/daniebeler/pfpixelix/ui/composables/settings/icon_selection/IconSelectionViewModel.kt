@@ -1,31 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.icon_selection
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
 
 @Inject
 class IconSelectionViewModel(
-    val platform: Platform
+    val appIconService: AppIconService
 ) : ViewModel() {
-    private val iconManager = platform.getAppIconManager()
+    val icons = appIconService.icons
+    val selectedIcon = appIconService.currentIcon
 
-    val icons = mutableStateListOf<IconWithName>()
-
-    fun updateList() {
-        icons.clear()
-        icons.addAll(iconManager.getIcons())
-    }
-
-    fun changeIcon(name: String) {
-        iconManager.disableCustomIcon()
-        iconManager.enableCustomIcon(icons.first { it.name == name })
-        updateList()
+    fun changeIcon(icon: DrawableResource) {
+        appIconService.selectIcon(icon)
     }
 }
-
-data class IconWithName(
-    val name: String, val icon: ImageBitmap, val enabled: Boolean = false
-)

@@ -24,19 +24,3 @@ fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: ()
             Navigate.navigate("icon_selection_screen", navController)
         })
 }
-
-@Composable
-fun CustomizeAppIconPref(navController: NavController, closePreferenceDrawer: () -> Unit, logo: ImageBitmap) {
-    SettingPref(leadingIcon = logo,
-        title = stringResource(Res.string.customize_app_icon),
-        trailingContent = Res.drawable.chevron_forward_outline,
-        onClick = {
-            closePreferenceDrawer()
-            Navigate.navigate("icon_selection_screen", navController)
-        })
-}
-
-@Composable
-private fun CustomizeAppIconPrefPreview() {
-    CustomizeAppIconPref(rememberNavController(), {}, Res.drawable.pixelix_logo)
-}

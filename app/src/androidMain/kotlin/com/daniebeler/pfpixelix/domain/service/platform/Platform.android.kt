@@ -12,14 +12,9 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.util.DisplayMetrics
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
@@ -29,9 +24,7 @@ import coil3.request.allowHardware
 import coil3.toBitmap
 import coil3.video.videoFrameMillis
 import com.daniebeler.pfpixelix.MyApplication
-import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
@@ -42,6 +35,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.app_icon_00
+import pixelix.app.generated.resources.app_icon_01
+import pixelix.app.generated.resources.app_icon_02
+import pixelix.app.generated.resources.app_icon_03
+import pixelix.app.generated.resources.app_icon_05
+import pixelix.app.generated.resources.app_icon_06
+import pixelix.app.generated.resources.app_icon_07
+import pixelix.app.generated.resources.app_icon_08
+import pixelix.app.generated.resources.app_icon_09
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
@@ -121,7 +125,11 @@ actual class Platform actual constructor(
 
                 println(bitmap.toString())
 
-                uri = saveImageToMediaStore(context, generateUniqueName(name, false, context), bitmap!!)
+                uri = saveImageToMediaStore(
+                    context,
+                    generateUniqueName(name, false, context),
+                    bitmap!!
+                )
                 if (uri == null) {
                     cancel("an error occured when saving the image")
                     return@launch
@@ -170,7 +178,11 @@ actual class Platform actual constructor(
         return null
     }
 
-    private fun saveImageToMediaStore(context: KmpContext, displayName: String, bitmap: Bitmap): Uri? {
+    private fun saveImageToMediaStore(
+        context: KmpContext,
+        displayName: String,
+        bitmap: Bitmap
+    ): Uri? {
         val imageCollections = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
@@ -211,6 +223,7 @@ actual class Platform actual constructor(
     actual fun getCacheSizeInBytes(): Long {
         return context.cacheDir.walkBottomUp().fold(0L) { acc, file -> acc + file.length() }
     }
+
     actual fun cleanCache() {
         context.cacheDir.deleteRecursively()
     }
@@ -284,57 +297,51 @@ private class AndroidFile(
 private class AndroidAppIconManager(
     private val context: Context
 ) : AppIconManager {
-    private val appIcons = listOf(
-        "com.daniebeler.pfpixelix.AppActivity" to R.mipmap.ic_launcher_02,
-        "com.daniebeler.pfpixelix.Icon03" to R.mipmap.ic_launcher_03,
-        "com.daniebeler.pfpixelix.Icon01" to R.mipmap.ic_launcher_01,
-        "com.daniebeler.pfpixelix.Icon05" to R.mipmap.ic_launcher_05,
-        "com.daniebeler.pfpixelix.Icon06" to R.mipmap.ic_launcher_06,
-        "com.daniebeler.pfpixelix.Icon07" to R.mipmap.ic_launcher_07,
-        "com.daniebeler.pfpixelix.Icon08" to R.mipmap.ic_launcher_08,
-        "com.daniebeler.pfpixelix.Icon09" to R.mipmap.ic_launcher_09,
-        "com.daniebeler.pfpixelix.Icon04" to R.mipmap.ic_launcher,
+    private val iconIds = mapOf(
+        Res.drawable.app_icon_00 to "com.daniebeler.pfpixelix.Icon04",
+        Res.drawable.app_icon_01 to "com.daniebeler.pfpixelix.Icon01",
+        Res.drawable.app_icon_02 to "com.daniebeler.pfpixelix.AppActivity",
+        Res.drawable.app_icon_03 to "com.daniebeler.pfpixelix.Icon03",
+        Res.drawable.app_icon_05 to "com.daniebeler.pfpixelix.Icon05",
+        Res.drawable.app_icon_06 to "com.daniebeler.pfpixelix.Icon06",
+        Res.drawable.app_icon_07 to "com.daniebeler.pfpixelix.Icon07",
+        Res.drawable.app_icon_08 to "com.daniebeler.pfpixelix.Icon08",
+        Res.drawable.app_icon_09 to "com.daniebeler.pfpixelix.Icon09",
     )
 
-    override fun getIcons(): List<IconWithName> {
-        fun icon(name: String, id: Int): IconWithName {
-            val bm = ResourcesCompat.getDrawableForDensity(
-                context.resources, id, DisplayMetrics.DENSITY_XXXHIGH, context.theme
-            )!!.let { drawable ->
-                drawable.toBitmap(drawable.minimumWidth, drawable.minimumHeight).asImageBitmap()
+    override fun getCurrentIcon(): DrawableResource {
+        for ((res, id) in iconIds.entries) {
+            val i = context.packageManager.getComponentEnabledSetting(ComponentName(context, id))
+            if (i == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                return res
             }
-            val isEnabled = context.packageManager.getComponentEnabledSetting(
-                ComponentName(context, name)
-            ) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            return IconWithName(name, bm, isEnabled)
         }
-
-        return appIcons.map { (name, id) -> icon(name, id) }
+        return Res.drawable.app_icon_02
     }
 
-    override fun getCurrentIcon(): ImageBitmap? {
-        return getIcons().firstOrNull { it.enabled }?.icon
-    }
-
-    override fun enableCustomIcon(iconWithName: IconWithName) {
+    override fun setCustomIcon(icon: DrawableResource) {
         try {
-            context.packageManager.setComponentEnabledSetting(
-                ComponentName(context, iconWithName.name),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )
+            val pm = context.packageManager
+            for ((res, id) in iconIds.entries) {
+                if (res != icon) {
+                    val i = pm.getComponentEnabledSetting(ComponentName(context, id))
+                    if (i == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                        pm.setComponentEnabledSetting(
+                            ComponentName(context, id),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP
+                        )
+                    }
+                } else {
+                    pm.setComponentEnabledSetting(
+                        ComponentName(context, iconIds[icon]!!),
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                }
+            }
         } catch (e: Error) {
             Logger.e("enableCustomIcon", e)
-        }
-    }
-
-    override fun disableCustomIcon() {
-        appIcons.forEach { (name, id) ->
-            context.packageManager.setComponentEnabledSetting(
-                ComponentName(context, name),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            )
         }
     }
 }

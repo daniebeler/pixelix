@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,7 +100,7 @@ fun ButtonRowElementWithRoundedImage(
 
 @Composable
 fun ButtonRowElement(
-    icon: ImageBitmap,
+    image: ImageBitmap,
     text: String,
     smallText: String = "",
     onClick: () -> Unit,
@@ -112,7 +113,7 @@ fun ButtonRowElement(
                 onClick()
             }) {
         Image(
-            icon,
+            image,
             contentDescription = "",
             Modifier
                 .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)

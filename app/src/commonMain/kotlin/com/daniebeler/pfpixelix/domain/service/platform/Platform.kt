@@ -1,11 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.platform
 
-import androidx.compose.ui.graphics.ImageBitmap
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconWithName
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.DrawableResource
 
 @Inject
 expect class Platform(
@@ -34,8 +33,6 @@ interface PlatformFile {
 }
 
 interface AppIconManager {
-    fun getIcons(): List<IconWithName>
-    fun getCurrentIcon(): ImageBitmap?
-    fun enableCustomIcon(iconWithName: IconWithName)
-    fun disableCustomIcon()
+    fun getCurrentIcon(): DrawableResource
+    fun setCustomIcon(icon: DrawableResource)
 }

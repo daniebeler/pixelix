@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences
 
-import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,13 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -50,7 +47,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.close_outline
-import pixelix.app.generated.resources.pixelix_logo
 import pixelix.app.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,14 +58,9 @@ fun PreferencesComposable(
     viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val context = LocalKmpContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.getVersionName(context)
-        viewModel.getAppIcon(context)
-    }
-
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(scrollBehavior = scrollBehavior, title = {
@@ -105,29 +96,20 @@ fun PreferencesComposable(
                 UseInAppBrowserPref()
             }
 
-            RepostSettingsPref { viewModel.openRepostSettings(context) }
+            RepostSettingsPref { viewModel.openRepostSettings() }
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
             ThemePref()
 
-            if (PlatformFeatures.customAppIcon) {
-                if (viewModel.appIcon == null) {
-                    CustomizeAppIconPref(
-                        navController,
-                        closePreferencesDrawer,
-                        Res.drawable.pixelix_logo
-                    )
-                } else {
-                    CustomizeAppIconPref(navController, closePreferencesDrawer, viewModel.appIcon!!)
-                }
-            }
+            val icon = viewModel.appIcon.collectAsState()
+            CustomizeAppIconPref(navController, closePreferencesDrawer, icon.value)
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
             ClearCachePref(drawerState)
 
-            MoreSettingsPref { viewModel.openMoreSettingsPage(context) }
+            MoreSettingsPref { viewModel.openMoreSettingsPage() }
 
             LogoutPref { viewModel.logout() }
 

@@ -14,6 +14,8 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.utils.Navigate
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
@@ -34,7 +36,11 @@ import pixelix.app.generated.resources.settings_outline
 
 @Composable
 fun ModalBottomSheetContent(
-    navController: NavController, instanceDomain: String, appIcon: ImageBitmap?, closeBottomSheet: () -> Unit, openPreferencesDrawer: () -> Unit
+    navController: NavController,
+    instanceDomain: String,
+    appIcon: DrawableResource,
+    closeBottomSheet: () -> Unit,
+    openPreferencesDrawer: () -> Unit
 ) {
     Column(
         Modifier
@@ -53,35 +59,40 @@ fun ModalBottomSheetContent(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElement(icon = Res.drawable.heart_outline,
+        ButtonRowElement(
+            icon = Res.drawable.heart_outline,
             text = stringResource(Res.string.liked_posts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("liked_posts_screen", navController)
             })
 
-        ButtonRowElement(icon = Res.drawable.bookmarks_outline,
+        ButtonRowElement(
+            icon = Res.drawable.bookmarks_outline,
             text = stringResource(Res.string.bookmarked_posts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("bookmarked_posts_screen", navController)
             })
 
-        ButtonRowElement(icon = Res.drawable.hash,
+        ButtonRowElement(
+            icon = Res.drawable.hash,
             text = stringResource(Res.string.followed_hashtags),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("followed_hashtags_screen", navController)
             })
 
-        ButtonRowElement(icon = Res.drawable.remove_circle_outline,
+        ButtonRowElement(
+            icon = Res.drawable.remove_circle_outline,
             text = stringResource(Res.string.muted_accounts),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("muted_accounts_screen", navController)
             })
 
-        ButtonRowElement(icon = Res.drawable.remove_circle_outline,
+        ButtonRowElement(
+            icon = Res.drawable.remove_circle_outline,
             text = stringResource(Res.string.blocked_accounts),
             onClick = {
                 closeBottomSheet()
@@ -90,28 +101,21 @@ fun ModalBottomSheetContent(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElementWithRoundedImage(icon = Res.drawable.pixelfed_logo,
+        ButtonRowElementWithRoundedImage(
+            icon = Res.drawable.pixelfed_logo,
             text = stringResource(Res.string.about_x, instanceDomain),
             onClick = {
                 closeBottomSheet()
                 Navigate.navigate("about_instance_screen", navController)
             })
 
-        if (appIcon == null) {
-            ButtonRowElementWithRoundedImage(icon = Res.drawable.pixelix_logo,
-                text = stringResource(Res.string.about_pixelix),
-                onClick = {
-                    closeBottomSheet()
-                    Navigate.navigate("about_pixelix_screen", navController)
-                })
-        } else {
-            ButtonRowElement(icon = appIcon,
-                text = stringResource(Res.string.about_pixelix),
-                onClick = {
-                    closeBottomSheet()
-                    Navigate.navigate("about_pixelix_screen", navController)
-                })
-        }
+        ButtonRowElement(
+            image = imageResource(appIcon),
+            text = stringResource(Res.string.about_pixelix),
+            onClick = {
+                closeBottomSheet()
+                Navigate.navigate("about_pixelix_screen", navController)
+            })
 
     }
 }

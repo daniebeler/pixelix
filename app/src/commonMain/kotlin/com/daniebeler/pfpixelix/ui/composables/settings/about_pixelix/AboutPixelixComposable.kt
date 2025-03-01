@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,16 +66,7 @@ fun AboutPixelixComposable(
     navController: NavController,
     viewModel: AboutPixelixViewModel = injectViewModel(key = "about-pixelix-viewmodel-key") { aboutPixelixViewModel }
 ) {
-
-    val context = LocalKmpContext.current
-
     val scrollState = rememberScrollState()
-
-
-    LaunchedEffect(Unit) {
-        viewModel.getVersionName(context)
-        viewModel.getAppIcon(context)
-    }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
@@ -84,7 +76,8 @@ fun AboutPixelixComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_back_outline),
+                    contentDescription = ""
                 )
             }
         })
@@ -101,25 +94,15 @@ fun AboutPixelixComposable(
                     .padding(vertical = 56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (viewModel.appIcon == null) {
-                    Image(
-                        painter = painterResource(Res.drawable.pixelix_logo),
-                        contentDescription = null,
-                        Modifier
-                            .width(84.dp)
-                            .height(84.dp)
-                            .clip(CircleShape)
-                    )
-                } else {
-                    Image(
-                        viewModel.appIcon!!,
-                        contentDescription = null,
-                        Modifier
-                            .width(84.dp)
-                            .height(84.dp)
-                            .clip(CircleShape)
-                    )
-                }
+                val icon = viewModel.appIcon.collectAsState()
+                Image(
+                    painterResource(icon.value),
+                    contentDescription = null,
+                    Modifier
+                        .width(84.dp)
+                        .height(84.dp)
+                        .clip(CircleShape)
+                )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -137,26 +120,30 @@ fun AboutPixelixComposable(
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = Res.drawable.star_outline,
+            ButtonRowElement(
+                icon = Res.drawable.star_outline,
                 text = "Rate Pixelix on Google Play Store",
-                onClick = { viewModel.rateApp(context) })
+                onClick = { viewModel.rateApp() })
 
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(icon = Res.drawable.browsers_outline,
+            ButtonRowElement(
+                icon = Res.drawable.browsers_outline,
                 text = "Homepage",
                 smallText = "https://app.pixelix.social",
-                onClick = { viewModel.openUrl("https://app.pixelix.social", context) })
+                onClick = { viewModel.openUrl("https://app.pixelix.social") })
 
-            ButtonRowElement(icon = Res.drawable.shield_outline,
+            ButtonRowElement(
+                icon = Res.drawable.shield_outline,
                 text = "Privacy Policy",
                 smallText = "https://app.pixelix.social/privacy",
-                onClick = { viewModel.openUrl("https://app.pixelix.social/privacy", context) })
+                onClick = { viewModel.openUrl("https://app.pixelix.social/privacy") })
 
-            ButtonRowElement(icon = Res.drawable.code_slash_outline,
+            ButtonRowElement(
+                icon = Res.drawable.code_slash_outline,
                 text = "Source Code",
                 smallText = "https://github.com/daniebeler/pixelix",
-                onClick = { viewModel.openUrl("https://github.com/daniebeler/pixelix", context) })
+                onClick = { viewModel.openUrl("https://github.com/daniebeler/pixelix") })
 
 
             HorizontalDivider(Modifier.padding(12.dp))
@@ -181,7 +168,8 @@ fun AboutPixelixComposable(
                 Text(text = "Emanuel Hiebeler", fontWeight = FontWeight.Bold)
 
                 Row {
-                    Image(painter = painterResource(Res.drawable.pixelfed_logo),
+                    Image(
+                        painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
@@ -194,13 +182,14 @@ fun AboutPixelixComposable(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(painter = painterResource(Res.drawable.mastodon_logo),
+                    Image(
+                        painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
                             .height(32.dp)
                             .clickable {
-                                viewModel.openUrl("https://techhub.social/@Hiebeler05", context)
+                                viewModel.openUrl("https://techhub.social/@Hiebeler05")
                             })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -211,7 +200,7 @@ fun AboutPixelixComposable(
                         Modifier
                             .size(32.dp)
                             .clickable {
-                                viewModel.openUrl("https://emanuelhiebeler.me", context)
+                                viewModel.openUrl("https://emanuelhiebeler.me")
                             },
                         tint = Color(0xFF4793FF)
                     )
@@ -228,7 +217,8 @@ fun AboutPixelixComposable(
                 Text(text = "Daniel Hiebeler", fontWeight = FontWeight.Bold)
 
                 Row {
-                    Image(painter = painterResource(Res.drawable.pixelfed_logo),
+                    Image(
+                        painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
@@ -241,13 +231,14 @@ fun AboutPixelixComposable(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(painter = painterResource(Res.drawable.mastodon_logo),
+                    Image(
+                        painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
                         Modifier
                             .width(32.dp)
                             .height(32.dp)
                             .clickable {
-                                viewModel.openUrl("https://techhub.social/@daniebeler", context)
+                                viewModel.openUrl("https://techhub.social/@daniebeler")
                             })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -258,7 +249,7 @@ fun AboutPixelixComposable(
                         Modifier
                             .size(32.dp)
                             .clickable {
-                                viewModel.openUrl("https://daniebeler.com", context)
+                                viewModel.openUrl("https://daniebeler.com")
                             },
                         tint = Color(0xFF4793FF)
                     )
