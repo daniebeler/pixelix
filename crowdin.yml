@@ -8,7 +8,7 @@
   {
     "source": "/app/src/commonMain/composeResources/values/strings.xml",
     "translation": "/app/src/commonMain/composeResources/values-%android-code%/strings.xml"
-  }
+  },
   {
     "source": "/metadata/en-US/full_description.txt",
     "translation": "/metadata/%locale%/full_description.txt"
