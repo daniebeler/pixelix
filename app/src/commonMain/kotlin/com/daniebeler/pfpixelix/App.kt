@@ -440,11 +440,23 @@ private fun BottomBar(
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
+    var avatar by remember {mutableStateOf<String?>(null) }
+    val appComponent = LocalAppComponent.current
+    LaunchedEffect(Unit) {
+        val authService = appComponent.authService
+        authService.activeUser
+            .map { authService.getCurrentSession() }
+            .collect {
+                avatar = it?.avatar
+            }
+    }
+
     NavigationBar(
         modifier = Modifier.height(60.dp + systemNavigationBarHeight)
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+
         screens.forEach { screen ->
             val interactionSource = remember { MutableInteractionSource() }
             val coroutineScope = rememberCoroutineScope()
@@ -471,14 +483,6 @@ private fun BottomBar(
                 }
             }
             NavigationBarItem(icon = {
-                var avatar by mutableStateOf<String?>(null)
-                val appComponent = LocalAppComponent.current
-                LaunchedEffect(Unit) {
-                    val authService = appComponent.authService
-                    authService.activeUser
-                        .map { authService.getCurrentSession() }
-                        .collect { avatar = it?.avatar }
-                }
 
 
                 if (screen.route == Destinations.OwnProfile.route && avatar != null) {
