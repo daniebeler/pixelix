@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,6 +92,7 @@ fun IconSelectionComposable(
                 .padding(paddingValues)
         ) {
 
+            val selectedIcon = viewModel.selectedIcon.collectAsState()
             LazyVerticalGrid(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -122,7 +124,7 @@ fun IconSelectionComposable(
                             .aspectRatio(1f)
                             .clip(CircleShape)
                             .let {
-                                if (viewModel.selectedIcon.value == icon) {
+                                if (selectedIcon.value == icon) {
                                     it.border(
                                         BorderStroke(4.dp, MaterialTheme.colorScheme.primary),
                                         shape = CircleShape

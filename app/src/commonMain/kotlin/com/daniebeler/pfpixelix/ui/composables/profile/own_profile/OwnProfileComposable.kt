@@ -32,7 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,12 +70,6 @@ fun OwnProfileComposable(
     var showBottomSheet by remember { mutableStateOf(0) }
 
     val lazyGridState = rememberLazyListState()
-
-    val context = LocalKmpContext.current
-
-    LaunchedEffect(Unit) {
-        viewModel.getAppIcon(context)
-    }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
@@ -126,9 +120,8 @@ fun OwnProfileComposable(
                             ProfileTopSection(account = viewModel.accountState.account,
                                 relationship = null,
                                 navController,
-                                openUrl = { url ->
-                                    viewModel.openUrl(url, context)
-                                })
+                                openUrl = { url -> viewModel.openUrl(url) }
+                            )
 
                             Row(
                                 Modifier
@@ -167,7 +160,7 @@ fun OwnProfileComposable(
                             navController = navController,
                             addNewButton = true,
                             instanceDomain = viewModel.ownDomain,
-                        ) { url -> viewModel.openUrl(url, context) }
+                        ) { url -> viewModel.openUrl(url) }
 
                         HorizontalDivider(Modifier.padding(bottom = 12.dp, top = 12.dp))
 
@@ -225,9 +218,10 @@ fun OwnProfileComposable(
             }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
+                val icon = viewModel.appIcon.collectAsState()
                 ModalBottomSheetContent(navController = navController,
                     instanceDomain = viewModel.ownDomain,
-                    appIcon = viewModel.appIcon,
+                    appIcon = icon.value,
                     closeBottomSheet = {
                         showBottomSheet = 0
                     }, openPreferencesDrawer)

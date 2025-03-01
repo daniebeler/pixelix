@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -35,15 +36,15 @@ class OwnProfileViewModel @Inject constructor(
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
     private val authService: AuthService,
-    private val platform: Platform
+    private val platform: Platform,
+    private val appIconService: AppIconService
 ) : ViewModel() {
-    private val iconManager = platform.getAppIconManager()
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
     private var collectionPage by mutableIntStateOf(1)
-    var appIcon by mutableStateOf<DrawableResource>(Res.drawable.pixelix_logo)
+    val appIcon = appIconService.currentIcon
 
     var collectionsState by mutableStateOf(CollectionsState())
 
@@ -56,10 +57,6 @@ class OwnProfileViewModel @Inject constructor(
             }
         }
         ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
-    }
-
-    fun getAppIcon(context: KmpContext) {
-        appIcon = iconManager.getCurrentIcon()
     }
 
     fun updateAccountSwitch() {
@@ -180,7 +177,7 @@ class OwnProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun openUrl(url: String, context: KmpContext) {
+    fun openUrl(url: String) {
         platform.openUrl(url)
     }
 

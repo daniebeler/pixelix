@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -57,12 +58,6 @@ fun PreferencesComposable(
     viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val context = LocalKmpContext.current
-
-    LaunchedEffect(drawerState.isOpen) {
-        viewModel.getVersionName()
-        viewModel.getAppIcon()
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
@@ -101,19 +96,20 @@ fun PreferencesComposable(
                 UseInAppBrowserPref()
             }
 
-            RepostSettingsPref { viewModel.openRepostSettings(context) }
+            RepostSettingsPref { viewModel.openRepostSettings() }
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
             ThemePref()
 
-            CustomizeAppIconPref(navController, closePreferencesDrawer, viewModel.appIcon)
+            val icon = viewModel.appIcon.collectAsState()
+            CustomizeAppIconPref(navController, closePreferencesDrawer, icon.value)
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 
             ClearCachePref(drawerState)
 
-            MoreSettingsPref { viewModel.openMoreSettingsPage(context) }
+            MoreSettingsPref { viewModel.openMoreSettingsPage() }
 
             LogoutPref { viewModel.logout() }
 

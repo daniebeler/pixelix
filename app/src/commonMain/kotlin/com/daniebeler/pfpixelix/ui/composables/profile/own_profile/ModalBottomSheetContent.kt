@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.utils.Navigate
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
@@ -109,7 +110,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = appIcon,
+            image = imageResource(appIcon),
             text = stringResource(Res.string.about_pixelix),
             onClick = {
                 closeBottomSheet()
