@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.edit_profile
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -26,7 +27,7 @@ class EditProfileViewModel @Inject constructor(
     var note by mutableStateOf("")
     var website by mutableStateOf("")
     var avatarUri by mutableStateOf(EmptyKmpUri)
-    var avatarChanged by mutableStateOf(false)
+    var newAvatar by mutableStateOf<ImageBitmap?>(null)
     var privateProfile by mutableStateOf(false)
     init {
         getAccount()
@@ -58,19 +59,15 @@ class EditProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun save(context: KmpContext) {
-        val newAvatarUri: KmpUri? = if (avatarUri == accountState.account?.avatar?.toKmpUri()) {
-            null
-        } else {
-            avatarUri
-        }
+    fun save() {
         accountService.updateAccount(
-            displayname, note, "https://$website", privateProfile, newAvatarUri
+            displayname, note, "https://$website", privateProfile, newAvatar
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
-                    avatarChanged = false
+                    avatarUri = accountState.account?.avatar!!.toKmpUri()
+                    newAvatar = null
                 }
 
                 is Resource.Error -> {

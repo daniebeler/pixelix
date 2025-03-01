@@ -3,6 +3,8 @@ package com.daniebeler.pfpixelix.utils
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.asSkiaBitmap
+import org.jetbrains.skia.EncodedImageFormat
+import org.jetbrains.skia.Image
 
 actual fun createBitmap(
     pixels: IntArray,
@@ -20,4 +22,10 @@ actual fun createBitmap(
         color.toByte()
     }
     bitmap.asSkiaBitmap().installPixels(pixelBytes)
+}
+
+actual fun ImageBitmap.encodeToPngBytes(quality: Int): ByteArray? {
+    return Image.makeFromBitmap(this.asSkiaBitmap())
+        .encodeToData(EncodedImageFormat.PNG, quality)
+        ?.bytes
 }

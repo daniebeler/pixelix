@@ -116,3 +116,4 @@ object BlurHashDecoder {
 }
 
 expect fun createBitmap(pixels: IntArray, width: Int, height: Int): ImageBitmap
+expect fun ImageBitmap.encodeToPngBytes(quality: Int = 100): ByteArray?

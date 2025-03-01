@@ -1,5 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.account
 
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toPixelMap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
@@ -9,12 +11,15 @@ import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
+import com.daniebeler.pfpixelix.utils.encodeToPngBytes
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -38,16 +43,17 @@ class AccountService(
         note: String,
         website: String,
         privateProfile: Boolean,
-        avatarUri: KmpUri?
+        avatar: ImageBitmap?
     ) = loadResource {
-        val file = avatarUri?.let { platform.getPlatformFile(avatarUri) }
-        val avatarBytes = file?.readBytes()
+        val bytes = withContext(Dispatchers.Default) {
+            avatar?.encodeToPngBytes()
+        }
         val body = MultiPartFormDataContent(formData {
-            if (avatarBytes != null) {
+            if (bytes != null) {
                 try {
                     val fileName = "filename=avatar"
-                    val fileType = file.getMimeType()
-                    append("avatar", avatarBytes, Headers.build {
+                    val fileType = "image/png"
+                    append("avatar", bytes, Headers.build {
                         append(HttpHeaders.ContentType, fileType)
                         append(HttpHeaders.ContentDisposition, fileName)
                     })

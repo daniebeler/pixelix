@@ -26,6 +26,7 @@ coil = "3.1.0"
 datastorePreferences = "1.1.2"
 multiplatformSettings = "1.3.0"
 filekitCompose = "0.8.8"
+krop = "0.2.0-alpha01"
 
 #android
 accompanistSystemuicontroller = "0.34.0"
@@ -100,6 +101,7 @@ multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-sett
 multiplatform-settings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformSettings" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 filekit-compose = { module = "io.github.vinceglb:filekit-compose", version.ref = "filekitCompose" }
+krop = { module = "com.attafitamim.krop:ui", version.ref = "krop" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
