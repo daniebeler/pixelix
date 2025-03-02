@@ -63,21 +63,17 @@ class EditProfileViewModel @Inject constructor(
         accountService.updateAccount(
             displayname, note, "https://$website", privateProfile, newAvatar
         ).onEach { result ->
-            when (result) {
+            accountState = when (result) {
                 is Resource.Success -> {
-                    accountState = EditProfileState(account = result.data)
-                    avatarUri = accountState.account?.avatar!!.toKmpUri()
-                    newAvatar = null
+                    EditProfileState(account = result.data)
                 }
 
                 is Resource.Error -> {
-                    accountState =
-                        EditProfileState(error = result.message ?: "An unexpected error occurred")
+                    EditProfileState(error = result.message ?: "An unexpected error occurred")
                 }
 
                 is Resource.Loading -> {
-                    accountState =
-                        EditProfileState(isLoading = true, account = accountState.account)
+                    EditProfileState(isLoading = true, account = accountState.account)
                 }
             }
         }.launchIn(viewModelScope)

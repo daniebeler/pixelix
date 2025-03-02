@@ -19,6 +19,7 @@ import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -35,6 +36,11 @@ class AccountService(
             flowOf(Resource.Error("No account found"))
         } else {
             getAccount(current.accountId)
+                .onEach { resource ->
+                    if (resource is Resource.Success) {
+                        authService.updateSessionAvatar(resource.data.id, resource.data.avatar)
+                    }
+                }
         }
     }
 

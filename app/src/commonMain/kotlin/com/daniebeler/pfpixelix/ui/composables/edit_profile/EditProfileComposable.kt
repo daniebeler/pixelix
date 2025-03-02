@@ -342,7 +342,6 @@ private fun ImageCropperFullscreenDialog(
     val style = DefaultCropperStyle
     LaunchedEffect(Unit) {
         state.setInitialState(style)
-        state.shape = CircleCropShape
         state.aspectLock = true
     }
 

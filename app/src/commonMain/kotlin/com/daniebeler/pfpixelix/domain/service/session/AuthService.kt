@@ -122,6 +122,20 @@ class AuthService(
         return sessionStorage.data.first()
     }
 
+    suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) {
+        sessionStorage.updateData { data ->
+            val updatedSessions = data.sessions.map { credentials ->
+                if (credentials.accountId == accountId) {
+                    credentials.copy(avatar = avatarUrl)
+                } else {
+                    credentials
+                }
+            }.toSet()
+            data.copy(sessions = updatedSessions)
+        }
+        openSessionIfExist()
+    }
+
     fun getCurrentSession(): Credentials? {
         return session.credentials.value
     }
