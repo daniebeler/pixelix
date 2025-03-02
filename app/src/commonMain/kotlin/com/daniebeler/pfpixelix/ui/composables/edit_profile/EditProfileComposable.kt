@@ -62,7 +62,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.attafitamim.krop.core.crop.CircleCropShape
 import com.attafitamim.krop.core.crop.CropResult
+import com.attafitamim.krop.core.crop.CropShape
 import com.attafitamim.krop.core.crop.CropState
 import com.attafitamim.krop.core.crop.CropperStyle
 import com.attafitamim.krop.core.crop.DefaultCropperStyle
@@ -340,6 +342,8 @@ private fun ImageCropperFullscreenDialog(
     val style = DefaultCropperStyle
     LaunchedEffect(Unit) {
         state.setInitialState(style)
+        state.shape = CircleCropShape
+        state.aspectLock = true
     }
 
     CompositionLocalProvider(LocalCropperStyle provides style) {
