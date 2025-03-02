@@ -301,7 +301,6 @@ fun ImagesPager(
     addImage: (kmpUri: KmpUri) -> Unit
 ) {
     val pagerState = rememberPagerState { images.size + 1 }
-    val context = LocalKmpContext.current
     val scope = rememberCoroutineScope()
 
     HorizontalPager(
@@ -313,17 +312,19 @@ fun ImagesPager(
         if (page == images.size) {
             Column {
                 Spacer(Modifier.height(48.dp))
-                Card(Modifier.fillMaxWidth().aspectRatio(1f)) {
+
+                val launcher = rememberFilePickerLauncher(
+                    type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
+                ) { files ->
+                    files?.forEach { file ->
+                        addImage(file.toKmpUri())
+                    }
+                }
+
+                Card(Modifier.fillMaxWidth().aspectRatio(1f).clickable { launcher.launch() }) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        val launcher = rememberFilePickerLauncher(
-                            type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
-                        ) { files ->
-                            files?.forEach { file ->
-                                addImage(file.toKmpUri())
-                            }
-                        }
                         Icon(
-                            modifier = Modifier.clickable { launcher.launch() }.height(50.dp)
+                            modifier = Modifier.height(50.dp)
                                 .width(50.dp),
                             imageVector = vectorResource(Res.drawable.add_outline),
                             contentDescription = null,
