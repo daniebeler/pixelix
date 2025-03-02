@@ -206,14 +206,16 @@
     <string name="server_version">%1$s Version %2$s</string>
     <string name="visit_url">Besuche %1$s</string>
     <string name="displayname">Anzeigename</string>
-    <string name="bio">Bio</string>
+    <string name="bio">Über mich</string>
     <string name="website">Website</string>
     <string name="location">Standort</string>
     <string name="mentions">Erwähnungen</string>
     <string name="explore">Entdecken</string>
     <string name="reblogged_by">geteilt von %1$s</string>
-    <string name="focus_mode">Focus Mode</string>
-    <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
+    <string name="focus_mode">Fokusmodus</string>
+    <string name="focus_mode_description">Versteckt Beschreibung, Likes und Buttons von Beiträgen.</string>
     <string name="repost_settings">Boost-Einstellungen</string>
     <string name="amoled">AMOLED</string>
+    <string name="no_followers_yet">Noch keine Follower</string>
+    <string name="not_following_anyone">Sie folgen niemanden</string>
 </resources>
