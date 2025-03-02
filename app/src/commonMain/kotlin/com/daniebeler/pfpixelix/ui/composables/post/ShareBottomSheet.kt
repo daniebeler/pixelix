@@ -77,6 +77,7 @@ fun ShareBottomSheet(
             Visibility.PUBLIC -> getString(Res.string.audience_public)
             Visibility.UNLISTED -> getString(Res.string.unlisted)
             Visibility.PRIVATE -> getString(Res.string.followers_only)
+            else -> ""
         }
     }
 

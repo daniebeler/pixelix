@@ -189,6 +189,7 @@ fun NewPostComposable(
                                         Visibility.PUBLIC -> stringResource(Res.string.audience_public)
                                         Visibility.UNLISTED -> stringResource(Res.string.unlisted)
                                         Visibility.PRIVATE -> stringResource(Res.string.followers_only)
+                                        else -> ""
                                     }
                                     Text(text = buttonText)
                                 }
