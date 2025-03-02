@@ -741,7 +741,8 @@ fun PostImage(
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else {
-                VideoPlayer(uri = mediaAttachment.url.orEmpty().toKmpUri(),
+                VideoAttachment(
+                    mediaAttachment,
                     viewModel,
                     { imageLoaded = true })
             }
@@ -809,11 +810,6 @@ private fun ImageWrapper(
         })
 }
 
-@Composable
-expect fun VideoPlayer(
-    uri: KmpUri, viewModel: PostViewModel, onSuccess: () -> Unit
-)
-
 fun Modifier.isVisible(
     threshold: Int, onVisibilityChange: (Boolean) -> Unit
 ) = composed {
@@ -861,7 +857,7 @@ fun MediaDialog(
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
                         {})
                 } else {
-                    VideoPlayer(uri = mediaAttachment.url.orEmpty().toKmpUri(), postViewModel, {})
+                    VideoAttachment(mediaAttachment, postViewModel, {})
 
                 }
             }
