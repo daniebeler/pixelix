@@ -57,20 +57,17 @@ fun AccountSwitchBottomSheet(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         val sessionStorage = viewModel.sessionStorage
-        val currentlyLoggedIn = remember(sessionStorage) {
-            viewModel.sessionStorage?.getActiveSession()
-        }
-        if (currentlyLoggedIn != null) {
+        if (viewModel.currentCredentials != null) {
             Text(
                 text = stringResource(Res.string.current_account),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            CustomAccount(account = credentialsToAccount(currentlyLoggedIn))
+            CustomAccount(account = credentialsToAccount(viewModel.currentCredentials!!))
         }
         val otherAccounts = remember(sessionStorage) {
-            viewModel.sessionStorage?.sessions?.filter { it != currentlyLoggedIn }.orEmpty()
+            viewModel.sessionStorage?.sessions?.filter { it.accountId != (viewModel.currentCredentials?.accountId ?: "") }.orEmpty()
         }
         if (otherAccounts.isNotEmpty()) {
             Text(

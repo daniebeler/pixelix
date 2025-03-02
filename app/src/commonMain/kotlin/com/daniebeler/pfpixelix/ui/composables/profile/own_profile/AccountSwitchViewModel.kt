@@ -9,6 +9,7 @@ import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Credentials
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.utils.Navigate
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -16,9 +17,20 @@ class AccountSwitchViewModel @Inject constructor(
     private val authService: AuthService
 ) : ViewModel() {
     var sessionStorage by mutableStateOf<SessionStorage?>(null)
-
+    var currentCredentials by mutableStateOf<Credentials?>(null)
     init {
+        viewModelScope.launch {
+            loadCurrentCredentials()
+        }
         loadAccounts()
+    }
+
+    private suspend fun loadCurrentCredentials() {
+        authService.activeUser
+            .map { authService.getCurrentSession() }
+            .collect {
+                currentCredentials = it
+            }
     }
 
     private fun loadAccounts() {
