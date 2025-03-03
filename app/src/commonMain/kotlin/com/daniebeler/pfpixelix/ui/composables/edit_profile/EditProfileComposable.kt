@@ -81,6 +81,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
+import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
@@ -184,6 +185,7 @@ fun EditProfileComposable(
                     .fillMaxSize()
                     .padding(12.dp)
                     .verticalScroll(state = rememberScrollState())
+                    .imeAwareInsets(90.dp)
             ) {
 
                 if (viewModel.accountState.account != null) {
