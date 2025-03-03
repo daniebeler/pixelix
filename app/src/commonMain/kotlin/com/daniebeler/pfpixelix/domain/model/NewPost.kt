@@ -9,6 +9,6 @@ data class NewPost(
     @SerialName("media_ids") val mediaIds: List<String>,
     @SerialName("sensitive") val sensitive: Boolean,
     @SerialName("visibility") val visibility: Visibility,
-    @SerialName("spoilerText") val spoilerText: String?,
+    @SerialName("spoiler_text") val spoilerText: String?,
     @SerialName("place_id") val placeId: String?
 )

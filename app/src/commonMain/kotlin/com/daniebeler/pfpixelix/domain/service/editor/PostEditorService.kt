@@ -35,6 +35,7 @@ class PostEditorService(
                 if (thumbnail != null) {
                     append("thumbnail", thumbnail, Headers.build {
                         append(HttpHeaders.ContentDisposition, "filename=thumbnail")
+                        append(HttpHeaders.ContentType, "image/png")
                     })
                 }
             }
