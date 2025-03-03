@@ -141,6 +141,8 @@ fun PixelixTheme(
         nightModeValue = if (isSystemInDarkTheme()) DARK else LIGHT
     }
 
+    ChangeSystemBarColors(nightModeValue)
+
     val context = LocalKmpContext.current
     val colorScheme = remember(nightModeValue, dynamicColor, lightScheme, darkScheme) {
         context.generateColorScheme(nightModeValue, dynamicColor, lightScheme, darkScheme)
@@ -154,6 +156,9 @@ fun PixelixTheme(
 }
 
 expect fun applySystemNightMode(mode: Int)
+
+@Composable
+expect fun ChangeSystemBarColors(mode: Int)
 
 expect fun KmpContext.generateColorScheme(
     nightModeValue: Int,
