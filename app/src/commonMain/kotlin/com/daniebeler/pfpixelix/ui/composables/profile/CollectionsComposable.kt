@@ -148,7 +148,7 @@ fun CollectionsComposable(
                     Text(
                         text = "$instanceDomain/i/collections/create",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = { openUrl("https://$instanceDomain/i/collections/create") })
+                        modifier = Modifier.clickable(onClick = { openUrl("${instanceDomain}i/collections/create") })
                     )
                 }
             }, onDismissRequest = {
