@@ -25,13 +25,13 @@ class PreferencesViewModel(
 
     fun openMoreSettingsPage() {
         authService.getCurrentSession()?.let {
-            platform.openUrl("https://${it.serverUrl}/settings/home")
+            platform.openUrl("${it.serverUrl}settings/home")
         }
     }
 
     fun openRepostSettings() {
         authService.getCurrentSession()?.let {
-            platform.openUrl("https://${it.serverUrl}/settings/timeline")
+            platform.openUrl("${it.serverUrl}settings/timeline")
         }
     }
 }
