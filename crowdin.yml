@@ -6,8 +6,8 @@
 
 "files": [
   {
-    "source": "/app/src/main/res/values/strings.xml",
-    "translation": "/app/src/main/res/values-%android_code%/strings.xml"
+    "source": "/app/src/commonMain/composeResources/values/strings.xml",
+    "translation": "/app/src/commonMain/composeResources/values-%android_code%/strings.xml"
   },
   {
     "source": "/metadata/en-US/full_description.txt",
