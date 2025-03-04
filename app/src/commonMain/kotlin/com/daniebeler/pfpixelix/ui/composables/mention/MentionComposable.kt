@@ -67,7 +67,6 @@ fun MentionComposable(
     LaunchedEffect(viewModel.postState.post, viewModel.postContextState.postContext) {
         if (viewModel.postState.post != null && viewModel.postContextState.postContext != null) {
             val index = viewModel.postContextState.postContext!!.ancestors.size + 1
-            Logger.d { "index $index" }
             coroutineScope.launch {
                 lazyListState.scrollToItem(index)
             }

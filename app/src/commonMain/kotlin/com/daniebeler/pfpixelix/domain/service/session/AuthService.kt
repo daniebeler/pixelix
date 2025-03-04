@@ -38,7 +38,6 @@ class AuthService(
     val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
 
     suspend fun auth(host: String) {
-        Logger.d("new authorization")
         val serverUrl = getServerUrl(host)
         val api = createAuthApi(serverUrl)
         val authData = api.getAuthData(clientName, redirectUrl)
@@ -51,12 +50,9 @@ class AuthService(
             }
         }.build()
 
-        Logger.d("open oauth url")
         urlHandler.openBrowser(authUrl.toString())
 
-        Logger.d("wait oauth redirect")
         val redirect = Url(urlHandler.redirects.first())
-        Logger.d("handle oauth redirect")
 
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
 

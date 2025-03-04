@@ -124,10 +124,6 @@ fun NewPostComposable(
         }
     }
 
-    LaunchedEffect(viewModel.images) {
-        Logger.d("images") { viewModel.images.none { it.isLoading }.toString() }
-    }
-
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
         CenterAlignedTopAppBar(title = {
             Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)

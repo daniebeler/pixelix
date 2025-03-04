@@ -70,7 +70,6 @@ class OtherProfileViewModel(
     }
 
     fun loadDataByUsername(username: String, refreshing: Boolean) {
-        Logger.d { "byUsername: load data by username" }
         getAccountByUsername(username, refreshing)
     }
 

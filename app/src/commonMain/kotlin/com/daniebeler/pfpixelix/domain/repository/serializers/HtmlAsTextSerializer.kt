@@ -22,7 +22,6 @@ internal object HtmlAsTextSerializer : KSerializer<String> {
         val text = document.text().replace("\\n", "\n")
         val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
 
-        Logger.d { cleanedText }
         return cleanedText.trim()
     }
 }
