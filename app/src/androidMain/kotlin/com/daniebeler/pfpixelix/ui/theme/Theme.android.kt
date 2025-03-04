@@ -20,13 +20,12 @@ import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.LocalKmpContext
 
-@RequiresApi(Build.VERSION_CODES.S)
 actual fun KmpContext.generateColorScheme(
     nightModeValue: Int,
     dynamicColor: Boolean,
     lightScheme: ColorScheme,
     darkScheme: ColorScheme
-): ColorScheme = if (dynamicColor) {
+): ColorScheme = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
     when (nightModeValue) {
         AMOLED -> dynamicDarkColorScheme(this).toAmoled()
         DARK -> dynamicDarkColorScheme(this)
