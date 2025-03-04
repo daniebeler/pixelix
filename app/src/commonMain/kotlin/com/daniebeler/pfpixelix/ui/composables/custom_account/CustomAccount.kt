@@ -42,6 +42,7 @@ fun CustomAccount(
     account: Account,
     relationship: Relationship?,
     navController: NavController,
+    showFollowers: Boolean = true,
     viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     CustomAccountPrivate(
@@ -50,6 +51,7 @@ fun CustomAccount(
         navController = navController,
         onClick = {},
         savedSearchItem = false,
+        showFollowers = showFollowers,
         removeSavedSearch = {},
         viewModel = viewModel
     )
@@ -59,9 +61,10 @@ fun CustomAccount(
 fun CustomAccount(
     account: Account,
     logoutButton: Boolean = false,
+    showFollowers: Boolean = true,
     logout: () -> Unit = {}
 ) {
-    CustomAccountPrivateNotClickable(account = account, logoutButton, logout)
+    CustomAccountPrivateNotClickable(account = account, showFollowers = showFollowers, logoutButton = logoutButton, logout = logout)
 }
 
 @Composable
@@ -70,6 +73,7 @@ fun CustomAccount(
     relationship: Relationship?,
     navController: NavController,
     removeSavedSearch: () -> Unit,
+    showFollowers: Boolean = true,
     viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     CustomAccountPrivate(
@@ -78,6 +82,7 @@ fun CustomAccount(
         navController = navController,
         onClick = {},
         savedSearchItem = true,
+        showFollowers = showFollowers,
         removeSavedSearch = removeSavedSearch,
         viewModel = viewModel
     )
@@ -87,6 +92,7 @@ fun CustomAccount(
 fun CustomAccount(
     account: Account,
     relationship: Relationship?,
+    showFollowers: Boolean = true,
     onClick: () -> Unit,
     navController: NavController,
     viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
@@ -97,6 +103,7 @@ fun CustomAccount(
         onClick = onClick,
         savedSearchItem = false,
         removeSavedSearch = {},
+        showFollowers = showFollowers,
         navController = navController,
         viewModel = viewModel
     )
@@ -109,6 +116,7 @@ private fun CustomAccountPrivate(
     onClick: () -> Unit,
     savedSearchItem: Boolean,
     removeSavedSearch: () -> Unit,
+    showFollowers: Boolean,
     navController: NavController,
     viewModel: CustomAccountViewModel
 ) {
@@ -141,14 +149,16 @@ private fun CustomAccountPrivate(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Text(
-                            text = " • " + StringFormat.groupDigits(
-                                account.followersCount
-                            ) + " " + stringResource(Res.string.followers),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            lineHeight = 8.sp
-                        )
+                        if (showFollowers) {
+                            Text(
+                                text = " • " + StringFormat.groupDigits(
+                                    account.followersCount
+                                ) + " " + stringResource(Res.string.followers),
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                lineHeight = 8.sp
+                            )
+                        }
                     }
                 }
 
@@ -196,7 +206,7 @@ private fun CustomAccountPrivate(
 
 @Composable
 private fun CustomAccountPrivateNotClickable(
-    account: Account, logoutButton: Boolean, logout: () -> Unit
+    account: Account, logoutButton: Boolean, showFollowers: Boolean, logout: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -224,14 +234,16 @@ private fun CustomAccountPrivateNotClickable(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Text(
-                            text = " • " + StringFormat.groupDigits(
-                                account.followersCount
-                            ) + " " + stringResource(Res.string.followers),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            lineHeight = 8.sp
-                        )
+                        if (showFollowers) {
+                            Text(
+                                text = " • " + StringFormat.groupDigits(
+                                    account.followersCount
+                                ) + " " + stringResource(Res.string.followers),
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                lineHeight = 8.sp
+                            )
+                        }
                     }
                 }
 

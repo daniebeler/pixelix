@@ -64,7 +64,7 @@ fun AccountSwitchBottomSheet(
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            CustomAccount(account = credentialsToAccount(viewModel.currentCredentials!!))
+            CustomAccount(account = credentialsToAccount(viewModel.currentCredentials!!), showFollowers = false)
         }
         val otherAccounts = remember(sessionStorage) {
             viewModel.sessionStorage?.sessions?.filter { it.accountId != (viewModel.currentCredentials?.accountId ?: "") }.orEmpty()
@@ -88,6 +88,7 @@ fun AccountSwitchBottomSheet(
                     CustomAccount(
                         account = credentialsToAccount(otherAccount),
                         logoutButton = true,
+                        showFollowers = false,
                         logout = { showRemoveLoginDataAlert.value = otherAccount.accountId })
                 }
             }
