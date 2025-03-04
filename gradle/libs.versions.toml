@@ -4,9 +4,9 @@ ksp = "2.1.10-1.0.29"
 agp = "8.8.0"
 
 #https://github.com/JetBrains/compose-multiplatform/releases
-composeMultiplatform = "1.8.0+dev2112"
-lifecycle = "2.9.0-alpha03"
-lifecycleMultiplatform = "2.9.0+dev2112"
+composeMultiplatform = "1.8.0-alpha03"
+lifecycle = "2.9.0-alpha11"
+lifecycleMultiplatform = "2.9.0-alpha03"
 navigationMultiplatform = "2.8.0+dev2112"
 
 #JetBrains
