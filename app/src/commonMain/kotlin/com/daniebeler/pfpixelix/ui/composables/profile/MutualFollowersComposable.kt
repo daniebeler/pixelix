@@ -76,6 +76,14 @@ fun MutualFollowersComposable(
 
                 if (listSize == 2) {
                     append(" " + stringResource(Res.string.and) + " ")
+                    withStyle(style = boldStyle) {
+                        pushStringAnnotation(
+                            tag = "account",
+                            annotation = mutualFollowersState.mutualFollowers[1].id
+                        )
+                        append(mutualFollowersState.mutualFollowers[1].username)
+                        pop()
+                    }
                 }
                 if (listSize > 2) {
                     append(", ")
