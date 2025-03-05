@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Cached
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
@@ -93,6 +94,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.snapBackZoomable
+import net.engawapg.lib.zoomable.zoomable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -197,7 +199,8 @@ fun PostComposable(
 
 
     var animateHeart by remember { mutableStateOf(false) }
-    val heartScale by animateFloatAsState(targetValue = if (animateHeart) 1.3f else 1f,
+    val heartScale by animateFloatAsState(
+        targetValue = if (animateHeart) 1.3f else 1f,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
         finishedListener = {
             animateHeart = false
@@ -530,7 +533,8 @@ fun PostComposable(
                             Text(
                                 text = stringResource(Res.string.liked_by) + " ", fontSize = 14.sp
                             )
-                            Text(text = viewModel.post!!.likedBy!!.username!!,
+                            Text(
+                                text = viewModel.post!!.likedBy!!.username!!,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.clickable {
@@ -544,9 +548,10 @@ fun PostComposable(
                                     text = " " + stringResource(Res.string.and) + " ",
                                     fontSize = 14.sp
                                 )
-                                Text(text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
-                                    Res.string.others
-                                ),
+                                Text(
+                                    text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
+                                        Res.string.others
+                                    ),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     modifier = Modifier.clickable {
@@ -579,9 +584,10 @@ fun PostComposable(
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Text(text = stringResource(
-                            Res.string.view_comments, viewModel.post!!.replyCount
-                        ),
+                        Text(
+                            text = stringResource(
+                                Res.string.view_comments, viewModel.post!!.replyCount
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.clickable {
                                 viewModel.loadReplies(
@@ -737,7 +743,8 @@ fun PostImage(
             })
         }) {
             if (mediaAttachment.type == "image") {
-                ImageWrapper(mediaAttachment,
+                ImageWrapper(
+                    mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else {
@@ -800,7 +807,8 @@ private fun ImageWrapper(
     setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
     onSuccess: () -> Unit
 ) {
-    AsyncImage(model = mediaAttachment.url,
+    AsyncImage(
+        model = mediaAttachment.url,
         contentDescription = "",
         Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
@@ -847,18 +855,24 @@ fun MediaDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f))
-                .clickable(onClick = closeDialog), // Close on background tap
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)),
             contentAlignment = Alignment.Center
         ) {
-            Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState)) {
+
+            Box(modifier = Modifier.zIndex(2f).zoomable(zoomState)) {
                 if (mediaAttachment.type == "image") {
-                    ImageWrapper(mediaAttachment,
+                    ImageWrapper(
+                        mediaAttachment,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
                         {})
                 } else {
                     VideoAttachment(mediaAttachment, postViewModel, {})
 
+                }
+            }
+            Box(Modifier.align(Alignment.TopEnd).padding(20.dp)) {
+                IconButton(onClick = { closeDialog() }) {
+                    Icon(Icons.Outlined.Close, "")
                 }
             }
         }
