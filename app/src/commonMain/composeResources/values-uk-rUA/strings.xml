@@ -212,8 +212,10 @@
     <string name="mentions">Згадування</string>
     <string name="explore">Досліджуйте</string>
     <string name="reblogged_by">репост від %1$s</string>
-    <string name="focus_mode">Focus Mode</string>
-    <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
-    <string name="repost_settings">Repost settings</string>
+    <string name="focus_mode">Режим фокусу</string>
+    <string name="focus_mode_description">Приховує опис, кнопки \"подобається\" і \".</string>
+    <string name="repost_settings">Налаштування репостів</string>
     <string name="amoled">AMOLED</string>
+    <string name="no_followers_yet">Поки немає підписників!</string>
+    <string name="not_following_anyone">Нікого не відстежую</string>
 </resources>
