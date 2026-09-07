@@ -20,4 +20,8 @@ class NotificationSettingsViewModel(
     fun openAppSettings() {
         platform.openAppSettings()
     }
+
+    fun goToUnifiedPushWebsite() {
+        platform.openUrl("https://unifiedpush.org")
+    }
 }

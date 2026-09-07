@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.notification_settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -102,9 +104,9 @@ fun NotificationSettingsComposable(
                     ) {
                         Text(
                             text = if (hasPermission) {
-                                "Permission is set"
+                                "Notifications allowed"
                             } else {
-                                "Permission is missing"
+                                "Notifications not allowed"
                             },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
@@ -149,6 +151,14 @@ fun NotificationSettingsComposable(
                     Text(
                         text = "Pixelix uses an open system called UnifiedPush to give you control over how notifications are delivered. You can choose a custom notification service, or simply rely on standard Google notifications (FCM), which are used automatically if no other provider is found.",
                         style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = "Unified push information",
+                        textDecoration = TextDecoration.Underline,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.clickable { viewModel.goToUnifiedPushWebsite() }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
