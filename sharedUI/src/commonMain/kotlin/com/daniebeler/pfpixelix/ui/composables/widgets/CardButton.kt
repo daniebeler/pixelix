@@ -28,8 +28,8 @@ fun CardButton(
     desc: String? = null,
     trailingContent: DrawableResource? = null,
     onClick: () -> Unit = {},
-    cardColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    textColor: Color = MaterialTheme.colorScheme.primaryContainer
+    cardColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    textColor: Color = MaterialTheme.colorScheme.onPrimaryContainer
 ) {
     val shape: Shape = MaterialTheme.shapes.medium
     val cardColors = CardDefaults.cardColors(
@@ -62,7 +62,7 @@ fun CardButton(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
-                    color = Color.Unspecified
+                    color = textColor
                 )
                 if (desc != null) {
                     Text(
@@ -71,7 +71,7 @@ fun CardButton(
                         modifier = Modifier.padding(top = 2.dp),
                         maxLines = 5,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color.Unspecified
+                        color = textColor
                     )
                 }
             }

@@ -139,7 +139,9 @@ fun ContributeCard(
             title = buttonTitle,
             desc = buttonDesc,
             onClick = onClick,
-            trailingContent = Res.drawable.chevron_right
+            trailingContent = Res.drawable.chevron_right,
+            cardColor = MaterialTheme.colorScheme.primaryContainer,
+            textColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
 
     }
