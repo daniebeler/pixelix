@@ -105,9 +105,6 @@ fun PreferencesComposable(
             )
             Spacer(modifier = Modifier.height(6.dp))
 
-            if (viewModel.capabilities.value.general.supportsPushNotifications) {
-                NotificationSettingsPref(navController, closePreferencesDrawer)
-            }
             HideSensitiveContentPref()
 
             HideAltTextButtonPref()
@@ -135,6 +132,10 @@ fun PreferencesComposable(
             if (PlatformFeatures.customAppIcon) {
                 val icon = viewModel.appIcon.collectAsState()
                 CustomizeAppIconPref(navController, closePreferencesDrawer, icon.value)
+            }
+
+            if (viewModel.capabilities.value.general.supportsPushNotifications) {
+                NotificationSettingsPref(navController, closePreferencesDrawer)
             }
 
             ThemePref()

@@ -28,7 +28,7 @@ fun NotificationSettingsPref(
                 contentDescription = null,
             )
         },
-        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 5),
+        shapes = ListItemDefaults.segmentedShapes(index = 1, count = 5),
         onClick = {
             closePreferenceDrawer()
             navController.navigate(Destination.NotificationSettings)

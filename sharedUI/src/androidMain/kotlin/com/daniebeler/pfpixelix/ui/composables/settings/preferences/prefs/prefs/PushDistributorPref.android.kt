@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
 import com.daniebeler.pfpixelix.utils.KmpContext
 import org.jetbrains.compose.resources.stringResource
 import org.unifiedpush.android.connector.UnifiedPush
@@ -60,27 +62,38 @@ actual fun PushDistributorPrefDialog(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
+                ) {
                     item {
                         Text(
-                            text = stringResource(Res.string.default_license),
+                            text = "Distributor",
                             style = MaterialTheme.typography.headlineSmall
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = "A distributor is the background app or service that delivers notifications to Pixelix.\n" +
+                                    "\n" +
+                                    "Choose a custom UnifiedPush provider (like ntfy or Gotify) if you have one installed, or select the default Google service.",
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    itemsIndexed(distributors) {index, it ->
+                    itemsIndexed(distributors) { index, it ->
                         SegmentedListItem(
-                            selected = it == distributor,
                             content = {
                                 Text(
-                                    text = it, style = MaterialTheme.typography.bodyMedium
+                                    text = if (it == "com.daniebeler.pfpixelix") {
+                                        "Google fallback"
+                                    } else {
+                                        it
+                                    }, style = MaterialTheme.typography.bodyMedium
                                 )
-                            },
-                            onClick = {
+                            }, onClick = {
                                 setDistributor(it)
-                            },
-                            shapes = ListItemDefaults.segmentedShapes(index = index, count = distributors.size)
+                            }, shapes = ListItemDefaults.segmentedShapes(
+                                index = index, count = distributors.size
+                            ),
+                            trailingContent = radioButtonBlock(it == distributor),
                         )
                     }
 

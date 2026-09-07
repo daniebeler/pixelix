@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -78,26 +80,11 @@ fun NotificationSettingsComposable(
         }) { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
             Column(
-                modifier = Modifier.padding(top = 24.dp).padding(horizontal = 8.dp),
+                modifier = Modifier.padding(top = 24.dp).padding(horizontal = 8.dp).verticalScroll(
+                    rememberScrollState()
+                ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(16.dp)
-                ) {
-                    Text(
-                        text = "Unified Push",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "UnifiedPush is a decentralized push notification system that lets you choose the service you want to use. It’s designed to be privacy-friendly, flexible, and open — making it perfect if you want control over your push notifications.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
                 viewModel.hasPushNotificationPermission.let { hasPermission ->
                     val bgColor = if (hasPermission) {
                         MaterialTheme.colorScheme.primaryContainer
@@ -149,7 +136,26 @@ fun NotificationSettingsComposable(
                     }
                 }
 
+                Column(
+                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainer).padding(16.dp)
+                ) {
+                    Text(
+                        text = "About Notification Delivery",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Pixelix uses an open system called UnifiedPush to give you control over how notifications are delivered. You can choose a custom notification service, or simply rely on standard Google notifications (FCM), which are used automatically if no other provider is found.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 PushDistributorPref()
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
