@@ -29,20 +29,6 @@ On our Website we wrote a blog post about all the easy ways you can support/cont
 
 [ghostbyte.dev/blog/support-pixelix](https://ghostbyte.dev/blog/support-pixelix)
 
-## Availability
-
-Pixelix is available on multiple platforms and distribution channels.
-
-The App Store and Google Play versions are paid to help support ongoing development:
-
-- App Store (€4)
-- Google Play (€2)
-
-Free builds are also available through:
-
-- F-Droid
-- GitHub Releases
-
 ## Translations
 
 We use [Weblate](https://hosted.weblate.org/engage/pixelix/) for translations and are thankful for every contribution.
@@ -50,7 +36,7 @@ We use [Weblate](https://hosted.weblate.org/engage/pixelix/) for translations an
 [![Translation status](https://hosted.weblate.org/widget/pixelix/multi-auto.svg)](https://hosted.weblate.org/engage/pixelix/)
 
 
-## Check Download Stats of Pixelix Releases
+## Download Stats of Pixelix Releases
 Curious how many times Pixelix has been downloaded from the Github Releases?
 
 You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts.
